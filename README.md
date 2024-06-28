@@ -66,6 +66,98 @@ Install and copy | replace files (optional, see in replacement folder):
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles.
 - [Segment Anything](https://github.com/storyicon/comfyui_segment_anything) : Replace \_\_init\_\_.py to disable requirements installation.
 
+## JK_workflow : tex2img_img2img_Complete : Introduction
+	Hotkey:
+		0: usage guide
+		\`: overall workflow
+		1: base, image selection, & noise injection
+		2: embedding, fine tune string, auto prompts, & adv conditioning parameters
+		3: lora, controlnet parameters, & adv model parameters
+		4: refine parameters
+		5: detailer parameters
+		6: upscale parameters
+		7: In/Out Paint parameters
+
+	Workflow Control:
+		All switches in any Workflow panel take effect in realtime.
+		All switches in any Select panel also affect sub workflow, but don't take effect in realtime, which needs preprocessing.
+		All switches in Parameters panel that affect sub workflow don't take effect in realtime, which needs preprocessing.
+
+	Suggested method:
+		Preprocessing Queue Prompt needs to be executed once before actural generation for switches in Select or Parameters panels to control the sub workflow, the state of correspoding switches in Workflow panels will be changed automatically after the preprocess. So that it's recommended to disable all process in Overall Workflow panel and adjust all sub-workflow-related switches before actural genaration.
+
+	Metadata:
+		All parameters including sub-workflow-related switches will affect the generation result and also the content of Metadata saved with the image.
+		In Refine image saving, remove noise_jinection_metadata link if not refining any noise injection process.
+		In Upscale image saving, remove noise_jinection_metadata or refine_metadata link if not using Noise Injection or refine process.
+		In Detailer image saving, remove noise_jinection_metadata, refine_metadata or upscale_metadata link if not using Noise Injection or refine process.
+
+	SDXL:
+		Load SDXL Ckpt for Base | Refine (Optional) | Upscale
+		Load SDXL Vae
+		Disable SD15 ELLA Text Encode (in Base Model Sub Workflow JK🐉)
+		Enable SDXL Text Ecode (in Base Model Sub Workflow JK🐉)     (Optional)
+		Enable SDXL Refine Text Encode (in Refine Sub Workflow JK🐉) (optional)
+		Disable IPAdapter 2 - faceid (in Refine Sub Workflow JK🐉)
+		Switch plus and plus-face ipadapter to sdxl_vit-h version
+		Switch Image Upscale ControlNet Tile to sdxl version (in Upscale Sub Workflow JK🐉)
+
+	Other:
+		1. Nodes State JK🐉 uses target nodes' id to control their active | mute | bypass mode. Need to update node_id_list if you make a copy.
+		2. The order of Detailer Progress and Upscale Progress can be swapped. Please avoid to form loops. 
+
+## JK_workflow : tex2img_img2img_Complete : Explanation
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0_OverallWorkflow.png)
+- Overall Workflow
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/1-1_ProjectSetting.png)
+- Project Setting
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/1-2_BaseCkptVaeSeed.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/1-3_BaseModelParameters.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/1-4_BaseModelSubWorkflowNNoiseInjectionParameter.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/1-5_ImageInputSelect.png)
+- Base Model Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-1_TI.png)
+- TI Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-2_AutoVariationPrompt.png)
+- Auto Variation Prompt Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-3_AdvancedConditioning.png)
+- Advanced Conditioning Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/3-1_Lora.png)
+- Lora Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/3-2_ControlNet.png)
+- Control Net Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/3-3_AdvancedModel.png)
+- Advanced Model Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/4-1_RefineProcessCkptSeed.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/4-2_RefineModelParameters.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/4-3_RefineSubProcessWorkflow.png)
+- Refine Process Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/5-1_UpscaleProcess.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/5-2_UpscaleCkptSeed.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/5-3_UpscaleParameters.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/5-4_UpscaleSubWorkflow.png)
+- Upscale Process Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/6-1_DetailerProcessSelect.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/6-2_DetailerParameters.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/6-3_DetailerSubWorkflow.png)
+- Detailer Process Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/7-1_InOutPaintProcessSelect.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/7-2_InOutPaintCkptVae.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/7-3_InOutPaintSubWorkflow.png)
+- In/Out Paint Process Parameters
+
 ## JakeUpgrade Custom Nodes
 	Misc Nodes
 		SD1.5 Aspect Ratio JK🐉
