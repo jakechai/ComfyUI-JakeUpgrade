@@ -43,6 +43,7 @@ To use JK_workflow, you need to install:
 - [pythongosssss](https://github.com/pythongosssss/ComfyUI-Custom-Scripts)
 - [ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
 - [Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
+- [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
 - [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)

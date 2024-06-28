@@ -1302,11 +1302,11 @@ class RefineModelParameters_JK:
                 "Enable_IPAdaptor_1": ("BOOLEAN", {"default": False}),
                 #
                 "Enable_refine_2": ("BOOLEAN", {"default": False}),
+                "Enable_refine_2_seed": ("BOOLEAN", {"default": True}),
                 "Enable_refine_2_prompt": ("BOOLEAN", {"default": False}),
                 "refine_2_positive": ("STRING", {"default": '', "multiline": True}),
                 "refine_2_negative": ("STRING", {"default": '', "multiline": True}),
                 "refine_2_variation": ("STRING", {"default": '', "multiline": True}),
-                "Enable_refine_2_seed": ("BOOLEAN", {"default": True}),
                 "refine_2_cfg": ("FLOAT", {"default": 7.0, "min": 0.0, "max": 100.0, "step": 0.05}),
                 "refine_2_denoise": ("FLOAT", {"default": 0.35, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "Enable_IPAdaptor_2": ("BOOLEAN", {"default": False}),
@@ -1465,6 +1465,7 @@ class UpscaleModelParameters_JK:
             "required": {
                 "base_ckpt_name": ("STRING", {"forceInput": True}),
                 "upscale_ckpt_name": ("STRING", {"forceInput": True}),
+                "upscale_seed": ("INT", {"forceInput": True}),
                 #
                 "batch_index": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
                 "upscale_length": ("INT", {"default": 1, "min": 1, "max": 0xffffffffffffffff}),
@@ -1486,6 +1487,7 @@ class UpscaleModelParameters_JK:
                 "upscale_cfg": ("FLOAT", {"default": 5.0, "min": 0.0, "max": 100.0, "step": 0.05}),
                 "Enable_upscale_ckpt": ("BOOLEAN", {"default": False}),
                 "upscale_denoise": ("FLOAT", {"default": 0.35, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "Enable_upscale_seed": ("BOOLEAN", {"default": True}),
                 #
                 "save_ckpt_hash": ("BOOLEAN", {"default": False},),
             },
@@ -1498,7 +1500,7 @@ class UpscaleModelParameters_JK:
     CATEGORY = icons.get("JK/Pipe")
 
     def get_value(self, batch_index, upscale_length, Enable_Image_Upscale, Image_upscale_model_name, Image_upscale_method, Image_scale_by, Enable_Latent_Upscale, Latent_upscale_method, Latent_scale_by, 
-                  Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, Enable_upscale_ckpt, upscale_ckpt_name, upscale_denoise, save_ckpt_hash, 
+                  Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, Enable_upscale_ckpt, upscale_ckpt_name, upscale_denoise, Enable_upscale_seed, upscale_seed, save_ckpt_hash, 
                   base_ckpt_name=None):
         
         if Enable_Image_Upscale == True:
@@ -1524,7 +1526,7 @@ class UpscaleModelParameters_JK:
         
         pipe_imageupscale = (Enable_Image_Upscale, Image_upscale_model_name, Image_upscale_method, image_rescale_by)
         pipe_latentupscale = (Enable_Latent_Upscale, Latent_upscale_method, Latent_scale_by)
-        pipe_upscalemodel = (Enable_upscale_ckpt, upscale_ckpt_name, Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, upscale_denoise)
+        pipe_upscalemodel = (Enable_upscale_ckpt, upscale_ckpt_name, Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, upscale_denoise, Enable_upscale_seed)
         
         if base_ckpt_name != None:
             baseckpt_path = f"{folder_paths.get_full_path('checkpoints', base_ckpt_name)}"
@@ -1537,12 +1539,13 @@ class UpscaleModelParameters_JK:
         upscaleckpt_hash = f" [{calculate_sha256(upscaleckpt_path)[:10]}]" if save_ckpt_hash == True else ""
         upscaleckpt_metadata = f"Hires checkpoint: {upscaleckpt_name}{upscaleckpt_hash}" if Enable_upscale_ckpt == True or base_ckpt_name == None else f"Hires checkpoint: {baseckpt_name}{baseckpt_hash}"
         upscaleprompt_metadata = f"Hires prompt: \"{handle_whitespace(upscale_positive)}\", Hires negative prompt: \"{handle_whitespace(upscale_negative)}\", " if Enable_upscale_prompt == True else ""
+        upscaleseed_metadata = f"Upscale Seed: {upscale_seed}, " if Enable_upscale_seed == True else ""
         imageupscalemodel_name = Path(f"{Image_upscale_model_name}").stem
         imageupscalemodel_metadata = f"Hires upscaler: {imageupscalemodel_name} ({Image_upscale_method}), " if Enable_Image_Upscale == True else ""
         latentupscalemodel_metadata = f"Hires upscaler: Latent ({Latent_upscale_method}), " if Enable_Latent_Upscale == True else ""
-        # Auto1111 shares img2img Denoising strength with upscale_denoise
-       #upscale_metadata = f"{upscaleckpt_metadata}, Hires sampler: {upscale_sampler_name}{f'_{upscale_scheduler}' if upscale_scheduler != 'normal' else ''}, {upscaleprompt_metadata}Hires upscale: {scale_amount}, {upscaleamount_metadata}Hires steps: {upscale_steps}, Hires CFG scale: {upscale_cfg}, Hires Denoising strength: {upscale_denoise_metadata}, {imageupscalemodel_metadata}{latentupscalemodel_metadata}" if Enable_Image_Upscale == True or Enable_Latent_Upscale == True else ""
-        upscale_metadata = f"{upscaleckpt_metadata}, Hires sampler: {upscale_sampler_name}{f'_{upscale_scheduler}' if upscale_scheduler != 'normal' else ''}, {upscaleprompt_metadata}Hires upscale: {scale_amount}, {upscaleamount_metadata}Hires steps: {upscale_steps}, Hires CFG scale: {upscale_cfg}, Denoising strength: {upscale_denoise_metadata}, {imageupscalemodel_metadata}{latentupscalemodel_metadata}" if Enable_Image_Upscale == True or Enable_Latent_Upscale == True else ""
+       #Auto1111 shares img2img Denoising strength with upscale_denoise
+       #upscale_metadata = f"{upscaleckpt_metadata}, Hires sampler: {upscale_sampler_name}{f'_{upscale_scheduler}' if upscale_scheduler != 'normal' else ''}, {upscaleprompt_metadata}Hires upscale: {scale_amount}, {upscaleamount_metadata}Hires steps: {upscale_steps}, Hires CFG scale: {upscale_cfg}, Hires Denoising strength: {upscale_denoise_metadata}, upscaleseed_metadata{imageupscalemodel_metadata}{latentupscalemodel_metadata}" if Enable_Image_Upscale == True or Enable_Latent_Upscale == True else ""
+        upscale_metadata = f"{upscaleckpt_metadata}, Hires sampler: {upscale_sampler_name}{f'_{upscale_scheduler}' if upscale_scheduler != 'normal' else ''}, {upscaleprompt_metadata}Hires upscale: {scale_amount}, {upscaleamount_metadata}Hires steps: {upscale_steps}, Hires CFG scale: {upscale_cfg}, Denoising strength: {upscale_denoise_metadata}, {upscaleseed_metadata}{imageupscalemodel_metadata}{latentupscalemodel_metadata}" if Enable_Image_Upscale == True or Enable_Latent_Upscale == True else ""
         
         return (upscale_metadata, pipe_imageupscale, pipe_latentupscale, pipe_upscalemodel, batch_index, upscale_length)
         
@@ -1594,14 +1597,14 @@ class UpscaleModelParametersExtract_JK:
             "required": {"upscale_model_pipe": ("PIPE_LINE",)},
             }
 
-    RETURN_TYPES = ("BOOLEAN", "STRING", "BOOLEAN", "STRING", "STRING", "INT", "STRING", "STRING", "FLOAT", "FLOAT")
-    RETURN_NAMES = ("Enable_upscale_ckpt", "upscale_ckpt_name", "Enable_upscale_prompt", "upscale_positive", "upscale_negative", "upscale_steps", "upscale_sampler_name", "upscale_scheduler", "upscale_cfg", "upscale_denoise")
+    RETURN_TYPES = ("BOOLEAN", "STRING", "BOOLEAN", "STRING", "STRING", "INT", "STRING", "STRING", "FLOAT", "FLOAT", "BOOLEAN")
+    RETURN_NAMES = ("Enable_upscale_ckpt", "upscale_ckpt_name", "Enable_upscale_prompt", "upscale_positive", "upscale_negative", "upscale_steps", "upscale_sampler_name", "upscale_scheduler", "upscale_cfg", "upscale_denoise", "Enable_upscale_seed")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
     
     def flush(self, upscale_model_pipe):
-        Enable_upscale_ckpt, upscale_ckpt_name, Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, upscale_denoise = upscale_model_pipe
-        return (Enable_upscale_ckpt, upscale_ckpt_name, Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, upscale_denoise)
+        Enable_upscale_ckpt, upscale_ckpt_name, Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, upscale_denoise, Enable_upscale_seed = upscale_model_pipe
+        return (Enable_upscale_ckpt, upscale_ckpt_name, Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, upscale_denoise, Enable_upscale_seed)
 
 class DetailerParameters_JK:
     def __init__(self):
@@ -1796,6 +1799,7 @@ class ImageSaveWithMetadata_JK:
                 "Enable_upscale_ckpt": ("BOOLEAN", {"default": False}),
                 "upscale_ckpt_name": (folder_paths.get_filename_list("checkpoints"),),
                 "upscale_denoise": ("FLOAT", {"default": 0.7, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "upscale_seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
                 #
                 "other_prompt": ("STRING", {"default": '', "multiline": True}),
                 "save_hash": ("BOOLEAN", {"default": False},),
@@ -1826,7 +1830,7 @@ class ImageSaveWithMetadata_JK:
                    Enable_refine_1, Enable_refine_1_seed, refine_1_seed, Enable_refine_ckpt, refine_ckpt_name, Enable_refine_1_prompt, refine_1_positive, refine_1_negative, refine_1_variation, refine_1_cfg, refine_1_switch_at, Enable_IPAdaptor_1, 
                    Enable_refine_2, Enable_refine_2_prompt, refine_2_positive, refine_2_negative, refine_2_variation, Enable_refine_2_seed, refine_2_seed, refine_2_cfg, refine_2_denoise, Enable_IPAdaptor_2, 
                    Enable_Image_Upscale, Image_upscale_model_name, Image_upscale_method, Image_scale_by, Enable_Latent_Upscale, Latent_upscale_method, Latent_scale_by,
-                   Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, Enable_upscale_ckpt, upscale_ckpt_name, upscale_denoise,
+                   Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, Enable_upscale_ckpt, upscale_ckpt_name, upscale_denoise, upscale_seed,
                    other_prompt, save_hash, image_name, path_name, counter, extension, lossless_webp, quality_jpeg_or_webp, 
                    lora_prompt=None, positive_embedding_prompt=None, negative_embedding_prompt=None, lora_metadata=None, positive_embedding_metadata=None, negative_embedding_metadata=None, controlnet_metadata=None, prompt=None, extra_pnginfo=None):
         
@@ -1884,6 +1888,7 @@ class ImageSaveWithMetadata_JK:
         upscaleckpt_hash = f" [{calculate_sha256(upscaleckpt_path)[:10]}]" if save_hash == True else ""
         upscaleckpt_metadata = f"Hires checkpoint: {upscaleckpt_name}{upscaleckpt_hash}" if Enable_upscale_ckpt == True else f"Hires checkpoint: {baseckpt_name}{baseckpt_hash_2}"
         upscaleprompt_metadata = f"Hires prompt: \"{handle_whitespace(upscale_positive)}\", Hires negative prompt: \"{handle_whitespace(upscale_negative)}\", " if Enable_upscale_prompt == True else ""
+        upscaleseed_metadata = f"Upscale Seed: {upscale_seed}, "
         #
         imageupscalemodel_name = Path(f"{Image_upscale_model_name}").stem
         imageupscalemodel_metadata = f"Hires upscaler: {imageupscalemodel_name} ({Image_upscale_method}), " if Enable_Image_Upscale == True else ""
@@ -1907,9 +1912,9 @@ class ImageSaveWithMetadata_JK:
             upscaleamount_metadata = f"Hires upscale image: {Image_scale_by}, Hires upscale latent: {Latent_scale_by}, "
         else:
             upscaleamount_metadata = ""
-        # Auto1111 shares img2img Denoising strength with upscale_denoise
-       #upscale_metadata = f"{upscaleckpt_metadata}, Hires sampler: {upscale_sampler_name}{f'_{upscale_scheduler}' if upscale_scheduler != 'normal' else ''}, {upscaleprompt_metadata}Hires upscale: {scale_amount}, {upscaleamount_metadata}Hires steps: {upscale_steps}, Hires CFG scale: {upscale_cfg}, Hires Denoising strength: {upscale_denoise_metadata}, {imageupscalemodel_metadata}{latentupscalemodel_metadata}" if Enable_Image_Upscale == True or Enable_Latent_Upscale == True else ""
-        upscale_metadata = f"{upscaleckpt_metadata}, Hires sampler: {upscale_sampler_name}{f'_{upscale_scheduler}' if upscale_scheduler != 'normal' else ''}, {upscaleprompt_metadata}Hires upscale: {scale_amount}, {upscaleamount_metadata}Hires steps: {upscale_steps}, Hires CFG scale: {upscale_cfg}, Denoising strength: {upscale_denoise_metadata}, {imageupscalemodel_metadata}{latentupscalemodel_metadata}" if Enable_Image_Upscale == True or Enable_Latent_Upscale == True else ""
+       #Auto1111 shares img2img Denoising strength with upscale_denoise
+       #upscale_metadata = f"{upscaleckpt_metadata}, Hires sampler: {upscale_sampler_name}{f'_{upscale_scheduler}' if upscale_scheduler != 'normal' else ''}, {upscaleprompt_metadata}Hires upscale: {scale_amount}, {upscaleamount_metadata}Hires steps: {upscale_steps}, Hires CFG scale: {upscale_cfg}, Hires Denoising strength: {upscale_denoise_metadata}, {upscaleseed_metadata}{imageupscalemodel_metadata}{latentupscalemodel_metadata}" if Enable_Image_Upscale == True or Enable_Latent_Upscale == True else ""
+        upscale_metadata = f"{upscaleckpt_metadata}, Hires sampler: {upscale_sampler_name}{f'_{upscale_scheduler}' if upscale_scheduler != 'normal' else ''}, {upscaleprompt_metadata}Hires upscale: {scale_amount}, {upscaleamount_metadata}Hires steps: {upscale_steps}, Hires CFG scale: {upscale_cfg}, Denoising strength: {upscale_denoise_metadata}, {upscaleseed_metadata}{imageupscalemodel_metadata}{latentupscalemodel_metadata}" if Enable_Image_Upscale == True or Enable_Latent_Upscale == True else ""
         #
         other_metadata = f"{handle_whitespace(other_prompt)}, " if other_prompt !="" else ""
         comment = f"{base_metadata}{upscale_metadata}{controlnet_metadata}{lora_metadata}{embedding_metadata}{refine_metadata}{noiseinjection_metadata}{other_metadata}Version: ComfyUI"
