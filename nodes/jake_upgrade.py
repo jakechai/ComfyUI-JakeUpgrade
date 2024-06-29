@@ -266,14 +266,14 @@ class RerouteList_JK:
             },
             "optional": {
                 "checkpoint": (folder_paths.get_filename_list("checkpoints"),{"forceInput": True}),
-                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"],{"forceInput": True}),
+                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],{"forceInput": True}),
                 "sampler": (comfy.samplers.KSampler.SAMPLERS,{"forceInput": True}),
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS,{"forceInput": True}),
                 "upscale_model": (folder_paths.get_filename_list("upscale_models"),{"forceInput": True}),
             },
         }
 
-    RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"), folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"], comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, folder_paths.get_filename_list("upscale_models"))
+    RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"), folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"], comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, folder_paths.get_filename_list("upscale_models"))
     RETURN_NAMES = ("CHECKPOINT", "VAE", "SAMPLER", "SCHEDULAR", "UPSCALE_MODEL")
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
@@ -307,11 +307,11 @@ class RerouteVae_JK:
             "required": {
             },
             "optional": {
-                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"],{"forceInput": True}),
+                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],{"forceInput": True}),
             },
         }
 
-    RETURN_TYPES = (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"],)
+    RETURN_TYPES = (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],)
     RETURN_NAMES = ("VAE",)
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
@@ -856,11 +856,11 @@ class VaeLoader_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"],),
+                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],),
             },
         }
 
-    RETURN_TYPES = ("STRING", folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"])
+    RETURN_TYPES = ("STRING", folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"])
     RETURN_NAMES = ("vae_name", "VAE")
     FUNCTION = "list"
     CATEGORY = icons.get("JK/Loader")
