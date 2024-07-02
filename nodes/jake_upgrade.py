@@ -803,7 +803,7 @@ class EmbeddingPicker_Multi_JK:
                     emb = f"({emb}:{emphasis})"
 
                 if (text_in == None or text_in == "") and j == 0:
-                    textout = f"{emb}"
+                    textout = f"{emb},"
                 elif text_in != None and text_in != "" and j == 0:
                     textout = f"{text_in},{emb}" if append_check else f"{emb},{text_in}"
                 else:
@@ -815,7 +815,7 @@ class EmbeddingPicker_Multi_JK:
                 emb_meta = f"{emb_name}{emb_hash}"
                 
                 if (metadata_in == None or metadata_in == "") and j == 0:
-                    metaout = f"{emb_meta}"
+                    metaout = f"{emb_meta},"
                 elif metadata_in != None and metadata_in != "" and j == 0:
                     metaout = f"{metadata_in}, {emb_meta}"
                 else:

@@ -28,6 +28,7 @@ Main:
 - [JK_workflow_Seamless Texture](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_Seamless%20Texture.json)
 - [JK_workflow_img2mesh_single](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_single.json)
 - [JK_workflow_img2mesh_multi](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_multi.json)
+(Tips: ComfyUI-3D-Pack needs pytorch 2.2+cu121, but the latest ComfyUI_windows_portable version uses pytorch 2.3+cu121, you should separate those two ComfyUI.)
 
 Other:
 - [JK_workflow_Concept](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/JK_workflow_Concept.json)
@@ -61,10 +62,9 @@ To use JK_workflow, you need to install:
 - [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
 - [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
 
-Install and copy | replace files (optional, see in replacement folder):
+Install and copy | replace files (see in replacement folder):
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy _JK.pack in the replacement folder to `custom_nodes\ComfyUI-Manager\component'.
-- [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles.
-- [Segment Anything](https://github.com/storyicon/comfyui_segment_anything) : Replace \_\_init\_\_.py to disable requirements installation.
+- [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
 
 ## JK_workflow : tex2img_img2img_Complete : Introduction
 	Hotkey:
@@ -84,7 +84,9 @@ Install and copy | replace files (optional, see in replacement folder):
 		All switches in Parameters panel that affect sub workflow don't take effect in realtime, which needs preprocessing.
 
 	Suggested method:
-		Preprocessing Queue Prompt needs to be executed once before actural generation for switches in Select or Parameters panels to control the sub workflow, the state of correspoding switches in Workflow panels will be changed automatically after the preprocess. So that it's recommended to disable all process in Overall Workflow panel and adjust all sub-workflow-related switches before actural genaration.
+		Preprocessing needs to be executed before actural generation for switches in Select or Parameters panels to control the sub workflow. 
+		Pre-Queue Prompt: It's recommended to disable all processes in the Overall Workflow panel and adjust all sub-workflow-related switches before running Queue Prompt. The state of corresponding switches in Pre-process panels will be changed automatically after the preprocessing.
+		Pre-process Pannel: Alternatively, you can preprocess manually by setting the corresponding switches in the Pre-process Pannel to the same state as in the Parameters Pannel, which does not need a Pre-Queue Prompt.
 
 	Metadata:
 		All parameters including sub-workflow-related switches will affect the generation result and also the content of Metadata saved with the image.
@@ -92,15 +94,19 @@ Install and copy | replace files (optional, see in replacement folder):
 		In Upscale image saving, remove noise_jinection_metadata or refine_metadata link if not using Noise Injection or refine process.
 		In Detailer image saving, remove noise_jinection_metadata, refine_metadata or upscale_metadata link if not using Noise Injection or refine process.
 
-	SDXL:
-		Load SDXL Ckpt for Base | Refine (Optional) | Upscale
-		Load SDXL Vae
+	SDXL switches:
+		Load SDXL Ckpt for Base | Refine | Upscale | Detailer | In/Out Paint
+		Load SDXL Vae for Base | Detailer
+		FreeU SDXL settings
+		Auto Variation SDXL settings
 		Disable SD15 ELLA Text Encode (in Base Model Sub Workflow JK🐉)
 		Enable SDXL Text Ecode (in Base Model Sub Workflow JK🐉)     (Optional)
 		Enable SDXL Refine Text Encode (in Refine Sub Workflow JK🐉) (optional)
 		Disable IPAdapter 2 - faceid (in Refine Sub Workflow JK🐉)
 		Switch plus and plus-face ipadapter to sdxl_vit-h version
 		Switch Image Upscale ControlNet Tile to sdxl version (in Upscale Sub Workflow JK🐉)
+		Switch NNLatentUpscale version to SDXL
+		(If it is SD15, choose the opposite)
 
 	Other:
 		1. Nodes State JK🐉 uses target nodes' id to control their active | mute | bypass mode. Need to update node_id_list if you make a copy.
