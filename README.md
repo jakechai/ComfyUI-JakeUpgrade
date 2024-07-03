@@ -31,7 +31,7 @@ Main:
 - [JK_workflow_img2mesh_single_Unique3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_single_Unique3D.json)
 - [JK_workflow_img2mesh_multi](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_multi.json)
 
-(Tips: ComfyUI-3D-Pack needs pytorch 2.2+cu121, but the latest ComfyUI_windows_portable version uses pytorch 2.3+cu121, you should separate those two ComfyUI.)
+(Tips: ComfyUI-3D-Pack needs pytorch 2.2+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3+cu121, you should separate those two ComfyUI.)
 
 Other:
 - [JK_workflow_Concept](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/JK_workflow_Concept.json)
