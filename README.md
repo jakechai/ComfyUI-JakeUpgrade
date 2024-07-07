@@ -12,6 +12,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
     - e.g. `cd C:\ComfyUI_windows_portable\ComfyUI\custom_nodes\ComfyUI-JakeUpgrade`
 4.  Install python packages
       - **Windows Standalone installation** (embedded python):
+	  
         `../../../python_embeded/python.exe -s -m pip install -r requirements.txt`
 	    
 		OR run install.bat:
