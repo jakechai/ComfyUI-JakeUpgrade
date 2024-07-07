@@ -15,6 +15,8 @@ def setup_js():
 
 setup_js()
 
+# nodes.EXTENSION_WEB_DIRS["ComfyUI-Impact-Pack"] = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'js')
+
 NODE_CLASS_MAPPINGS = {
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,

@@ -5,22 +5,21 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
-	OR:
-	Install using ComfyUI Manager.
+	
+	OR: Install using ComfyUI Manager.
 2. Open a Command Prompt/Terminal/etc.
 3. Change to the `custom_nodes\ComfyUI-JakeUpgrade` folder you just created 
     - e.g. `cd C:\ComfyUI_windows_portable\ComfyUI\custom_nodes\ComfyUI-JakeUpgrade`
 4.  Install python packages
       - **Windows Standalone installation** (embedded python):
-	   run install.bat
-	   OR:
-       `../../../python_embeded/python.exe -s -m pip install -r requirements.txt`
-      - **Manual/non-Windows installation**   
+        `../../../python_embeded/python.exe -s -m pip install -r requirements.txt`
+	    
+		OR run install.bat:
+      - **Manual/non-Windows installation**
         `pip install -r requirements.txt`
 
 ## Video Introduction
-Youtube
-Bilibili
+[Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 
 ## JakeUpgrade Workflow
 Main:
@@ -131,10 +130,13 @@ Install and copy | replace files (see in replacement folder):
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-1_TI.png)
 - TI Parameters
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-2_AutoVariationPrompt.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-2_FineTuneString.png)
+- Fine Tune String Parameters
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-3_AutoVariationPrompt.png)
 - Auto Variation Prompt Parameters
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-3_AdvancedConditioning.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/2-4_AdvancedConditioning.png)
 - Advanced Conditioning Parameters
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/3-1_Lora.png)
@@ -323,3 +325,9 @@ Jake Upgrade Nodes are inspired by:
 
 ## Changelog
 - 2024-06-23 - v1.0.0 released.
+
+## Workflow Todo List
+- ControlNet Preprocess
+- IC Light
+- Layer Diffuse
+- Color Grading
