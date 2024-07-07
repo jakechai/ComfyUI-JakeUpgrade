@@ -15,7 +15,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 	  
         `../../../python_embeded/python.exe -s -m pip install -r requirements.txt`
 	    
-		OR run install.bat:
+		OR: run install.bat.
       - **Manual/non-Windows installation**
         `pip install -r requirements.txt`
 
