@@ -121,6 +121,7 @@ Install and copy | replace files (see in replacement folder):
 ## JK_workflow : tex2img_img2img_Complete : Explanation
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0-1_OverallWorkflow.png)
 - Overall Workflow
+
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0-2_ImageComparer.png)
 - Image Comparer
 
