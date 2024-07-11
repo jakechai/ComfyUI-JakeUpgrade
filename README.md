@@ -31,7 +31,7 @@ Main:
 - [JK_workflow_img2mesh_single_Unique3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_single_Unique3D.json)
 - [JK_workflow_img2mesh_multi](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_multi.json)
 
-(Tips: ComfyUI-3D-Pack needs pytorch 2.2+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3+cu121, you should separate those two ComfyUI.)
+(Tips: ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121, you should separate those two ComfyUI.)
 
 Other:
 - [JK_workflow_Concept](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/JK_workflow_Concept.json)
@@ -48,6 +48,7 @@ To use JK_workflow, you need to install:
 - [ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
 - [Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
 - [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
+- [KJ Nodes](https://github.com/kijai/ComfyUI-KJNodes)
 - [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
@@ -107,8 +108,10 @@ Install and copy | replace files (see in replacement folder):
 		Enable SDXL Refine Text Encode (in Refine Sub Workflow JK🐉) (optional)
 		Disable IPAdapter 2 - faceid (in Refine Sub Workflow JK🐉)
 		Switch plus and plus-face ipadapter to sdxl_vit-h version
-		Switch Image Upscale ControlNet Tile to sdxl version (in Upscale Sub Workflow JK🐉)
+		Switch Image Upscale ControlNet Depth|Tile to sdxl version (in Upscale Sub Workflow JK🐉)
 		Switch NNLatentUpscale version to SDXL
+		Set Ultimate SD Upscale Tile size to 1024
+		Disable SD15 Hand Fix Detailer
 		(If it is SD15, choose the opposite)
 
 	Other:
@@ -116,8 +119,10 @@ Install and copy | replace files (see in replacement folder):
 		2. The order of Detailer Progress and Upscale Progress can be swapped. Please avoid to form loops. 
 
 ## JK_workflow : tex2img_img2img_Complete : Explanation
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0_OverallWorkflow.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0-1_OverallWorkflow.png)
 - Overall Workflow
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0-2_ImageComparer.png)
+- Image Comparer
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/1-1_ProjectSetting.png)
 - Project Setting
@@ -158,6 +163,7 @@ Install and copy | replace files (see in replacement folder):
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/5-2_UpscaleCkptSeed.png)
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/5-3_UpscaleParameters.png)
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/5-4_UpscaleSubWorkflow.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/5-5_UpscaleNoiseInjection.png)
 - Upscale Process Parameters
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/6-1_DetailerProcessSelect.png)
@@ -326,6 +332,7 @@ Jake Upgrade Nodes are inspired by:
 
 ## Changelog
 - 2024-06-23 - v1.0.0 released.
+- 2024-07-11 - v1.0.6 Noise Injection for Upscale Workflow.
 
 ## Workflow Todo List
 - ControlNet Preprocess
