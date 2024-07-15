@@ -2687,20 +2687,17 @@ class CR_TextInputSwitch_JK:
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
+                "text_false": ("STRING", {"default": ""}),
+                "text_true": ("STRING", {"default": ""}),
             },
-            "optional": {
-                "text_false": ("STRING", {"forceInput": True}),
-                "text_true": ("STRING", {"forceInput": True}),
-            }
         }
 
     RETURN_TYPES = ("STRING", "BOOLEAN",)
     FUNCTION = "text_input_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def text_input_switch(self, boolean_value, text_false=None, text_true=None):
-        text_false = text_false if text_false != None else ""
-        text_true = text_true if text_true != None else ""
+    def text_input_switch(self, boolean_value, text_false, text_true):
+
         if boolean_value == True:
             return (text_true, boolean_value,)
         else:
@@ -3969,6 +3966,19 @@ class EvalExamples_JK:
 #---------------------------------------------------------------------------------------------------------------------#
 # 3D Nodes (WIP)
 #---------------------------------------------------------------------------------------------------------------------#
+ORBITPOSE_PRESET = ["Custom", "CRM(6)", "Zero123Plus(6)", "Wonder3D(6)", "Era3D(6)", "MVDream(4)", "Unique3D(4)", "CharacterGen(4)"]
+
+OrbitPoses = {
+    "Custom":           [[-90.0, 0.0, 180.0, 90.0, 0.0, 0.0], [0.0, 90.0, 0.0, 0.0, -90.0, 0.0], [4.0, 4.0, 4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
+    "CRM(6)":           [[-90.0, 0.0, 180.0, 90.0, 0.0, 0.0], [0.0, 90.0, 0.0, 0.0, -90.0, 0.0], [4.0, 4.0, 4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
+    "Wonder3D(6)":      [[0.0, 45.0, 90.0, 180.0, -90.0, -45.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [4.0, 4.0, 4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
+    "Zero123Plus(6)":   [[30.0, 90.0, 150.0, -150.0, -90.0, -30.0], [-20.0, 10.0, -20.0, 10.0, -20.0, 10.0], [4.0, 4.0, 4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
+    "Era3D(6)":         [[0.0, 45.0, 90.0, 180.0, -90.0, -45.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]], #[[radius], [radius], [radius], [radius], [radius], [radius]], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    "MVDream(4)":       [[0.0, 90.0, 180.0, -90.0], [0.0, 0.0, 0.0, 0.0], [4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]],
+    "Unique3D(4)":      [[0.0, 90.0, 180.0, -90.0], [0.0, 0.0, 0.0, 0.0]], #[[radius], [radius], [radius], [radius]], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]
+    "CharacterGen(4)":  [[-90.0, 90.0, 180.0, 0.0], [0.0, 0.0, 0.0, 0.0]], #[[radius], [radius], [radius], [radius]], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]
+}
+
 class OrbitPoses_JK:
     def __init__(self):
         pass
@@ -3977,7 +3987,11 @@ class OrbitPoses_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "radius": ("FLOAT", {"default": 4.0, "min": 0.1, "step": 0.01}),
+                "orbitpose_preset": (ORBITPOSE_PRESET, {"default": "Custom"}),
+                "azimuths": ("STRING", {"default": "-90.0, 0.0, 180.0, 90.0, 0.0, 0.0"}),
+                "elevations": ("STRING", {"default": "0.0, 90.0, 0.0, 0.0, -90.0, 0.0"}),
+                "radius": ("STRING", {"default": "4.0, 4.0, 4.0, 4.0, 4.0, 4.0"}),
+                "center": ("STRING", {"default": "0.0, 0.0, 0.0, 0.0, 0.0, 0.0"}),
             },
         }
     
@@ -3987,14 +4001,32 @@ class OrbitPoses_JK:
     FUNCTION = "get_orbit_poses"
     CATEGORY = icons.get("JK/3D")
     
-    def get_orbit_poses(self, radius):
-    
-        azimuths = [0, 45, 90, 180, -90, -45]
-        elevations = [0.0] * 6
-        radiuss = [radius] * 6
-        center = [0.0] * 6
+    def get_orbit_poses(self, orbitpose_preset, azimuths, elevations, radius, center):
         
-        orbit_camposes = [azimuths, elevations, radiuss, center, center, center]
+        orbit_camposes = OrbitPoses.get(f"{orbitpose_preset}")
+        
+        if orbitpose_preset == "Custom":
+            azimuths = azimuths.split(",")
+            elevations = elevations.split(",")
+            radius = radius.split(",")
+            center = center.split(",")
+            orbit_azimuths = [float(item) for item in azimuths]
+            orbit_elevations = [float(item) for item in elevations]
+            orbit_radius = [float(item) for item in radius]
+            orbit_center = [float(item) for item in center]
+            orbit_camposes = [orbit_azimuths, orbit_elevations, orbit_radius, orbit_center, orbit_center, orbit_center]
+        elif orbitpose_preset == "Era3D(6)":
+            radius = radius.split(",")
+            orbit_radius = [float(item) for item in radius]
+            orbit_center = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            orbit_camposes = [orbit_camposes[0], orbit_camposes[1], orbit_radius, orbit_center, orbit_center, orbit_center]
+        elif orbitpose_preset == "Unique3D(4)" or orbitpose_preset == "CharacterGen(4)":
+            radius = radius.split(",")
+            orbit_radius = [float(item) for item in radius]
+            orbit_radius.pop(4)
+            orbit_radius.pop(4)
+            orbit_center = [0.0, 0.0, 0.0, 0.0]
+            orbit_camposes = [orbit_camposes[0], orbit_camposes[1], orbit_radius, orbit_center, orbit_center, orbit_center]
         
         return (orbit_camposes,)
     
