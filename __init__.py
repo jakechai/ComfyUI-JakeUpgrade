@@ -147,7 +147,7 @@ NODE_CLASS_MAPPINGS = {
     "Evaluate Strings JK": EvaluateStrs_JK,
     "Evaluate Examples JK": EvalExamples_JK,
     ### 3D Nodes
-    # "Orbit Poses JK": OrbitPoses_JK,
+    "Orbit Poses JK": OrbitPoses_JK,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -280,7 +280,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Evaluate Strings JK": "Evaluate String JK🐉",
     "Evaluate Examples JK": "Evaluate Examples JK🐉",
     ### 3D Nodes
-    # "Orbit Poses JK": "Orbit Poses JK🐉",
+    "Orbit Poses JK": "Orbit Poses JK🐉",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS']

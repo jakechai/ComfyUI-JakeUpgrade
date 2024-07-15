@@ -27,8 +27,8 @@ Main:
 - [JK_workflow_tex2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_tex2img_img2img_SDXL.json)
 - [JK_workflow_tex2img_img2img_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_tex2img_img2img_SD15.json)
 - [JK_workflow_Seamless Texture](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_Seamless%20Texture.json)
-- [JK_workflow_img2mesh_single](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_single.json)
-- [JK_workflow_img2mesh_single_Unique3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_single_Unique3D.json)
+- [JK_workflow_img2mesh_single_CRM&Zero123plus](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_single_CRM&Zero123plus.json)
+- [JJK_workflow_img2mesh_single_Unique&Wonder&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_single_Unique&Wonder&Era3D.json)
 - [JK_workflow_img2mesh_multi](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_multi.json)
 
 (Tips: ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121, you should separate those two ComfyUI.)
@@ -334,6 +334,7 @@ Jake Upgrade Nodes are inspired by:
 ## Changelog
 - 2024-06-23 - v1.0.0 released.
 - 2024-07-11 - v1.0.6 Noise Injection for Upscale Workflow.
+- 2024-07-16 - v1.0.7 Single Image to Mesh Workflow updated.
 
 ## Workflow Todo List
 - ControlNet Preprocess
