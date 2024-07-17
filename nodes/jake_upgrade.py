@@ -2801,6 +2801,30 @@ class CR_ImpactPipeInputSwitch_JK:
         else:
             return (pipe_false, boolean_value)
 
+class CR_MeshInputSwitch_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {"default": False}),
+                "mesh_false": ("MESH", {"forceInput": True}),
+                "mesh_true": ("MESH", {"forceInput": True}),
+            }
+        }
+    
+    RETURN_TYPES = ("MESH", "BOOLEAN",)   
+    FUNCTION = "mesh_switch"
+    CATEGORY = icons.get("JK/Logic")
+
+    def mesh_switch(self, boolean_value, mesh_false, mesh_true):
+        if boolean_value == True:
+            return (mesh_true, boolean_value)
+        else:
+            return (mesh_false, boolean_value)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # ComfyMath Fix Nodes
 #---------------------------------------------------------------------------------------------------------------------#
@@ -3976,7 +4000,7 @@ OrbitPoses = {
     "Era3D(6)":         [[0.0, 45.0, 90.0, 180.0, -90.0, -45.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]], #[[radius], [radius], [radius], [radius], [radius], [radius]], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     "MVDream(4)":       [[0.0, 90.0, 180.0, -90.0], [0.0, 0.0, 0.0, 0.0], [4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]],
     "Unique3D(4)":      [[0.0, 90.0, 180.0, -90.0], [0.0, 0.0, 0.0, 0.0]], #[[radius], [radius], [radius], [radius]], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]
-    "CharacterGen(4)":  [[-90.0, 90.0, 180.0, 0.0], [0.0, 0.0, 0.0, 0.0]], #[[radius], [radius], [radius], [radius]], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]
+    "CharacterGen(4)":  [[-90.0, 180.0, 90.0, 0.0], [0.0, 0.0, 0.0, 0.0]], #[[radius], [radius], [radius], [radius]], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]
 }
 
 class OrbitPoses_JK:
@@ -4108,6 +4132,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Switch Model and CLIP JK": CR_ModelAndCLIPInputSwitch_JK,
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
     "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
+    "CR Mesh Input Switch JK": CR_MeshInputSwitch_JK,
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": BoolToInt_JK,
     "CM_IntToBool JK": IntToBool_JK,
@@ -4240,6 +4265,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Switch Model and CLIP JK": "Switch Model and CLIP JK🐉",
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
     "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
+    "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
     "CM_IntToBool JK": "IntToBool JK🐉",
