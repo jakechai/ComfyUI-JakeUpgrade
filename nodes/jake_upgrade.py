@@ -16,7 +16,7 @@
 #   ComfyMath Fix Nodes
 #   ComfyMath Nodes
 #   Simple Evaluate Nodes
-#   3D Nodes (WIP)
+#   3D Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 import os
 import sys
@@ -2825,6 +2825,30 @@ class CR_MeshInputSwitch_JK:
         else:
             return (mesh_false, boolean_value)
 
+class CR_OrbitPoseInputSwitch_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {"default": False}),
+                "orbit_camposes_false": ("ORBIT_CAMPOSES", {"forceInput": True}),
+                "orbit_camposes_true": ("ORBIT_CAMPOSES", {"forceInput": True}),
+            }
+        }
+    
+    RETURN_TYPES = ("ORBIT_CAMPOSES", "BOOLEAN",)   
+    FUNCTION = "orbit_switch"
+    CATEGORY = icons.get("JK/Logic")
+
+    def orbit_switch(self, boolean_value, orbit_camposes_false, orbit_camposes_true):
+        if boolean_value == True:
+            return (orbit_camposes_true, boolean_value)
+        else:
+            return (orbit_camposes_false, boolean_value)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # ComfyMath Fix Nodes
 #---------------------------------------------------------------------------------------------------------------------#
@@ -3988,11 +4012,11 @@ class EvalExamples_JK:
     CATEGORY = icons.get("JK/Math")
 
 #---------------------------------------------------------------------------------------------------------------------#
-# 3D Nodes (WIP)
+# 3D Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 ORBITPOSE_PRESET = ["Custom", "CRM(6)", "Zero123Plus(6)", "Wonder3D(6)", "Era3D(6)", "MVDream(4)", "Unique3D(4)", "CharacterGen(4)"]
 
-OrbitPoses = {
+OrbitPosesList = {
     "Custom":           [[-90.0, 0.0, 180.0, 90.0, 0.0, 0.0], [0.0, 90.0, 0.0, 0.0, -90.0, 0.0], [4.0, 4.0, 4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
     "CRM(6)":           [[-90.0, 0.0, 180.0, 90.0, 0.0, 0.0], [0.0, 90.0, 0.0, 0.0, -90.0, 0.0], [4.0, 4.0, 4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
     "Wonder3D(6)":      [[0.0, 45.0, 90.0, 180.0, -90.0, -45.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [4.0, 4.0, 4.0, 4.0, 4.0, 4.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
@@ -4019,15 +4043,15 @@ class OrbitPoses_JK:
             },
         }
     
-    RETURN_TYPES = ("ORBIT_CAMPOSES",)
-    RETURN_NAMES = ("orbit_camposes",)
+    RETURN_TYPES = ("ORBIT_CAMPOSES", "ORBIT_CAMPOSES",)
+    RETURN_NAMES = ("orbit_lists", "orbit_camposes",)
     
     FUNCTION = "get_orbit_poses"
     CATEGORY = icons.get("JK/3D")
     
     def get_orbit_poses(self, orbitpose_preset, azimuths, elevations, radius, center):
         
-        orbit_camposes = OrbitPoses.get(f"{orbitpose_preset}")
+        orbit_lists = OrbitPosesList.get(f"{orbitpose_preset}")
         
         if orbitpose_preset == "Custom":
             azimuths = azimuths.split(",")
@@ -4038,22 +4062,93 @@ class OrbitPoses_JK:
             orbit_elevations = [float(item) for item in elevations]
             orbit_radius = [float(item) for item in radius]
             orbit_center = [float(item) for item in center]
-            orbit_camposes = [orbit_azimuths, orbit_elevations, orbit_radius, orbit_center, orbit_center, orbit_center]
+            orbit_lists = [orbit_azimuths, orbit_elevations, orbit_radius, orbit_center, orbit_center, orbit_center]
         elif orbitpose_preset == "Era3D(6)":
             radius = radius.split(",")
             orbit_radius = [float(item) for item in radius]
             orbit_center = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-            orbit_camposes = [orbit_camposes[0], orbit_camposes[1], orbit_radius, orbit_center, orbit_center, orbit_center]
+            orbit_lists = [orbit_lists[0], orbit_lists[1], orbit_radius, orbit_center, orbit_center, orbit_center]
         elif orbitpose_preset == "Unique3D(4)" or orbitpose_preset == "CharacterGen(4)":
             radius = radius.split(",")
             orbit_radius = [float(item) for item in radius]
             orbit_radius.pop(4)
             orbit_radius.pop(4)
             orbit_center = [0.0, 0.0, 0.0, 0.0]
-            orbit_camposes = [orbit_camposes[0], orbit_camposes[1], orbit_radius, orbit_center, orbit_center, orbit_center]
+            orbit_lists = [orbit_lists[0], orbit_lists[1], orbit_radius, orbit_center, orbit_center, orbit_center]
+        
+        orbit_camposes = []
+
+        for i in range(0, len(orbit_lists[0])):
+            orbit_camposes.append([orbit_lists[2][i], orbit_lists[1][i], orbit_lists[0][i], orbit_lists[3][i], orbit_lists[4][i], orbit_lists[5][i]])
+        
+        return (orbit_lists, orbit_camposes,)
+
+class OrbitLists_to_OrbitPoses_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "orbit_lists": ("ORBIT_CAMPOSES",),
+            },
+        }
+    
+    RETURN_TYPES = ("ORBIT_CAMPOSES",)
+    RETURN_NAMES = ("orbit_camposes",)
+    
+    FUNCTION = "convert_orbit_poses"
+    CATEGORY = icons.get("JK/3D")
+    
+    def convert_orbit_poses(self, orbit_lists):
+        
+        orbit_camposes = []
+
+        for i in range(0, len(orbit_camposes[0])):
+            orbit_camposes.append([orbit_lists[2][i], orbit_lists[1][i], orbit_lists[0][i], orbit_lists[3][i], orbit_lists[4][i], orbit_lists[5][i]])
         
         return (orbit_camposes,)
+
+class OrbitPoses_to_OrbitLists_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "orbit_camposes": ("ORBIT_CAMPOSES",),
+            },
+        }
     
+    RETURN_TYPES = ("ORBIT_CAMPOSES",)
+    RETURN_NAMES = ("orbit_lists",)
+    
+    FUNCTION = "convert_orbit_poses"
+    CATEGORY = icons.get("JK/3D")
+    
+    def convert_orbit_poses(self, orbit_camposes):
+        
+        orbit_azimuths = []
+        orbit_elevations = []
+        orbit_radius = []
+        orbit_center0 = []
+        orbit_center1 = []
+        orbit_center2 = []
+
+        for i in range(0, len(orbit_camposes)):
+            orbit_azimuths.append(orbit_camposes[i][2])
+            orbit_elevations.append(orbit_camposes[i][1])
+            orbit_radius.append(orbit_camposes[i][0])
+            orbit_center0.append(orbit_camposes[i][3])
+            orbit_center1.append(orbit_camposes[i][4])
+            orbit_center2.append(orbit_camposes[i][5])
+        
+        orbit_lists = [orbit_azimuths, orbit_elevations, orbit_radius, orbit_center0, orbit_center1, orbit_center2]
+        
+        return (orbit_lists,)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # MAPPINGS
 #---------------------------------------------------------------------------------------------------------------------#
@@ -4133,6 +4228,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
     "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
     "CR Mesh Input Switch JK": CR_MeshInputSwitch_JK,
+    "CR Obit Pose Input Switch JK": CR_ObitPoseInputSwitch_JK,
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": BoolToInt_JK,
     "CM_IntToBool JK": IntToBool_JK,
@@ -4191,6 +4287,8 @@ NODE_CLASS_MAPPINGS = {
     "Evaluate Examples JK": EvalExamples_JK,
     ### 3D Nodes
     "Orbit Poses JK": OrbitPoses_JK,
+    "OrbitLists to OrbitPoses JK": OrbitLists_to_OrbitPoses_JK,
+    "OrbitPoses to OrbitLists JK": OrbitPoses_to_OrbitLists_JK,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     ### Misc Nodes
@@ -4266,6 +4364,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
     "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
     "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
+    "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
     "CM_IntToBool JK": "IntToBool JK🐉",
@@ -4324,5 +4423,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Evaluate Examples JK": "Evaluate Examples JK🐉",
     ### 3D Nodes
     "Orbit Poses JK": "Orbit Poses JK🐉",
+    "OrbitLists to OrbitPoses JK": "OrbitLists to OrbitPoses JK🐉",
+    "OrbitPoses to OrbitLists JK": "OrbitPoses to OrbitLists JK🐉",
 }    
 '''
