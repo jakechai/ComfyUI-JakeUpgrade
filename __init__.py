@@ -91,6 +91,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
     "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
     "CR Mesh Input Switch JK": CR_MeshInputSwitch_JK,
+    "CR Orbit Pose Input Switch JK": CR_OrbitPoseInputSwitch_JK,
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": BoolToInt_JK,
     "CM_IntToBool JK": IntToBool_JK,
@@ -149,6 +150,8 @@ NODE_CLASS_MAPPINGS = {
     "Evaluate Examples JK": EvalExamples_JK,
     ### 3D Nodes
     "Orbit Poses JK": OrbitPoses_JK,
+    "OrbitLists to OrbitPoses JK": OrbitLists_to_OrbitPoses_JK,
+    "OrbitPoses to OrbitLists JK": OrbitPoses_to_OrbitLists_JK,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -225,6 +228,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
     "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
     "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
+    "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
     "CM_IntToBool JK": "IntToBool JK🐉",
@@ -283,6 +287,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Evaluate Examples JK": "Evaluate Examples JK🐉",
     ### 3D Nodes
     "Orbit Poses JK": "Orbit Poses JK🐉",
+    "OrbitLists to OrbitPoses JK": "OrbitLists to OrbitPoses JK🐉",
+    "OrbitPoses to OrbitLists JK": "OrbitPoses to OrbitLists JK🐉",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
