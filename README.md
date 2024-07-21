@@ -20,7 +20,9 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
         `pip install -r requirements.txt`
 
 ## Video Introduction
-[Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
+- txt2img&img2img: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
+- img2mesh: WIP
+- 3D-Pack Installation Tips： WIP
 
 ## JakeUpgrade Workflow
 Main:
@@ -71,7 +73,7 @@ Install and copy | replace files (see in replacement folder):
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy _JK.pack in the replacement folder to `custom_nodes\ComfyUI-Manager\component'.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
 
-## JK_workflow : tex2img_img2img_Complete : Introduction
+## JK_workflow : tex2img_img2img : Introduction
 	Hotkey:
 		0: usage guide
 		\`: overall workflow
@@ -119,7 +121,7 @@ Install and copy | replace files (see in replacement folder):
 		1. Nodes State JK🐉 uses target nodes' id to control their active | mute | bypass mode. Need to update node_id_list if you make a copy.
 		2. The order of Detailer Progress and Upscale Progress can be swapped. Please avoid to form loops. 
 
-## JK_workflow : tex2img_img2img_Complete : Explanation
+## JK_workflow : tex2img_img2img : Explanation
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0-1_OverallWorkflow.png)
 - Overall Workflow
 
@@ -177,6 +179,40 @@ Install and copy | replace files (see in replacement folder):
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/7-2_InOutPaintCkptVae.png)
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/7-3_InOutPaintSubWorkflow.png)
 - In/Out Paint Process Parameters
+
+## JK_workflow : img2mesh : Introduction
+	Hotkey:
+		\`: Main Workflow Control Pannels
+	
+	Workflow Control:
+		Each img2mesh workflow contains several sub-workflows as the filename indicates.
+		Each sub-workflow consists of one or more sub-steps.
+		Each sub-step saves the result as images or meshes when it finishes generation.
+		Each sub-step can switch from generation mode to loading mode.
+		It's recommended to enable sub-step step by step and switch to loading mode after the generation.
+	
+	Other:
+		TripoSR workflow is not included because it is straightforward.
+		3DGS workflow is not included but you can integrate LGM or GS3D nodes into the workflows I provided easily.
+
+## JK_workflow : img2mesh : Explanation
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_CRM&Zero123plus&MVDream&CharacterGen-structure.png)
+- Workflow breakdown: CRM&Zero123plus&MVDream&CharacterGen
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_CRM&Zero123plus&MVDream&CharacterGen.png)
+- Workflow Control Panels: CRM&Zero123plus&MVDream&CharacterGen
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Unique3D&Wonder3D&Era3D-structure.png)
+- Workflow breakdown: JUnique3D&Wonder3D&Era3D
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Unique3D&Wonder3D&Era3D.png)
+- Workflow Control Panels: JUnique3D&Wonder3D&Era3D
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D-sturcture.png)
+- Workflow breakdown: Zero123&SV3D
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D.png)
+- Workflow Control Panels: Zero123&SV3D
 
 ## JakeUpgrade Custom Nodes
 	Misc Nodes
