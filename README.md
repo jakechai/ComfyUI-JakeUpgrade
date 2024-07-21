@@ -196,20 +196,23 @@ Install and copy | replace files (see in replacement folder):
 		3DGS workflow is not included but you can integrate LGM or GS3D nodes into the workflows I provided easily.
 
 ## JK_workflow : img2mesh : Explanation
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh-types.png)
+- Workflow breakdown: img2mesh types
+
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_CRM&Zero123plus&MVDream&CharacterGen-structure.png)
 - Workflow breakdown: CRM&Zero123plus&MVDream&CharacterGen
-
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_CRM&Zero123plus&MVDream&CharacterGen.png)
-- Workflow Control Panels: CRM&Zero123plus&MVDream&CharacterGen
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Unique3D&Wonder3D&Era3D-structure.png)
 - Workflow breakdown: JUnique3D&Wonder3D&Era3D
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Unique3D&Wonder3D&Era3D.png)
-- Workflow Control Panels: JUnique3D&Wonder3D&Era3D
-
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D-sturcture.png)
 - Workflow breakdown: Zero123&SV3D
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_CRM&Zero123plus&MVDream&CharacterGen.png)
+- Workflow Control Panels: CRM&Zero123plus&MVDream&CharacterGen
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Unique3D&Wonder3D&Era3D.png)
+- Workflow Control Panels: JUnique3D&Wonder3D&Era3D
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D.png)
 - Workflow Control Panels: Zero123&SV3D
