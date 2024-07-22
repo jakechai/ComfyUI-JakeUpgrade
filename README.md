@@ -298,6 +298,7 @@ Install and copy | replace files (see in replacement folder):
 		Pipe Input Switch JK🐉
 		Impact Pipe Input Switch JK🐉
 		Mesh Input Switch JK🐉
+		Ply Input Switch JK🐉
 		Orbit Pose Input Switch JK🐉
     ComfyMath Fix Nodes
 		BoolToInt JK🐉
