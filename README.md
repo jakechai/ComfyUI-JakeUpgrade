@@ -31,6 +31,7 @@ Main:
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
+- [JK_workflow_img2mesh_3DGS](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_3DGS.json)
 
 (Tips: ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121, you should separate those two ComfyUI.)
 
@@ -193,7 +194,7 @@ Install and copy | replace files (see in replacement folder):
 	
 	Other:
 		TripoSR workflow is not included because it is straightforward.
-		3DGS workflow is not included but you can integrate LGM or GS3D nodes into the workflows I provided easily.
+		Triplane workflow is not included because it is straightforward.
 
 ## JK_workflow : img2mesh : Explanation
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh-types.png)
@@ -205,8 +206,11 @@ Install and copy | replace files (see in replacement folder):
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Unique3D&Wonder3D&Era3D-structure.png)
 - Workflow breakdown: JUnique3D&Wonder3D&Era3D
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D-sturcture.png)
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D-structure.png)
 - Workflow breakdown: Zero123&SV3D
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_3DGS-structure.png)
+- Workflow breakdown: 3DGS
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_CRM&Zero123plus&MVDream&CharacterGen.png)
 - Workflow Control Panels: CRM&Zero123plus&MVDream&CharacterGen
@@ -216,6 +220,9 @@ Install and copy | replace files (see in replacement folder):
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D.png)
 - Workflow Control Panels: Zero123&SV3D
+
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_3DGS.png)
+- Workflow Control Panels: 3DGS
 
 ## JakeUpgrade Custom Nodes
 	Misc Nodes
@@ -382,6 +389,7 @@ Jake Upgrade Nodes are inspired by:
 - 2024-07-11 - v1.0.6 Noise Injection for Upscale Workflow.
 - 2024-07-16 - v1.0.7 Single Image to Mesh Workflow updated.
 - 2024-07-21 - v1.0.8 Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.
+- 2024-07-22 - v1.0.9 3DGS workflow added.
 
 ## Workflow Todo List
 - ControlNet Preprocess

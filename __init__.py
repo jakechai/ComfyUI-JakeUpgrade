@@ -91,6 +91,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
     "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
     "CR Mesh Input Switch JK": CR_MeshInputSwitch_JK,
+    "CR Ply Input Switch JK": CR_PlyInputSwitch_JK,
     "CR Orbit Pose Input Switch JK": CR_OrbitPoseInputSwitch_JK,
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": BoolToInt_JK,
@@ -228,6 +229,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
     "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
     "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
+    "CR Ply Input Switch JK": "Ply Input Switch JK🐉",
     "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
