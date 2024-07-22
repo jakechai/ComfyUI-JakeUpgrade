@@ -26,8 +26,8 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 
 ## JakeUpgrade Workflow
 Main:
-- [JK_workflow_tex2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_tex2img_img2img_SDXL.json)
-- [JK_workflow_tex2img_img2img_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_tex2img_img2img_SD15.json)
+- [JK_workflow_txt2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SDXL.json)
+- [JK_workflow_txt2img_img2img_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD15.json)
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
@@ -40,41 +40,46 @@ Other:
 - [JK_workflow_Seamless Texture](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Seamless%20Texture.json)
 - [JK_workflow_Detailer](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Detailer.json)
 - [JK_workflow_Inpaint](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Inpaint.json)
-- [JK_workflow_tex2img_Simple](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_tex2img_Simple.json)
+- [JK_workflow_txt2img_Simple](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_txt2img_Simple.json)
 - [JK_workflow_Upscale](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Upscale.json)
 - [JK_Workflow_Mesh-ReMesh_Projection](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_Workflow_Mesh-ReMesh_Projection.json)
 
 ## Required Custom Nodes
 To use JK_workflow, you need to install:
 - [rgthree](https://github.com/rgthree/rgthree-comfy)
-- [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [pythongosssss](https://github.com/pythongosssss/ComfyUI-Custom-Scripts)
 - [ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
 - [Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
 - [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
+- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 - [KJ Nodes](https://github.com/kijai/ComfyUI-KJNodes)
+- [Essentials](https://github.com/cubiq/ComfyUI_essentials)
+- [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui)
+- [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
+- [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
+
+txt2img_img2img workflow:
+- [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
-- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 - [Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - [StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
 - [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - [Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
 - [One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
 - [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
-- [Essentials](https://github.com/cubiq/ComfyUI_essentials)
-- [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
-- [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
-- [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
+
+img2mesh workflow:
+- [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
 
 Install and copy | replace files (see in replacement folder):
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy _JK.pack in the replacement folder to `custom_nodes\ComfyUI-Manager\component'.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
 
-## JK_workflow : tex2img_img2img : Introduction
+## JK_workflow : txt2img_img2img : Introduction
 	Hotkey:
 		0: usage guide
 		\`: overall workflow
@@ -122,7 +127,7 @@ Install and copy | replace files (see in replacement folder):
 		1. Nodes State JK🐉 uses target nodes' id to control their active | mute | bypass mode. Need to update node_id_list if you make a copy.
 		2. The order of Detailer Progress and Upscale Progress can be swapped. Please avoid to form loops. 
 
-## JK_workflow : tex2img_img2img : Explanation
+## JK_workflow : txt2img_img2img : Explanation
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0-1_OverallWorkflow.png)
 - Overall Workflow
 
@@ -371,7 +376,7 @@ Install and copy | replace files (see in replacement folder):
 		JK🐉::Inpaint Simple
 		JK🐉::Inpaint Checkpoint
 		JK🐉::Outpaint Checkpoint
-		JK🐉::Tex2Img
+		JK🐉::txt2img
 
 ## Reference Custom Nodes
 Jake Upgrade Nodes are inspired by:
