@@ -20,9 +20,10 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
         `pip install -r requirements.txt`
 
 ## Video Introduction
-- txt2img&img2img: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
-- img2mesh: WIP
-- 3D-Pack Installation Tips： WIP
+- txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
+- img2mesh workflow: WIP
+- 3D-Pack Installation Tips： [Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
+- 3D-Pack Algorithm Comparison： [Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
 
 ## JakeUpgrade Workflow
 Main:
