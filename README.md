@@ -36,8 +36,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
 - [JK_workflow_img2mesh_3DGS](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_3DGS.json)
 
-> Tips
-> ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121, you should separate those two ComfyUI.)
+> Tips: ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121, you should separate those two ComfyUI.
 
 ### Other
 
@@ -84,7 +83,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
 
-###Install and copy | replace files
+### Install and copy | replace files
 
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy _JK.pack in the replacement folder to `custom_nodes\ComfyUI-Manager\component'.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
