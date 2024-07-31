@@ -12,6 +12,7 @@ icons = {
     "JK/Math": "🐉 JK/✖️ Math",
     "JK/Math/Conversion": "🐉 JK/✖️ Math/💠 Conversion",
     "JK/Math/Bool": "🐉 JK/✖️ Math/🥢 Bool",
+    "JK/Math/String": "🐉 JK/✖️ Math/🐤 String",
     "JK/Math/Float": "🐉 JK/✖️ Math/🍥 Float",
     "JK/Math/Int": "🐉 JK/✖️ Math/🎡 Int",
     "JK/Math/Number": "🐉 JK/✖️ Math/🔢 Number",
