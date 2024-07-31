@@ -121,7 +121,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 
 	SDXL switches:
 		Load SDXL Ckpt for Base | Refine | Upscale | Detailer | In/Out Paint
-		Load SDXL Vae for Base | Detailer
+		Load SDXL Vae for Base | Detailer | In/Out Paint
 		FreeU SDXL settings
 		Auto Variation SDXL settings
 		Disable SD15 ELLA Text Encode (in Base Model Sub Workflow JK🐉)
@@ -414,6 +414,7 @@ Jake Upgrade Nodes are inspired by:
 - 2024-07-21 - v1.0.8 Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.
 - 2024-07-22 - v1.0.9 3DGS workflow added.
 - 2024-07-24 - v1.1.0 img2mesh workflow updated. Craftsman Mesh added. Three OrbitPoses nodes been added to 3D-Pack.
+- 2024-07-31 - v1.1.1 Prompt Combine node added
 
 ## Workflow Todo List
 - ControlNet Preprocess

@@ -669,8 +669,7 @@ class CR_LoRAStack_JK:
                 elif input_mode == "advanced":
                     loraweight = f"{kwargs.get(f'model_weight_{i}'):.3f}"
                 
-                if loraweight != "1.000":
-                    loraprompt = f"<{loraprompt}:{loraweight}>"
+                loraprompt = f"<{loraprompt}:{loraweight}>"
                 
                 if (lora_prompt == None or lora_prompt == "") and j == 0:
                     lorapromptout = f"{loraprompt}"
@@ -695,7 +694,7 @@ class CR_LoRAStack_JK:
         return (lora_list, lorapromptout, lorametaout,)
 
 #---------------------------------------------------------------------------------------------------------------------#
-# TI Nodes
+# Embedding Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 class EmbeddingPicker_JK:
     def __init__(self):
@@ -782,32 +781,46 @@ class EmbeddingPicker_Multi_JK:
     CATEGORY = icons.get("JK/Embedding")
 
     def concat_embedding(self, input_mode, embedding_count, save_hash, text_in=None, metadata_in=None, **kwargs):
-    
-        textout = f"{text_in}," if text_in != None else ","
-        metaout = metadata_in if metadata_in != None else ""
         
-        if input_mode == "simple":
-            append_check = True
-        elif input_mode == "advanced":
-            append_check = kwargs.get(f"append_{i}")
+        embedding_enable = False
+        
+        for i in range(1, embedding_count + 1):
+            if kwargs.get(f"embedding_{i}") == True and kwargs.get(f"embedding_name_{i}") != "None" and kwargs.get(f"emphasis_{i}") >= 0.05:
+                embedding_enable = True
+                break
+        
+        if text_in != None:
+            if text_in != "":
+                if embedding_enable:
+                    if text_in[-1] == ",":
+                        textout = f"{text_in}"
+                    else:
+                        textout = f"{text_in},"
+                else:
+                    textout = f"{text_in}"
+            else:
+                textout = ""
+        else:
+            textout = ""
+        
+        metaout = metadata_in if metadata_in != None else ""
         
         j = 0
         
         for i in range(1, embedding_count + 1):
             
             if kwargs.get(f"embedding_{i}") == True and kwargs.get(f"embedding_name_{i}") != "None" and kwargs.get(f"emphasis_{i}") >= 0.05:
-
+                
+                if input_mode == "simple":
+                    append_check = True
+                elif input_mode == "advanced":
+                    append_check = kwargs.get(f"append_{i}")
+                
                 emb = "embedding:" + Path(kwargs.get(f"embedding_name_{i}")).stem
                 emphasis = f"{kwargs.get(f'emphasis_{i}'):.3f}"
-                if emphasis != "1.000":
-                    emb = f"({emb}:{emphasis})"
-
-                if (text_in == None or text_in == "") and j == 0:
-                    textout = f"{emb},"
-                elif text_in != None and text_in != "" and j == 0:
-                    textout = f"{text_in},{emb}" if append_check else f"{emb},{text_in}"
-                else:
-                    textout = f"{textout},{emb}" if append_check else f"{emb},{textout}"
+                emb = f"({emb}:{emphasis}),"
+                
+                textout = f"{textout}{emb}" if append_check else f"{emb}{textout}"
                 
                 emb_path = folder_paths.get_full_path("embeddings", kwargs.get(f"embedding_name_{i}"))
                 emb_name = Path(kwargs.get(f"embedding_name_{i}")).stem
@@ -1196,10 +1209,10 @@ class BaseModelPipe_JK:
 
     def get_value(self, positive_conditioning=None, negative_conditioning=None, base_latent=None, base_image=None, positive_prompt=None, negative_prompt=None, variation_prompt=None, lora_prompt=None):
         
-        positive_prompt = f"{positive_prompt}," if positive_prompt !=None and positive_prompt != "" else ""
+        positive_prompt = positive_prompt if positive_prompt !=None and positive_prompt != "" else ""
         negative_prompt = negative_prompt if negative_prompt !=None and negative_prompt != "" else ""
-        variation_prompt = f"{variation_prompt}," if variation_prompt !=None and variation_prompt != "" else ""
-        lora_prompt = lora_prompt if lora_prompt !=None and lora_prompt != "" else ""
+        variation_prompt = f",{variation_prompt}" if variation_prompt !=None and variation_prompt != "" else ""
+        lora_prompt = f",{lora_prompt}" if lora_prompt !=None and lora_prompt != "" else ""
         base_prompt = f"{handle_whitespace(positive_prompt)}{handle_whitespace(variation_prompt)}{handle_whitespace(lora_prompt)}\nNegative prompt: {handle_whitespace(negative_prompt)}\n"
         
         base_pipe = (positive_conditioning, negative_conditioning, positive_prompt, negative_prompt, base_latent, base_image, base_prompt)
@@ -2877,6 +2890,7 @@ class CR_OrbitPoseInputSwitch_JK:
 # ComfyMath Fix Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 DEFAULT_BOOL = ("BOOLEAN", {"default": False})
+DEFAULT_STRING = ("STRING", {"default": ""})
 DEFAULT_FLOAT = ("FLOAT", {"default": 0.0})
 DEFAULT_INT = ("INT", {"default": 0})
 DEFAULT_NUMBER = ("NUMBER", {"default": 0.0})
@@ -2902,6 +2916,11 @@ BOOL_BINARY_OPERATIONS: Mapping[str, Callable[[bool, bool], bool]] = {
     "And": lambda a, b: a and b,
     "Xnor": lambda a, b: not (a ^ b),
     "Or": lambda a, b: a or b,
+    "Eq": lambda a, b: a == b,
+    "Neq": lambda a, b: a != b,
+}
+
+STRING_BINARY_CONDITIONS: Mapping[str, Callable[[str, str], bool]] = {
     "Eq": lambda a, b: a == b,
     "Neq": lambda a, b: a != b,
 }
@@ -3143,6 +3162,57 @@ class BoolBinaryOperation_JK:
 
     def op(self, op: str, a: bool, b: bool) -> tuple[bool]:
         return (BOOL_BINARY_OPERATIONS[op](a, b),)
+
+class StringBinaryCondition_JK:
+    @classmethod
+    def INPUT_TYPES(cls) -> Mapping[str, Any]:
+        return {
+            "required": {
+                "op": (list(STRING_BINARY_CONDITIONS.keys()),),
+                "a": DEFAULT_STRING,
+                "b": DEFAULT_STRING,
+            }
+        }
+
+    RETURN_TYPES = ("BOOLEAN",)
+    FUNCTION = "op"
+    CATEGORY = icons.get("JK/Math/String")
+
+    def op(self, op: str, a: str, b: str) -> tuple[bool]:
+        return (STRING_BINARY_CONDITIONS[op](a, b),)
+
+class PromptCombine_JK:
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "prompt_1": ("STRING", {"forceInput": True}),
+                "prompt_2": ("STRING", {"forceInput": True}),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("Prompt",)
+    FUNCTION = "combine"
+    CATEGORY = icons.get("JK/Math/String")
+    
+    def combine(self, prompt_1=None, prompt_2=None):
+        
+        if prompt_1 != None:
+            if prompt_1 != "":
+                if prompt_1[-1] == ",":
+                    prompt_output = f"{prompt_1}{prompt_2}" if prompt_2 !=None and prompt_2 !="" else prompt_1
+                else:
+                    prompt_output = f"{prompt_1},{prompt_2}" if prompt_2 !=None and prompt_2 !="" else prompt_1
+            else:
+                prompt_output = prompt_2 if prompt_2 !=None and prompt_2 !="" else ""
+        else:
+            prompt_output = prompt_2 if prompt_2 !=None and prompt_2 !="" else ""
+        
+        return (prompt_output,)
 
 class FloatUnaryCondition_JK:
     @classmethod
@@ -4259,6 +4329,8 @@ NODE_CLASS_MAPPINGS = {
     "CM_IntToBool JK": IntToBool_JK,
     "CM_BoolUnaryOperation JK": BoolUnaryOperation_JK,
     "CM_BoolBinaryOperation JK": BoolBinaryOperation_JK,
+    "CM_StringBinaryCondition_JK": StringBinaryCondition_JK,
+    "CM_PromptCombine_JK": PromptCombine_JK,
     "CM_FloatUnaryCondition JK": FloatUnaryCondition_JK,
     "CM_FloatBinaryCondition JK": FloatBinaryCondition_JK,
     "CM_IntUnaryCondition JK": IntUnaryCondition_JK,
@@ -4396,6 +4468,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CM_IntToBool JK": "IntToBool JK🐉",
     "CM_BoolUnaryOperation JK": "BoolUnaryOp JK🐉",
     "CM_BoolBinaryOperation JK": "BoolBinaryOp JK🐉",
+    "CM_StringBinaryCondition_JK": "StringBinaryCon JK🐉",
+    "CM_PromptCombine_JK": "Prompt Combine JK🐉",
     "CM_FloatUnaryCondition JK": "FloatUnaryCon JK🐉",
     "CM_FloatBinaryCondition JK": "FloatBinaryCon JK🐉",
     "CM_IntUnaryCondition JK": "IntUnaryCon JK🐉",
