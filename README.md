@@ -414,7 +414,8 @@ Jake Upgrade Nodes are inspired by:
 - 2024-07-21 - v1.0.8 Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.
 - 2024-07-22 - v1.0.9 3DGS workflow added.
 - 2024-07-24 - v1.1.0 img2mesh workflow updated. Craftsman Mesh added. Three OrbitPoses nodes been added to 3D-Pack.
-- 2024-07-31 - v1.1.1 Prompt Combine node added
+- 2024-07-31 - v1.1.1 Prompt Combine node added.
+- 2024-08-03 - v1.1.2 Resize to Focus added to image2mesh workflow.
 
 ## Workflow Todo List
 - ControlNet Preprocess
