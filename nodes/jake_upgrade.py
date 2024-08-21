@@ -4244,6 +4244,59 @@ class OrbitPoses_to_OrbitLists_JK:
         return (orbit_lists,)
 
 #---------------------------------------------------------------------------------------------------------------------#
+# Test Nodes
+#---------------------------------------------------------------------------------------------------------------------#
+class RandomBeats_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+    
+        return {
+            "required": {
+                "count": ("INT", {"default": 1, "min": 0, "max": 0xffffffffffffffff}),
+                "X_start": ("INT", {"default": 1, "min": 0, "max": 0xffffffffffffffff}),
+                "X_end": ("INT", {"default": 4, "min": 1, "max": 0xffffffffffffffff}),
+                "Y_start": ("INT", {"default": 1, "min": 0, "max": 0xffffffffffffffff}),
+                "Y_end": ("INT", {"default": 4, "min": 1, "max": 0xffffffffffffffff}),
+                "Z_start": ("INT", {"default": 1, "min": 0, "max": 0xffffffffffffffff}),
+                "Z_end": ("INT", {"default": 23, "min": 1, "max": 0xffffffffffffffff}),
+                "max_items_per_count": ("INT", {"default": 1, "min": 1, "max": 0xffffffffffffffff}),
+                "max_items_odds": ("INT", {"default": 5, "min": 0, "max": 10}),
+            }
+        }
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("BEATSTEXT", )
+    FUNCTION = "gen_beats"
+    CATEGORY = icons.get("JK/Misc")
+
+    def gen_beats(self, count, X_start, X_end, Y_start, Y_end, Z_start, Z_end, max_items_per_count, max_items_odds):
+    
+        beatstext = ""
+        
+        for i in range(0, count):
+            
+            if max_items_per_count == 1 or max_items_odds == 0:
+                randomItem = 1
+            else:
+                randomItemOdds = random.randint(1, 10)
+                randomItem = random.randint(1, max_items_per_count if randomItemOdds <= max_items_odds else 1)
+            
+            for j in range(0, randomItem):
+            
+                randomX = random.randint(X_start, X_end)
+                randomY = random.randint(Y_start, Y_end)
+                randomZ = random.randint(Z_start, Z_end)
+                
+                pretext = "  - mTextVal: " if j == 0 else ""
+                endtext = "\n" if j == (randomItem-1) else ""
+                beatstext = f"{beatstext}{pretext}{randomX}_{randomY}_{randomZ},{endtext}"
+        
+        print(beatstext)
+        return(beatstext,)
+
+#---------------------------------------------------------------------------------------------------------------------#
 # MAPPINGS
 #---------------------------------------------------------------------------------------------------------------------#
 # For reference only, actual mappings are in __init__.py
@@ -4252,6 +4305,7 @@ NODE_CLASS_MAPPINGS = {
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
     "CR SDXL Aspect Ratio JK": CR_SDXLAspectRatio_JK,
+    "Random Beats JK": RandomBeats_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
@@ -4391,6 +4445,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
+    "Random Beats JK": "Random Beats JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",
