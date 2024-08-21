@@ -21,6 +21,7 @@ NODE_CLASS_MAPPINGS = {
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
     "CR SDXL Aspect Ratio JK": CR_SDXLAspectRatio_JK,
+    "Random Beats JK": RandomBeats_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
@@ -161,6 +162,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
+    "Random Beats JK": "Random Beats JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",

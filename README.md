@@ -416,6 +416,7 @@ Jake Upgrade Nodes are inspired by:
 - 2024-07-24 - v1.1.0 img2mesh workflow updated. Craftsman Mesh added. Three OrbitPoses nodes been added to 3D-Pack.
 - 2024-07-31 - v1.1.1 Prompt Combine node added.
 - 2024-08-03 - v1.1.2 Resize to Focus added to image2mesh workflow.
+- 2024-08-21 - v1.1.3 Random Beats node added (not for AIGC).
 
 ## Workflow Todo List
 - ControlNet Preprocess
