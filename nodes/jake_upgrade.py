@@ -1096,9 +1096,9 @@ class BaseModelParameters_JK:
                 "base_seed": ("INT", {"forceInput": True}),
                 #
                 "positive": ("STRING", {"default": '', "multiline": True}),
-                "positive_clip": ("STRING", {"default": '', "multiline": True}),
+                "positive_t5xxl": ("STRING", {"default": '', "multiline": True}),
                 "negative": ("STRING", {"default": '', "multiline": True}),
-                "negative_clip": ("STRING", {"default": '', "multiline": True}),
+                "negative_t5xxl": ("STRING", {"default": '', "multiline": True}),
                 "append_input_prompt": ("BOOLEAN", {"default": False},),
                 "variation": ("STRING", {"default": '', "multiline": True}),
                 "resolution": (["Custom", "SD15 512x512", "SD15 680x512", "SD15 768x512", "SD15 912x512", "SD15 952x512", "SD15 1024x512",
@@ -1136,7 +1136,7 @@ class BaseModelParameters_JK:
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
-    def get_value(self, ckpt_name, vae_name, base_seed, positive, positive_clip, negative, negative_clip, append_input_prompt, variation, resolution, custom_width, custom_height, swap_dimensions, steps, sampler_name, scheduler, cfg, tiling, specified_vae, stop_at_clip_layer, img2img, image_resize, img2img_denoise, batch_size, save_ckpt_hash, image=None, input_positive=None, input_negative=None):
+    def get_value(self, ckpt_name, vae_name, base_seed, positive, positive_t5xxl, negative, negative_t5xxl, append_input_prompt, variation, resolution, custom_width, custom_height, swap_dimensions, steps, sampler_name, scheduler, cfg, tiling, specified_vae, stop_at_clip_layer, img2img, image_resize, img2img_denoise, batch_size, save_ckpt_hash, image=None, input_positive=None, input_negative=None):
         
         if append_input_prompt == True and input_positive != None and input_negative != None:
             if input_positive != "":
@@ -1151,7 +1151,7 @@ class BaseModelParameters_JK:
         
         img2img_denoise = 1.0 if img2img == False else img2img_denoise
         
-        pipe_model = (ckpt_name, stop_at_clip_layer, positive, positive_clip, negative, negative_clip, variation, base_seed, steps, sampler_name, scheduler, cfg, img2img_denoise, tiling, specified_vae, vae_name)
+        pipe_model = (ckpt_name, stop_at_clip_layer, positive, positive_t5xxl, negative, negative_t5xxl, variation, base_seed, steps, sampler_name, scheduler, cfg, img2img_denoise, tiling, specified_vae, vae_name)
         pipe_image = (image, width, height, batch_size, image_resize, img2img)
         pipe_image_swap = (image, height, width, batch_size, image_resize, img2img)
         
