@@ -1,6 +1,7 @@
 ## ComfyUI Jake Upgrade
 
 A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by Jake.
+
 If you like what I share, please support me with PayPal[https://paypal.me/jakechaikefu].
 
 ## Installation
