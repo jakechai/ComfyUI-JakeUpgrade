@@ -29,10 +29,12 @@ NODE_CLASS_MAPPINGS = {
     "Reroute Sampler JK": RerouteSampler_JK,
     "Reroute Upscale JK": RerouteUpscale_JK,
     "Reroute Resize JK": RerouteResize_JK,
+    "Reroute String JK": RerouteString_JK,
     ### ControlNet Nodes
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
+    "CR_Apply Multi-ControlNet SD3 JK": CR_ApplyControlNetStackSD3_JK,
     ### LoRA Nodes
     "CR Load LoRA JK": CR_LoraLoader_JK,
     "CR LoRA Stack JK": CR_LoRAStack_JK,
@@ -56,6 +58,7 @@ NODE_CLASS_MAPPINGS = {
     "Refine Pipe JK": RefinePipe_JK,
     "Refine Pipe Extract JK": RefinePipeExtract_JK,
     "Noise Injection Parameters JK": NoiseInjectionParameters_JK,
+    "Noise Injection Pipe Extract JK": NoiseInjectionPipeExtract_JK,
     "Refine Model Parameters JK": RefineModelParameters_JK,
     "Refine 1 Parameters Extract JK": Refine1ParametersExtract_JK,
     "Refine 2 Parameters Extract JK": Refine2ParametersExtract_JK,
@@ -170,10 +173,12 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Reroute Sampler JK": "Reroute Sampler JK🐉",
     "Reroute Upscale JK": "Reroute Upscale JK🐉",
     "Reroute Resize JK": "Reroute Resize JK🐉",
+    "Reroute String JK": "Reroute String JK🐉",
     ### ControlNet Nodes
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
+    "CR_Apply Multi-ControlNet SD3 JK": "Apply Multi-ControlNet SD3 JK🐉",
     ### LoRA Nodes
     "CR Load LoRA JK": "Load LoRA JK🐉",
     "CR LoRA Stack JK": "LoRA Stack JK🐉",
@@ -197,6 +202,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Refine Pipe JK": "Refine Pipe JK🐉",
     "Refine Pipe Extract JK": "Refine Pipe Extract JK🐉",
     "Noise Injection Parameters JK": "Noise Injection Parameters JK🐉",
+    "Noise Injection Pipe Extract JK": "Noise Injection Pipe Extract JK🐉",
     "Refine Model Parameters JK": "Refine Model Parameters JK🐉",
     "Refine 1 Parameters Extract JK": "Refine 1 Parameters Extract JK🐉",
     "Refine 2 Parameters Extract JK": "Refine 2 Parameters Extract JK🐉",
