@@ -1,6 +1,7 @@
 ## ComfyUI Jake Upgrade
 
 A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by Jake.
+If you like what I share, please support me with PayPal[https://paypal.me/jakechaikefu].
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
