@@ -263,14 +263,12 @@ class RerouteList_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-            },
-            "optional": {
                 "checkpoint": (folder_paths.get_filename_list("checkpoints"),{"forceInput": True}),
                 "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],{"forceInput": True}),
                 "sampler": (comfy.samplers.KSampler.SAMPLERS,{"forceInput": True}),
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS,{"forceInput": True}),
                 "upscale_model": (folder_paths.get_filename_list("upscale_models"),{"forceInput": True}),
-            },
+            }
         }
 
     RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"), folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"], comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, folder_paths.get_filename_list("upscale_models"))
@@ -286,10 +284,8 @@ class RerouteCkpt_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-            },
-            "optional": {
                 "checkpoint": (folder_paths.get_filename_list("checkpoints"),{"forceInput": True}),
-            },
+            }
         }
 
     RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"),)
@@ -305,10 +301,8 @@ class RerouteVae_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-            },
-            "optional": {
                 "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],{"forceInput": True}),
-            },
+            }
         }
 
     RETURN_TYPES = (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],)
@@ -324,8 +318,6 @@ class RerouteSampler_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-            },
-            "optional": {
                 "sampler": (comfy.samplers.KSampler.SAMPLERS,{"forceInput": True}),
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS,{"forceInput": True}),
             },
@@ -344,10 +336,8 @@ class RerouteUpscale_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-            },
-            "optional": {
                 "upscale_model": (folder_paths.get_filename_list("upscale_models"),{"forceInput": True}),
-            },
+            }
         }
 
     RETURN_TYPES = (folder_paths.get_filename_list("upscale_models"),)
@@ -363,10 +353,8 @@ class RerouteResize_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-            },
-            "optional": {
                 "image_resize": (["Just Resize", "Crop and Resize", "Resize and Fill"], {"default": "Crop and Resize", "forceInput": True}),
-            },
+            }
         }
 
     RETURN_TYPES = (["Just Resize", "Crop and Resize", "Resize and Fill"],)
@@ -376,6 +364,23 @@ class RerouteResize_JK:
 
     def route(self, image_resize=None):
         return (image_resize,)
+
+class RerouteString_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "string": ("STRING",{"forceInput": True}),
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("STRING",)
+    FUNCTION = "route"
+    CATEGORY = icons.get("JK/Reroute")
+
+    def route(self, string=None):
+        return (string,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # ControlNet Nodes
@@ -503,9 +508,9 @@ class CR_ApplyControlNetStack_JK:
         return {
             "required": {
                 "base_positive": ("CONDITIONING",),
-                "base_negative": ("CONDITIONING",),
-                "ControlNet_switch": ("BOOLEAN", {"default": False},),
+                "base_negative": ("CONDITIONING",),                
                 "controlnet_stack": ("CONTROL_NET_STACK", ),
+                "ControlNet_switch": ("BOOLEAN", {"default": False},),
             }
         }                    
 
@@ -518,7 +523,7 @@ class CR_ApplyControlNetStack_JK:
 
         if ControlNet_switch == False:
             return (base_positive, base_negative, )
-    
+        
         if controlnet_stack is not None:
             for controlnet_tuple in controlnet_stack:
                 controlnet_name, image, strength, start_percent, end_percent  = controlnet_tuple
@@ -532,9 +537,50 @@ class CR_ApplyControlNetStack_JK:
                 controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative,
                                                                                      controlnet, image, strength,
                                                                                      start_percent, end_percent)
-
+                
                 base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
+                
+        return (base_positive, base_negative, )
 
+class CR_ApplyControlNetStackSD3_JK:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "base_positive": ("CONDITIONING",),
+                "base_negative": ("CONDITIONING",),                
+                "vae": ("VAE",),
+                "controlnet_stack": ("CONTROL_NET_STACK", ),
+                "ControlNet_switch": ("BOOLEAN", {"default": False},),
+            }
+        }                    
+
+    RETURN_TYPES = ("CONDITIONING", "CONDITIONING", )
+    RETURN_NAMES = ("base_pos", "base_neg", )
+    FUNCTION = "apply_controlnet_stack"
+    CATEGORY = icons.get("JK/ControlNet")
+
+    def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, vae=None, controlnet_stack=None,):
+
+        if ControlNet_switch == False:
+            return (base_positive, base_negative, )
+        
+        if controlnet_stack is not None:
+            for controlnet_tuple in controlnet_stack:
+                controlnet_name, image, strength, start_percent, end_percent  = controlnet_tuple
+                
+                if type(controlnet_name) == str:
+                    controlnet_path = folder_paths.get_full_path("controlnet", controlnet_name)
+                    controlnet = comfy.sd.load_controlnet(controlnet_path)
+                else:
+                    controlnet = controlnet_name
+                
+                controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative,
+                                                                                     controlnet, image, strength,
+                                                                                     start_percent, end_percent, vae)
+                
+                base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
+                
         return (base_positive, base_negative, )
 
 #---------------------------------------------------------------------------------------------------------------------#
@@ -704,14 +750,14 @@ class EmbeddingPicker_JK:
     def INPUT_TYPES(self):
         return {
             "required": {
-            },
-            "optional": {
-                "text_in": ("STRING", {"forceInput": True}),
-                "metadata_in": ("STRING", {"forceInput": True}),
                 "embedding": (folder_paths.get_filename_list("embeddings"),),
                 "emphasis": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 3.0, "step": 0.05,},),
                 "append": ("BOOLEAN", {"default": True},),
                 "save_hash": ("BOOLEAN", {"default": True},),
+            },
+            "optional": {
+                "text_in": ("STRING", {"forceInput": True}),
+                "metadata_in": ("STRING", {"forceInput": True}),
             }
         }
 
@@ -889,11 +935,9 @@ class SamplerLoader_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-            },
-            "optional": {
                 "sampler": (comfy.samplers.KSampler.SAMPLERS,),
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
-            },
+            }
         }
 
     RETURN_TYPES = ("STRING", comfy.samplers.KSampler.SAMPLERS, "STRING", comfy.samplers.KSampler.SCHEDULERS)
@@ -912,10 +956,8 @@ class UpscaleModelLoader_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-            },
-            "optional": {
                 "upscale_model": (folder_paths.get_filename_list("upscale_models"),),
-            },
+            }
         }
 
     RETURN_TYPES = ("STRING", folder_paths.get_filename_list("upscale_models"))
@@ -1142,10 +1184,8 @@ class BaseModelParametersExtract_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-            },
-            "optional": {
                 "base_model_pipe": ("PIPE_LINE",)
-            },
+            }
         }
 
     RETURN_TYPES = ("STRING", "STRING", "INT", "STRING", "STRING", "STRING", "STRING", "STRING", "INT", "INT", "STRING", "STRING", "FLOAT", "FLOAT", "BOOLEAN", "STRING")
@@ -1165,10 +1205,8 @@ class BaseImageParametersExtract_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-            },
-            "optional": {
                 "base_image_pipe": ("PIPE_LINE",)
-            },
+            }
         }
 
     RETURN_TYPES = ("IMAGE", "INT", "INT", "INT", "STRING", "BOOLEAN")
@@ -1227,10 +1265,8 @@ class BaseModelPipeExtract_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-            },
-            "optional": {
                 "base_pipe": ("PIPE_LINE",)
-            },
+            }
         }
 
     RETURN_TYPES = ("PIPE_LINE", "CONDITIONING", "CONDITIONING", "STRING", "STRING", "LATENT", "IMAGE", "STRING")
@@ -1260,31 +1296,63 @@ class NoiseInjectionParameters_JK:
         return {
             "required": {
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
-                "noisy_latent_strength": ("FLOAT", {"default": 0.05, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "img2img_injection_switch_at": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "variation_strength": ("FLOAT", {"default": 0.05, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "variation_batch": ("INT", {"default": 4, "min": 1, "max": 0xffffffffffffffff}),
+                "variation_batch_mode_Inspire": (["incremental", "comfy", "variation str inc:0.01", "variation str inc:0.05"], {"default": "variation str inc:0.05"}),
+                "variation_method_Inspire": (["linear", "slerp"], {"default": "slerp"}),
+                "img2img_injection_switch_at_Legacy": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01}),
             },
             "optional": {
                 "base_steps": ("INT", {"forceInput": True}),
-                "img2img": ("BOOLEAN", {"forceInput": True},),
             }
         }
     
-    RETURN_TYPES = ("STRING", "INT", "INT", "FLOAT", "INT")
-    RETURN_NAMES = ("Noise_Injection_MetaData", "Img2img_Injection_1st_step_end", "Img2img_Injection_2nd_step_start", "Noisy_Latent_Strength", "Noise_Latent_seed")
+    RETURN_TYPES = ("STRING", "PIPE_LINE")
+    RETURN_NAMES = ("Noise_Injection_MetaData", "Noise_Injection_Pipe")
     OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
-    def get_value(self, base_steps, seed, noisy_latent_strength, img2img_injection_switch_at, img2img=None):
+    def get_value(self, base_steps, seed, variation_strength, variation_batch, variation_batch_mode_Inspire, variation_method_Inspire, img2img_injection_switch_at_Legacy):
         
         base_steps = base_steps if base_steps != None else 30
-        img2img_injection_1st_step_end = int(base_steps * img2img_injection_switch_at)
+        img2img_injection_1st_step_end = int(base_steps * img2img_injection_switch_at_Legacy)
         img2img_injection_2nd_step_start = img2img_injection_1st_step_end #+ 1
         
-        img2img = img2img if img2img != None else False
-        noiseinjection_metadata = f"Noise Injection Strength: {noisy_latent_strength}, Noise Injection Seed: {seed}, " if img2img == False else f"img2img Noise Injection switch at: {img2img_injection_switch_at}, img2img Noise Injection 1st end: {img2img_injection_1st_step_end}, img2img Noise Injection 2nd start: {img2img_injection_2nd_step_start}, "
+        noiseinjection_metadata = f"Noise Injection Strength: {variation_strength}, Noise Injection Seed: {seed}, "
+        noiseinjection_pipe = (seed, variation_strength, variation_batch, variation_batch_mode_Inspire, variation_method_Inspire, img2img_injection_1st_step_end, img2img_injection_2nd_step_start)
         
-        return (noiseinjection_metadata, img2img_injection_1st_step_end, img2img_injection_2nd_step_start, noisy_latent_strength, seed)
+        return (noiseinjection_metadata, noiseinjection_pipe)
+
+class NoiseInjectionPipeExtract_JK:
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "noise_injection_pipe": ("PIPE_LINE",)
+            }
+        }
+
+    RETURN_TYPES = ("INT", "FLOAT", "INT", "STRING", "STRING", "INT", "INT")
+    RETURN_NAMES = ("variation_seed", "variation_strength", "variation_batch", "variation_batch_mode", "variation_method", "img2img_injection_1st_step_end", "img2img_injection_2nd_step_start")
+    FUNCTION = "flush"
+    CATEGORY = icons.get("JK/Pipe")
+    
+    def flush(self, noise_injection_pipe=None):
+        if noise_injection_pipe == None:
+            seed = 0
+            variation_strength = 0.05
+            variation_batch = 4
+            variation_batch_mode = "variation str inc:0.05"
+            variation_method = "slerp"
+            img2img_injection_1st_step_end = 0.2
+            img2img_injection_2nd_step_start = 0.2
+        else:
+            seed, variation_strength, variation_batch, variation_batch_mode, variation_method, img2img_injection_1st_step_end, img2img_injection_2nd_step_start = noise_injection_pipe
+        return (seed, variation_strength, variation_batch, variation_batch_mode, variation_method, img2img_injection_1st_step_end, img2img_injection_2nd_step_start)
 
 class RefineModelParameters_JK:
     def __init__(self):
@@ -1412,7 +1480,9 @@ class RefinePipe_JK:
             "required": {
             "positive_conditioning": ("CONDITIONING", {"forceInput": True}),
             "negative_conditioning": ("CONDITIONING", {"forceInput": True}),
+            "image_latent": ("LATENT",),
             "base_latent": ("LATENT",),
+            "base_image": ("IMAGE",),
             },
             "optional": {
                 "positive_prompt": ("STRING", {"forceInput": True}),
@@ -1427,13 +1497,13 @@ class RefinePipe_JK:
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
-    def get_value(self, positive_conditioning=None, negative_conditioning=None, base_latent=None, positive_prompt=None, negative_prompt=None, variation_prompt=None):
+    def get_value(self, positive_conditioning=None, negative_conditioning=None, image_latent=None, base_latent=None, base_image=None, positive_prompt=None, negative_prompt=None, variation_prompt=None):
         
         positive_prompt = f"{positive_prompt}," if positive_prompt !=None and positive_prompt != "" else ""
         negative_prompt = negative_prompt if negative_prompt !=None and negative_prompt != "" else ""
         variation_prompt = f"{variation_prompt}," if variation_prompt !=None and variation_prompt != "" else ""
         
-        refine_pipe = (positive_conditioning, negative_conditioning, base_latent, positive_prompt, negative_prompt, variation_prompt)
+        refine_pipe = (positive_conditioning, negative_conditioning, image_latent, base_latent, base_image, positive_prompt, negative_prompt, variation_prompt)
         
         return (refine_pipe,)
 
@@ -1445,14 +1515,12 @@ class RefinePipeExtract_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-            },
-            "optional": {
                 "refine_pipe": ("PIPE_LINE",)
-            },
+            }
         }
 
-    RETURN_TYPES = ("PIPE_LINE", "CONDITIONING", "CONDITIONING", "LATENT", "STRING", "STRING", "STRING",)
-    RETURN_NAMES = ("Refine_Pipe", "Positive_Conditioning", "Negative_Conditioning", "Base_Latent", "Positive_Prompt", "Negative_Prompt", "Variation_Prompt",)
+    RETURN_TYPES = ("PIPE_LINE", "CONDITIONING", "CONDITIONING", "LATENT", "LATENT", "IMAGE", "STRING", "STRING", "STRING",)
+    RETURN_NAMES = ("Refine_Pipe", "Positive_Conditioning", "Negative_Conditioning", "Image_Latent", "Base_Latent", "Base_Image", "Positive_Prompt", "Negative_Prompt", "Variation_Prompt",)
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
     
@@ -1460,13 +1528,15 @@ class RefinePipeExtract_JK:
         if refine_pipe == None:
             Positive_Conditioning = None
             Negative_Conditioning = None
+            Image_Latent = None
             Base_Latent = None
+            Base_Image = None
             Positive_Prompt = ""
             Negative_Prompt = ""
             Variation_Prompt = ""
         else:
-            Positive_Conditioning, Negative_Conditioning, Base_Latent, Positive_Prompt, Negative_Prompt, Variation_Prompt = refine_pipe
-        return (refine_pipe, Positive_Conditioning, Negative_Conditioning, Base_Latent, Positive_Prompt, Negative_Prompt, Variation_Prompt,)
+            Positive_Conditioning, Negative_Conditioning, Image_Latent, Base_Latent, Base_Image, Positive_Prompt, Negative_Prompt, Variation_Prompt = refine_pipe
+        return (refine_pipe, Positive_Conditioning, Negative_Conditioning, Image_Latent, Base_Latent, Base_Image, Positive_Prompt, Negative_Prompt, Variation_Prompt,)
 
 class UpscaleModelParameters_JK:
     def __init__(self):
@@ -1666,8 +1736,6 @@ class MetadataPipe_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-            },
-            "optional": {
                 "base_model_prompt": ("STRING", {"forceInput": True}),
                 "base_model_metadata": ("STRING", {"forceInput": True}),
                 "lora_metadata": ("STRING", {"forceInput": True}),
@@ -1680,7 +1748,7 @@ class MetadataPipe_JK:
                 "image_name": ("STRING", {"forceInput": True}),
                 "path_name": ("STRING", {"forceInput": True}),
                 "counter": ("INT", {"forceInput": True}),
-            },
+            }
         }
 
     RETURN_TYPES = ("META_PIPE",)
@@ -2179,8 +2247,89 @@ class LoadImageWithMetadata_JK:
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Image Resize from ControlNet AUX
+# High Quality Edge Thinning using Pure Python
+# Written by Lvmin Zhang
+# 2023 April
+# Stanford University
 #---------------------------------------------------------------------------------------------------------------------#
 RESIZE_MODES = ["Just Resize", "Crop and Resize", "Resize and Fill"]
+
+lvmin_kernels_raw = [
+    numpy.array([
+        [-1, -1, -1],
+        [0, 1, 0],
+        [1, 1, 1]
+    ], dtype=numpy.int32),
+    numpy.array([
+        [0, -1, -1],
+        [1, 1, -1],
+        [0, 1, 0]
+    ], dtype=numpy.int32)
+]
+
+lvmin_kernels = []
+lvmin_kernels += [numpy.rot90(x, k=0, axes=(0, 1)) for x in lvmin_kernels_raw]
+lvmin_kernels += [numpy.rot90(x, k=1, axes=(0, 1)) for x in lvmin_kernels_raw]
+lvmin_kernels += [numpy.rot90(x, k=2, axes=(0, 1)) for x in lvmin_kernels_raw]
+lvmin_kernels += [numpy.rot90(x, k=3, axes=(0, 1)) for x in lvmin_kernels_raw]
+
+lvmin_prunings_raw = [
+    numpy.array([
+        [-1, -1, -1],
+        [-1, 1, -1],
+        [0, 0, -1]
+    ], dtype=numpy.int32),
+    numpy.array([
+        [-1, -1, -1],
+        [-1, 1, -1],
+        [-1, 0, 0]
+    ], dtype=numpy.int32)
+]
+
+lvmin_prunings = []
+lvmin_prunings += [numpy.rot90(x, k=0, axes=(0, 1)) for x in lvmin_prunings_raw]
+lvmin_prunings += [numpy.rot90(x, k=1, axes=(0, 1)) for x in lvmin_prunings_raw]
+lvmin_prunings += [numpy.rot90(x, k=2, axes=(0, 1)) for x in lvmin_prunings_raw]
+lvmin_prunings += [numpy.rot90(x, k=3, axes=(0, 1)) for x in lvmin_prunings_raw]
+
+
+def remove_pattern(x, kernel):
+    objects = cv2.morphologyEx(x, cv2.MORPH_HITMISS, kernel)
+    objects = numpy.where(objects > 127)
+    x[objects] = 0
+    return x, objects[0].shape[0] > 0
+
+
+def thin_one_time(x, kernels):
+    y = x
+    is_done = True
+    for k in kernels:
+        y, has_update = remove_pattern(y, k)
+        if has_update:
+            is_done = False
+    return y, is_done
+
+
+def lvmin_thin(x, prunings=True):
+    y = x
+    for i in range(32):
+        y, is_done = thin_one_time(y, lvmin_kernels)
+        if is_done:
+            break
+    if prunings:
+        y, _ = thin_one_time(y, lvmin_prunings)
+    return y
+
+
+def nake_nms(x):
+    f1 = numpy.array([[0, 0, 0], [1, 1, 1], [0, 0, 0]], dtype=numpy.uint8)
+    f2 = numpy.array([[0, 1, 0], [0, 1, 0], [0, 1, 0]], dtype=numpy.uint8)
+    f3 = numpy.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=numpy.uint8)
+    f4 = numpy.array([[0, 0, 1], [0, 1, 0], [1, 0, 0]], dtype=numpy.uint8)
+    y = numpy.zeros_like(x)
+    for f in [f1, f2, f3, f4]:
+        numpy.putmask(y, cv2.dilate(x, kernel=f) == x, x)
+    return y
 
 #https://github.com/Mikubill/sd-webui-controlnet/blob/e67e017731aad05796b9615dc6eadce911298ea1/scripts/controlnet.py#L404
 def safe_numpy(x):
@@ -4313,10 +4462,12 @@ NODE_CLASS_MAPPINGS = {
     "Reroute Sampler JK": RerouteSampler_JK,
     "Reroute Upscale JK": RerouteUpscale_JK,
     "Reroute Resize JK": RerouteResize_JK,
+    "Reroute String JK": RerouteString_JK,
     ### ControlNet Nodes
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
+    "CR_Apply Multi-ControlNet SD3 JK": CR_ApplyControlNetStackSD3_JK,
     ### LoRA Nodes
     "CR Load LoRA JK": CR_LoraLoader_JK,
     "CR LoRA Stack JK": CR_LoRAStack_JK,
@@ -4340,6 +4491,7 @@ NODE_CLASS_MAPPINGS = {
     "Refine Pipe JK": RefinePipe_JK,
     "Refine Pipe Extract JK": RefinePipeExtract_JK,
     "Noise Injection Parameters JK": NoiseInjectionParameters_JK,
+    "Noise Injection Pipe Extract JK": NoiseInjectionPipeExtract_JK,
     "Refine Model Parameters JK": RefineModelParameters_JK,
     "Refine 1 Parameters Extract JK": Refine1ParametersExtract_JK,
     "Refine 2 Parameters Extract JK": Refine2ParametersExtract_JK,
@@ -4453,10 +4605,12 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Reroute Sampler JK": "Reroute Sampler JK🐉",
     "Reroute Upscale JK": "Reroute Upscale JK🐉",
     "Reroute Resize JK": "Reroute Resize JK🐉",
+    "Reroute String JK": "Reroute String JK🐉",
     ### ControlNet Nodes
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
+    "CR_Apply Multi-ControlNet SD3 JK": "Apply Multi-ControlNet SD3 JK🐉",
     ### LoRA Nodes
     "CR Load LoRA JK": "Load LoRA JK🐉",
     "CR LoRA Stack JK": "LoRA Stack JK🐉",
@@ -4480,6 +4634,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Refine Pipe JK": "Refine Pipe JK🐉",
     "Refine Pipe Extract JK": "Refine Pipe Extract JK🐉",
     "Noise Injection Parameters JK": "Noise Injection Parameters JK🐉",
+    "Noise Injection Pipe Extract JK": "Noise Injection Pipe Extract JK🐉",
     "Refine Model Parameters JK": "Refine Model Parameters JK🐉",
     "Refine 1 Parameters Extract JK": "Refine 1 Parameters Extract JK🐉",
     "Refine 2 Parameters Extract JK": "Refine 2 Parameters Extract JK🐉",

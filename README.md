@@ -29,6 +29,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 
 ### Main
 
+- [JK_workflow_txt2img_img2img_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD3.json)
 - [JK_workflow_txt2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SDXL.json)
 - [JK_workflow_txt2img_img2img_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD15.json)
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
@@ -120,6 +121,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 		In Detailer image saving, remove noise_jinection_metadata, refine_metadata or upscale_metadata link if not using Noise Injection or refine process.
 
 	SDXL switches:
+		Image Resolution
 		Load SDXL Ckpt for Base | Refine | Upscale | Detailer | In/Out Paint
 		Load SDXL Vae for Base | Detailer | In/Out Paint
 		FreeU SDXL settings
@@ -127,12 +129,11 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 		Disable SD15 ELLA Text Encode (in Base Model Sub Workflow JK🐉)
 		Enable SDXL Text Ecode (in Base Model Sub Workflow JK🐉)     (Optional)
 		Enable SDXL Refine Text Encode (in Refine Sub Workflow JK🐉) (optional)
-		Disable IPAdapter 2 - faceid (in Refine Sub Workflow JK🐉)
-		Switch plus and plus-face ipadapter to sdxl_vit-h version
+		Switch plus, plus-face, and faceid ipadapter to sdxl_vit-h version
+		Switch faceid lora to sdxl version
 		Switch Image Upscale ControlNet Depth|Tile to sdxl version (in Upscale Sub Workflow JK🐉)
 		Switch NNLatentUpscale version to SDXL
 		Set Ultimate SD Upscale Tile size to 1024
-		Disable SD15 Hand Fix Detailer
 		(If it is SD15, choose the opposite)
 
 	Other:
@@ -257,10 +258,12 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 		Reroute Sampler JK🐉
 		Reroute Upscale JK🐉
 		Reroute Resize JK🐉
+		Reroute String JK🐉
     ControlNet Nodes
 		Apply ControlNet JK🐉
 		Multi-ControlNet Stack JK🐉
 		Apply Multi-ControlNet JK🐉
+		Apply Multi-ControlNet SD3 JK🐉
     LoRA Nodes
 		Load LoRA JK🐉
 		LoRA Stack JK🐉
@@ -284,6 +287,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 		Refine Pipe JK🐉
 		Refine Pipe Extract JK🐉
 		Noise Injection Parameters JK🐉
+		Noise Injection Pipe Extract JK🐉
 		Refine Model Parameters JK🐉
 		Refine 1 Parameters Extract JK🐉
 		Refine 2 Parameters Extract JK🐉
@@ -327,6 +331,8 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 		IntToBool JK🐉
 		BoolUnaryOp JK🐉
 		BoolBinaryOp JK🐉
+		StringBinaryCon JK🐉
+		Prompt Combine JK🐉
 		FloatUnaryCon JK🐉
 		FloatBinaryCon JK🐉
 		IntUnaryCon JK🐉
@@ -408,15 +414,20 @@ Jake Upgrade Nodes are inspired by:
 - [Embedding Picker](https://github.com/Tropfchen/ComfyUI-Embedding_Picker)
 
 ## Changelog
-- 2024-06-23 - v1.0.0 released.
-- 2024-07-11 - v1.0.6 Noise Injection for Upscale Workflow.
-- 2024-07-16 - v1.0.7 Single Image to Mesh Workflow updated.
-- 2024-07-21 - v1.0.8 Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.
-- 2024-07-22 - v1.0.9 3DGS workflow added.
-- 2024-07-24 - v1.1.0 img2mesh workflow updated. Craftsman Mesh added. Three OrbitPoses nodes been added to 3D-Pack.
-- 2024-07-31 - v1.1.1 Prompt Combine node added.
-- 2024-08-03 - v1.1.2 Resize to Focus added to image2mesh workflow.
-- 2024-08-21 - v1.1.3 Random Beats node added (not for AIGC).
+- 2024-06-23 - v1.0.0	released.
+- 2024-07-11 - v1.0.6	Noise Injection for Upscale Workflow.
+- 2024-07-16 - v1.0.7	Single Image to Mesh Workflow updated.
+- 2024-07-21 - v1.0.8	Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.
+- 2024-07-22 - v1.0.9	3DGS workflow added.
+- 2024-07-24 - v1.1.0	img2mesh workflow updated. Craftsman Mesh added.
+						Three OrbitPoses nodes been added to 3D-Pack.
+- 2024-07-31 - v1.1.1	Prompt Combine node added.
+- 2024-08-03 - v1.1.2	Resize to Focus added to image2mesh workflow.
+- 2024-08-21 - v1.1.3	Random Beats node added (not for AIGC).
+- 2024-09-01 - v1.2.0	SD3 workflow added. Noise Injection (Inspire) added.
+						Refine, Upscale, and Detailer process major updated.
+						SD15 Hand Fix supports SDXL and SD3 workflow.
+						SDXL IPAdapter supports SD3 workflow.
 
 ## Workflow Todo List
 - ControlNet Preprocess
