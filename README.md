@@ -240,7 +240,7 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 - Workflow Control Panels: CRM&Zero123plus&MVDream&CharacterGen
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Unique3D&Wonder3D&Era3D.png)
-- Workflow Control Panels: JUnique3D&Wonder3D&Era3D
+- Workflow Control Panels: Unique3D&Wonder3D&Era3D
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D.png)
 - Workflow Control Panels: Zero123&SV3D
@@ -429,6 +429,7 @@ Jake Upgrade Nodes are inspired by:
 						Refine, Upscale, and Detailer process major updated.
 						SD15 Hand Fix supports SDXL and SD3 workflow.
 						SDXL IPAdapter supports SD3 workflow.
+						NoiseInjection Component and workflow added.
 
 ## Workflow Todo List
 - ControlNet Preprocess
