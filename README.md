@@ -82,6 +82,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
+- [Adv ControlNet](https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet)
 
 ### img2mesh workflow
 
@@ -406,6 +407,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::Inpaint Checkpoint
 		JK🐉::Outpaint Checkpoint
 		JK🐉::txt2img
+		JK🐉::Inpaint ControlNet
+		JK🐉::Outpaint ControlNet
 
 ## Reference Custom Nodes
 Jake Upgrade Nodes are inspired by:
@@ -418,6 +421,7 @@ Jake Upgrade Nodes are inspired by:
 - [Prompt Reader](https://github.com/receyuki/comfyui-prompt-reader-node)
 - [ComfyMath](https://github.com/evanspearman/ComfyMath)
 - [Embedding Picker](https://github.com/Tropfchen/ComfyUI-Embedding_Picker)
+- [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
 
 ## Changelog
 - 2024-06-23 - v1.0.0	released.
