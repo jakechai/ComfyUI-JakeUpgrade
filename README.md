@@ -90,8 +90,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ### Install and copy | replace files
 
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy _JK.pack in the replacement folder to `custom_nodes\ComfyUI-Manager\component'.
-	- Make sure to replace _JK.pack again if it's updated.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
+
+> Tips: Make sure to replace _JK.pack again if it's updated.
 
 ## JK_workflow : txt2img_img2img
 
