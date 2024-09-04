@@ -2246,6 +2246,45 @@ class LoadImageWithMetadata_JK:
         return True
 
 #---------------------------------------------------------------------------------------------------------------------#
+# Image Remove Alpha from Layer Style
+#---------------------------------------------------------------------------------------------------------------------#
+def tensor2pil(t_image: torch.Tensor)  -> Image:
+    return Image.fromarray(numpy.clip(255.0 * t_image.cpu().numpy().squeeze(), 0, 255).astype(numpy.uint8))
+
+def pil2tensor(image:Image) -> torch.Tensor:
+    return torch.from_numpy(numpy.array(image).astype(numpy.float32) / 255.0).unsqueeze(0)
+
+class ImageRemoveAlpha_JK:
+    
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(self):
+
+        return {
+            "required": {
+                "RGBA_image": ("IMAGE", ),
+            }
+        }
+    
+    RETURN_TYPES = ("IMAGE", )
+    RETURN_NAMES = ("RGB_image", )
+    FUNCTION = 'image_remove_alpha'
+    CATEGORY = icons.get("JK/Image")
+    
+    def image_remove_alpha(self, RGBA_image):
+
+        ret_images = []
+
+        for index, img in enumerate(RGBA_image):
+        
+            _image = tensor2pil(img)
+            ret_images.append(pil2tensor(tensor2pil(img).convert('RGB')))
+        
+        return (torch.cat(ret_images, dim=0), )
+
+#---------------------------------------------------------------------------------------------------------------------#
 # Image Resize from ControlNet AUX
 # High Quality Edge Thinning using Pure Python
 # Written by Lvmin Zhang
@@ -4508,6 +4547,7 @@ NODE_CLASS_MAPPINGS = {
     "Save Image with Metadata Flow JK": ImageSaveWithMetadata_Flow_JK,
     "Load Image With Metadata JK": LoadImageWithMetadata_JK,
     "HintImageEnchance JK": HintImageEnchance_JK,
+    "Image Remove Alpha JK": ImageRemoveAlpha_JK,
     ### Animation Nodes
     "Animation Prompt JK": AnimPrompt_JK,
     "Animation Value JK": AnimValue_JK,
@@ -4651,6 +4691,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Save Image with Metadata Flow JK": "Save Image With Metadata Flow JK🐉",
     "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
     "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
+    "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
     ### Animation Nodes
     "Animation Prompt JK": "Animation Prompt JK🐉",
     "Animation Value JK": "Animation Value JK🐉",

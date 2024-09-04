@@ -82,6 +82,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
+- [Adv ControlNet](https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet)
 
 ### img2mesh workflow
 
@@ -91,6 +92,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy _JK.pack in the replacement folder to `custom_nodes\ComfyUI-Manager\component'.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
+
+> Tips: Make sure to replace _JK.pack again if it's updated.
 
 ## JK_workflow : txt2img_img2img
 
@@ -125,8 +128,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 	SDXL switches:
 		Image Resolution
-		Load SDXL Ckpt for Base | Refine | Upscale | Detailer | In/Out Paint
-		Load SDXL Vae for Base | Detailer | In/Out Paint
+		Load SDXL Ckpt | Vae for Base | Refine | Upscale | Detailer | In/Out Paint
 		FreeU SDXL settings
 		Auto Variation SDXL settings
 		Disable SD15 ELLA Text Encode (in Base Model Sub Workflow JK🐉)
@@ -137,6 +139,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Switch Image Upscale ControlNet Depth|Tile to sdxl version (in Upscale Sub Workflow JK🐉)
 		Switch NNLatentUpscale version to SDXL
 		Set Ultimate SD Upscale Tile size to 1024
+		Use Load ControNet++ Model of ComfyUI Advanced ControNet to load xinsir controlnet union inpaint/outpaint for Inpaint/Outpaint ControlNet in I/O Paint process
 		(If it is SD15, choose the opposite)
 
 	Other:
@@ -307,6 +310,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Save Image With Metadata Flow JK🐉
 		Load Image With Metadata JK🐉
 		Enchance And Resize Hint Images JK🐉
+		Remove Image Alpha JK🐉
     Animation Nodes
 		Animation Prompt JK🐉
 		Animation Value JK🐉
@@ -403,6 +407,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::Inpaint Checkpoint
 		JK🐉::Outpaint Checkpoint
 		JK🐉::txt2img
+		JK🐉::Inpaint ControlNet
+		JK🐉::Outpaint ControlNet
 
 ## Reference Custom Nodes
 Jake Upgrade Nodes are inspired by:
@@ -415,6 +421,7 @@ Jake Upgrade Nodes are inspired by:
 - [Prompt Reader](https://github.com/receyuki/comfyui-prompt-reader-node)
 - [ComfyMath](https://github.com/evanspearman/ComfyMath)
 - [Embedding Picker](https://github.com/Tropfchen/ComfyUI-Embedding_Picker)
+- [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
 
 ## Changelog
 - 2024-06-23 - v1.0.0	released.
@@ -432,6 +439,10 @@ Jake Upgrade Nodes are inspired by:
 						SD15 Hand Fix supports SDXL and SD3 workflow.
 						SDXL IPAdapter supports SD3 workflow.
 						NoiseInjection Component and workflow added.
+- 2024-09-04 - v1.2.1	In/Out Paint ControlNet Component added.
+						Inpaint Module Workflow updated.
+						SD15|SDXL|SD3 Workflow updated.
+						Image Remove Alpha JK node added.
 
 ## Workflow Todo List
 - ControlNet Preprocess
