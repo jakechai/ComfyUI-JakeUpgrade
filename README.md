@@ -24,6 +24,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## Video Introduction
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
+- SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - 3D-Pack Installation Tips： [Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - 3D-Pack Algorithm Comparison： [Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
 
