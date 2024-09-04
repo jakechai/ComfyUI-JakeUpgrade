@@ -75,6 +75,7 @@ NODE_CLASS_MAPPINGS = {
     "Save Image with Metadata Flow JK": ImageSaveWithMetadata_Flow_JK,
     "Load Image With Metadata JK": LoadImageWithMetadata_JK,
     "HintImageEnchance JK": HintImageEnchance_JK,
+    "Image Remove Alpha JK": ImageRemoveAlpha_JK,
     ### Animation Nodes
     "Animation Prompt JK": AnimPrompt_JK,
     "Animation Value JK": AnimValue_JK,
@@ -219,6 +220,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Save Image with Metadata Flow JK": "Save Image With Metadata Flow JK🐉",
     "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
     "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
+    "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
     ### Animation Nodes
     "Animation Prompt JK": "Animation Prompt JK🐉",
     "Animation Value JK": "Animation Value JK🐉",

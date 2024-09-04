@@ -125,8 +125,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 	SDXL switches:
 		Image Resolution
-		Load SDXL Ckpt for Base | Refine | Upscale | Detailer | In/Out Paint
-		Load SDXL Vae for Base | Detailer | In/Out Paint
+		Load SDXL Ckpt | Vae for Base | Refine | Upscale | Detailer | In/Out Paint
 		FreeU SDXL settings
 		Auto Variation SDXL settings
 		Disable SD15 ELLA Text Encode (in Base Model Sub Workflow JK🐉)
@@ -137,6 +136,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Switch Image Upscale ControlNet Depth|Tile to sdxl version (in Upscale Sub Workflow JK🐉)
 		Switch NNLatentUpscale version to SDXL
 		Set Ultimate SD Upscale Tile size to 1024
+		Use Load ControNet++ Model of ComfyUI Advanced ControNet to load xinsir controlnet union inpaint/outpaint for Inpaint/Outpaint ControlNet in I/O Paint process
 		(If it is SD15, choose the opposite)
 
 	Other:
@@ -432,6 +432,10 @@ Jake Upgrade Nodes are inspired by:
 						SD15 Hand Fix supports SDXL and SD3 workflow.
 						SDXL IPAdapter supports SD3 workflow.
 						NoiseInjection Component and workflow added.
+- 2024-09-04 - v1.2.1	In/Out Paint ControlNet Component added.
+						Inpaint Module Workflow updated.
+						SD15|SDXL|SD3 Workflow updated.
+						Image Remove Alpha JK node added.
 
 ## Workflow Todo List
 - ControlNet Preprocess
