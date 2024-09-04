@@ -309,6 +309,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Save Image With Metadata Flow JK🐉
 		Load Image With Metadata JK🐉
 		Enchance And Resize Hint Images JK🐉
+		Remove Image Alpha JK🐉
     Animation Nodes
 		Animation Prompt JK🐉
 		Animation Value JK🐉
