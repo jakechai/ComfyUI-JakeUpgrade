@@ -444,6 +444,7 @@ Jake Upgrade Nodes are inspired by:
 						Inpaint Module Workflow updated.
 						SD15|SDXL|SD3 Workflow updated.
 						Image Remove Alpha JK node added.
+- 2024-09-05 - v1.2.2	Black Pixel switch added for Inpaint ControlNet Component following ControlNet Preprocessor AUX Custom Node's update.
 
 ## Workflow Todo List
 - ControlNet Preprocess

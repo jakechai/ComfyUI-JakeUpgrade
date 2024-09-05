@@ -301,11 +301,11 @@ class RerouteVae_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],{"forceInput": True}),
+                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"],{"forceInput": True}),
             }
         }
 
-    RETURN_TYPES = (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],)
+    RETURN_TYPES = (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"],)
     RETURN_NAMES = ("VAE",)
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
@@ -915,11 +915,11 @@ class VaeLoader_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],),
+                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"],),
             },
         }
 
-    RETURN_TYPES = ("STRING", folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"])
+    RETURN_TYPES = ("STRING", folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"])
     RETURN_NAMES = ("vae_name", "VAE")
     FUNCTION = "list"
     CATEGORY = icons.get("JK/Loader")
