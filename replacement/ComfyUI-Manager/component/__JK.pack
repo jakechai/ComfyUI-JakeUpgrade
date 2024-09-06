@@ -2665,6 +2665,1262 @@
         "packname": "\ud83d\udc09 JK",
         "version": "1.0"
     },
+    "\ud83d\udc09 JK::Image to Prompt (LLava Local)": {
+        "author": "Jake",
+        "category": "\ud83d\udc12 Tools",
+        "config": {
+            "0": {},
+            "1": {
+                "input": {
+                    "CUSTOM": {
+                        "name": "LLAVA MODEL"
+                    }
+                }
+            },
+            "2": {},
+            "3": {},
+            "4": {
+                "input": {
+                    "input_text": {
+                        "name": "image prompt"
+                    }
+                }
+            },
+            "5": {},
+            "6": {
+                "input": {
+                    "prompt": {
+                        "visible": false
+                    },
+                    "temperature": {
+                        "name": "Sampler Temperature"
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": "SAMPLER STRING",
+                        "visible": true
+                    }
+                }
+            },
+            "7": {
+                "input": {
+                    "prompt": {
+                        "visible": false
+                    },
+                    "temperature": {
+                        "name": "Keyword Temperature"
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": "KEYWORD STRING",
+                        "visible": true
+                    }
+                }
+            },
+            "8": {
+                "input": {
+                    "prompt": {
+                        "visible": false
+                    },
+                    "temperature": {
+                        "name": "Generator Temperature"
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": "GENERATOR STRING",
+                        "visible": true
+                    }
+                }
+            },
+            "9": {
+                "input": {
+                    "prompt": {
+                        "visible": false
+                    },
+                    "randomize": {
+                        "name": "Suggester Randomize"
+                    },
+                    "temperature": {
+                        "name": "Suggester Temperature"
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": "SUGGESTER STRING"
+                    }
+                }
+            }
+        },
+        "datetime": 1725619229248,
+        "external": [],
+        "links": [
+            [
+                1,
+                0,
+                2,
+                0,
+                196,
+                "*"
+            ],
+            [
+                0,
+                0,
+                6,
+                0,
+                197,
+                "*"
+            ],
+            [
+                1,
+                0,
+                6,
+                1,
+                196,
+                "*"
+            ],
+            [
+                4,
+                0,
+                6,
+                2,
+                206,
+                "STRING"
+            ],
+            [
+                2,
+                0,
+                3,
+                0,
+                199,
+                "*"
+            ],
+            [
+                2,
+                0,
+                7,
+                0,
+                199,
+                "*"
+            ],
+            [
+                6,
+                0,
+                7,
+                1,
+                202,
+                "STRING"
+            ],
+            [
+                3,
+                0,
+                5,
+                0,
+                200,
+                "*"
+            ],
+            [
+                3,
+                0,
+                8,
+                0,
+                200,
+                "*"
+            ],
+            [
+                7,
+                0,
+                8,
+                1,
+                203,
+                "STRING"
+            ],
+            [
+                5,
+                0,
+                9,
+                0,
+                201,
+                "*"
+            ],
+            [
+                8,
+                0,
+                9,
+                1,
+                204,
+                "STRING"
+            ]
+        ],
+        "nodes": [
+            {
+                "flags": {},
+                "id": -1,
+                "index": 0,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 6,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 1890,
+                    "1": 380
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 1,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 5,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 1890,
+                    "1": 300
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 2,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 13,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2250,
+                    "1": 300
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 3,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 19,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2610,
+                    "1": 300
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 4,
+                "inputs": [],
+                "mode": 0,
+                "order": 8,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 1680,
+                    "1": 460
+                },
+                "properties": {
+                    "Node name for S&R": "SimpleText"
+                },
+                "size": {
+                    "0": 301.86761474609375,
+                    "1": 176.1848907470703
+                },
+                "type": "SimpleText",
+                "widgets_values": [
+                    "describe this image in great detail, describe everything in the image"
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 5,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 27,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2960,
+                    "1": 300
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "bgcolor": "#533",
+                "color": "#322",
+                "flags": {},
+                "id": -1,
+                "index": 6,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "image",
+                        "type": "IMAGE"
+                    },
+                    {
+                        "link": null,
+                        "name": "model",
+                        "type": "CUSTOM"
+                    },
+                    {
+                        "link": null,
+                        "name": "prompt",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "prompt"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 14,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 2020,
+                    "1": 380
+                },
+                "properties": {
+                    "Node name for S&R": "LLavaSamplerSimple"
+                },
+                "size": [
+                    315,
+                    98
+                ],
+                "type": "LLavaSamplerSimple",
+                "widgets_values": [
+                    "",
+                    0.1
+                ]
+            },
+            {
+                "bgcolor": "#653",
+                "color": "#432",
+                "flags": {},
+                "id": -1,
+                "index": 7,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "type": "CUSTOM"
+                    },
+                    {
+                        "link": null,
+                        "name": "prompt",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "prompt"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 20,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 2380,
+                    "1": 380
+                },
+                "properties": {
+                    "Node name for S&R": "KeywordExtraction"
+                },
+                "size": [
+                    310,
+                    80
+                ],
+                "type": "KeywordExtraction",
+                "widgets_values": [
+                    "",
+                    0.15
+                ]
+            },
+            {
+                "bgcolor": "#355",
+                "color": "#233",
+                "flags": {},
+                "id": -1,
+                "index": 8,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "type": "CUSTOM"
+                    },
+                    {
+                        "link": null,
+                        "name": "prompt",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "prompt"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 28,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 2730,
+                    "1": 380
+                },
+                "properties": {
+                    "Node name for S&R": "LLavaPromptGenerator"
+                },
+                "size": [
+                    315,
+                    82
+                ],
+                "type": "LLavaPromptGenerator",
+                "widgets_values": [
+                    "",
+                    0.15
+                ]
+            },
+            {
+                "bgcolor": "#535",
+                "color": "#323",
+                "flags": {},
+                "id": -1,
+                "index": 9,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "slot_index": 0,
+                        "type": "CUSTOM"
+                    },
+                    {
+                        "link": null,
+                        "name": "prompt",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "prompt"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 34,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 3090,
+                    "1": 380
+                },
+                "properties": {
+                    "Node name for S&R": "Suggester"
+                },
+                "size": [
+                    315,
+                    102
+                ],
+                "type": "Suggester",
+                "widgets_values": [
+                    "",
+                    0.15,
+                    true
+                ]
+            }
+        ],
+        "packname": "\ud83d\udc09 JK",
+        "version": "1.0"
+    },
+    "\ud83d\udc09 JK::Image to Prompt Advanced (LLava Local)": {
+        "author": "Jake",
+        "category": "\ud83d\udc12 Tools",
+        "config": {
+            "0": {},
+            "1": {
+                "input": {
+                    "CUSTOM": {
+                        "name": "LLAVA MODEL"
+                    }
+                }
+            },
+            "10": {
+                "input": {
+                    "prompt": {
+                        "visible": false
+                    },
+                    "randomize": {
+                        "name": "Suggester Randomize"
+                    },
+                    "temperature": {
+                        "name": "Suggester Temperature"
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": "SUGGESTER STRING"
+                    }
+                }
+            },
+            "2": {},
+            "3": {},
+            "4": {
+                "input": {
+                    "input_text": {
+                        "name": "image prompt"
+                    }
+                }
+            },
+            "5": {
+                "input": {
+                    "input_text": {
+                        "name": "system message"
+                    }
+                }
+            },
+            "6": {},
+            "7": {
+                "input": {
+                    "prompt": {
+                        "visible": false
+                    },
+                    "system_msg": {
+                        "visible": false
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": "SAMPLER STRING",
+                        "visible": true
+                    }
+                }
+            },
+            "8": {
+                "input": {
+                    "prompt": {
+                        "visible": false
+                    },
+                    "temperature": {
+                        "name": "Keyword Temperature"
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": "KEYWORD STRING",
+                        "visible": true
+                    }
+                }
+            },
+            "9": {
+                "input": {
+                    "prompt": {
+                        "visible": false
+                    },
+                    "temperature": {
+                        "name": "Generator Temperature"
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": "GENERATER STRING",
+                        "visible": true
+                    }
+                }
+            }
+        },
+        "datetime": 1725619244327,
+        "external": [],
+        "links": [
+            [
+                1,
+                0,
+                2,
+                0,
+                186,
+                "*"
+            ],
+            [
+                0,
+                0,
+                7,
+                0,
+                187,
+                "*"
+            ],
+            [
+                1,
+                0,
+                7,
+                1,
+                186,
+                "*"
+            ],
+            [
+                4,
+                0,
+                7,
+                2,
+                207,
+                "STRING"
+            ],
+            [
+                5,
+                0,
+                7,
+                3,
+                208,
+                "STRING"
+            ],
+            [
+                2,
+                0,
+                3,
+                0,
+                189,
+                "*"
+            ],
+            [
+                2,
+                0,
+                8,
+                0,
+                189,
+                "*"
+            ],
+            [
+                7,
+                0,
+                8,
+                1,
+                156,
+                "STRING"
+            ],
+            [
+                3,
+                0,
+                6,
+                0,
+                190,
+                "*"
+            ],
+            [
+                3,
+                0,
+                9,
+                0,
+                190,
+                "*"
+            ],
+            [
+                8,
+                0,
+                9,
+                1,
+                193,
+                "STRING"
+            ],
+            [
+                6,
+                0,
+                10,
+                0,
+                191,
+                "*"
+            ],
+            [
+                9,
+                0,
+                10,
+                1,
+                194,
+                "STRING"
+            ]
+        ],
+        "nodes": [
+            {
+                "flags": {},
+                "id": -1,
+                "index": 0,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 8,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2009.9998779296875,
+                    "1": 1010
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 1,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 7,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2009.9998779296875,
+                    "1": 930
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 2,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 12,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2370,
+                    "1": 930
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 3,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 15,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2730,
+                    "1": 930
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 4,
+                "inputs": [],
+                "mode": 0,
+                "order": 9,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 1800,
+                    "1": 1090
+                },
+                "properties": {
+                    "Node name for S&R": "SimpleText"
+                },
+                "size": {
+                    "0": 301.86761474609375,
+                    "1": 176.1848907470703
+                },
+                "type": "SimpleText",
+                "widgets_values": [
+                    "describe this image in great detail, describe everything in the image"
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 5,
+                "inputs": [],
+                "mode": 0,
+                "order": 10,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 1800,
+                    "1": 1320
+                },
+                "properties": {
+                    "Node name for S&R": "SimpleText"
+                },
+                "size": {
+                    "0": 301.86761474609375,
+                    "1": 176.1848907470703
+                },
+                "type": "SimpleText",
+                "widgets_values": [
+                    "You are an assistant who perfectly describes images."
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 6,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 21,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 3080,
+                    "1": 930
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 7,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "image",
+                        "type": "IMAGE"
+                    },
+                    {
+                        "link": null,
+                        "name": "model",
+                        "type": "CUSTOM"
+                    },
+                    {
+                        "link": null,
+                        "name": "prompt",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "prompt"
+                        }
+                    },
+                    {
+                        "link": null,
+                        "name": "system_msg",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "system_msg"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 13,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 2150,
+                    "1": 1010
+                },
+                "properties": {
+                    "Node name for S&R": "LLavaSamplerAdvanced"
+                },
+                "size": [
+                    320,
+                    320
+                ],
+                "type": "LLavaSamplerAdvanced",
+                "widgets_values": [
+                    "",
+                    "",
+                    512,
+                    0.1,
+                    0.95,
+                    40,
+                    0,
+                    0,
+                    1.1,
+                    0,
+                    "randomize"
+                ]
+            },
+            {
+                "bgcolor": "#653",
+                "color": "#432",
+                "flags": {},
+                "id": -1,
+                "index": 8,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "type": "CUSTOM"
+                    },
+                    {
+                        "link": null,
+                        "name": "prompt",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "prompt"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 16,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 2503.33154296875,
+                    "1": 1009.025390625
+                },
+                "properties": {
+                    "Node name for S&R": "KeywordExtraction"
+                },
+                "size": [
+                    310,
+                    80
+                ],
+                "type": "KeywordExtraction",
+                "widgets_values": [
+                    "",
+                    0.15
+                ]
+            },
+            {
+                "bgcolor": "#355",
+                "color": "#233",
+                "flags": {},
+                "id": -1,
+                "index": 9,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "type": "CUSTOM"
+                    },
+                    {
+                        "link": null,
+                        "name": "prompt",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "prompt"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 22,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 2850,
+                    "1": 1010
+                },
+                "properties": {
+                    "Node name for S&R": "LLavaPromptGenerator"
+                },
+                "size": [
+                    315,
+                    82
+                ],
+                "type": "LLavaPromptGenerator",
+                "widgets_values": [
+                    "",
+                    0.15
+                ]
+            },
+            {
+                "bgcolor": "#535",
+                "color": "#323",
+                "flags": {},
+                "id": -1,
+                "index": 10,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "slot_index": 0,
+                        "type": "CUSTOM"
+                    },
+                    {
+                        "link": null,
+                        "name": "prompt",
+                        "type": "STRING",
+                        "widget": {
+                            "name": "prompt"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 23,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "STRING",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "STRING"
+                    }
+                ],
+                "pos": {
+                    "0": 3210,
+                    "1": 1010
+                },
+                "properties": {
+                    "Node name for S&R": "Suggester"
+                },
+                "size": [
+                    315,
+                    102
+                ],
+                "type": "Suggester",
+                "widgets_values": [
+                    "",
+                    0.15,
+                    true
+                ]
+            }
+        ],
+        "packname": "\ud83d\udc09 JK",
+        "version": "1.0"
+    },    
     "\ud83d\udc09 JK::Inpaint Checkpoint": {
         "author": "Jake",
         "category": "\ud83d\udc19 Workflow",
