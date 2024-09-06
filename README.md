@@ -71,19 +71,22 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ### txt2img_img2img workflow
 
+- [Adv ControlNet](https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet)
+- [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
+- [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
+- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - [Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - [StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
-- [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - [Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
 - [One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
 - [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
-- [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
-- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
-- [Adv ControlNet](https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet)
+- [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
+- [IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
+- [Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
 
 ### img2mesh workflow
 
@@ -402,6 +405,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::CLIPSegMask
 		JK🐉::Pad Image for Outpainting
 		JK🐉::SegAnythingMask
+		JK🐉::Image to Prompt (LLava Local)
+		JK🐉::Image to Prompt Advanced (LLava Local)
 	Workflow
 		JK🐉::Concept
 		JK🐉::Inpaint Simple
@@ -445,9 +450,11 @@ Jake Upgrade Nodes are inspired by:
 						SD15|SDXL|SD3 Workflow updated.
 						Image Remove Alpha JK node added.
 - 2024-09-05 - v1.2.2	Black Pixel switch added for Inpaint ControlNet Component following ControlNet Preprocessor AUX Custom Node's update.
+- 2024-09-06 - v1.2.3	Refinement Noise Injection added.
+						txt2prompt and img2prompt workflow added.
+						img2prompt component added.
 
 ## Workflow Todo List
-- ControlNet Preprocess
 - IC Light
 - Layer Diffuse
-- Color Grading
+
