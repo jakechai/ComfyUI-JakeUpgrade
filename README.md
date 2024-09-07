@@ -100,9 +100,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
 
 > [!NOTE]
-> Make sure to replace _JK.pack again if it's updated.
-
-> img2mesh workflow doesn't need to copy _JK.pack or prompt styles.
+> Make sure to replace _JK.pack again if it's updated. img2mesh workflow doesn't need to copy _JK.pack or prompt styles.
 
 ## JK_workflow : txt2img_img2img
 <details>
