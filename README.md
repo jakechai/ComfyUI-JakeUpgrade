@@ -430,7 +430,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 </details>
 
 ## Reference Custom Nodes
-Jake Upgrade Nodes are inspired by:
+<details>
+<summary>ℹ️ <i>See More Information</i></summary>
 - [rgthree](https://github.com/rgthree/rgthree-comfy)
 - [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [Efficiency Nodes](https://github.com/jags111/efficiency-nodes-comfyui)
@@ -441,6 +442,7 @@ Jake Upgrade Nodes are inspired by:
 - [ComfyMath](https://github.com/evanspearman/ComfyMath)
 - [Embedding Picker](https://github.com/Tropfchen/ComfyUI-Embedding_Picker)
 - [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
+</details>
 
 ## Changelog
 - 2024-06-23 - v1.0.0	released.
