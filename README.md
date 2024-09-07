@@ -44,7 +44,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > [!NOTE]
 > ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121 or higher, you should separate those two ComfyUI.
 
-### Other
+### Module
 
 - [JK_workflow_NoiseInjectionVariation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_Workflow_NoiseInjectionVariation.json)
 - [JK_workflow_Concept](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Concept.json)
@@ -105,6 +105,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## JK_workflow : txt2img_img2img
 <details>
 <summary>ℹ️ <i>See More Information</i></summary>
+
 ### Introduction
 
 	Hotkey:
@@ -218,6 +219,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## JK_workflow : img2mesh
 <details>
 <summary>ℹ️ <i>See More Information</i></summary>
+
 ### Introduction
 
 	Hotkey:
@@ -267,6 +269,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## JakeUpgrade Custom Nodes
 <details>
 <summary>ℹ️ <i>See More Information</i></summary>
+
 	Misc Nodes
 		SD1.5 Aspect Ratio JK🐉
 		SDXL Aspect Ratio JK🐉
@@ -413,6 +416,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## JakeUpgrade Group Nodes
 <details>
 <summary>ℹ️ <i>See More Information</i></summary>
+
 	Tools
 		JK🐉::CLIPSegMask
 		JK🐉::Pad Image for Outpainting
@@ -432,6 +436,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## Reference Custom Nodes
 <details>
 <summary>ℹ️ <i>See More Information</i></summary>
+
 - [rgthree](https://github.com/rgthree/rgthree-comfy)
 - [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [Efficiency Nodes](https://github.com/jags111/efficiency-nodes-comfyui)
