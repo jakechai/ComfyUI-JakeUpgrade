@@ -41,7 +41,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
 - [JK_workflow_img2mesh_3DGS](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_3DGS.json)
 
-> Tips: ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121 or higher, you should separate those two ComfyUI.
+> [!NOTE]
+> ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121 or higher, you should separate those two ComfyUI.
 
 ### Other
 
@@ -67,12 +68,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [KJ Nodes](https://github.com/kijai/ComfyUI-KJNodes)
 - [Essentials](https://github.com/cubiq/ComfyUI_essentials)
 - [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui)
-- [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
 
 ### txt2img_img2img workflow
 
 - [Adv ControlNet](https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet)
+- [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
@@ -98,10 +99,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy _JK.pack in the replacement folder to `custom_nodes\ComfyUI-Manager\component'.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
 
-> Tips: Make sure to replace _JK.pack again if it's updated.
+> [!NOTE]
+> Make sure to replace _JK.pack again if it's updated.
+
+> img2mesh workflow doesn't need to copy _JK.pack or prompt styles.
 
 ## JK_workflow : txt2img_img2img
-
+<details>
+<summary>ℹ️ <i>See More Information</i></summary>
 ### Introduction
 
 	Hotkey:
@@ -210,9 +215,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/7-2_InOutPaintCkptVae.png)
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/7-3_InOutPaintSubWorkflow.png)
 - In/Out Paint Process Parameters
+</details>
 
 ## JK_workflow : img2mesh
-
+<details>
+<summary>ℹ️ <i>See More Information</i></summary>
 ### Introduction
 
 	Hotkey:
@@ -257,8 +264,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_3DGS.png)
 - Workflow Control Panels: 3DGS
+</details>
 
 ## JakeUpgrade Custom Nodes
+<details>
+<summary>ℹ️ <i>See More Information</i></summary>
 	Misc Nodes
 		SD1.5 Aspect Ratio JK🐉
 		SDXL Aspect Ratio JK🐉
@@ -400,8 +410,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Orbit Poses JK🐉
 		OrbitLists to OrbitPoses JK🐉
 		OrbitPoses to OrbitLists JK🐉
+</details>
 
 ## JakeUpgrade Group Nodes
+<details>
+<summary>ℹ️ <i>See More Information</i></summary>
 	Tools
 		JK🐉::CLIPSegMask
 		JK🐉::Pad Image for Outpainting
@@ -416,6 +429,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::txt2img
 		JK🐉::Inpaint ControlNet
 		JK🐉::Outpaint ControlNet
+</details>
 
 ## Reference Custom Nodes
 Jake Upgrade Nodes are inspired by:
@@ -454,6 +468,7 @@ Jake Upgrade Nodes are inspired by:
 - 2024-09-06 - v1.2.3	Refinement Noise Injection added.
 						txt2prompt and img2prompt workflow added.
 						img2prompt component added.
+- 2024-09-07 - v1.2.4	img2mesh workflow doesn't need _JK.pack, so that doesn't need to install segment anything, VLM nodes, and IF AI tools.
 
 ## Workflow Todo List
 - IC Light
