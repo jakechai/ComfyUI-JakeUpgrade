@@ -309,4 +309,4 @@ NODE_DISPLAY_NAME_MAPPINGS = {
 
 __all__ = ['NODE_CLASS_MAPPINGS']
 
-print("\033[34mJake Upgrade Nodes: \033[92m123 Nodes Loaded\033[0m")
+print("----------Jake Upgrade Nodes Loaded----------")
