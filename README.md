@@ -42,7 +42,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_img2mesh_3DGS](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_3DGS.json)
 
 > [!NOTE]
-> ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121 or higher, you should separate those two ComfyUI.
+> ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121 or higher, you should separate those two ComfyUI.  
+> [CXH joy caption](https://github.com/StartHua/Comfyui_CXH_joy_caption) conflicts with [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes) and is not included in the prompt generation workflow.
 
 ### Module
 
@@ -78,17 +79,17 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
-- [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - [Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - [StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
+- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
 - [Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
 - [One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
-- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
 - [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
+- [Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
+- [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
 - [IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
-- [Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
 
 ### img2mesh workflow
 
@@ -474,8 +475,3 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 						txt2prompt and img2prompt workflow added.
 						img2prompt component added.
 - 2024-09-07 - v1.2.4	img2mesh workflow doesn't need _JK.pack, so that doesn't need to install segment anything, VLM nodes, and IF AI tools.
-
-## Workflow Todo List
-- IC Light
-- Layer Diffuse
-
