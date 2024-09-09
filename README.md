@@ -150,6 +150,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Switch NNLatentUpscale version to SDXL
 		Set Ultimate SD Upscale Tile size to 1024
 		Use Load ControNet++ Model of ComfyUI Advanced ControNet to load xinsir controlnet union inpaint/outpaint for Inpaint/Outpaint ControlNet in I/O Paint process
+		Enable Black Pixel switch for Inpaint/Outpaint ControlNet in I/O Paint process
 		(If it is SD15, choose the opposite)
 
 	Other:
@@ -475,3 +476,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 						txt2prompt and img2prompt workflow added.
 						img2prompt component added.
 - 2024-09-07 - v1.2.4	img2mesh workflow doesn't need _JK.pack, so that doesn't need to install segment anything, VLM nodes, and IF AI tools.
+- 2024-09-09 - v1.2.5	Clip l, clip g, t5xxl texture encode logic upgrade. 
+						Clip l & g switch added.
+						Negative g switch added.
+						SDXL Clip Text Encode Target Resolution Scale added.

@@ -1095,10 +1095,10 @@ class BaseModelParameters_JK:
                 "vae_name": ("STRING", {"forceInput": True}),
                 "base_seed": ("INT", {"forceInput": True}),
                 #
-                "positive": ("STRING", {"default": '', "multiline": True}),
-                "positive_t5xxl": ("STRING", {"default": '', "multiline": True}),
-                "negative": ("STRING", {"default": '', "multiline": True}),
-                "negative_t5xxl": ("STRING", {"default": '', "multiline": True}),
+                "positive_clip_l": ("STRING", {"default": '', "multiline": True}),
+                "positive_clip_g_or_t5xxl": ("STRING", {"default": '', "multiline": True}),
+                "negative_clip_l": ("STRING", {"default": '', "multiline": True}),
+                "negative_clip_g_or_t5xxl": ("STRING", {"default": '', "multiline": True}),
                 "append_input_prompt": ("BOOLEAN", {"default": False},),
                 "variation": ("STRING", {"default": '', "multiline": True}),
                 "resolution": (["Custom", "SD15 512x512", "SD15 680x512", "SD15 768x512", "SD15 912x512", "SD15 952x512", "SD15 1024x512",
@@ -1136,13 +1136,13 @@ class BaseModelParameters_JK:
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
-    def get_value(self, ckpt_name, vae_name, base_seed, positive, positive_t5xxl, negative, negative_t5xxl, append_input_prompt, variation, resolution, custom_width, custom_height, swap_dimensions, steps, sampler_name, scheduler, cfg, tiling, specified_vae, stop_at_clip_layer, img2img, image_resize, img2img_denoise, batch_size, save_ckpt_hash, image=None, input_positive=None, input_negative=None):
+    def get_value(self, ckpt_name, vae_name, base_seed, positive_clip_l, positive_clip_g_or_t5xxl, negative_clip_l, negative_clip_g_or_t5xxl, append_input_prompt, variation, resolution, custom_width, custom_height, swap_dimensions, steps, sampler_name, scheduler, cfg, tiling, specified_vae, stop_at_clip_layer, img2img, image_resize, img2img_denoise, batch_size, save_ckpt_hash, image=None, input_positive=None, input_negative=None):
         
         if append_input_prompt == True and input_positive != None and input_negative != None:
             if input_positive != "":
-                positive = f"{input_positive},{positive}"
+                positive_clip_g_or_t5xxl = f"{input_positive},{positive_clip_g_or_t5xxl}"
             if input_negative != "":
-                negative = f"{input_negative},{negative}"
+                negative_clip_g_or_t5xxl = f"{input_negative},{negative_clip_g_or_t5xxl}"
         
         if resolution == "Custom":
             width, height = custom_width, custom_height
@@ -1151,7 +1151,7 @@ class BaseModelParameters_JK:
         
         img2img_denoise = 1.0 if img2img == False else img2img_denoise
         
-        pipe_model = (ckpt_name, stop_at_clip_layer, positive, positive_t5xxl, negative, negative_t5xxl, variation, base_seed, steps, sampler_name, scheduler, cfg, img2img_denoise, tiling, specified_vae, vae_name)
+        pipe_model = (ckpt_name, stop_at_clip_layer, positive_clip_l, positive_clip_g_or_t5xxl, negative_clip_l, negative_clip_g_or_t5xxl, variation, base_seed, steps, sampler_name, scheduler, cfg, img2img_denoise, tiling, specified_vae, vae_name)
         pipe_image = (image, width, height, batch_size, image_resize, img2img)
         pipe_image_swap = (image, height, width, batch_size, image_resize, img2img)
         
@@ -1189,13 +1189,13 @@ class BaseModelParametersExtract_JK:
         }
 
     RETURN_TYPES = ("STRING", "STRING", "INT", "STRING", "STRING", "STRING", "STRING", "STRING", "INT", "INT", "STRING", "STRING", "FLOAT", "FLOAT", "BOOLEAN", "STRING")
-    RETURN_NAMES = ("Checkpoint", "Tiling", "Stop_Layer", "Positive", "Positive_Clip", "Negative", "Negative_Clip", "Variation", "Seed", "Steps", "Sampler", "Schedular", "Cfg", "Denoise", "Specified_VAE", "VAE")
+    RETURN_NAMES = ("Checkpoint", "Tiling", "Stop_Layer", "Positive_l", "Positive_g", "Negative_l", "Negative_g", "Variation", "Seed", "Steps", "Sampler", "Schedular", "Cfg", "Denoise", "Specified_VAE", "VAE")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
     
     def flush(self, base_model_pipe=None):
-        ckpt_name, stop_at_clip_layer, positive_prompt, positive_clip, negative_prompt, negative_clip, variation, seed, steps, sampler_name, scheduler, cfg, img2img_denoise, tiling, specified_vae, vae_name = base_model_pipe
-        return (ckpt_name, tiling, stop_at_clip_layer, positive_prompt, positive_clip, negative_prompt, negative_clip, variation, seed, steps, sampler_name, scheduler, cfg, img2img_denoise, specified_vae, vae_name)
+        ckpt_name, stop_at_clip_layer, positive_l, positive_g, negative_l, negative_g, variation, seed, steps, sampler_name, scheduler, cfg, img2img_denoise, tiling, specified_vae, vae_name = base_model_pipe
+        return (ckpt_name, tiling, stop_at_clip_layer, positive_l, positive_g, negative_l, negative_g, variation, seed, steps, sampler_name, scheduler, cfg, img2img_denoise, specified_vae, vae_name)
 
 class BaseImageParametersExtract_JK:
     def __init__(self):
