@@ -150,6 +150,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Switch Image Upscale ControlNet Depth|Tile to sdxl version (in Upscale Sub Workflow JK🐉)
 		Switch NNLatentUpscale version to SDXL
 		Set Ultimate SD Upscale Tile size to 1024
+		Switch Detailer's Add Detail Lora to SDXL version
 		Use Load ControNet++ Model of ComfyUI Advanced ControNet to load xinsir controlnet union inpaint/outpaint for Inpaint/Outpaint ControlNet in I/O Paint process
 		Enable Black Pixel switch for Inpaint/Outpaint ControlNet in I/O Paint process
 		(If it is SD15, choose the opposite)
@@ -481,3 +482,4 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 						Clip l & g switch added.
 						Negative g switch added.
 						SDXL Clip Text Encode Target Resolution Scale added.
+- 2024-09-10 - v1.2.6	detailer: add detail lora
