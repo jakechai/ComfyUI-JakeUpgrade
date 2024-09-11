@@ -3079,9 +3079,9 @@ class CR_OrbitPoseInputSwitch_JK:
 #---------------------------------------------------------------------------------------------------------------------#
 DEFAULT_BOOL = ("BOOLEAN", {"default": False})
 DEFAULT_STRING = ("STRING", {"default": ""})
-DEFAULT_FLOAT = ("FLOAT", {"default": 0.0})
+DEFAULT_FLOAT = ("FLOAT", {"default": 0.0, "step": 0.0001})
 DEFAULT_INT = ("INT", {"default": 0})
-DEFAULT_NUMBER = ("NUMBER", {"default": 0.0})
+DEFAULT_NUMBER = ("NUMBER", {"default": 0.0, "step": 0.0001})
 number: TypeAlias = int | float
 Vec2: TypeAlias = tuple[float, float]
 VEC2_ZERO = (0.0, 0.0)
@@ -3826,7 +3826,7 @@ class NumberToInt_JK:
 class FloatToNumber_JK:
     @classmethod
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
-        return {"required": {"a": ("FLOAT", {"default": 0.0})}}
+        return {"required": {"a": ("FLOAT", {"default": 0.0, "step": 0.0001})}}
 
     RETURN_TYPES = ("NUMBER",)
     FUNCTION = "op"
@@ -3839,7 +3839,7 @@ class FloatToNumber_JK:
 class NumberToFloat_JK:
     @classmethod
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
-        return {"required": {"a": ("NUMBER", {"default": 0.0})}}
+        return {"required": {"a": ("NUMBER", {"default": 0.0, "step": 0.0001})}}
 
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "op"
@@ -3854,8 +3854,8 @@ class ComposeVec2_JK:
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
         return {
             "required": {
-                "x": ("FLOAT", {"default": 0.0}),
-                "y": ("FLOAT", {"default": 0.0}),
+                "x": ("FLOAT", {"default": 0.0, "step": 0.0001}),
+                "y": ("FLOAT", {"default": 0.0, "step": 0.0001}),
             }
         }
 
@@ -3872,7 +3872,7 @@ class FillVec2_JK:
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
         return {
             "required": {
-                "a": ("FLOAT", {"default": 0.0}),
+                "a": ("FLOAT", {"default": 0.0, "step": 0.0001}),
             }
         }
 
@@ -3902,9 +3902,9 @@ class ComposeVec3_JK:
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
         return {
             "required": {
-                "x": ("FLOAT", {"default": 0.0}),
-                "y": ("FLOAT", {"default": 0.0}),
-                "z": ("FLOAT", {"default": 0.0}),
+                "x": ("FLOAT", {"default": 0.0, "step": 0.0001}),
+                "y": ("FLOAT", {"default": 0.0, "step": 0.0001}),
+                "z": ("FLOAT", {"default": 0.0, "step": 0.0001}),
             }
         }
 
@@ -3921,7 +3921,7 @@ class FillVec3_JK:
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
         return {
             "required": {
-                "a": ("FLOAT", {"default": 0.0}),
+                "a": ("FLOAT", {"default": 0.0, "step": 0.0001}),
             }
         }
 
@@ -3951,10 +3951,10 @@ class ComposeVec4_JK:
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
         return {
             "required": {
-                "x": ("FLOAT", {"default": 0.0}),
-                "y": ("FLOAT", {"default": 0.0}),
-                "z": ("FLOAT", {"default": 0.0}),
-                "w": ("FLOAT", {"default": 0.0}),
+                "x": ("FLOAT", {"default": 0.0, "step": 0.0001}),
+                "y": ("FLOAT", {"default": 0.0, "step": 0.0001}),
+                "z": ("FLOAT", {"default": 0.0, "step": 0.0001}),
+                "w": ("FLOAT", {"default": 0.0, "step": 0.0001}),
             }
         }
 
@@ -3971,7 +3971,7 @@ class FillVec4_JK:
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
         return {
             "required": {
-                "a": ("FLOAT", {"default": 0.0}),
+                "a": ("FLOAT", {"default": 0.0, "step": 0.0001}),
             }
         }
 
@@ -4242,9 +4242,9 @@ class EvaluateFloats_JK:
         return {"required": {
             "python_expression": ("STRING", {"default": "((a + b) - c) / 2", "multiline": False}), },
             "optional": {
-                "a": ("FLOAT", {"default": 0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 1}),
-                "b": ("FLOAT", {"default": 0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 1}),
-                "c": ("FLOAT", {"default": 0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 1}), },
+                "a": ("FLOAT", {"default": 0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 0.0001}),
+                "b": ("FLOAT", {"default": 0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 0.0001}),
+                "c": ("FLOAT", {"default": 0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 0.0001}), },
         }
 
     RETURN_TYPES = ("INT", "FLOAT", "STRING",)
