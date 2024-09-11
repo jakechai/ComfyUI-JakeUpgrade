@@ -89,6 +89,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
 - [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
 - [Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
+- [Merlin Magic Photo Prompter](https://github.com/Xclbr7/ComfyUI-Merlin)
 - [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
 - [IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
@@ -484,4 +485,5 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 						Clip l & g switch added.
 						Negative g switch added.
 						SDXL Clip Text Encode Target Resolution Scale added.
-- 2024-09-10 - v1.2.6	detailer: add detail lora
+- 2024-09-10 - v1.2.6	detailer: add detail lora.
+- 2024-09-11 - v1.2.7	Magic Photo Prompter added.
