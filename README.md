@@ -44,7 +44,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 > [!NOTE]
 > ComfyUI-3D-Pack needs pytorch 2.3.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.3.1+cu121 or higher, you should separate those two ComfyUI.  
-> ComfyUI-3D-Pack 3DMesh | 3DGS Preview not working seems to be related to the frontend change of ComfyUI. Fall back to the legacy frontend by adding `--front-end-version Comfy-Org/ComfyUI_legacy_frontend@latest` to the command line argument. [ComfyUI/pull/4379](https://github.com/comfyanonymous/ComfyUI/pull/4379)  
+> ComfyUI-3D-Pack 3DMesh | 3DGS Preview not working seems to be related to the frontend change of ComfyUI. Fall back to the legacy frontend by adding `--front-end-version Comfy-Org/ComfyUI_legacy_frontend@latest` to the command line argument. [ComfyUI/pull/4379](https://github.com/comfyanonymous/ComfyUI/pull/4379).  
 > [CXH joy caption](https://github.com/StartHua/Comfyui_CXH_joy_caption) conflicts with [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes) and is not included in the prompt generation workflow.
 
 ### Module
@@ -103,7 +103,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
 
 > [!NOTE]
-> Make sure to replace _JK.pack again if it's updated. img2mesh workflow doesn't need to copy _JK.pack or prompt styles.
+> Make sure to replace _JK.pack again if it's updated.  
+> img2mesh workflow doesn't need to copy _JK.pack or prompt styles.
 
 ## JK_workflow : txt2img_img2img
 <details>
