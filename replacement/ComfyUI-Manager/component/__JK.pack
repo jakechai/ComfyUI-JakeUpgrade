@@ -2665,6 +2665,736 @@
         "packname": "\ud83d\udc09 JK",
         "version": "1.0"
     },
+    "\ud83d\udc09 JK::Image RemBG": {
+        "author": "Jake",
+        "category": "\ud83d\udc12 Tools",
+        "config": {
+            "0": {},
+            "1": {},
+            "10": {
+                "input": {
+                    "channel": {
+                        "visible": false
+                    }
+                }
+            },
+            "11": {},
+            "12": {
+                "input": {
+                    "resize_source": {
+                        "visible": false
+                    },
+                    "x": {
+                        "visible": false
+                    },
+                    "y": {
+                        "visible": false
+                    }
+                }
+            },
+            "2": {
+                "output": {
+                    "0": {
+                        "name": "RGB"
+                    }
+                }
+            },
+            "3": {},
+            "4": {
+                "output": {
+                    "0": {
+                        "name": "RGBA"
+                    },
+                    "1": {
+                        "name": "MASK",
+                        "visible": true
+                    }
+                }
+            },
+            "5": {},
+            "6": {},
+            "7": {
+                "output": {
+                    "2": {
+                        "visible": false
+                    }
+                }
+            },
+            "8": {},
+            "9": {
+                "input": {
+                    "height": {
+                        "visible": false
+                    },
+                    "value": {
+                        "name": "BG Grayscale"
+                    },
+                    "width": {
+                        "visible": false
+                    }
+                }
+            }
+        },
+        "datetime": 1726197949177,
+        "external": [],
+        "links": [
+            [
+                3,
+                0,
+                4,
+                0,
+                3,
+                "REMBG_SESSION"
+            ],
+            [
+                0,
+                0,
+                4,
+                1,
+                1,
+                "*"
+            ],
+            [
+                0,
+                0,
+                5,
+                0,
+                1,
+                "*"
+            ],
+            [
+                4,
+                1,
+                6,
+                0,
+                5,
+                "MASK"
+            ],
+            [
+                5,
+                0,
+                1,
+                0,
+                9,
+                "IMAGE"
+            ],
+            [
+                5,
+                0,
+                7,
+                0,
+                9,
+                "IMAGE"
+            ],
+            [
+                6,
+                0,
+                8,
+                0,
+                10,
+                "IMAGE"
+            ],
+            [
+                7,
+                0,
+                9,
+                0,
+                6,
+                "INT"
+            ],
+            [
+                7,
+                1,
+                9,
+                1,
+                6,
+                "INT"
+            ],
+            [
+                8,
+                0,
+                10,
+                0,
+                11,
+                "IMAGE"
+            ],
+            [
+                9,
+                0,
+                11,
+                0,
+                7,
+                "MASK"
+            ],
+            [
+                11,
+                0,
+                12,
+                0,
+                8,
+                "IMAGE"
+            ],
+            [
+                1,
+                0,
+                12,
+                1,
+                2,
+                "IMAGE"
+            ],
+            [
+                10,
+                0,
+                12,
+                2,
+                12,
+                "MASK"
+            ],
+            [
+                12,
+                0,
+                2,
+                0,
+                4,
+                "IMAGE"
+            ]
+        ],
+        "nodes": [
+            {
+                "flags": {},
+                "id": -1,
+                "index": 0,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 1,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 3560,
+                    "1": 2550
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 1,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 5,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 4020,
+                    "1": 2640
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {
+                    "collapsed": false
+                },
+                "id": -1,
+                "index": 2,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "image",
+                        "type": "IMAGE"
+                    }
+                ],
+                "mode": 0,
+                "order": 12,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "IMAGE",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "IMAGE"
+                    }
+                ],
+                "pos": {
+                    "0": 4890,
+                    "1": 2620
+                },
+                "properties": {
+                    "Node name for S&R": "ImageListToBatch+"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 26
+                },
+                "type": "ImageListToBatch+"
+            },
+            {
+                "flags": {
+                    "collapsed": false
+                },
+                "id": -1,
+                "index": 3,
+                "inputs": [],
+                "mode": 0,
+                "order": 0,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "REMBG_SESSION",
+                        "shape": 3,
+                        "type": "REMBG_SESSION"
+                    }
+                ],
+                "pos": {
+                    "0": 3330,
+                    "1": 2640
+                },
+                "properties": {
+                    "Node name for S&R": "TransparentBGSession+"
+                },
+                "size": {
+                    "0": 315,
+                    "1": 82
+                },
+                "type": "TransparentBGSession+",
+                "widgets_values": [
+                    "base",
+                    true
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": false
+                },
+                "id": -1,
+                "index": 4,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "rembg_session",
+                        "slot_index": 0,
+                        "type": "REMBG_SESSION"
+                    },
+                    {
+                        "link": null,
+                        "name": "image",
+                        "slot_index": 1,
+                        "type": "IMAGE"
+                    }
+                ],
+                "mode": 0,
+                "order": 2,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "IMAGE",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "IMAGE"
+                    },
+                    {
+                        "links": [],
+                        "name": "MASK",
+                        "shape": 3,
+                        "slot_index": 1,
+                        "type": "MASK"
+                    }
+                ],
+                "pos": {
+                    "0": 3690,
+                    "1": 2640
+                },
+                "properties": {
+                    "Node name for S&R": "ImageRemoveBackground+"
+                },
+                "size": {
+                    "0": 270,
+                    "1": 50
+                },
+                "type": "ImageRemoveBackground+"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 5,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "image",
+                        "type": "IMAGE"
+                    }
+                ],
+                "mode": 0,
+                "order": 3,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "IMAGE",
+                        "shape": 6,
+                        "slot_index": 0,
+                        "type": "IMAGE"
+                    }
+                ],
+                "pos": {
+                    "0": 3770,
+                    "1": 2580
+                },
+                "properties": {
+                    "Node name for S&R": "ImageBatchToList+"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 26
+                },
+                "type": "ImageBatchToList+"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 6,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "mask",
+                        "type": "MASK"
+                    }
+                ],
+                "mode": 0,
+                "order": 4,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "IMAGE",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "IMAGE"
+                    }
+                ],
+                "pos": {
+                    "0": 4020,
+                    "1": 2690
+                },
+                "properties": {
+                    "Node name for S&R": "MaskToImage"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 26
+                },
+                "type": "MaskToImage"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 7,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "image",
+                        "type": "IMAGE"
+                    }
+                ],
+                "mode": 0,
+                "order": 6,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "width",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "INT"
+                    },
+                    {
+                        "links": [],
+                        "name": "height",
+                        "shape": 3,
+                        "slot_index": 1,
+                        "type": "INT"
+                    },
+                    {
+                        "links": null,
+                        "name": "count",
+                        "shape": 3,
+                        "type": "INT"
+                    }
+                ],
+                "pos": {
+                    "0": 4020,
+                    "1": 2650
+                },
+                "properties": {
+                    "Node name for S&R": "GetImageSize+"
+                },
+                "size": {
+                    "0": 160,
+                    "1": 66
+                },
+                "type": "GetImageSize+"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 8,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "image",
+                        "type": "IMAGE"
+                    }
+                ],
+                "mode": 0,
+                "order": 7,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "IMAGE",
+                        "shape": 6,
+                        "slot_index": 0,
+                        "type": "IMAGE"
+                    }
+                ],
+                "pos": {
+                    "0": 4220,
+                    "1": 2690
+                },
+                "properties": {
+                    "Node name for S&R": "ImageBatchToList+"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 26
+                },
+                "type": "ImageBatchToList+"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 9,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "width",
+                        "type": "INT",
+                        "widget": {
+                            "name": "width"
+                        }
+                    },
+                    {
+                        "link": null,
+                        "name": "height",
+                        "type": "INT",
+                        "widget": {
+                            "name": "height"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 8,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "MASK",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "MASK"
+                    }
+                ],
+                "pos": {
+                    "0": 4220,
+                    "1": 2650
+                },
+                "properties": {
+                    "Node name for S&R": "SolidMask"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 80
+                },
+                "type": "SolidMask",
+                "widgets_values": [
+                    0,
+                    512,
+                    512
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 10,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "image",
+                        "type": "IMAGE"
+                    }
+                ],
+                "mode": 0,
+                "order": 9,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "MASK",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "MASK"
+                    }
+                ],
+                "pos": {
+                    "0": 4430,
+                    "1": 2690
+                },
+                "properties": {
+                    "Node name for S&R": "ImageToMask"
+                },
+                "size": {
+                    "0": 315,
+                    "1": 58
+                },
+                "type": "ImageToMask",
+                "widgets_values": [
+                    "red"
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 11,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "mask",
+                        "type": "MASK"
+                    }
+                ],
+                "mode": 0,
+                "order": 10,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "IMAGE",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "IMAGE"
+                    }
+                ],
+                "pos": {
+                    "0": 4430,
+                    "1": 2650
+                },
+                "properties": {
+                    "Node name for S&R": "MaskToImage"
+                },
+                "size": {
+                    "0": 180,
+                    "1": 30
+                },
+                "type": "MaskToImage"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 12,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "destination",
+                        "type": "IMAGE"
+                    },
+                    {
+                        "link": null,
+                        "name": "source",
+                        "type": "IMAGE"
+                    },
+                    {
+                        "link": null,
+                        "name": "mask",
+                        "type": "MASK"
+                    }
+                ],
+                "mode": 0,
+                "order": 11,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "IMAGE",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "IMAGE"
+                    }
+                ],
+                "pos": {
+                    "0": 4650,
+                    "1": 2620
+                },
+                "properties": {
+                    "Node name for S&R": "ImageCompositeMasked"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 150
+                },
+                "type": "ImageCompositeMasked",
+                "widgets_values": [
+                    0,
+                    0,
+                    false
+                ]
+            }
+        ],
+        "packname": "\ud83d\udc09 JK",
+        "version": "1.0"
+    },
     "\ud83d\udc09 JK::Image to Prompt (LLava Local)": {
         "author": "Jake",
         "category": "\ud83d\udc12 Tools",
@@ -3920,7 +4650,7 @@
         ],
         "packname": "\ud83d\udc09 JK",
         "version": "1.0"
-    },    
+    },
     "\ud83d\udc09 JK::Inpaint Checkpoint": {
         "author": "Jake",
         "category": "\ud83d\udc19 Workflow",
