@@ -158,8 +158,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	Other:
 		1. Nodes State JK🐉 uses target nodes' id to control their active | mute | bypass mode. Need to update node_id_list if you make a copy.
 		2. The order of Detailer Progress and Upscale Progress can be swapped. Please avoid to form loops. 
-<details>
+</details>
 
+<details>
 <summary><b>Explanation</b></summary>
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0-1_OverallWorkflow.png)
