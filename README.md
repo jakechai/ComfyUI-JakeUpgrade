@@ -66,21 +66,20 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [pythongosssss](https://github.com/pythongosssss/ComfyUI-Custom-Scripts)
 - [ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
 - [Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
-- [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 - [KJ Nodes](https://github.com/kijai/ComfyUI-KJNodes)
 - [Essentials](https://github.com/cubiq/ComfyUI_essentials)
-- [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui)
 - [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
 
 ### txt2img_img2img workflow
 
-- [Adv ControlNet](https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet)
+- [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
+- [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui)
+- [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
-- [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - [Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - [StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
@@ -154,7 +153,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Switch NNLatentUpscale version to SDXL
 		Set Ultimate SD Upscale Tile size to 1024
 		Switch Detailer's Add Detail Lora to SDXL version
-		Use Load ControNet++ Model of ComfyUI Advanced ControNet to load xinsir controlnet union inpaint/outpaint for Inpaint/Outpaint ControlNet in I/O Paint process
+		Use Load ControNet Model and set Union ControlNet type to load xinsir controlnet union in I/O Paint process
 		Enable Black Pixel switch for Inpaint/Outpaint ControlNet in I/O Paint process
 		(If it is SD15, choose the opposite)
 
@@ -430,6 +429,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::SegAnythingMask
 		JK🐉::Image to Prompt (LLava Local)
 		JK🐉::Image to Prompt Advanced (LLava Local)
+		JK🐉::Image RemBG
 	Workflow
 		JK🐉::Concept
 		JK🐉::Inpaint Simple
@@ -487,3 +487,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 						SDXL Clip Text Encode Target Resolution Scale added.
 - 2024-09-10 - v1.2.6	detailer: add detail lora.
 - 2024-09-11 - v1.2.7	Magic Photo Prompter added.
+- 2024-09-13 - v1.2.8	Use Comfy UI default set union controlnet type to load xinsir sdxl controlnet union.
+						Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows.
+						Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.
