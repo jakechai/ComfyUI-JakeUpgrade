@@ -108,9 +108,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ## JK_workflow : txt2img_img2img
 <details>
-<summary>ℹ️ <i>See More Information</i></summary>
-
-### Introduction
+<summary><b>Introduction</b></summary>
 
 	Hotkey:
 		0: usage guide
@@ -160,8 +158,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	Other:
 		1. Nodes State JK🐉 uses target nodes' id to control their active | mute | bypass mode. Need to update node_id_list if you make a copy.
 		2. The order of Detailer Progress and Upscale Progress can be swapped. Please avoid to form loops. 
+<details>
 
-### Explanation
+<summary><b>Explanation</b></summary>
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/0-1_OverallWorkflow.png)
 - Overall Workflow
@@ -224,9 +223,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ## JK_workflow : img2mesh
 <details>
-<summary>ℹ️ <i>See More Information</i></summary>
-
-### Introduction
+<summary><b>Introduction</b></summary>
 
 	Hotkey:
 		\`: Main Workflow Control Pannels
@@ -241,8 +238,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	Other:
 		TripoSR workflow is not included because it is straightforward.
 		Triplane workflow is not included because it is straightforward.
+</details>
 
-### Explanation
+<details>
+<summary><b>Explanation</b></summary>
 
 ![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh-types.png)
 - Workflow breakdown: img2mesh types
@@ -272,9 +271,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - Workflow Control Panels: 3DGS
 </details>
 
-## JakeUpgrade Custom Nodes
+## JakeUpgrade Nodes
 <details>
-<summary>ℹ️ <i>See More Information</i></summary>
+<summary><b>Custom Nodes</b></summary>
 
 	Misc Nodes
 		SD1.5 Aspect Ratio JK🐉
@@ -419,9 +418,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		OrbitPoses to OrbitLists JK🐉
 </details>
 
-## JakeUpgrade Group Nodes
 <details>
-<summary>ℹ️ <i>See More Information</i></summary>
+<summary><b>Group Nodes</b></summary>
 
 	Tools
 		JK🐉::CLIPSegMask
@@ -441,9 +439,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 </details>
 
 ## Reference Custom Nodes
-<details>
-<summary>ℹ️ <i>See More Information</i></summary>
-
 - [rgthree](https://github.com/rgthree/rgthree-comfy)
 - [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [Efficiency Nodes](https://github.com/jags111/efficiency-nodes-comfyui)
@@ -454,7 +449,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [ComfyMath](https://github.com/evanspearman/ComfyMath)
 - [Embedding Picker](https://github.com/Tropfchen/ComfyUI-Embedding_Picker)
 - [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
-</details>
 
 ## Changelog
 - 2024-06-23 - v1.0.0	released.
