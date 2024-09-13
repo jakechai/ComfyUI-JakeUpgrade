@@ -169,6 +169,7 @@ upscalemodels = {
     "1x-ITF-SkinDiffDetail-Lite-v1.pth": float(1.0),
     "4x_NMKD-Siax_200k.pth": float(4.0),
     "4x_Nickelback_70000G.pth": float(4.0),
+    "4xFaceUpDAT.pth": float(4.0),
     "8x_NMKD-Superscale_150000_G.pth": float(8.0),
     "BSRGANx2.pth": float(2.0),
     "BSRGANx4.pth": float(4.0),
