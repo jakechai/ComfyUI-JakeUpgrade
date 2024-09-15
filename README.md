@@ -424,19 +424,20 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 	Tools
 		JK🐉::CLIPSegMask
-		JK🐉::Pad Image for Outpainting
-		JK🐉::SegAnythingMask
+		JK🐉::Image RemBG
 		JK🐉::Image to Prompt (LLava Local)
 		JK🐉::Image to Prompt Advanced (LLava Local)
-		JK🐉::Image RemBG
+		JK🐉::Pad Image for Outpainting
+		JK🐉::SegAnythingMask		
 	Workflow
 		JK🐉::Concept
 		JK🐉::Inpaint Simple
 		JK🐉::Inpaint Checkpoint
+		JK🐉::Inpaint ControlNet			
+		JK🐉::Outpaint Simple
 		JK🐉::Outpaint Checkpoint
-		JK🐉::txt2img
-		JK🐉::Inpaint ControlNet
 		JK🐉::Outpaint ControlNet
+		JK🐉::txt2img
 </details>
 
 ## Reference Custom Nodes
@@ -485,3 +486,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2024-09-13 - v1.2.8	Use Comfy UI default set union controlnet type to load xinsir sdxl controlnet union.
 						Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows.
 						Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.
+- 2024-09-13 - v1.2.9	Inpaint Simple updated. Outpaint Simple added.
+						txt2img | img2img | inpaint workflow updated.
+						In/Out Paint to Refinement process added.
+						Upscale to Refinment process added.
