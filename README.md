@@ -490,6 +490,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 						txt2img | img2img | inpaint workflow updated.
 						In/Out Paint to Refinement process added.
 						Upscale to Refinment process added.
-- 2024-09-13 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated.
+- 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated.
 						Inpaint and txt2img/img2img workflows updated.
 						SD3/Flux Inpaint ControlNet added.
