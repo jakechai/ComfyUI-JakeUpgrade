@@ -486,7 +486,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2024-09-13 - v1.2.8	Use Comfy UI default set union controlnet type to load xinsir sdxl controlnet union.
 						Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows.
 						Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.
-- 2024-09-13 - v1.2.9	Inpaint Simple updated. Outpaint Simple added.
+- 2024-09-15 - v1.2.9	Inpaint Simple updated. Outpaint Simple added.
 						txt2img | img2img | inpaint workflow updated.
 						In/Out Paint to Refinement process added.
 						Upscale to Refinment process added.
