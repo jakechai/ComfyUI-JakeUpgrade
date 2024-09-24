@@ -493,3 +493,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated.
 						Inpaint and txt2img/img2img workflows updated.
 						SD3/Flux Inpaint ControlNet added.
+- 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux
+						SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly.
+						Replace SD3 ControlNet Apply with new ControlNet Apply Node.
