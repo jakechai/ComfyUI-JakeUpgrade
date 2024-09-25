@@ -49,13 +49,15 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ### Module
 
+- [JK_workflow_Refine](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_04_Refine.json)
+- [JK_workflow_Upscale 1st](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_05_Upscale_1st.json)
+- [JK_workflow_Upscale 2nd](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_05_Upscale_2nd.json)
+- [JK_workflow_Detailer](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_06_Detailer.json)
+- [JK_workflow_Inpaint](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow__07_Inpaint.json)
 - [JK_workflow_NoiseInjectionVariation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_Workflow_NoiseInjectionVariation.json)
 - [JK_workflow_Concept](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Concept.json)
 - [JK_workflow_Seamless Texture](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Seamless%20Texture.json)
-- [JK_workflow_Detailer](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Detailer.json)
-- [JK_workflow_Inpaint](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Inpaint.json)
 - [JK_workflow_txt2img_Simple](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_txt2img_Simple.json)
-- [JK_workflow_Upscale](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Upscale.json)
 - [JK_Workflow_Mesh-ReMesh_Projection](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_Workflow_Mesh-ReMesh_Projection.json)
 
 ## Required Custom Nodes
@@ -138,7 +140,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		In Detailer image saving, remove noise_jinection_metadata, refine_metadata or upscale_metadata link if not using Noise Injection or refine process.
 
 	SDXL switches:
-		Image Resolution
+		Image Resolution | AIO resolution
 		Load SDXL Ckpt | Vae for Base | Refine | Upscale | Detailer | In/Out Paint
 		FreeU SDXL settings
 		Auto Variation SDXL settings
@@ -151,6 +153,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Switch NNLatentUpscale version to SDXL
 		Set Ultimate SD Upscale Tile size to 1024
 		Switch Detailer's Add Detail Lora to SDXL version
+		Switch Hand Fix Depth ControlNet version to SDXL
 		Use Load ControNet Model and set Union ControlNet type to load xinsir controlnet union in I/O Paint process
 		Enable Black Pixel switch for Inpaint/Outpaint ControlNet in I/O Paint process
 		(If it is SD15, choose the opposite)
@@ -493,6 +496,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated.
 						Inpaint and txt2img/img2img workflows updated.
 						SD3/Flux Inpaint ControlNet added.
-- 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux
+- 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux.
 						SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly.
 						Replace SD3 ControlNet Apply with new ControlNet Apply Node.
+- 2024-09-25 - v1.3.2	AIO Preprocessor added for txt2img | img2img workflow. 
+						Detailer, Upscale workflows updated. Refine workflow added.
