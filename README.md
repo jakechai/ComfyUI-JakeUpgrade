@@ -53,7 +53,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_Upscale 1st](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_05_Upscale_1st.json)
 - [JK_workflow_Upscale 2nd](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_05_Upscale_2nd.json)
 - [JK_workflow_Detailer](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_06_Detailer.json)
-- [JK_workflow_Inpaint](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow__07_Inpaint.json)
+- [JK_workflow_Inpaint](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_07_Inpaint.json)
 - [JK_workflow_NoiseInjectionVariation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_Workflow_NoiseInjectionVariation.json)
 - [JK_workflow_Concept](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Concept.json)
 - [JK_workflow_Seamless Texture](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Seamless%20Texture.json)
