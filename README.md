@@ -99,13 +99,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
 
-### Install and copy | replace files
+### Install and copy | replace files (optional)
 
-- [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy _JK.pack in the replacement folder to `custom_nodes\ComfyUI-Manager\component'.
-- [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles (optional).
+- [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` in the replacement folder to `custom_nodes\ComfyUI-Manager\component`.
+- [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles.
 
 > [!NOTE]
-> - Make sure to replace _JK.pack again if it's updated.  
 > - img2mesh workflow doesn't need to copy _JK.pack or prompt styles.
 
 ## JK_workflow : txt2img_img2img
