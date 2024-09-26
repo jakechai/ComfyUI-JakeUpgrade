@@ -104,9 +104,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` in the replacement folder to `custom_nodes\ComfyUI-Manager\component`.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles.
 
-> [!NOTE]
-> - img2mesh workflow doesn't need to copy _JK.pack or prompt styles.
-
 ## JK_workflow : txt2img_img2img
 <details>
 <summary><b>Introduction</b></summary>
