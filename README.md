@@ -460,52 +460,53 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## Changelog
 <details>
 <summary><b>Previous Version</b></summary>
-- 2024-06-23 - v1.0.0	released.  
-- 2024-07-11 - v1.0.6	Noise Injection for Upscale Workflow.  
-- 2024-07-16 - v1.0.7	Single Image to Mesh Workflow updated.  
-- 2024-07-21 - v1.0.8	Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.  
-- 2024-07-22 - v1.0.9	3DGS workflow added.  
-- 2024-07-24 - v1.1.0	img2mesh workflow updated. Craftsman Mesh added. 
-						Three OrbitPoses nodes been added to 3D-Pack.  
-- 2024-07-31 - v1.1.1	Prompt Combine node added.  
-- 2024-08-03 - v1.1.2	Resize to Focus added to image2mesh workflow.  
-- 2024-08-21 - v1.1.3	Random Beats node added (not for AIGC).  
-- 2024-09-01 - v1.2.0	SD3 workflow added. Noise Injection (Inspire) added. 
-						Refine, Upscale, and Detailer process major updated. 
-						SD15 Hand Fix supports SDXL and SD3 workflow. 
-						SDXL IPAdapter supports SD3 workflow. 
-						NoiseInjection Component and workflow added.  
-- 2024-09-04 - v1.2.1	In/Out Paint ControlNet Component added. 
-						Inpaint Module Workflow updated. 
-						SD15|SDXL|SD3 Workflow updated. 
-						Image Remove Alpha JK node added.  
-- 2024-09-05 - v1.2.2	Black Pixel switch added for Inpaint ControlNet Component following ControlNet Preprocessor AUX Custom Node's update.  
-- 2024-09-06 - v1.2.3	Refinement Noise Injection added. 
-						txt2prompt and img2prompt workflow added. 
-						img2prompt component added.  
-- 2024-09-07 - v1.2.4	img2mesh workflow doesn't need _JK.pack, so that doesn't need to install segment anything, VLM nodes, and IF AI tools.  
-- 2024-09-09 - v1.2.5	Clip l, clip g, t5xxl texture encode logic upgrade. 
-						Clip l & g switch added. 
-						Negative g switch added. 
-						SDXL Clip Text Encode Target Resolution Scale added.  
-- 2024-09-10 - v1.2.6	detailer: add detail lora.  
-- 2024-09-11 - v1.2.7	Magic Photo Prompter added.  
-- 2024-09-13 - v1.2.8	Use Comfy UI default set union controlnet type to load xinsir sdxl controlnet union.  
-						Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows. 
-						Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.  
-- 2024-09-15 - v1.2.9	Inpaint Simple updated. Outpaint Simple added. 
-						txt2img | img2img | inpaint workflow updated. 
-						In/Out Paint to Refinement process added. 
-						Upscale to Refinment process added.  
+	
+	- 2024-06-23 - v1.0.0	released.  
+	- 2024-07-11 - v1.0.6	Noise Injection for Upscale Workflow.  
+	- 2024-07-16 - v1.0.7	Single Image to Mesh Workflow updated.  
+	- 2024-07-21 - v1.0.8	Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.  
+	- 2024-07-22 - v1.0.9	3DGS workflow added.  
+	- 2024-07-24 - v1.1.0	img2mesh workflow updated. Craftsman Mesh added. 
+				Three OrbitPoses nodes been added to 3D-Pack.  
+	- 2024-07-31 - v1.1.1	Prompt Combine node added.  
+	- 2024-08-03 - v1.1.2	Resize to Focus added to image2mesh workflow.  
+	- 2024-08-21 - v1.1.3	Random Beats node added (not for AIGC).  
+	- 2024-09-01 - v1.2.0	SD3 workflow added. Noise Injection (Inspire) added. 
+				Refine, Upscale, and Detailer process major updated. 
+				SD15 Hand Fix supports SDXL and SD3 workflow. 
+				SDXL IPAdapter supports SD3 workflow. 
+				NoiseInjection Component and workflow added.  
+	- 2024-09-04 - v1.2.1	In/Out Paint ControlNet Component added. 
+				Inpaint Module Workflow updated. 
+				SD15|SDXL|SD3 Workflow updated. 
+				Image Remove Alpha JK node added.  
+	- 2024-09-05 - v1.2.2	Black Pixel switch added for Inpaint ControlNet Component following ControlNet Preprocessor AUX Custom Node's update.  
+	- 2024-09-06 - v1.2.3	Refinement Noise Injection added. 
+				txt2prompt and img2prompt workflow added. 
+				img2prompt component added.  
+	- 2024-09-07 - v1.2.4	img2mesh workflow doesn't need _JK.pack, so that doesn't need to install segment anything, VLM nodes, and IF AI tools.  
+	- 2024-09-09 - v1.2.5	Clip l, clip g, t5xxl texture encode logic upgrade. 
+				Clip l & g switch added. 
+				Negative g switch added. 
+				SDXL Clip Text Encode Target Resolution Scale added.  
+	- 2024-09-10 - v1.2.6	detailer: add detail lora.  
+	- 2024-09-11 - v1.2.7	Magic Photo Prompter added.  
+	- 2024-09-13 - v1.2.8	Use Comfy UI default set union controlnet type to load xinsir sdxl controlnet union.  
+				Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows. 
+				Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.  
+	- 2024-09-15 - v1.2.9	Inpaint Simple updated. Outpaint Simple added. 
+				txt2img | img2img | inpaint workflow updated. 
+				In/Out Paint to Refinement process added. 
+				Upscale to Refinment process added.  
 </details>
 
 - 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated. 
-						Inpaint and txt2img/img2img workflows updated. 
-						SD3/Flux Inpaint ControlNet added.  
+			Inpaint and txt2img/img2img workflows updated. 
+			SD3/Flux Inpaint ControlNet added.  
 - 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux. 
-						SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly. 
-						Replace SD3 ControlNet Apply with new ControlNet Apply Node.  
+			SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly. 
+			Replace SD3 ControlNet Apply with new ControlNet Apply Node.  
 - 2024-09-25 - v1.3.2	AIO Preprocessor added for txt2img | img2img workflow.  
-						Detailer, Upscale workflows updated. Refine workflow added.  
+			Detailer, Upscale workflows updated. Refine workflow added.  
 - 2024-09-26 - v1.3.3	Latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
-						Specified Dual Clip switch added for sdxl workflow.  
+			Specified Dual Clip switch added for sdxl workflow.  
