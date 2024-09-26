@@ -458,6 +458,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
 
 ## Changelog
+<details>
+<summary><b>Previous Version</b></summary>
 - 2024-06-23 - v1.0.0	released.
 - 2024-07-11 - v1.0.6	Noise Injection for Upscale Workflow.
 - 2024-07-16 - v1.0.7	Single Image to Mesh Workflow updated.
@@ -495,6 +497,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 						txt2img | img2img | inpaint workflow updated.
 						In/Out Paint to Refinement process added.
 						Upscale to Refinment process added.
+</details>
+
 - 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated.
 						Inpaint and txt2img/img2img workflows updated.
 						SD3/Flux Inpaint ControlNet added.
@@ -503,5 +507,5 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 						Replace SD3 ControlNet Apply with new ControlNet Apply Node.
 - 2024-09-25 - v1.3.2	AIO Preprocessor added for txt2img | img2img workflow. 
 						Detailer, Upscale workflows updated. Refine workflow added.
-- 2024-09-26 - v1.3.3	latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
+- 2024-09-26 - v1.3.3	Latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
 						Specified Dual Clip switch added for sdxl workflow.
