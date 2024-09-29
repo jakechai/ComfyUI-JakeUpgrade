@@ -3205,8 +3205,8 @@ INT_BINARY_CONDITIONS: Mapping[str, Callable[[int, int], bool]] = {
 }
 
 INT_UNARY_OPERATIONS: Mapping[str, Callable[[int], int]] = {
-    "Abs": lambda a: abs(a),
     "Neg": lambda a: -a,
+    "Abs": lambda a: abs(a),
     "Inc": lambda a: a + 1,
     "Dec": lambda a: a - 1,
     "Sqr": lambda a: a * a,

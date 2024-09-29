@@ -511,3 +511,4 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2024-09-26 - v1.3.3	Latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
 			Specified Dual Clip switch added for sdxl workflow.  
 - 2024-09-28 - v1.3.4	Hand Fix supports SD3 and Flux. Hand Fix module workflow added.
+- 2024-09-29 - v1.3.5	Inpaint Group Nodes upgrade, add more Image | Mask | Latent control.
