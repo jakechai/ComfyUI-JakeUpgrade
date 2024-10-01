@@ -79,6 +79,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
 - [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui)
 - [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
+- [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
 - [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
@@ -512,3 +513,4 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 			Specified Dual Clip switch added for sdxl workflow.  
 - 2024-09-28 - v1.3.4	Hand Fix supports SD3 and Flux. Hand Fix module workflow added.
 - 2024-09-29 - v1.3.5	Inpaint Group Nodes upgrade, add more Image | Mask | Latent control.
+- 2024-10-01 - v1.3.6	Inpaint Group Nodes upgrade, change color grading method.
