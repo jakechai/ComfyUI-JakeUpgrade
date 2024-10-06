@@ -24,8 +24,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## Video Introduction
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
+- txt2img&img2img SAI API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
+- inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
 - 3D-Pack Installation Tips： [Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - 3D-Pack Algorithm Comparison： [Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
 
@@ -33,9 +35,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ### Main
 
-- [JK_workflow_txt2img_img2img_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD3.json)
-- [JK_workflow_txt2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SDXL.json)
 - [JK_workflow_txt2img_img2img_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD15.json)
+- [JK_workflow_txt2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SDXL.json)
+- [JK_workflow_txt2img_img2img_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD3.json)
+- [JK_workflow_txt2img_img2img_SAIAPI](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SAIAPI.json)
 - [JK_workflow_txt2prompt_img2prompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2prompt_img2prompt.json)
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
@@ -96,6 +99,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
 - [IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
+- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 
 ### img2mesh workflow
 
@@ -105,9 +109,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` in the replacement folder to `custom_nodes\ComfyUI-Manager\component`.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy new styles.
+- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) : (Workaround before ComfyUI SAI API approves my pull request)Copy and replace files in `custom_nodes\ComfyUI-SAI_API`
 
 > [!NOTE]
-> - Group Nodes are saved and can only used in the current workflow. Copy `_JK.pack` if you want all Jake Upgrade group nodes available for other workflows.
+> - Group Nodes are saved and can only used in the current workflow. Copy `_JK.pack` and set `Component: Use my version` in the ComfyUI Manager Menu if you want all the latest Jake Upgrade group nodes available for other workflows.
 
 ## JK_workflow : txt2img_img2img
 <details>
@@ -285,6 +290,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	Misc Nodes
 		SD1.5 Aspect Ratio JK🐉
 		SDXL Aspect Ratio JK🐉
+		SD3 Aspect Ratio JK🐉
     Reroute Nodes
 		Reroute List JK🐉
 		Reroute Ckpt JK🐉
@@ -318,6 +324,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Base Image Parameters Extract JK🐉
 		Base Model Pipe JK🐉
 		Base Model Pipe Extract JK🐉
+		Base Model Parameters SD3 JK🐉
 		Refine Pipe JK🐉
 		Refine Pipe Extract JK🐉
 		Noise Injection Parameters JK🐉
@@ -515,3 +522,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2024-09-29 - v1.3.5	Inpaint Group Nodes upgrade, add more Image | Mask | Latent control.
 - 2024-10-01 - v1.3.6	Inpaint Group Nodes upgrade, change color grading method.
 - 2024-10-03 - v1.3.7	Remove Outpaint Pad Feathering.
+- 2024-10-06 - v1.4.0	Replace Base Ipadapter simple with IPAdapter Style and Composition Transfer in SD15 and SDXL workflow.
+			SD3 Aspect Ratio node and SD3 Base Model Parameter node added. 
+			SD3 Api workflow added to make up the shorcomings of SD3 local deployment using Stability SD3 control and inpaint nodes.

@@ -20,7 +20,8 @@ setup_js()
 NODE_CLASS_MAPPINGS = {
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
-    "CR SDXL Aspect Ratio JK": CR_SDXLAspectRatio_JK,
+    "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
+    "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
     "Random Beats JK": RandomBeats_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
@@ -55,6 +56,7 @@ NODE_CLASS_MAPPINGS = {
     "Base Image Parameters Extract JK": BaseImageParametersExtract_JK,
     "Base Model Pipe JK": BaseModelPipe_JK,
     "Base Model Pipe Extract JK": BaseModelPipeExtract_JK,
+    "Base Model Parameters SD3API JK": BaseModelParametersSD3API_JK,
     "Refine Pipe JK": RefinePipe_JK,
     "Refine Pipe Extract JK": RefinePipeExtract_JK,
     "Noise Injection Parameters JK": NoiseInjectionParameters_JK,
@@ -166,6 +168,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
+    "CR SD3 Aspect Ratio JK": "SD3 Aspect Ratio JK🐉",
     "Random Beats JK": "Random Beats JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
@@ -200,6 +203,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Base Image Parameters Extract JK": "Base Image Parameters Extract JK🐉",
     "Base Model Pipe JK": "Base Model Pipe JK🐉",
     "Base Model Pipe Extract JK": "Base Model Pipe Extract JK🐉",
+    "Base Model Parameters SD3API JK": "Base Model Parameters SD3API JK🐉",
     "Refine Pipe JK": "Refine Pipe JK🐉",
     "Refine Pipe Extract JK": "Refine Pipe Extract JK🐉",
     "Noise Injection Parameters JK": "Noise Injection Parameters JK🐉",
