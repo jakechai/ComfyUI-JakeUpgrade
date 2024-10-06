@@ -123,17 +123,17 @@ def get_resolution(resolution):
         width, height = 1024, 960
     elif resolution == "SDXL 1088x960":
         width, height = 1088, 960
-    elif resolution == "SDXL 1088x896":
+    elif resolution == "SD3 1088x896":
         width, height = 1088, 896
     elif resolution == "SDXL 1152x896":
         width, height = 1152, 896
     elif resolution == "SDXL 1152x832":
         width, height = 1152, 832
-    elif resolution == "SDXL 1216x832":
+    elif resolution == "SD3 1216x832":
         width, height = 1216, 832
     elif resolution == "SDXL 1280x768":
         width, height = 1280, 768
-    elif resolution == "SDXL 1344x768":
+    elif resolution == "SD3 1344x768":
         width, height = 1344, 768
     elif resolution == "SDXL 1344x704":
         width, height = 1344, 704
@@ -141,7 +141,7 @@ def get_resolution(resolution):
         width, height = 1408, 704
     elif resolution == "SDXL 1472x704":
         width, height = 1472, 704
-    elif resolution == "SDXL 1536x640":
+    elif resolution == "SD3 1536x640":
         width, height = 1536, 640
     elif resolution == "SDXL 1600x640":
         width, height = 1600, 640
@@ -149,6 +149,29 @@ def get_resolution(resolution):
         width, height = 1664, 576
     elif resolution == "SDXL 1728x576":
         width, height = 1728, 576
+    
+    return (width, height)
+
+def get_sd3_resolution(ratio):
+
+    if ratio == "1:1":
+        width, height = 1024, 1024
+    elif ratio == "5:4":
+        width, height = 1088, 896
+    elif ratio == "3:2":
+        width, height = 1216, 832
+    elif ratio == "16:9":
+        width, height = 1344, 768
+    elif ratio == "21:9":
+        width, height = 1536, 640
+    elif ratio == "4:5":
+        width, height = 896, 1088
+    elif ratio == "2:3":
+        width, height = 832, 1216
+    elif ratio == "9:16":
+        width, height = 768, 1344
+    elif ratio == "9:21":
+        width, height = 640, 1536
     
     return (width, height)
 
@@ -225,7 +248,7 @@ class CR_AspectRatioSD15_JK:
         else:
             return(width, height,)  
 
-class CR_SDXLAspectRatio_JK:
+class CR_AspectRatioSDXL_JK:
     def __init__(self):
         pass
 
@@ -233,8 +256,8 @@ class CR_SDXLAspectRatio_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "resolution": (["Custom", "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SDXL 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SDXL 1216x832", "SDXL 1280x768",
-                "SDXL 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SDXL 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
+                "resolution": (["Custom", "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SD3 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SD3 1216x832", "SDXL 1280x768",
+                "SD3 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SD3 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
                 "custom_width": ("INT", {"default": 1024, "min": 64, "max": 2048, "step": 8}),
                 "custom_height": ("INT", {"default": 1024, "min": 64, "max": 2048, "step": 8}),
                 "swap_dimensions": ("BOOLEAN", {"default": False},),
@@ -255,6 +278,30 @@ class CR_SDXLAspectRatio_JK:
             return(height, width,)
         else:
             return(width, height,)
+
+class CR_AspectRatioSD3_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+    
+        return {
+            "required": {
+                "aspect_ratio": (["1:1", "5:4", "3:2", "16:9", "21:9", "4:5", "2:3", "9:16", "9:21"],),
+            }
+        }
+    RETURN_TYPES = ("STRING", "INT", "INT")
+    RETURN_NAMES = ("AspectRatio", "width", "height")
+    FUNCTION = "Aspect_Ratio"
+    CATEGORY = icons.get("JK/Misc")
+
+    def Aspect_Ratio(self, aspect_ratio):
+
+        width, height = get_sd3_resolution(aspect_ratio)
+
+        return(aspect_ratio, width, height,)  
+
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes
@@ -1024,8 +1071,8 @@ class KsamplerParameters_JK:
                 "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "resolution": (["Custom", "SD15 512x512", "SD15 680x512", "SD15 768x512", "SD15 912x512", "SD15 952x512", "SD15 1024x512",
                                 "SD15 1224x512", "SD15 768x432", "SD15 768x416", "SD15 768x384", "SD15 768x320", 
-                                "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SDXL 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SDXL 1216x832", "SDXL 1280x768",
-                                "SDXL 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SDXL 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
+                                "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SD3 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SD3 1216x832", "SDXL 1280x768",
+                                "SD3 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SD3 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
                 "custom_width": ("INT", {"default": 512, "min": 64, "max": MAX_RESOLUTION, "step": 8}),
                 "custom_height": ("INT", {"default": 512, "min": 64, "max": MAX_RESOLUTION, "step": 8}),
                 "swap_dimensions": ("BOOLEAN", {"default": False},),
@@ -1104,8 +1151,8 @@ class BaseModelParameters_JK:
                 "variation": ("STRING", {"default": '', "multiline": True}),
                 "resolution": (["Custom", "SD15 512x512", "SD15 680x512", "SD15 768x512", "SD15 912x512", "SD15 952x512", "SD15 1024x512",
                                 "SD15 1224x512", "SD15 768x432", "SD15 768x416", "SD15 768x384", "SD15 768x320", 
-                                "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SDXL 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SDXL 1216x832", "SDXL 1280x768",
-                                "SDXL 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SDXL 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
+                                "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SD3 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SD3 1216x832", "SDXL 1280x768",
+                                "SD3 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SD3 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
                 "custom_width": ("INT", {"default": 512, "min": 64, "max": MAX_RESOLUTION, "step": 8}),
                 "custom_height": ("INT", {"default": 512, "min": 64, "max": MAX_RESOLUTION, "step": 8}),
                 "swap_dimensions": ("BOOLEAN", {"default": False},),
@@ -1287,6 +1334,42 @@ class BaseModelPipeExtract_JK:
         else:
             Positive_Conditioning, Negative_Conditioning, Positive_Prompt, Negative_Prompt, Base_Latent, Base_Image, Base_Prompt = base_pipe
         return (base_pipe, Positive_Conditioning, Negative_Conditioning, Positive_Prompt, Negative_Prompt, Base_Latent, Base_Image, Base_Prompt)
+
+class BaseModelParametersSD3API_JK:
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "positive": ("STRING", {"default": '', "multiline": True}),
+                "negative": ("STRING", {"default": '', "multiline": True}),
+                "use_input_prompt": ("BOOLEAN", {"default": False},),
+                "aspect_ratio": (["1:1", "5:4", "3:2", "16:9", "21:9", "4:5", "2:3", "9:16", "9:21"],),
+            },
+            "optional": {
+                "input_positive": ("STRING", {"forceInput": True}),
+                "input_negative": ("STRING", {"forceInput": True}),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "INT", "INT")
+    RETURN_NAMES = ("POSITIVE", "NEGATIVE", "ASPECT_RATIO", "WIDTH", "HEIGHT")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Pipe")
+
+    def get_value(self, positive, negative, use_input_prompt, aspect_ratio, input_positive=None, input_negative=None):
+        
+        if use_input_prompt == True and input_positive != None and input_negative != None:
+            if input_positive != "":
+                positive = input_positive
+            if input_negative != "":
+                negative = input_negative
+        
+        width, height = get_sd3_resolution(aspect_ratio)
+        
+        return (positive, negative, aspect_ratio, width, height)
 
 class NoiseInjectionParameters_JK:
     def __init__(self):
@@ -4493,7 +4576,8 @@ class RandomBeats_JK:
 NODE_CLASS_MAPPINGS = { 
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
-    "CR SDXL Aspect Ratio JK": CR_SDXLAspectRatio_JK,
+    "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
+    "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
     "Random Beats JK": RandomBeats_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
@@ -4528,6 +4612,7 @@ NODE_CLASS_MAPPINGS = {
     "Base Image Parameters Extract JK": BaseImageParametersExtract_JK,
     "Base Model Pipe JK": BaseModelPipe_JK,
     "Base Model Pipe Extract JK": BaseModelPipeExtract_JK,
+    "Base Model Parameters SD3API JK": BaseModelParametersSD3API_JK,
     "Refine Pipe JK": RefinePipe_JK,
     "Refine Pipe Extract JK": RefinePipeExtract_JK,
     "Noise Injection Parameters JK": NoiseInjectionParameters_JK,
@@ -4638,6 +4723,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### Misc Nodes
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
+    "CR SD3 Aspect Ratio JK": "SD3 Aspect Ratio JK🐉",
     "Random Beats JK": "Random Beats JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
@@ -4672,6 +4758,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Base Image Parameters Extract JK": "Base Image Parameters Extract JK🐉",
     "Base Model Pipe JK": "Base Model Pipe JK🐉",
     "Base Model Pipe Extract JK": "Base Model Pipe Extract JK🐉",
+    "Base Model Parameters SD3API JK": "Base Model Parameters SD3API JK🐉",
     "Refine Pipe JK": "Refine Pipe JK🐉",
     "Refine Pipe Extract JK": "Refine Pipe Extract JK🐉",
     "Noise Injection Parameters JK": "Noise Injection Parameters JK🐉",
