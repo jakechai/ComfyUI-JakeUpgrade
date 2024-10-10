@@ -1159,7 +1159,7 @@ class BaseModelParameters_JK:
                 "steps": ("INT", {"default": 20, "min": 1, "max": 10000}),
                 "sampler_name": (comfy.samplers.KSampler.SAMPLERS,),
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
-                "cfg": ("FLOAT", {"default": 8.0, "min": 0.0, "max": 100.0, "step": 0.05}),
+                "cfg_or_flux_neg_scale": ("FLOAT", {"default": 8.0, "min": 0.0, "max": 100.0, "step": 0.05}),
                 "tiling": (["enable", "x_only", "y_only", "disable"], {"default": "disable"}),
                 "specified_vae": ("BOOLEAN", {"default": True},),
                 "stop_at_clip_layer": ("INT", {"default": -1, "min": -24, "max": -1}),
@@ -1184,7 +1184,7 @@ class BaseModelParameters_JK:
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
-    def get_value(self, ckpt_name, vae_name, base_seed, positive_clip_l, positive_clip_g_or_t5xxl, negative_clip_l, negative_clip_g_or_t5xxl, append_input_prompt, variation, resolution, custom_width, custom_height, swap_dimensions, steps, sampler_name, scheduler, cfg, tiling, specified_vae, stop_at_clip_layer, img2img, image_resize, img2img_denoise, batch_size, save_ckpt_hash, image=None, input_positive=None, input_negative=None):
+    def get_value(self, ckpt_name, vae_name, base_seed, positive_clip_l, positive_clip_g_or_t5xxl, negative_clip_l, negative_clip_g_or_t5xxl, append_input_prompt, variation, resolution, custom_width, custom_height, swap_dimensions, steps, sampler_name, scheduler, cfg_or_flux_neg_scale, tiling, specified_vae, stop_at_clip_layer, img2img, image_resize, img2img_denoise, batch_size, save_ckpt_hash, image=None, input_positive=None, input_negative=None):
         
         if append_input_prompt == True and input_positive != None and input_negative != None:
             if input_positive != "":
@@ -1199,7 +1199,7 @@ class BaseModelParameters_JK:
         
         img2img_denoise = 1.0 if img2img == False else img2img_denoise
         
-        pipe_model = (ckpt_name, stop_at_clip_layer, positive_clip_l, positive_clip_g_or_t5xxl, negative_clip_l, negative_clip_g_or_t5xxl, variation, base_seed, steps, sampler_name, scheduler, cfg, img2img_denoise, tiling, specified_vae, vae_name)
+        pipe_model = (ckpt_name, stop_at_clip_layer, positive_clip_l, positive_clip_g_or_t5xxl, negative_clip_l, negative_clip_g_or_t5xxl, variation, base_seed, steps, sampler_name, scheduler, cfg_or_flux_neg_scale, img2img_denoise, tiling, specified_vae, vae_name)
         pipe_image = (image, width, height, batch_size, image_resize, img2img)
         pipe_image_swap = (image, height, width, batch_size, image_resize, img2img)
         
@@ -1217,7 +1217,7 @@ class BaseModelParameters_JK:
         else:
             basevae_metadata = ""
         
-        base_model_metadata = f"Steps: {steps}, Sampler: {sampler_name}{f' {scheduler}' if scheduler != 'normal' else ''}, CFG scale: {cfg}, Seed: {base_seed}, Size: {size_metadata}, {baseckpt_hash}Model: {baseckpt_name}, {basevae_metadata}{f'Denoising strength: {img2img_denoise_metadata}, ' if img2img == True else ''}Clip skip: {stop_layer_metadata}, RNG: CPU, "
+        base_model_metadata = f"Steps: {steps}, Sampler: {sampler_name}{f' {scheduler}' if scheduler != 'normal' else ''}, CFG scale: {cfg_or_flux_neg_scale}, Seed: {base_seed}, Size: {size_metadata}, {baseckpt_hash}Model: {baseckpt_name}, {basevae_metadata}{f'Denoising strength: {img2img_denoise_metadata}, ' if img2img == True else ''}Clip skip: {stop_layer_metadata}, RNG: CPU, "
         
         if swap_dimensions == True:
             return (base_model_metadata, pipe_model, pipe_image_swap)
@@ -3086,6 +3086,102 @@ class CR_ImpactPipeInputSwitch_JK:
         else:
             return (pipe_false, boolean_value)
 
+class CR_NoiseInputSwitch_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {"default": False}),
+                "noise_false": ("NOISE", {"forceInput": True}),
+                "noise_true": ("NOISE", {"forceInput": True}),
+            }
+        }
+    
+    RETURN_TYPES = ("NOISE", "BOOLEAN",)   
+    FUNCTION = "noise_switch"
+    CATEGORY = icons.get("JK/Logic")
+
+    def noise_switch(self, boolean_value, noise_false, noise_true):
+        if boolean_value == True:
+            return (noise_true, boolean_value)
+        else:
+            return (noise_false, boolean_value)
+
+class CR_GuiderInputSwitch_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {"default": False}),
+                "guider_false": ("GUIDER", {"forceInput": True}),
+                "guider_true": ("GUIDER", {"forceInput": True}),
+            }
+        }
+    
+    RETURN_TYPES = ("GUIDER", "BOOLEAN",)   
+    FUNCTION = "guider_switch"
+    CATEGORY = icons.get("JK/Logic")
+
+    def guider_switch(self, boolean_value, guider_false, guider_true):
+        if boolean_value == True:
+            return (guider_true, boolean_value)
+        else:
+            return (guider_false, boolean_value)
+
+class CR_SamplerInputSwitch_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {"default": False}),
+                "sampler_false": ("SAMPLER", {"forceInput": True}),
+                "sampler_true": ("SAMPLER", {"forceInput": True}),
+            }
+        }
+    
+    RETURN_TYPES = ("SAMPLER", "BOOLEAN",)
+    FUNCTION = "sampler_switch"
+    CATEGORY = icons.get("JK/Logic")
+
+    def sampler_switch(self, boolean_value, sampler_false, sampler_true):
+        if boolean_value == True:
+            return (sampler_true, boolean_value)
+        else:
+            return (sampler_false, boolean_value)
+
+class CR_SigmasInputSwitch_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {"default": False}),
+                "sigmas_false": ("SIGMAS", {"forceInput": True}),
+                "sigmas_true": ("SIGMAS", {"forceInput": True}),
+            }
+        }
+    
+    RETURN_TYPES = ("SIGMAS", "BOOLEAN",)
+    FUNCTION = "sigmas_switch"
+    CATEGORY = icons.get("JK/Logic")
+
+    def sigmas_switch(self, boolean_value, sigmas_false, sigmas_true):
+        if boolean_value == True:
+            return (sigmas_true, boolean_value)
+        else:
+            return (sigmas_false, boolean_value)
+
 class CR_MeshInputSwitch_JK:
     def __init__(self):
         pass
@@ -4653,6 +4749,10 @@ NODE_CLASS_MAPPINGS = {
     "CR Switch Model and CLIP JK": CR_ModelAndCLIPInputSwitch_JK,
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
     "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
+    "CR Noise Input Switch JK": CR_NoiseInputSwitch_JK,
+    "CR Guider Input Switch JK": CR_GuiderInputSwitch_JK,
+    "CR Sampler Input Switch JK": CR_SamplerInputSwitch_JK,
+    "CR Sigmas Input Switch JK": CR_SigmasInputSwitch_JK,
     "CR Mesh Input Switch JK": CR_MeshInputSwitch_JK,
     "CR Ply Input Switch JK": CR_PlyInputSwitch_JK,
     "CR Obit Pose Input Switch JK": CR_ObitPoseInputSwitch_JK,
@@ -4799,6 +4899,10 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Switch Model and CLIP JK": "Switch Model and CLIP JK🐉",
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
     "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
+    "CR Noise Input Switch JK": "Noise Input Switch JK🐉",
+    "CR Guider Input Switch JK": "Guider Input Switch JK🐉",
+    "CR Sampler Input Switch JK": "Sampler Input Switch JK🐉",
+    "CR Sigmas Input Switch JK": "Sigmas Input Switch JK🐉",
     "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
     "CR Ply Input Switch JK": "Ply Input Switch JK🐉",
     "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",

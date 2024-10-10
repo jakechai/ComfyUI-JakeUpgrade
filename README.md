@@ -26,8 +26,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - txt2img&img2img SAI API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
-- img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
+- img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - 3D-Pack Installation Tips： [Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - 3D-Pack Algorithm Comparison： [Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
 
@@ -38,6 +38,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_txt2img_img2img_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD15.json)
 - [JK_workflow_txt2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SDXL.json)
 - [JK_workflow_txt2img_img2img_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD3.json)
+- [JK_workflow_txt2img_img2img_Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_Flux.json)
 - [JK_workflow_txt2img_img2img_SAIAPI](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SAIAPI.json)
 - [JK_workflow_txt2prompt_img2prompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2prompt_img2prompt.json)
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
@@ -62,6 +63,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_Concept](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Concept.json)
 - [JK_workflow_Seamless Texture](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_Seamless%20Texture.json)
 - [JK_workflow_txt2img_Simple](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_txt2img_Simple.json)
+- [JK_workflow_Flux_KSampler](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_FluxKSampler.json)
 - [JK_Workflow_Mesh-ReMesh_Projection](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_Workflow_Mesh-ReMesh_Projection.json)
 
 ## Required Custom Nodes
@@ -365,6 +367,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Switch Model and CLIP JK🐉
 		Pipe Input Switch JK🐉
 		Impact Pipe Input Switch JK🐉
+		Noise Input Switch JK🐉
+		Guider Input Switch JK🐉
+		Sampler Input Switch JK🐉
+		Sigmas Input Switch JK🐉
 		Mesh Input Switch JK🐉
 		Ply Input Switch JK🐉
 		Orbit Pose Input Switch JK🐉
@@ -444,6 +450,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::SegAnythingMask		
 	Workflow
 		JK🐉::Concept
+		JK🐉::Flux KSampler
+		JK🐉::Flux KSampler Adv
 		JK🐉::Inpaint Latent
 		JK🐉::Inpaint Checkpoint
 		JK🐉::Inpaint ControlNet			
@@ -506,22 +514,27 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 				txt2img | img2img | inpaint workflow updated. 
 				In/Out Paint to Refinement process added. 
 				Upscale to Refinment process added.  
+	- 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated. 
+				Inpaint and txt2img/img2img workflows updated. 
+				SD3/Flux Inpaint ControlNet added.  
+	- 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux. 
+				SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly. 
+				Replace SD3 ControlNet Apply with new ControlNet Apply Node.  
+	- 2024-09-25 - v1.3.2	AIO Preprocessor added for txt2img | img2img workflow.  
+				Detailer, Upscale workflows updated. Refine workflow added.  
+	- 2024-09-26 - v1.3.3	Latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
+				Specified Dual Clip switch added for sdxl workflow.  
+	- 2024-09-28 - v1.3.4	Hand Fix supports SD3 and Flux. Hand Fix module workflow added.
+	- 2024-09-29 - v1.3.5	Inpaint Group Nodes upgrade, add more Image | Mask | Latent control.
+	- 2024-10-01 - v1.3.6	Inpaint Group Nodes upgrade, change color grading method.
+	- 2024-10-03 - v1.3.7	Remove Outpaint Pad Feathering.
 </details>
 
-- 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated. 
-			Inpaint and txt2img/img2img workflows updated. 
-			SD3/Flux Inpaint ControlNet added.  
-- 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux. 
-			SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly. 
-			Replace SD3 ControlNet Apply with new ControlNet Apply Node.  
-- 2024-09-25 - v1.3.2	AIO Preprocessor added for txt2img | img2img workflow.  
-			Detailer, Upscale workflows updated. Refine workflow added.  
-- 2024-09-26 - v1.3.3	Latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
-			Specified Dual Clip switch added for sdxl workflow.  
-- 2024-09-28 - v1.3.4	Hand Fix supports SD3 and Flux. Hand Fix module workflow added.
-- 2024-09-29 - v1.3.5	Inpaint Group Nodes upgrade, add more Image | Mask | Latent control.
-- 2024-10-01 - v1.3.6	Inpaint Group Nodes upgrade, change color grading method.
-- 2024-10-03 - v1.3.7	Remove Outpaint Pad Feathering.
 - 2024-10-06 - v1.4.0	Replace Base Ipadapter simple with IPAdapter Style and Composition Transfer in SD15 and SDXL workflow.
 			SD3 Aspect Ratio node and SD3 Base Model Parameter node added. 
 			SD3 Api workflow added to make up the shorcomings of SD3 local deployment using Stability SD3 control and inpaint nodes.
+- 2024-10-10 - v1.5.0	Flux KSampler and Flux Ksampler Adv group nodes added.
+			Flux txt2img and img2img workflow added. Flux KSampler workflow added.
+			Inpaint/Outpaint ControlNet and Checkpoint method order changed.
+			Enchance and Resize Input Image added for img2img workflow.
+			Noise | Guider | Sampler | Sigmas switch added.

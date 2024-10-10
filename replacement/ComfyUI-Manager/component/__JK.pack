@@ -2665,6 +2665,1705 @@
         "packname": "\ud83d\udc09 JK",
         "version": "1.0"
     },
+    "\ud83d\udc09 JK::Flux KSampler": {
+        "author": "Jake",
+        "category": "\ud83d\udc19 Workflow",
+        "config": {
+            "0": {
+                "input": {
+                    "MODEL": {
+                        "name": "model"
+                    }
+                }
+            },
+            "1": {
+                "input": {
+                    "CONDITIONING": {
+                        "name": "positive"
+                    }
+                }
+            },
+            "10": {
+                "input": {
+                    "a": {
+                        "visible": false
+                    },
+                    "op": {
+                        "visible": false
+                    }
+                }
+            },
+            "11": {
+                "input": {
+                    "a": {
+                        "visible": false
+                    }
+                }
+            },
+            "12": {
+                "input": {
+                    "a": {
+                        "visible": false
+                    }
+                }
+            },
+            "2": {
+                "input": {
+                    "CONDITIONING": {
+                        "name": "negative"
+                    }
+                }
+            },
+            "3": {
+                "input": {
+                    "LATENT": {
+                        "name": "latent_image"
+                    }
+                }
+            },
+            "4": {},
+            "5": {},
+            "6": {},
+            "7": {
+                "input": {
+                    "cfg": {
+                        "visible": false
+                    },
+                    "neg_scale": {
+                        "name": "negative_scale"
+                    }
+                }
+            },
+            "8": {},
+            "9": {}
+        },
+        "datetime": 1728397731476,
+        "external": [],
+        "links": [
+            [
+                0,
+                0,
+                6,
+                0,
+                23,
+                "*"
+            ],
+            [
+                0,
+                0,
+                7,
+                0,
+                23,
+                "*"
+            ],
+            [
+                1,
+                0,
+                7,
+                1,
+                24,
+                "*"
+            ],
+            [
+                2,
+                0,
+                7,
+                2,
+                25,
+                "*"
+            ],
+            [
+                9,
+                0,
+                7,
+                3,
+                36,
+                "CONDITIONING"
+            ],
+            [
+                12,
+                0,
+                7,
+                4,
+                32,
+                "FLOAT"
+            ],
+            [
+                4,
+                0,
+                8,
+                0,
+                28,
+                "NOISE"
+            ],
+            [
+                7,
+                0,
+                8,
+                1,
+                29,
+                "GUIDER"
+            ],
+            [
+                5,
+                0,
+                8,
+                2,
+                35,
+                "SAMPLER"
+            ],
+            [
+                6,
+                0,
+                8,
+                3,
+                27,
+                "SIGMAS"
+            ],
+            [
+                3,
+                0,
+                8,
+                4,
+                26,
+                "*"
+            ],
+            [
+                2,
+                0,
+                9,
+                0,
+                25,
+                "*"
+            ],
+            [
+                10,
+                0,
+                11,
+                0,
+                47,
+                "BOOLEAN"
+            ],
+            [
+                11,
+                0,
+                12,
+                0,
+                30,
+                "INT"
+            ]
+        ],
+        "nodes": [
+            {
+                "flags": {},
+                "id": -1,
+                "index": 0,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 6,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2370,
+                    "1": 510
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 1,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 7,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2310,
+                    "1": 530
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "title": "positive",
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 2,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 8,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2310,
+                    "1": 550
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "title": "negative",
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 3,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 9,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2640,
+                    "1": 930
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 4,
+                "inputs": [],
+                "mode": 0,
+                "order": 13,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "NOISE",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "NOISE"
+                    }
+                ],
+                "pos": {
+                    "0": 2520,
+                    "1": 370
+                },
+                "properties": {
+                    "Node name for S&R": "RandomNoise"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 80
+                },
+                "type": "RandomNoise",
+                "widgets_values": [
+                    0,
+                    "randomize"
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 5,
+                "inputs": [],
+                "mode": 0,
+                "order": 10,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "SAMPLER",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "SAMPLER"
+                    }
+                ],
+                "pos": {
+                    "0": 2520,
+                    "1": 700
+                },
+                "properties": {
+                    "Node name for S&R": "KSamplerSelect"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 60
+                },
+                "type": "KSamplerSelect",
+                "widgets_values": [
+                    "euler"
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 6,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "slot_index": 0,
+                        "type": "MODEL"
+                    }
+                ],
+                "mode": 0,
+                "order": 19,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "SIGMAS",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "SIGMAS"
+                    }
+                ],
+                "pos": {
+                    "0": 2520,
+                    "1": 810
+                },
+                "properties": {
+                    "Node name for S&R": "BasicScheduler"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 110
+                },
+                "type": "BasicScheduler",
+                "widgets_values": [
+                    "simple",
+                    20,
+                    1
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 7,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "type": "MODEL"
+                    },
+                    {
+                        "link": null,
+                        "name": "positive",
+                        "type": "CONDITIONING"
+                    },
+                    {
+                        "link": null,
+                        "name": "negative",
+                        "type": "CONDITIONING"
+                    },
+                    {
+                        "link": null,
+                        "name": "empty_conditioning",
+                        "type": "CONDITIONING"
+                    },
+                    {
+                        "link": null,
+                        "name": "cfg",
+                        "type": "FLOAT",
+                        "widget": {
+                            "name": "cfg"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 28,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "GUIDER",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "GUIDER"
+                    }
+                ],
+                "pos": {
+                    "0": 2520,
+                    "1": 510
+                },
+                "properties": {
+                    "Node name for S&R": "PerpNegGuider"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 140
+                },
+                "type": "PerpNegGuider",
+                "widgets_values": [
+                    8,
+                    1
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": false
+                },
+                "id": -1,
+                "index": 8,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "noise",
+                        "slot_index": 0,
+                        "type": "NOISE"
+                    },
+                    {
+                        "link": null,
+                        "name": "guider",
+                        "slot_index": 1,
+                        "type": "GUIDER"
+                    },
+                    {
+                        "link": null,
+                        "name": "sampler",
+                        "slot_index": 2,
+                        "type": "SAMPLER"
+                    },
+                    {
+                        "link": null,
+                        "name": "sigmas",
+                        "slot_index": 3,
+                        "type": "SIGMAS"
+                    },
+                    {
+                        "link": null,
+                        "name": "latent_image",
+                        "slot_index": 4,
+                        "type": "LATENT"
+                    }
+                ],
+                "mode": 0,
+                "order": 30,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "output",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "LATENT"
+                    },
+                    {
+                        "links": [],
+                        "name": "denoised_output",
+                        "shape": 3,
+                        "slot_index": 1,
+                        "type": "LATENT"
+                    }
+                ],
+                "pos": {
+                    "0": 2810,
+                    "1": 520
+                },
+                "properties": {
+                    "Node name for S&R": "SamplerCustomAdvanced"
+                },
+                "size": {
+                    "0": 240,
+                    "1": 110
+                },
+                "type": "SamplerCustomAdvanced"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 9,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "conditioning",
+                        "type": "CONDITIONING"
+                    }
+                ],
+                "mode": 0,
+                "order": 20,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "CONDITIONING",
+                        "slot_index": 0,
+                        "type": "CONDITIONING"
+                    }
+                ],
+                "pos": {
+                    "0": 2310,
+                    "1": 600
+                },
+                "properties": {
+                    "Node name for S&R": "ConditioningZeroOut"
+                },
+                "size": {
+                    "0": 317.4000244140625,
+                    "1": 26
+                },
+                "type": "ConditioningZeroOut"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 10,
+                "inputs": [],
+                "mode": 0,
+                "order": 12,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "BOOLEAN",
+                        "slot_index": 0,
+                        "type": "BOOLEAN"
+                    }
+                ],
+                "pos": {
+                    "0": 2310,
+                    "1": 660
+                },
+                "properties": {
+                    "Node name for S&R": "CM_BoolUnaryOperation JK"
+                },
+                "size": {
+                    "0": 315,
+                    "1": 82
+                },
+                "type": "CM_BoolUnaryOperation JK",
+                "widgets_values": [
+                    "Not",
+                    false
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 11,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "a",
+                        "type": "BOOLEAN",
+                        "widget": {
+                            "name": "a"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 22,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "INT",
+                        "slot_index": 0,
+                        "type": "INT"
+                    }
+                ],
+                "pos": {
+                    "0": 2310,
+                    "1": 640
+                },
+                "properties": {
+                    "Node name for S&R": "CM_BoolToInt JK"
+                },
+                "size": {
+                    "0": 320,
+                    "1": 60
+                },
+                "type": "CM_BoolToInt JK",
+                "widgets_values": [
+                    false
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 12,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "a",
+                        "type": "INT",
+                        "widget": {
+                            "name": "a"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 26,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "FLOAT",
+                        "slot_index": 0,
+                        "type": "FLOAT"
+                    }
+                ],
+                "pos": {
+                    "0": 2310,
+                    "1": 620
+                },
+                "properties": {
+                    "Node name for S&R": "CM_IntToFloat JK"
+                },
+                "size": {
+                    "0": 320,
+                    "1": 60
+                },
+                "type": "CM_IntToFloat JK",
+                "widgets_values": [
+                    0
+                ]
+            }
+        ],
+        "packname": "\ud83d\udc09 JK",
+        "version": "1.0"
+    },
+    "\ud83d\udc09 JK::Flux KSampler Adv": {
+        "author": "Jake",
+        "category": "\ud83d\udc19 Workflow",
+        "config": {
+            "0": {
+                "input": {
+                    "MODEL": {
+                        "name": "model"
+                    }
+                }
+            },
+            "1": {
+                "input": {
+                    "CONDITIONING": {
+                        "name": "positive"
+                    }
+                }
+            },
+            "10": {
+                "input": {
+                    "boolean_value": {
+                        "name": "second_pass"
+                    }
+                },
+                "output": {
+                    "1": {
+                        "visible": false
+                    }
+                }
+            },
+            "11": {},
+            "12": {},
+            "13": {
+                "input": {
+                    "a": {
+                        "visible": false
+                    },
+                    "op": {
+                        "visible": false
+                    }
+                }
+            },
+            "14": {},
+            "15": {
+                "input": {
+                    "a": {
+                        "visible": false
+                    }
+                }
+            },
+            "16": {
+                "input": {
+                    "a": {
+                        "visible": false
+                    }
+                }
+            },
+            "2": {
+                "input": {
+                    "CONDITIONING": {
+                        "name": "negative"
+                    }
+                }
+            },
+            "3": {
+                "input": {
+                    "LATENT": {
+                        "name": "latent_image"
+                    }
+                },
+                "output": {
+                    "0": {
+                        "name": ""
+                    }
+                }
+            },
+            "4": {
+                "input": {
+                    "boolean_value": {
+                        "name": "add_noise"
+                    }
+                },
+                "output": {
+                    "1": {
+                        "visible": false
+                    }
+                }
+            },
+            "5": {},
+            "6": {},
+            "7": {
+                "input": {
+                    "denoise": {
+                        "name": "basic_denoise",
+                        "visible": false
+                    }
+                }
+            },
+            "8": {
+                "input": {
+                    "denoise": {
+                        "name": "denoise"
+                    }
+                }
+            },
+            "9": {
+                "input": {
+                    "cfg": {
+                        "visible": false
+                    },
+                    "neg_scale": {
+                        "name": "negative_scale"
+                    }
+                }
+            }
+        },
+        "datetime": 1728397760396,
+        "external": [],
+        "links": [
+            [
+                12,
+                0,
+                4,
+                0,
+                261,
+                "NOISE"
+            ],
+            [
+                5,
+                0,
+                4,
+                1,
+                254,
+                "NOISE"
+            ],
+            [
+                0,
+                0,
+                7,
+                0,
+                249,
+                "*"
+            ],
+            [
+                7,
+                0,
+                8,
+                0,
+                256,
+                "SIGMAS"
+            ],
+            [
+                0,
+                0,
+                9,
+                0,
+                249,
+                "*"
+            ],
+            [
+                1,
+                0,
+                9,
+                1,
+                250,
+                "*"
+            ],
+            [
+                2,
+                0,
+                9,
+                2,
+                251,
+                "*"
+            ],
+            [
+                14,
+                0,
+                9,
+                3,
+                263,
+                "CONDITIONING"
+            ],
+            [
+                16,
+                0,
+                9,
+                4,
+                265,
+                "FLOAT"
+            ],
+            [
+                8,
+                0,
+                10,
+                0,
+                257,
+                "SIGMAS"
+            ],
+            [
+                8,
+                1,
+                10,
+                1,
+                257,
+                "SIGMAS"
+            ],
+            [
+                4,
+                0,
+                11,
+                0,
+                253,
+                "NOISE"
+            ],
+            [
+                9,
+                0,
+                11,
+                1,
+                258,
+                "GUIDER"
+            ],
+            [
+                6,
+                0,
+                11,
+                2,
+                255,
+                "SAMPLER"
+            ],
+            [
+                10,
+                0,
+                11,
+                3,
+                259,
+                "SIGMAS"
+            ],
+            [
+                3,
+                0,
+                11,
+                4,
+                252,
+                "*"
+            ],
+            [
+                2,
+                0,
+                14,
+                0,
+                251,
+                "*"
+            ],
+            [
+                13,
+                0,
+                15,
+                0,
+                262,
+                "BOOLEAN"
+            ],
+            [
+                15,
+                0,
+                16,
+                0,
+                264,
+                "INT"
+            ]
+        ],
+        "nodes": [
+            {
+                "flags": {},
+                "id": -1,
+                "index": 0,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 35,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2280,
+                    "1": -450
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 1,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 36,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2180,
+                    "1": -430
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "title": "positive",
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 2,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 37,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2180,
+                    "1": -410
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "title": "negative",
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 3,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "",
+                        "type": "*"
+                    }
+                ],
+                "mode": 0,
+                "order": 42,
+                "outputs": [
+                    {
+                        "links": null,
+                        "name": "*",
+                        "type": "*"
+                    }
+                ],
+                "pos": {
+                    "0": 2550,
+                    "1": -30
+                },
+                "properties": {
+                    "horizontal": false,
+                    "showOutputText": true
+                },
+                "size": [
+                    75,
+                    26
+                ],
+                "type": "Reroute"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 4,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "noise_false",
+                        "type": "NOISE"
+                    },
+                    {
+                        "link": null,
+                        "name": "noise_true",
+                        "type": "NOISE"
+                    }
+                ],
+                "mode": 0,
+                "order": 63,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "NOISE",
+                        "slot_index": 0,
+                        "type": "NOISE"
+                    },
+                    {
+                        "links": null,
+                        "name": "BOOLEAN",
+                        "type": "BOOLEAN"
+                    }
+                ],
+                "pos": {
+                    "0": 2720,
+                    "1": -570
+                },
+                "properties": {
+                    "Node name for S&R": "CR Noise Input Switch JK"
+                },
+                "size": {
+                    "0": 277.20001220703125,
+                    "1": 80
+                },
+                "title": "Noise Input Switch JK\ud83d\udc09-Add Noise",
+                "type": "CR Noise Input Switch JK",
+                "widgets_values": [
+                    false
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 5,
+                "inputs": [],
+                "mode": 0,
+                "order": 39,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "NOISE",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "NOISE"
+                    }
+                ],
+                "pos": {
+                    "0": 2430,
+                    "1": -580
+                },
+                "properties": {
+                    "Node name for S&R": "RandomNoise"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 82
+                },
+                "type": "RandomNoise",
+                "widgets_values": [
+                    0,
+                    "randomize"
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 6,
+                "inputs": [],
+                "mode": 0,
+                "order": 38,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "SAMPLER",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "SAMPLER"
+                    }
+                ],
+                "pos": {
+                    "0": 2430,
+                    "1": -250
+                },
+                "properties": {
+                    "Node name for S&R": "KSamplerSelect"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 60
+                },
+                "type": "KSamplerSelect",
+                "widgets_values": [
+                    "euler"
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 7,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "slot_index": 0,
+                        "type": "MODEL"
+                    }
+                ],
+                "mode": 0,
+                "order": 61,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "SIGMAS",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "SIGMAS"
+                    }
+                ],
+                "pos": {
+                    "0": 2430,
+                    "1": -140
+                },
+                "properties": {
+                    "Node name for S&R": "BasicScheduler"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 110
+                },
+                "type": "BasicScheduler",
+                "widgets_values": [
+                    "normal",
+                    20,
+                    1
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 8,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "sigmas",
+                        "type": "SIGMAS"
+                    }
+                ],
+                "mode": 0,
+                "order": 74,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "high_sigmas",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "SIGMAS"
+                    },
+                    {
+                        "links": [],
+                        "name": "low_sigmas",
+                        "shape": 3,
+                        "slot_index": 1,
+                        "type": "SIGMAS"
+                    }
+                ],
+                "pos": {
+                    "0": 2720,
+                    "1": -140
+                },
+                "properties": {
+                    "Node name for S&R": "SplitSigmasDenoise"
+                },
+                "size": {
+                    "0": 280,
+                    "1": 80
+                },
+                "type": "SplitSigmasDenoise",
+                "widgets_values": [
+                    1
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 9,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "model",
+                        "type": "MODEL"
+                    },
+                    {
+                        "link": null,
+                        "name": "positive",
+                        "type": "CONDITIONING"
+                    },
+                    {
+                        "link": null,
+                        "name": "negative",
+                        "type": "CONDITIONING"
+                    },
+                    {
+                        "link": null,
+                        "name": "empty_conditioning",
+                        "type": "CONDITIONING"
+                    },
+                    {
+                        "link": null,
+                        "name": "cfg",
+                        "type": "FLOAT",
+                        "widget": {
+                            "name": "cfg"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 82,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "GUIDER",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "GUIDER"
+                    }
+                ],
+                "pos": {
+                    "0": 2430,
+                    "1": -450
+                },
+                "properties": {
+                    "Node name for S&R": "PerpNegGuider"
+                },
+                "size": {
+                    "0": 211.60000610351562,
+                    "1": 140
+                },
+                "type": "PerpNegGuider",
+                "widgets_values": [
+                    8,
+                    1
+                ]
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 10,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "sigmas_false",
+                        "type": "SIGMAS"
+                    },
+                    {
+                        "link": null,
+                        "name": "sigmas_true",
+                        "type": "SIGMAS"
+                    }
+                ],
+                "mode": 0,
+                "order": 81,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "SIGMAS",
+                        "slot_index": 0,
+                        "type": "SIGMAS"
+                    },
+                    {
+                        "links": null,
+                        "name": "BOOLEAN",
+                        "type": "BOOLEAN"
+                    }
+                ],
+                "pos": {
+                    "0": 2720,
+                    "1": -280
+                },
+                "properties": {
+                    "Node name for S&R": "CR Sigmas Input Switch JK"
+                },
+                "size": {
+                    "0": 280,
+                    "1": 80
+                },
+                "title": "Sigmas Input Switch JK\ud83d\udc09-2nd pass",
+                "type": "CR Sigmas Input Switch JK",
+                "widgets_values": [
+                    false
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": false
+                },
+                "id": -1,
+                "index": 11,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "noise",
+                        "slot_index": 0,
+                        "type": "NOISE"
+                    },
+                    {
+                        "link": null,
+                        "name": "guider",
+                        "slot_index": 1,
+                        "type": "GUIDER"
+                    },
+                    {
+                        "link": null,
+                        "name": "sampler",
+                        "slot_index": 2,
+                        "type": "SAMPLER"
+                    },
+                    {
+                        "link": null,
+                        "name": "sigmas",
+                        "slot_index": 3,
+                        "type": "SIGMAS"
+                    },
+                    {
+                        "link": null,
+                        "name": "latent_image",
+                        "slot_index": 4,
+                        "type": "LATENT"
+                    }
+                ],
+                "mode": 0,
+                "order": 85,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "output",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "LATENT"
+                    },
+                    {
+                        "links": [],
+                        "name": "denoised_output",
+                        "shape": 3,
+                        "slot_index": 1,
+                        "type": "LATENT"
+                    }
+                ],
+                "pos": {
+                    "0": 2720,
+                    "1": -440
+                },
+                "properties": {
+                    "Node name for S&R": "SamplerCustomAdvanced"
+                },
+                "size": {
+                    "0": 280,
+                    "1": 110
+                },
+                "type": "SamplerCustomAdvanced"
+            },
+            {
+                "flags": {},
+                "id": -1,
+                "index": 12,
+                "inputs": [],
+                "mode": 0,
+                "order": 40,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "NOISE",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "NOISE"
+                    }
+                ],
+                "pos": {
+                    "0": 2430,
+                    "1": -660
+                },
+                "properties": {
+                    "Node name for S&R": "DisableNoise"
+                },
+                "size": {
+                    "0": 210,
+                    "1": 26
+                },
+                "type": "DisableNoise"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 13,
+                "inputs": [],
+                "mode": 0,
+                "order": 41,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "BOOLEAN",
+                        "slot_index": 0,
+                        "type": "BOOLEAN"
+                    }
+                ],
+                "pos": {
+                    "0": 2180,
+                    "1": -300
+                },
+                "properties": {
+                    "Node name for S&R": "CM_BoolUnaryOperation JK"
+                },
+                "size": {
+                    "0": 315,
+                    "1": 82
+                },
+                "type": "CM_BoolUnaryOperation JK",
+                "widgets_values": [
+                    "Not",
+                    false
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 14,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "conditioning",
+                        "type": "CONDITIONING"
+                    }
+                ],
+                "mode": 0,
+                "order": 62,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "CONDITIONING",
+                        "shape": 3,
+                        "slot_index": 0,
+                        "type": "CONDITIONING"
+                    }
+                ],
+                "pos": {
+                    "0": 2180,
+                    "1": -360
+                },
+                "properties": {
+                    "Node name for S&R": "ConditioningZeroOut"
+                },
+                "size": {
+                    "0": 300,
+                    "1": 30
+                },
+                "type": "ConditioningZeroOut"
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 15,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "a",
+                        "type": "BOOLEAN",
+                        "widget": {
+                            "name": "a"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 64,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "INT",
+                        "slot_index": 0,
+                        "type": "INT"
+                    }
+                ],
+                "pos": {
+                    "0": 2180,
+                    "1": -320
+                },
+                "properties": {
+                    "Node name for S&R": "CM_BoolToInt JK"
+                },
+                "size": {
+                    "0": 320,
+                    "1": 60
+                },
+                "type": "CM_BoolToInt JK",
+                "widgets_values": [
+                    false
+                ]
+            },
+            {
+                "flags": {
+                    "collapsed": true
+                },
+                "id": -1,
+                "index": 16,
+                "inputs": [
+                    {
+                        "link": null,
+                        "name": "a",
+                        "type": "INT",
+                        "widget": {
+                            "name": "a"
+                        }
+                    }
+                ],
+                "mode": 0,
+                "order": 75,
+                "outputs": [
+                    {
+                        "links": [],
+                        "name": "FLOAT",
+                        "slot_index": 0,
+                        "type": "FLOAT"
+                    }
+                ],
+                "pos": {
+                    "0": 2180,
+                    "1": -340
+                },
+                "properties": {
+                    "Node name for S&R": "CM_IntToFloat JK"
+                },
+                "size": {
+                    "0": 320,
+                    "1": 60
+                },
+                "type": "CM_IntToFloat JK",
+                "widgets_values": [
+                    0
+                ]
+            }
+        ],
+        "packname": "\ud83d\udc09 JK",
+        "version": "1.0"
+    },
     "\ud83d\udc09 JK::Image RemBG": {
         "author": "Jake",
         "category": "\ud83d\udc12 Tools",
