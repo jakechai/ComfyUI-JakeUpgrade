@@ -540,4 +540,4 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 			Enchance and Resize Input Image added for img2img workflow.
 			Noise | Guider | Sampler | Sigmas switch added.
 - 2024-10-10 - v1.5.1	Fal LLM and VLM API added for prompt generation workflow and SAI API workfkow.
-- 2024-10-10 - v1.5.2	Flux KSampler Adv updated, use SplitSigmas instead of SpleSigmasDenoise.
+- 2024-10-11 - v1.5.2	Flux KSampler Adv updated, use SplitSigmas instead of SplitSigmasDenoise.
