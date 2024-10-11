@@ -102,7 +102,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
 - [IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
-- [comfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
+- [ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
 
 ### img2mesh workflow
 
@@ -540,3 +540,4 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 			Enchance and Resize Input Image added for img2img workflow.
 			Noise | Guider | Sampler | Sigmas switch added.
 - 2024-10-10 - v1.5.1	Fal LLM and VLM API added for prompt generation workflow and SAI API workfkow.
+- 2024-10-10 - v1.5.2	Flux KSampler Adv updated, use SplitSigmas instead of SpleSigmasDenoise.
