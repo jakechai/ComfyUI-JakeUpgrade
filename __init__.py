@@ -22,6 +22,9 @@ NODE_CLASS_MAPPINGS = {
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
     "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
     "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
+    "CR Aspect Ratio JK": CR_AspectRatio_JK,
+    "Tiling Mode JK": TilingMode_JK,
+    "Empty Latent Color JK": EmptyLatentColor_JK,
     "Random Beats JK": RandomBeats_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
@@ -35,7 +38,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
-    "CR_Apply Multi-ControlNet SD3 JK": CR_ApplyControlNetStackSD3_JK,
+    "CR Apply Multi-ControlNet VAE JK": CR_ApplyControlNetStackVAE_JK,
     ### LoRA Nodes
     "CR Load LoRA JK": CR_LoraLoader_JK,
     "CR LoRA Stack JK": CR_LoRAStack_JK,
@@ -94,7 +97,6 @@ NODE_CLASS_MAPPINGS = {
     "CR ControlNet Input Switch JK": CR_ControlNetInputSwitch_JK,
     "CR Text Input Switch JK": CR_TextInputSwitch_JK,
     "CR VAE Input Switch JK": CR_VAEInputSwitch_JK,
-    "CR Switch Model and CLIP JK": CR_ModelAndCLIPInputSwitch_JK,
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
     "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
     "CR Noise Input Switch JK": CR_NoiseInputSwitch_JK,
@@ -173,6 +175,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
     "CR SD3 Aspect Ratio JK": "SD3 Aspect Ratio JK🐉",
+    "CR Aspect Ratio JK": "Aspect Ratio JK🐉",
+    "Tiling Mode JK": "Tiling Mode JK🐉",
+    "Empty Latent Color JK": "Empty Latent Color JK🐉",
     "Random Beats JK": "Random Beats JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
@@ -186,7 +191,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
-    "CR_Apply Multi-ControlNet SD3 JK": "Apply Multi-ControlNet SD3 JK🐉",
+    "CR Apply Multi-ControlNet VAE JK": "Apply Multi-ControlNet VAE JK🐉",
     ### LoRA Nodes
     "CR Load LoRA JK": "Load LoRA JK🐉",
     "CR LoRA Stack JK": "LoRA Stack JK🐉",
@@ -245,7 +250,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR ControlNet Input Switch JK": "ControlNet Input Switch JK🐉",
     "CR Text Input Switch JK": "Text Input Switch JK🐉",
     "CR VAE Input Switch JK": "VAE Input Switch JK🐉",
-    "CR Switch Model and CLIP JK": "Switch Model and CLIP JK🐉",
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
     "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
     "CR Noise Input Switch JK": "Noise Input Switch JK🐉",

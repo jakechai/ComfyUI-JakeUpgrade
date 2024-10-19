@@ -24,7 +24,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## Video Introduction
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
-- txt2img&img2img SAI API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
+- txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
 - inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
@@ -39,7 +39,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_txt2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SDXL.json)
 - [JK_workflow_txt2img_img2img_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD3.json)
 - [JK_workflow_txt2img_img2img_Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_Flux.json)
-- [JK_workflow_txt2img_img2img_SAIAPI](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SAIAPI.json)
+- [JK_workflow_txt2img_img2img_API](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_API.json)
 - [JK_workflow_txt2prompt_img2prompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2prompt_img2prompt.json)
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
@@ -48,7 +48,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 > [!NOTE]
 > - ComfyUI-3D-Pack needs pytorch 2.4.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.4.1+cu124 (or higher), you should separate those two ComfyUI.  
-> - ComfyUI-3D-Pack 3DMesh | 3DGS Preview not working seems to be related to the frontend change of ComfyUI. Fall back to the legacy frontend by adding `--front-end-version Comfy-Org/ComfyUI_legacy_frontend@latest` to the command line argument. [ComfyUI/pull/4379](https://github.com/comfyanonymous/ComfyUI/pull/4379).  
+> - ComfyUI-3D-Pack 3DMesh | 3DGS Preview works with the new frontend of ComfyUI with a [restriction](https://github.com/MrForExample/ComfyUI-3D-Pack/issues/343#issuecomment-2423478072).  
 > - [CXH joy caption](https://github.com/StartHua/Comfyui_CXH_joy_caption) conflicts with [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes) and is not included in the prompt generation workflow.
 
 ### Module
@@ -294,6 +294,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		SD1.5 Aspect Ratio JK🐉
 		SDXL Aspect Ratio JK🐉
 		SD3 Aspect Ratio JK🐉
+		Aspect Ratio JK🐉
+		Tiling Mode JK🐉
+		Empty Latent Color JK🐉
     Reroute Nodes
 		Reroute List JK🐉
 		Reroute Ckpt JK🐉
@@ -306,7 +309,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Apply ControlNet JK🐉
 		Multi-ControlNet Stack JK🐉
 		Apply Multi-ControlNet JK🐉
-		Apply Multi-ControlNet SD3 JK🐉
+		Apply Multi-ControlNet VAE JK🐉
     LoRA Nodes
 		Load LoRA JK🐉
 		LoRA Stack JK🐉
@@ -365,7 +368,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		ControlNet Input Switch JK🐉
 		Text Input Switch JK🐉
 		VAE Input Switch JK🐉
-		Switch Model and CLIP JK🐉
 		Pipe Input Switch JK🐉
 		Impact Pipe Input Switch JK🐉
 		Noise Input Switch JK🐉
@@ -453,6 +455,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::Concept
 		JK🐉::Flux KSampler
 		JK🐉::Flux KSampler Adv
+		JK🐉::Image Gen Common
+		JK🐉::Image Gen Flux
+		JK🐉::Image Gen SD15
+		JK🐉::Image Gen SD3
+		JK🐉::Image Gen SDXL
 		JK🐉::Inpaint Latent
 		JK🐉::Inpaint Checkpoint
 		JK🐉::Inpaint ControlNet			
@@ -541,3 +548,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 			Noise | Guider | Sampler | Sigmas switch added.
 - 2024-10-10 - v1.5.1	Fal LLM and VLM API added for prompt generation workflow and SAI API workfkow.
 - 2024-10-11 - v1.5.2	Flux KSampler Adv updated, use SplitSigmas instead of SplitSigmasDenoise.
+- 2024-10-19 - v1.6.0	Image Generation group node and module workflow added.
+			Switch Model and CLIP JK🐉 node removed.
+			Rename Apply ControlNet Stack SD3 to Applly ControlNet VAE.
+			Tiling Mode and Empty Latent Color nodes added.
