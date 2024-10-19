@@ -302,6 +302,81 @@ class CR_AspectRatioSD3_JK:
 
         return(aspect_ratio, width, height,)  
 
+class CR_AspectRatio_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "resolution": (["Custom", "SD15 512x512", "SD15 680x512", "SD15 768x512", "SD15 912x512", "SD15 952x512", "SD15 1024x512",
+                                "SD15 1224x512", "SD15 768x432", "SD15 768x416", "SD15 768x384", "SD15 768x320", 
+                                "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SD3 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SD3 1216x832", "SDXL 1280x768",
+                                "SD3 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SD3 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
+                "custom_width": ("INT", {"default": 512, "min": 64, "max": 2048, "step": 8}),
+                "custom_height": ("INT", {"default": 512, "min": 64, "max": 2048, "step": 8}),
+                "swap_dimensions": ("BOOLEAN", {"default": False},),
+            }
+        }
+    RETURN_TYPES = ("INT", "INT",)
+    RETURN_NAMES = ("width", "height")
+    FUNCTION = "Aspect_Ratio"
+    CATEGORY = icons.get("JK/Misc")
+
+    def Aspect_Ratio(self, custom_width, custom_height, resolution, swap_dimensions):
+        if resolution == "Custom":
+            width, height = custom_width, custom_height
+        else:
+            width, height = get_resolution(resolution)
+            
+        if swap_dimensions == True:
+            return(height, width,)
+        else:
+            return(width, height,)
+
+class TilingMode_JK:
+  
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "tiling": (["enable", "x_only", "y_only", "disable"], {"default": "disable"}),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("TILING",)
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+
+    def get_value(self, tiling):
+        return (tiling,)
+
+class EmptyLatentColor_JK:
+  
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "INT", "INT", "INT")
+    RETURN_NAMES = ("SD15", "SDXL", "SD3", "FLUX")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+
+    def get_value(self,):
+        return (8548961, 9077127, 9214099, 8618319)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes
@@ -556,10 +631,12 @@ class CR_ApplyControlNetStack_JK:
         return {
             "required": {
                 "base_positive": ("CONDITIONING",),
-                "base_negative": ("CONDITIONING",),                
-                "controlnet_stack": ("CONTROL_NET_STACK", ),
+                "base_negative": ("CONDITIONING",), 
                 "ControlNet_switch": ("BOOLEAN", {"default": False},),
-            }
+            },
+             "optional": {
+                "controlnet_stack": ("CONTROL_NET_STACK", ),
+             }
         }                    
 
     RETURN_TYPES = ("CONDITIONING", "CONDITIONING", )
@@ -569,10 +646,8 @@ class CR_ApplyControlNetStack_JK:
 
     def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, controlnet_stack=None,):
 
-        if ControlNet_switch == False:
-            return (base_positive, base_negative, )
+        if controlnet_stack is not None and ControlNet_switch == True:
         
-        if controlnet_stack is not None:
             for controlnet_tuple in controlnet_stack:
                 controlnet_name, image, strength, start_percent, end_percent  = controlnet_tuple
                 
@@ -590,17 +665,19 @@ class CR_ApplyControlNetStack_JK:
                 
         return (base_positive, base_negative, )
 
-class CR_ApplyControlNetStackSD3_JK:
+class CR_ApplyControlNetStackVAE_JK:
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
                 "base_positive": ("CONDITIONING",),
-                "base_negative": ("CONDITIONING",),                
+                "base_negative": ("CONDITIONING",),
                 "vae": ("VAE",),
-                "controlnet_stack": ("CONTROL_NET_STACK", ),
                 "ControlNet_switch": ("BOOLEAN", {"default": False},),
-            }
+            },
+             "optional": {
+                "controlnet_stack": ("CONTROL_NET_STACK", ),
+             }
         }                    
 
     RETURN_TYPES = ("CONDITIONING", "CONDITIONING", )
@@ -609,11 +686,8 @@ class CR_ApplyControlNetStackSD3_JK:
     CATEGORY = icons.get("JK/ControlNet")
 
     def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, vae=None, controlnet_stack=None,):
-
-        if ControlNet_switch == False:
-            return (base_positive, base_negative, )
         
-        if controlnet_stack is not None:
+        if controlnet_stack is not None and ControlNet_switch == True:
             for controlnet_tuple in controlnet_stack:
                 controlnet_name, image, strength, start_percent, end_percent  = controlnet_tuple
                 
@@ -2757,16 +2831,18 @@ class CR_IntInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "int_false": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
+            },
+            "optional": {
                 "int_true": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
-            }
+            },
         }
 
     RETURN_TYPES = ("INT", "BOOLEAN",)
     FUNCTION = "InputInt"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputInt(self, boolean_value, int_false, int_true):
-        if boolean_value == True:
+    def InputInt(self, boolean_value, int_false, int_true=None):
+        if int_true != None and boolean_value == True:
             return (int_true, boolean_value,)
         else:
             return (int_false, boolean_value,)
@@ -2781,16 +2857,18 @@ class CR_FloatInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "float_false": ("FLOAT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
+            },
+            "optional": {
                 "float_true": ("FLOAT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
-            }
+            },
         }
 
     RETURN_TYPES = ("FLOAT", "BOOLEAN",)
     FUNCTION = "InputFloat"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputFloat(self, boolean_value, float_false, float_true):
-        if boolean_value == True:
+    def InputFloat(self, boolean_value, float_false, float_true=None):
+        if float_true != None and boolean_value == True:
             return (float_true, boolean_value,)
         else:
             return (float_false, boolean_value,)
@@ -2805,16 +2883,18 @@ class CR_ImageInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "image_false": ("IMAGE",),
-                "image_true": ("IMAGE",)
-            }
+            },
+            "optional": {
+                "image_true": ("IMAGE",),
+            },
         }
 
     RETURN_TYPES = ("IMAGE", "BOOLEAN",)
     FUNCTION = "InputImages"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputImages(self, boolean_value, image_false, image_true):
-        if boolean_value == True:
+    def InputImages(self, boolean_value, image_false, image_true=None):
+        if image_true != None and boolean_value == True:
             return (image_true, boolean_value,)
         else:
             return (image_false, boolean_value,)
@@ -2829,16 +2909,18 @@ class CR_MaskInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "mask_false": ("MASK",),
+            },
+            "optional": {
                 "mask_true": ("MASK",)
-            }
+            },
         }
 
     RETURN_TYPES = ("MASK", "BOOLEAN",)
     FUNCTION = "InputMasks"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputMasks(self, boolean_value, mask_false, mask_true):
-        if boolean_value == True:
+    def InputMasks(self, boolean_value, mask_false, mask_true=None):
+        if mask_true != None and boolean_value == True:
             return (mask_true, boolean_value,)
         else:
             return (mask_false, boolean_value,)
@@ -2853,16 +2935,18 @@ class CR_LatentInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "latent_false": ("LATENT",),
-                "latent_true": ("LATENT",)
-            }
+            },
+            "optional": {
+                "latent_true": ("LATENT",),
+            },
         }
 
     RETURN_TYPES = ("LATENT", "BOOLEAN",)
     FUNCTION = "InputLatents"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputLatents(self, boolean_value, latent_false, latent_true):
-        if boolean_value == True:
+    def InputLatents(self, boolean_value, latent_false, latent_true=None):
+        if latent_true != None and boolean_value == True:
             return (latent_true, boolean_value,)
         else:
             return (latent_false, boolean_value,)
@@ -2877,16 +2961,18 @@ class CR_ConditioningInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "conditioning_false": ("CONDITIONING",),
-                "conditioning_true": ("CONDITIONING",)
-            }
+            },
+            "optional": {
+                "conditioning_true": ("CONDITIONING",),
+            },
         }
 
     RETURN_TYPES = ("CONDITIONING", "BOOLEAN",)
     FUNCTION = "InputConditioning"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputConditioning(self, boolean_value, conditioning_false, conditioning_true):
-        if boolean_value == True:
+    def InputConditioning(self, boolean_value, conditioning_false, conditioning_true=None):
+        if conditioning_true != None and boolean_value == True:
             return (conditioning_true, boolean_value,)
         else:
             return (conditioning_false, boolean_value,)
@@ -2901,16 +2987,18 @@ class CR_ClipInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "clip_false": ("CLIP",),
-                "clip_true": ("CLIP",)
-            }
+            },
+            "optional": {
+                "clip_true": ("CLIP",),
+            },
         }
 
     RETURN_TYPES = ("CLIP", "BOOLEAN",)
     FUNCTION = "InputClip"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputClip(self, boolean_value, clip_false, clip_true):
-        if boolean_value == True:
+    def InputClip(self, boolean_value, clip_false, clip_true=None):
+        if clip_true != None and boolean_value == True:
             return (clip_true, boolean_value,)
         else:
             return (clip_false, boolean_value,)
@@ -2925,16 +3013,18 @@ class CR_ModelInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "model_false": ("MODEL",),
-                "model_true": ("MODEL",)
-            }
+            },
+            "optional": {
+                "model_true": ("MODEL",),
+            },
         }
 
     RETURN_TYPES = ("MODEL", "BOOLEAN",)
     FUNCTION = "InputModel"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputModel(self, boolean_value, model_false, model_true):
-        if boolean_value == True:
+    def InputModel(self, boolean_value, model_false, model_true=None):
+        if model_true != None and boolean_value == True:
             return (model_true, boolean_value,)
         else:
             return (model_false, boolean_value,)
@@ -2949,16 +3039,18 @@ class CR_ControlNetInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "control_net_false": ("CONTROL_NET",),
-                "control_net_true": ("CONTROL_NET",)
-            }
+            },
+            "optional": {
+                "control_net_true": ("CONTROL_NET",),
+            },
         }
         
     RETURN_TYPES = ("CONTROL_NET", "BOOLEAN",)
     FUNCTION = "InputControlNet"
     CATEGORY = icons.get("JK/Logic")
 
-    def InputControlNet(self, boolean_value, control_net_false, control_net_true):
-        if boolean_value == True:
+    def InputControlNet(self, boolean_value, control_net_false, control_net_true=None):
+        if control_net_true != None and boolean_value == True:
             return (control_net_true, boolean_value,)
         else:
             return (control_net_false, boolean_value,)
@@ -2973,6 +3065,8 @@ class CR_TextInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "text_false": ("STRING", {"default": ""}),
+            },
+            "optional": {
                 "text_true": ("STRING", {"default": ""}),
             },
         }
@@ -2981,9 +3075,8 @@ class CR_TextInputSwitch_JK:
     FUNCTION = "text_input_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def text_input_switch(self, boolean_value, text_false, text_true):
-
-        if boolean_value == True:
+    def text_input_switch(self, boolean_value, text_false, text_true=None):
+        if text_true != None and boolean_value == True:
             return (text_true, boolean_value,)
         else:
             return (text_false, boolean_value,)
@@ -2998,45 +3091,21 @@ class CR_VAEInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "VAE_false": ("VAE", {"forceInput": True}),
+            },
+            "optional": {
                 "VAE_true": ("VAE", {"forceInput": True}),
-            }
+            },
         }
 
     RETURN_TYPES = ("VAE", "BOOLEAN",)   
     FUNCTION = "vae_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def vae_switch(self, boolean_value, VAE_false, VAE_true):
-        if boolean_value == True:
+    def vae_switch(self, boolean_value, VAE_false, VAE_true=None):
+        if VAE_true != None and boolean_value == True:
             return (VAE_true, boolean_value)
         else:
             return (VAE_false, boolean_value)
-
-class CR_ModelAndCLIPInputSwitch_JK:
-    def __init__(self):
-        pass
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "boolean_value": ("BOOLEAN", {"default": False}),
-                "model_false": ("MODEL",),
-                "clip_false": ("CLIP",),                
-                "model_true": ("MODEL",),               
-                "clip_true": ("CLIP",)
-            }
-        }
-
-    RETURN_TYPES = ("MODEL", "CLIP", "BOOLEAN",)
-    FUNCTION = "switch"
-    CATEGORY = icons.get("JK/Logic")
-
-    def switch(self, boolean_value, model_false, clip_false, model_true, clip_true):
-        if boolean_value == True:
-            return (model_true, clip_true, boolean_value)
-        else:
-            return (model_false, clip_false, boolean_value)
 
 class CR_PipeInputSwitch_JK:
     def __init__(self):
@@ -3048,16 +3117,19 @@ class CR_PipeInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "pipe_false": ("PIPE_LINE", {"forceInput": True}),
+                
+            },
+            "optional": {
                 "pipe_true": ("PIPE_LINE", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("PIPE_LINE", "BOOLEAN",)   
     FUNCTION = "pipe_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def pipe_switch(self, boolean_value, pipe_false, pipe_true):
-        if boolean_value == True:
+    def pipe_switch(self, boolean_value, pipe_false, pipe_true=None):
+        if pipe_true != None and boolean_value == True:
             return (pipe_true, boolean_value)
         else:
             return (pipe_false, boolean_value)
@@ -3072,16 +3144,18 @@ class CR_ImpactPipeInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "pipe_false": ("BASIC_PIPE", {"forceInput": True}),
+            },
+            "optional": {
                 "pipe_true": ("BASIC_PIPE", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("BASIC_PIPE", "BOOLEAN",)   
     FUNCTION = "pipe_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def pipe_switch(self, boolean_value, pipe_false, pipe_true):
-        if boolean_value == True:
+    def pipe_switch(self, boolean_value, pipe_false, pipe_true=None):
+        if pipe_true != None and boolean_value == True:
             return (pipe_true, boolean_value)
         else:
             return (pipe_false, boolean_value)
@@ -3096,16 +3170,18 @@ class CR_NoiseInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "noise_false": ("NOISE", {"forceInput": True}),
+            },
+            "optional": {
                 "noise_true": ("NOISE", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("NOISE", "BOOLEAN",)   
     FUNCTION = "noise_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def noise_switch(self, boolean_value, noise_false, noise_true):
-        if boolean_value == True:
+    def noise_switch(self, boolean_value, noise_false, noise_true=None):
+        if noise_true != None and boolean_value == True:
             return (noise_true, boolean_value)
         else:
             return (noise_false, boolean_value)
@@ -3120,16 +3196,18 @@ class CR_GuiderInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "guider_false": ("GUIDER", {"forceInput": True}),
+            },
+            "optional": {
                 "guider_true": ("GUIDER", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("GUIDER", "BOOLEAN",)   
     FUNCTION = "guider_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def guider_switch(self, boolean_value, guider_false, guider_true):
-        if boolean_value == True:
+    def guider_switch(self, boolean_value, guider_false, guider_true=None):
+        if guider_true != None and boolean_value == True:
             return (guider_true, boolean_value)
         else:
             return (guider_false, boolean_value)
@@ -3144,16 +3222,18 @@ class CR_SamplerInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "sampler_false": ("SAMPLER", {"forceInput": True}),
+            },
+            "optional": {
                 "sampler_true": ("SAMPLER", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("SAMPLER", "BOOLEAN",)
     FUNCTION = "sampler_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def sampler_switch(self, boolean_value, sampler_false, sampler_true):
-        if boolean_value == True:
+    def sampler_switch(self, boolean_value, sampler_false, sampler_true=None):
+        if sampler_true != None and boolean_value == True:
             return (sampler_true, boolean_value)
         else:
             return (sampler_false, boolean_value)
@@ -3168,16 +3248,18 @@ class CR_SigmasInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "sigmas_false": ("SIGMAS", {"forceInput": True}),
+            },
+            "optional": {
                 "sigmas_true": ("SIGMAS", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("SIGMAS", "BOOLEAN",)
     FUNCTION = "sigmas_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def sigmas_switch(self, boolean_value, sigmas_false, sigmas_true):
-        if boolean_value == True:
+    def sigmas_switch(self, boolean_value, sigmas_false, sigmas_true=None):
+        if sigmas_true != None and boolean_value == True:
             return (sigmas_true, boolean_value)
         else:
             return (sigmas_false, boolean_value)
@@ -3192,16 +3274,18 @@ class CR_MeshInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "mesh_false": ("MESH", {"forceInput": True}),
+            },
+            "optional": {
                 "mesh_true": ("MESH", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("MESH", "BOOLEAN",)   
     FUNCTION = "mesh_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def mesh_switch(self, boolean_value, mesh_false, mesh_true):
-        if boolean_value == True:
+    def mesh_switch(self, boolean_value, mesh_false, mesh_true=None):
+        if mesh_true != None and boolean_value == True:
             return (mesh_true, boolean_value)
         else:
             return (mesh_false, boolean_value)
@@ -3216,16 +3300,18 @@ class CR_PlyInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "ply_false": ("GS_PLY", {"forceInput": True}),
+            },
+            "optional": {
                 "ply_true": ("GS_PLY", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("GS_PLY", "BOOLEAN",)   
     FUNCTION = "ply_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def mesh_switch(self, boolean_value, ply_false, ply_true):
-        if boolean_value == True:
+    def mesh_switch(self, boolean_value, ply_false, ply_true=None):
+        if ply_true != None and boolean_value == True:
             return (ply_true, boolean_value)
         else:
             return (ply_false, boolean_value)
@@ -3240,16 +3326,18 @@ class CR_OrbitPoseInputSwitch_JK:
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
                 "orbit_camposes_false": ("ORBIT_CAMPOSES", {"forceInput": True}),
+            },
+            "optional": {
                 "orbit_camposes_true": ("ORBIT_CAMPOSES", {"forceInput": True}),
-            }
+            },
         }
     
     RETURN_TYPES = ("ORBIT_CAMPOSES", "BOOLEAN",)   
     FUNCTION = "orbit_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def orbit_switch(self, boolean_value, orbit_camposes_false, orbit_camposes_true):
-        if boolean_value == True:
+    def orbit_switch(self, boolean_value, orbit_camposes_false, orbit_camposes_true=None):
+        if orbit_camposes_true != None and boolean_value == True:
             return (orbit_camposes_true, boolean_value)
         else:
             return (orbit_camposes_false, boolean_value)
@@ -4674,6 +4762,9 @@ NODE_CLASS_MAPPINGS = {
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
     "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
     "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
+    "CR Aspect Ratio JK": CR_AspectRatio_JK,
+    "Tiling Mode JK": TilingMode_JK,
+    "Empty Latent Color JK": EmptyLatentColor_JK,
     "Random Beats JK": RandomBeats_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
@@ -4687,7 +4778,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
-    "CR_Apply Multi-ControlNet SD3 JK": CR_ApplyControlNetStackSD3_JK,
+    "CR Apply Multi-ControlNet VAE JK": CR_ApplyControlNetStackVAE_JK,
     ### LoRA Nodes
     "CR Load LoRA JK": CR_LoraLoader_JK,
     "CR LoRA Stack JK": CR_LoRAStack_JK,
@@ -4746,7 +4837,6 @@ NODE_CLASS_MAPPINGS = {
     "CR ControlNet Input Switch JK": CR_ControlNetInputSwitch_JK,
     "CR Text Input Switch JK": CR_TextInputSwitch_JK,
     "CR VAE Input Switch JK": CR_VAEInputSwitch_JK,
-    "CR Switch Model and CLIP JK": CR_ModelAndCLIPInputSwitch_JK,
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
     "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
     "CR Noise Input Switch JK": CR_NoiseInputSwitch_JK,
@@ -4824,6 +4914,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
     "CR SD3 Aspect Ratio JK": "SD3 Aspect Ratio JK🐉",
+    "CR Aspect Ratio JK": "Aspect Ratio JK🐉",
+    "Tiling Mode JK": "Tiling Mode JK🐉",
+    "Empty Latent Color JK": "Empty Latent Color JK🐉",
     "Random Beats JK": "Random Beats JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
@@ -4837,7 +4930,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
-    "CR_Apply Multi-ControlNet SD3 JK": "Apply Multi-ControlNet SD3 JK🐉",
+    "CR Apply Multi-ControlNet VAE JK": "Apply Multi-ControlNet VAE JK🐉",
     ### LoRA Nodes
     "CR Load LoRA JK": "Load LoRA JK🐉",
     "CR LoRA Stack JK": "LoRA Stack JK🐉",
@@ -4896,7 +4989,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR ControlNet Input Switch JK": "ControlNet Input Switch JK🐉",
     "CR Text Input Switch JK": "Text Input Switch JK🐉",
     "CR VAE Input Switch JK": "VAE Input Switch JK🐉",
-    "CR Switch Model and CLIP JK": "Switch Model and CLIP JK🐉",
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
     "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
     "CR Noise Input Switch JK": "Noise Input Switch JK🐉",
