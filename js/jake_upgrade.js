@@ -170,7 +170,7 @@ function handleWidgetsVisibility(node, countValue, node_type) {
 		"Animation Value JK": ["keyframe_frame", "keyframe_value"],
 		"CR LoRA Stack JK": ["lora", "lora_name", "lora_weight", "model_weight", "clip_weight"],
 		"Embedding Picker Multi JK": ["embedding", "embedding_name", "emphasis", "append"],
-		"CR Multi-ControlNet Stack JK": ["ControlNet_Unit", "controlnet", "controlnet_strength", "start_percent", "end_percent"],
+		"CR Multi-ControlNet Stack JK": ["ControlNet_Unit", "controlnet", "union_type", "controlnet_strength", "start_percent", "end_percent"],
 	};
 	
  	if (node_type === "Animation Prompt JK") {
@@ -317,14 +317,16 @@ function handleWidgetsVisibility(node, countValue, node_type) {
 			const InvisibleWidget2 = findWidgetByName(node, `${InvisibleWidgetNames[2]}_${i}`);
 			const InvisibleWidget3 = findWidgetByName(node, `${InvisibleWidgetNames[3]}_${i}`);
 			const InvisibleWidget4 = findWidgetByName(node, `${InvisibleWidgetNames[4]}_${i}`);
+			const InvisibleWidget5 = findWidgetByName(node, `${InvisibleWidgetNames[5]}_${i}`);
 
 			if (i <= countValue) {
 				if (inputModeValue === "simple") {
 					toggleWidget(node, InvisibleWidget0, true);
 					toggleWidget(node, InvisibleWidget1, true);
 					toggleWidget(node, InvisibleWidget2, true);
-					toggleWidget(node, InvisibleWidget3, false);
+					toggleWidget(node, InvisibleWidget3, true);
 					toggleWidget(node, InvisibleWidget4, false);
+					toggleWidget(node, InvisibleWidget5, false);
 				}
 				else if (inputModeValue === "advanced") {
 					toggleWidget(node, InvisibleWidget0, true);
@@ -332,6 +334,7 @@ function handleWidgetsVisibility(node, countValue, node_type) {
 					toggleWidget(node, InvisibleWidget2, true);
 					toggleWidget(node, InvisibleWidget3, true);
 					toggleWidget(node, InvisibleWidget4, true);
+					toggleWidget(node, InvisibleWidget5, true);
 				}
 			}
 			else {
@@ -340,6 +343,7 @@ function handleWidgetsVisibility(node, countValue, node_type) {
 				toggleWidget(node, InvisibleWidget2, false);
 				toggleWidget(node, InvisibleWidget3, false);
 				toggleWidget(node, InvisibleWidget4, false);
+				toggleWidget(node, InvisibleWidget5, false);
 			}
 		}
 	}

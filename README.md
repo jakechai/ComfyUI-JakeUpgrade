@@ -4,6 +4,85 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
+## Changelog
+<details>
+<summary><b>Previous Version</b></summary>
+	
+	- 2024-06-23 - v1.0.0	released.  
+	- 2024-07-11 - v1.0.6	Noise Injection for Upscale Workflow.  
+	- 2024-07-16 - v1.0.7	Single Image to Mesh Workflow updated.  
+	- 2024-07-21 - v1.0.8	Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.  
+	- 2024-07-22 - v1.0.9	3DGS workflow added.  
+	- 2024-07-24 - v1.1.0	img2mesh workflow updated. Craftsman Mesh added. 
+				Three OrbitPoses nodes been added to 3D-Pack.  
+	- 2024-07-31 - v1.1.1	Prompt Combine node added.  
+	- 2024-08-03 - v1.1.2	Resize to Focus added to image2mesh workflow.  
+	- 2024-08-21 - v1.1.3	Random Beats node added (not for AIGC).  
+	- 2024-09-01 - v1.2.0	SD3 workflow added. Noise Injection (Inspire) added. 
+				Refine, Upscale, and Detailer process major updated. 
+				SD15 Hand Fix supports SDXL and SD3 workflow. 
+				SDXL IPAdapter supports SD3 workflow. 
+				NoiseInjection Component and workflow added.  
+	- 2024-09-04 - v1.2.1	In/Out Paint ControlNet Component added. 
+				Inpaint Module Workflow updated. 
+				SD15|SDXL|SD3 Workflow updated. 
+				Image Remove Alpha JK node added.  
+	- 2024-09-05 - v1.2.2	Black Pixel switch added for Inpaint ControlNet Component following ControlNet Preprocessor AUX Custom Node's update.  
+	- 2024-09-06 - v1.2.3	Refinement Noise Injection added. 
+				txt2prompt and img2prompt workflow added. 
+				img2prompt component added.  
+	- 2024-09-07 - v1.2.4	img2mesh workflow doesn't need _JK.pack, so that doesn't need to install segment anything, VLM nodes, and IF AI tools.  
+	- 2024-09-09 - v1.2.5	Clip l, clip g, t5xxl texture encode logic upgrade. 
+				Clip l & g switch added. 
+				Negative g switch added. 
+				SDXL Clip Text Encode Target Resolution Scale added.  
+	- 2024-09-10 - v1.2.6	detailer: add detail lora.  
+	- 2024-09-11 - v1.2.7	Magic Photo Prompter added.  
+	- 2024-09-13 - v1.2.8	Use Comfy UI default set union controlnet type to load xinsir sdxl controlnet union.  
+				Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows. 
+				Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.  
+	- 2024-09-15 - v1.2.9	Inpaint Simple updated. Outpaint Simple added. 
+				txt2img | img2img | inpaint workflow updated. 
+				In/Out Paint to Refinement process added. 
+				Upscale to Refinment process added.  
+	- 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated. 
+				Inpaint and txt2img/img2img workflows updated. 
+				SD3/Flux Inpaint ControlNet added.  
+	- 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux. 
+				SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly. 
+				Replace SD3 ControlNet Apply with new ControlNet Apply Node.  
+	- 2024-09-25 - v1.3.2	AIO Preprocessor added for txt2img | img2img workflow.  
+				Detailer, Upscale workflows updated. Refine workflow added.  
+	- 2024-09-26 - v1.3.3	Latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
+				Specified Dual Clip switch added for sdxl workflow.  
+	- 2024-09-28 - v1.3.4	Hand Fix supports SD3 and Flux. Hand Fix module workflow added.
+	- 2024-09-29 - v1.3.5	Inpaint Group Nodes upgrade, add more Image | Mask | Latent control.
+	- 2024-10-01 - v1.3.6	Inpaint Group Nodes upgrade, change color grading method.
+	- 2024-10-03 - v1.3.7	Remove Outpaint Pad Feathering.
+	- 2024-10-06 - v1.4.0	Replace Base Ipadapter simple with IPAdapter Style and Composition Transfer in SD15 and SDXL workflow.
+				SD3 Aspect Ratio node and SD3 Base Model Parameter node added. 
+				SD3 Api workflow added to make up the shorcomings of SD3 local deployment using Stability SD3 control and inpaint nodes.
+	- 2024-10-10 - v1.5.0	Flux KSampler and Flux Ksampler Adv group nodes added.
+				Flux txt2img and img2img workflow added. Flux KSampler workflow added.
+				Inpaint/Outpaint ControlNet and Checkpoint method order changed.
+				Enchance and Resize Input Image added for img2img workflow.
+				Noise | Guider | Sampler | Sigmas switch added.
+	- 2024-10-10 - v1.5.1	Fal LLM and VLM API added for prompt generation workflow and SAI API workfkow.
+	- 2024-10-11 - v1.5.2	Flux KSampler Adv updated, use SplitSigmas instead of SplitSigmasDenoise.
+</details>
+
+- 2024-10-19 - v1.6.0	Image Generation group node and module workflow added.
+			Switch Model and CLIP JK🐉 node removed.
+			Rename Apply ControlNet Stack SD3 to Applly ControlNet VAE.
+			Tiling Mode and Empty Latent Color nodes added.
+- 2024-11-08 - v1.7.0	Normal | Input version of Image Gen and Image Gen Adv group nodes added.
+			Krita workflow added using Input version of Image Gen group nodes.
+			Remove Comfyroll Custom Nodes from the must-have-node list.
+			ControlNet Apply and ControlNet Stack nodes upgraded, supports Union, Alimama Inpaint.
+			ControlNet Stack Input Switch node added.
+			Add Blend with Original Mask option to Inpaint, Image Gen Adv and Image Gen Input group nodes.
+			IsMaskEmpty Node and Image Crop by Mask Group Node added.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -25,6 +104,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
+- Group Nodes - Image Generation and Krita workflow: WIP
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
 - inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
@@ -54,6 +134,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ### Module
 
 - [JK_workflow_Image Generation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_01_ImgGen.json)
+- [JK_workflow_Image Generation Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_01_ImgGen_Adv.json)
 - [JK_workflow_Refine](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_04_Refine.json)
 - [JK_workflow_Upscale 1st](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_05_Upscale_1st.json)
 - [JK_workflow_Upscale 2nd](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_05_Upscale_2nd.json)
@@ -66,6 +147,39 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_txt2img_Simple](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_txt2img_Simple.json)
 - [JK_workflow_Flux_KSampler](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_FluxKSampler.json)
 - [JK_Workflow_Mesh-ReMesh_Projection](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_Workflow_Mesh-ReMesh_Projection.json)
+
+### Krita (sync)
+
+- [JK_workflow-Krita Common](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita Common.json)
+- [JK_workflow-Krita Common Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita Common Adv.json)
+- [JK_workflow-Krita SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita SD15.json)
+- [JK_workflow-Krita SD15 Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita SD15 Adv.json)
+- [JK_workflow-Krita SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita SDXL.json)
+- [JK_workflow-Krita SDXL Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita SDXL Adv.json)
+- [JK_workflow-Krita SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita SD3.json)
+- [JK_workflow-Krita SD3 Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita SD3 Adv.json)
+- [JK_workflow-Krita Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita Flux.json)
+- [JK_workflow-Krita Flux Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita Flux Adv.json)
+
+### Krita (dev)
+
+- [JK Krita Common](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita Common.json)
+- [JK Krita Common Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita Common Adv.json)
+- [JK Krita SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita SD15.json)
+- [JK Krita SD15 Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita SD15 Adv.json)
+- [JK Krita SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita SDXL.json)
+- [JK Krita SDXL Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita SDXL Adv.json)
+- [JK Krita SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita SD3.json)
+- [JK Krita SD3 Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita SD3 Adv.json)
+- [JK Krita Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita Flux.json)
+- [JK Krita Flux Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK Krita Flux Adv.json)
+
+> [!NOTE]
+> - Installing a separate version of ComfyUI to work with Krita is recommended.
+> - [Krita AI Plugin - ComyUI Custom Workflows](https://youtu.be/TeALR63-LzE?si=O4b6DijZKrmR7teP)
+> - Krita workflows are used for [Krita](https://krita.org/en/) + [Krita AI Diffusion](https://github.com/Acly/krita-ai-diffusion) + [Krita AI Tools](https://github.com/Acly/krita-ai-tools)
+> - A synchronous version of Krita workflows can be opened by ComyUI and synchronous with Krita AI Diffusion.
+> - A dev version of Krita workflows can only loaded by Krita AI Diffusion and should be moved to `...\AppData\Roaming\krita\ai_diffusion\workflows`.
 
 ## Required Custom Nodes
 
@@ -84,7 +198,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
 - [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui)
-- [Comfyroll](https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes)
 - [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
 - [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
@@ -109,6 +222,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
 
+### Krita workflow
+
+- [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
+- [Tooling Nodes](https://github.com/Acly/comfyui-tooling-nodes)
+- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
+- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
+- [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
+
 ### Install and copy | replace files (optional)
 
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` in the replacement folder to `custom_nodes\ComfyUI-Manager\component`.
@@ -116,7 +237,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) : (Workaround before ComfyUI SAI API approves my pull request)Copy and replace files in `custom_nodes\ComfyUI-SAI_API`
 
 > [!NOTE]
-> - Group Nodes are saved and can only used in the current workflow. Copy `_JK.pack` and set `Component: Use my version` in the ComfyUI Manager Menu if you want all the latest Jake Upgrade group nodes available for other workflows.
+> - Group Nodes can be copied and pasted between workflows in the latest ComfyUI.
 
 ## JK_workflow : txt2img_img2img
 <details>
@@ -306,6 +427,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Reroute Upscale JK🐉
 		Reroute Resize JK🐉
 		Reroute String JK🐉
+		String To Combo JK🐉
     ControlNet Nodes
 		Apply ControlNet JK🐉
 		Multi-ControlNet Stack JK🐉
@@ -314,6 +436,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
     LoRA Nodes
 		Load LoRA JK🐉
 		LoRA Stack JK🐉
+		Apply LoRA Stack JK🐉
     Embedding Nodes
 		Embedding Picker JK🐉
 		Embedding Picker Multi JK🐉
@@ -353,6 +476,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Load Image With Metadata JK🐉
 		Enchance And Resize Hint Images JK🐉
 		Remove Image Alpha JK🐉
+	Mask Nodes
+		Is Mask Empty JK🐉
     Animation Nodes
 		Animation Prompt JK🐉
 		Animation Value JK🐉
@@ -367,6 +492,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Clip Input Switch JK🐉
 		Model Input Switch JK🐉
 		ControlNet Input Switch JK🐉
+		ControlNet Stack Input Switch JK🐉
 		Text Input Switch JK🐉
 		VAE Input Switch JK🐉
 		Pipe Input Switch JK🐉
@@ -447,6 +573,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 	Tools
 		JK🐉::CLIPSegMask
+		JK🐉::Image Crop by Mask
 		JK🐉::Image RemBG
 		JK🐉::Image to Prompt (LLava Local)
 		JK🐉::Image to Prompt Advanced (LLava Local)
@@ -457,10 +584,25 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::Flux KSampler
 		JK🐉::Flux KSampler Adv
 		JK🐉::Image Gen Common
+		JK🐉::Image Gen Common (Input)
+		JK🐉::Image Gen Common Adv
+		JK🐉::Image Gen Common Adv (Input)
 		JK🐉::Image Gen Flux
+		JK🐉::Image Gen Flux (Input)
+		JK🐉::Image Gen Flux Adv
+		JK🐉::Image Gen Flux Adv (Input)
 		JK🐉::Image Gen SD15
+		JK🐉::Image Gen SD15 (Input)
+		JK🐉::Image Gen SD15 Adv
+		JK🐉::Image Gen SD15 Adv (Input)
 		JK🐉::Image Gen SD3
+		JK🐉::Image Gen SD3 (Input)
+		JK🐉::Image Gen SD3 Adv
+		JK🐉::Image Gen SD3 Adv (Input)
 		JK🐉::Image Gen SDXL
+		JK🐉::Image Gen SDXL (Input)
+		JK🐉::Image Gen SDXL Adv
+		JK🐉::Image Gen SDXL Adv (Input)
 		JK🐉::Inpaint Latent
 		JK🐉::Inpaint Checkpoint
 		JK🐉::Inpaint ControlNet			
@@ -481,75 +623,3 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [ComfyMath](https://github.com/evanspearman/ComfyMath)
 - [Embedding Picker](https://github.com/Tropfchen/ComfyUI-Embedding_Picker)
 - [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
-
-## Changelog
-<details>
-<summary><b>Previous Version</b></summary>
-	
-	- 2024-06-23 - v1.0.0	released.  
-	- 2024-07-11 - v1.0.6	Noise Injection for Upscale Workflow.  
-	- 2024-07-16 - v1.0.7	Single Image to Mesh Workflow updated.  
-	- 2024-07-21 - v1.0.8	Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.  
-	- 2024-07-22 - v1.0.9	3DGS workflow added.  
-	- 2024-07-24 - v1.1.0	img2mesh workflow updated. Craftsman Mesh added. 
-				Three OrbitPoses nodes been added to 3D-Pack.  
-	- 2024-07-31 - v1.1.1	Prompt Combine node added.  
-	- 2024-08-03 - v1.1.2	Resize to Focus added to image2mesh workflow.  
-	- 2024-08-21 - v1.1.3	Random Beats node added (not for AIGC).  
-	- 2024-09-01 - v1.2.0	SD3 workflow added. Noise Injection (Inspire) added. 
-				Refine, Upscale, and Detailer process major updated. 
-				SD15 Hand Fix supports SDXL and SD3 workflow. 
-				SDXL IPAdapter supports SD3 workflow. 
-				NoiseInjection Component and workflow added.  
-	- 2024-09-04 - v1.2.1	In/Out Paint ControlNet Component added. 
-				Inpaint Module Workflow updated. 
-				SD15|SDXL|SD3 Workflow updated. 
-				Image Remove Alpha JK node added.  
-	- 2024-09-05 - v1.2.2	Black Pixel switch added for Inpaint ControlNet Component following ControlNet Preprocessor AUX Custom Node's update.  
-	- 2024-09-06 - v1.2.3	Refinement Noise Injection added. 
-				txt2prompt and img2prompt workflow added. 
-				img2prompt component added.  
-	- 2024-09-07 - v1.2.4	img2mesh workflow doesn't need _JK.pack, so that doesn't need to install segment anything, VLM nodes, and IF AI tools.  
-	- 2024-09-09 - v1.2.5	Clip l, clip g, t5xxl texture encode logic upgrade. 
-				Clip l & g switch added. 
-				Negative g switch added. 
-				SDXL Clip Text Encode Target Resolution Scale added.  
-	- 2024-09-10 - v1.2.6	detailer: add detail lora.  
-	- 2024-09-11 - v1.2.7	Magic Photo Prompter added.  
-	- 2024-09-13 - v1.2.8	Use Comfy UI default set union controlnet type to load xinsir sdxl controlnet union.  
-				Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows. 
-				Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.  
-	- 2024-09-15 - v1.2.9	Inpaint Simple updated. Outpaint Simple added. 
-				txt2img | img2img | inpaint workflow updated. 
-				In/Out Paint to Refinement process added. 
-				Upscale to Refinment process added.  
-	- 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated. 
-				Inpaint and txt2img/img2img workflows updated. 
-				SD3/Flux Inpaint ControlNet added.  
-	- 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux. 
-				SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly. 
-				Replace SD3 ControlNet Apply with new ControlNet Apply Node.  
-	- 2024-09-25 - v1.3.2	AIO Preprocessor added for txt2img | img2img workflow.  
-				Detailer, Upscale workflows updated. Refine workflow added.  
-	- 2024-09-26 - v1.3.3	Latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
-				Specified Dual Clip switch added for sdxl workflow.  
-	- 2024-09-28 - v1.3.4	Hand Fix supports SD3 and Flux. Hand Fix module workflow added.
-	- 2024-09-29 - v1.3.5	Inpaint Group Nodes upgrade, add more Image | Mask | Latent control.
-	- 2024-10-01 - v1.3.6	Inpaint Group Nodes upgrade, change color grading method.
-	- 2024-10-03 - v1.3.7	Remove Outpaint Pad Feathering.
-</details>
-
-- 2024-10-06 - v1.4.0	Replace Base Ipadapter simple with IPAdapter Style and Composition Transfer in SD15 and SDXL workflow.
-			SD3 Aspect Ratio node and SD3 Base Model Parameter node added. 
-			SD3 Api workflow added to make up the shorcomings of SD3 local deployment using Stability SD3 control and inpaint nodes.
-- 2024-10-10 - v1.5.0	Flux KSampler and Flux Ksampler Adv group nodes added.
-			Flux txt2img and img2img workflow added. Flux KSampler workflow added.
-			Inpaint/Outpaint ControlNet and Checkpoint method order changed.
-			Enchance and Resize Input Image added for img2img workflow.
-			Noise | Guider | Sampler | Sigmas switch added.
-- 2024-10-10 - v1.5.1	Fal LLM and VLM API added for prompt generation workflow and SAI API workfkow.
-- 2024-10-11 - v1.5.2	Flux KSampler Adv updated, use SplitSigmas instead of SplitSigmasDenoise.
-- 2024-10-19 - v1.6.0	Image Generation group node and module workflow added.
-			Switch Model and CLIP JK🐉 node removed.
-			Rename Apply ControlNet Stack SD3 to Applly ControlNet VAE.
-			Tiling Mode and Empty Latent Color nodes added.

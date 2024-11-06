@@ -11,6 +11,7 @@
 #   Loader Nodes
 #   Pipe Nodes
 #   Image Nodes
+#   Mask Nodes
 #   Animation Nodes
 #   Logic switches Nodes
 #   ComfyMath Fix Nodes
@@ -505,6 +506,32 @@ class RerouteString_JK:
     def route(self, string=None):
         return (string,)
 
+# copied from https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Conversion-Nodes#cr-string-to-combo
+class StringToCombo_JK:
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "string": ("STRING", {"multiline": False, "default": "", "forceInput": True}),
+            },
+        }
+    
+    RETURN_TYPES = (any_type,)
+    RETURN_NAMES = ("any",)
+    FUNCTION = "convert"
+    CATEGORY = icons.get("JK/Reroute")
+    
+    def convert(self, string):
+    
+        text_list = list()
+        
+        if string != "":
+            values = string.split(',')
+            text_list = values[0]
+        
+        return (text_list,)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # ControlNet Nodes
 #---------------------------------------------------------------------------------------------------------------------#
@@ -513,32 +540,67 @@ class CR_ApplyControlNet_JK:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "conditioning": ("CONDITIONING", ),
-                "control_net": ("CONTROL_NET", ),
-                "image": ("IMAGE", ),
+                "base_positive": ("CONDITIONING",),
+                "base_negative": ("CONDITIONING",),
+                
                 "switch": ("BOOLEAN", {"default": False},),
-                "strength": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01})
-            }
+                "strength": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01}),
+                "start_percent": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.001}),
+                "end_percent": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.001}),
+            },
+            "optional": {
+                "image": ("IMAGE", ),
+                "mask": ("MASK", ),
+                "vae": ("VAE",),
+                "control_net": ("CONTROL_NET", ),
+             }
         }
-    RETURN_TYPES = ("CONDITIONING",)
+    RETURN_TYPES = ("CONDITIONING", "CONDITIONING",)
+    RETURN_NAMES = ("base_pos", "base_neg", )
     FUNCTION = "apply_controlnet"
 
     CATEGORY = icons.get("JK/ControlNet")
 
-    def apply_controlnet(self, conditioning, control_net, image, switch, strength):
-        if strength == 0 or switch == False:
-            return (conditioning, )
+    def apply_controlnet(self, base_positive, base_negative, switch, strength, start_percent, end_percent, image=None, vae=None, mask=None, control_net=None):
+        
+        if image is not None and control_net is not None and switch == True and strength != 0.0:
+            
+            if type(control_net) == str:
+                controlnet_path = folder_paths.get_full_path("controlnet", control_net)
+                controlnet = comfy.sd.load_controlnet(controlnet_path)
+            else:
+                controlnet = control_net
+            
+            extra_concat = []
+            if mask != None and control_net.concat_mask:
+                mask = 1.0 - mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1]))
+                mask_apply = comfy.utils.common_upscale(mask, image.shape[2], image.shape[1], "bilinear", "center").round()
+                image = image * mask_apply.movedim(1, -1).repeat(1, 1, 1, image.shape[3])
+                extra_concat = [mask]
+                
+            controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae=vae, extra_concat=extra_concat)
+            
+            base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
 
-        c = []
-        control_hint = image.movedim(-1,1)
-        for t in conditioning:
-            n = [t[0], t[1].copy()]
-            c_net = control_net.copy().set_cond_hint(control_hint, strength)
-            if 'control' in t[1]:
-                c_net.set_previous_controlnet(t[1]['control'])
-            n[1]['control'] = c_net
-            c.append(n)
-        return (c, )
+        return (base_positive, base_negative, )
+
+UNION_CONTROLNET_TYPES = {
+    "sdxl_xinsir_openpose": 0,
+    "sdxl_xinsir_depth": 1,
+    "sdxl_xinsir_hed/pidi/scribble/ted": 2,
+    "sdxl_xinsir_canny/lineart/anime_lineart/mlsd": 3,
+    "sdxl_xinsir_normal": 4,
+    "sdxl_xinsir_segment": 5,
+    "sdxl_xinsir_tile": 6,
+    "sdxl_xinsir_repaint": 7,
+    "flux_shakker_canny": 0,
+    "flux_shakker_tile": 1,
+    "flux_shakker_depth": 2,
+    "flux_shakker_blur": 3,
+    "flux_shakker_pose": 4,
+    "flux_shakker_gray": 5,
+    "flux_shakker_low quality": 6,
+}
 
 class CR_ControlNetStack_JK:
     
@@ -574,6 +636,7 @@ class CR_ControlNetStack_JK:
             #inputs["required"][f"image_{i}"] = ("IMAGE",)
             inputs["required"][f"ControlNet_Unit_{i}"] = ("BOOLEAN", {"default": False},)
             inputs["required"][f"controlnet_{i}"] = (cls.controlnets,)
+            inputs["required"][f"union_type_{i}"] = (["None"] + ["auto"] + list(UNION_CONTROLNET_TYPES.keys()),)
             inputs["required"][f"controlnet_strength_{i}"] = ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01})
             inputs["required"][f"start_percent_{i}"] = ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.001})
             inputs["required"][f"end_percent_{i}"] = ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.001})
@@ -597,10 +660,22 @@ class CR_ControlNetStack_JK:
             j = 0
             for i in range (0, controlnet_count + 1):
                 if kwargs.get(f"controlnet_{i}") != "None" and  kwargs.get(f"ControlNet_Unit_{i}") == True and kwargs.get(f"image_{i}") is not None:
+                    
                     controlnet_path = folder_paths.get_full_path("controlnet", kwargs.get(f"controlnet_{i}"))
                     controlnet_name = Path(kwargs.get(f"controlnet_{i}")).stem
                     controlnet_hash = f" [{calculate_sha256(controlnet_path)[:8]}]" if save_hash == True else ""
                     controlnet_load = comfy.controlnet.load_controlnet(controlnet_path)
+                    
+                    type_number = UNION_CONTROLNET_TYPES.get(kwargs.get(f"union_type_{i}"), -2)
+                    
+                    if type_number >= -1:
+                        controlnet_load = controlnet_load.copy()
+                    
+                        if type_number >= 0:
+                            controlnet_load.set_extra_arg("control_type", [type_number])
+                        else:
+                            controlnet_load.set_extra_arg("control_type", [])
+                    
                     controlnet_list.extend([(controlnet_load, kwargs.get(f"image_{i}"), kwargs.get(f"controlnet_strength_{i}"), kwargs.get(f"start_percent_{i}") if input_mode == "simple" else 0.0, kwargs.get(f"end_percent_{i}") if input_mode == "simple" else 1.0)])
                     
                     controlnet_str = f"{kwargs.get(f'controlnet_strength_{i}'):.3f}"
@@ -644,7 +719,7 @@ class CR_ApplyControlNetStack_JK:
     FUNCTION = "apply_controlnet_stack"
     CATEGORY = icons.get("JK/ControlNet")
 
-    def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, controlnet_stack=None,):
+    def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, controlnet_stack=None):
 
         if controlnet_stack is not None and ControlNet_switch == True:
         
@@ -657,35 +732,34 @@ class CR_ApplyControlNetStack_JK:
                 else:
                     controlnet = controlnet_name
                 
-                controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative,
-                                                                                     controlnet, image, strength,
-                                                                                     start_percent, end_percent)
+                controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent)
                 
                 base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
                 
         return (base_positive, base_negative, )
 
-class CR_ApplyControlNetStackVAE_JK:
+class CR_ApplyControlNetStackAdv_JK:
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
                 "base_positive": ("CONDITIONING",),
                 "base_negative": ("CONDITIONING",),
-                "vae": ("VAE",),
                 "ControlNet_switch": ("BOOLEAN", {"default": False},),
             },
              "optional": {
+                "mask": ("MASK", ),
+                "vae": ("VAE",),
                 "controlnet_stack": ("CONTROL_NET_STACK", ),
              }
         }                    
-
+    
     RETURN_TYPES = ("CONDITIONING", "CONDITIONING", )
     RETURN_NAMES = ("base_pos", "base_neg", )
     FUNCTION = "apply_controlnet_stack"
     CATEGORY = icons.get("JK/ControlNet")
 
-    def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, vae=None, controlnet_stack=None,):
+    def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, vae=None, mask=None, controlnet_stack=None):
         
         if controlnet_stack is not None and ControlNet_switch == True:
             for controlnet_tuple in controlnet_stack:
@@ -697,9 +771,15 @@ class CR_ApplyControlNetStackVAE_JK:
                 else:
                     controlnet = controlnet_name
                 
-                controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative,
-                                                                                     controlnet, image, strength,
-                                                                                     start_percent, end_percent, vae)
+                # controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae)
+                extra_concat = []
+                if mask != None and controlnet.concat_mask:
+                    mask = 1.0 - mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1]))
+                    mask_apply = comfy.utils.common_upscale(mask, image.shape[2], image.shape[1], "bilinear", "center").round()
+                    image = image * mask_apply.movedim(1, -1).repeat(1, 1, 1, image.shape[3])
+                    extra_concat = [mask]
+                    
+                controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae=vae, extra_concat=extra_concat)
                 
                 base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
                 
@@ -860,6 +940,44 @@ class CR_LoRAStack_JK:
                 j +=1
                 
         return (lora_list, lorapromptout, lorametaout,)
+
+# Copied from "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/LoRA-Nodes#cr-apply-lora-stack"
+class CR_ApplyLoRAStack_JK:
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {"model": ("MODEL",),
+                            "clip": ("CLIP", ),
+                            "lora_stack": ("LORA_STACK", ),
+                            }
+        }
+
+    RETURN_TYPES = ("MODEL", "CLIP",)
+    RETURN_NAMES = ("MODEL", "CLIP",)
+    FUNCTION = "apply_lora_stack"
+    CATEGORY = icons.get("JK/LoRA")
+
+    def apply_lora_stack(self, model, clip, lora_stack=None,):
+        
+        lora_params = list()
+ 
+        if lora_stack:
+            lora_params.extend(lora_stack)
+        else:
+            return (model, clip,)
+
+        model_lora = model
+        clip_lora = clip
+
+        for tup in lora_params:
+            lora_name, strength_model, strength_clip = tup
+            
+            lora_path = folder_paths.get_full_path("loras", lora_name)
+            lora = comfy.utils.load_torch_file(lora_path, safe_load=True)
+            
+            model_lora, clip_lora = comfy.sd.load_lora_for_models(model_lora, clip_lora, lora, strength_model, strength_clip)  
+
+        return (model_lora, clip_lora,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Embedding Nodes
@@ -2688,6 +2806,29 @@ class HintImageEnchance_JK:
         return y
 
 #---------------------------------------------------------------------------------------------------------------------#
+# Mask Nodes
+#---------------------------------------------------------------------------------------------------------------------#
+class IsMaskEmpty_JK:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "mask": ("MASK",),
+            },
+        }
+    RETURN_TYPES = ["BOOLEAN"]
+    RETURN_NAMES = ["BOOLEAN"]
+
+    FUNCTION = "main"
+    CATEGORY = icons.get("JK/Mask")
+
+    def main(self, mask):
+    
+        a = torch.all(mask == 0).int().item() != 0
+        
+        return (a,)
+
+#---------------------------------------------------------------------------------------------------------------------#
 # Animation Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 class AnimPrompt_JK:
@@ -3054,6 +3195,32 @@ class CR_ControlNetInputSwitch_JK:
             return (control_net_true, boolean_value,)
         else:
             return (control_net_false, boolean_value,)
+
+class CR_ControlNetStackInputSwitch_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {"default": False}),
+                "control_net_stack_false": ("CONTROL_NET_STACK",),
+            },
+            "optional": {
+                "control_net_stack_true": ("CONTROL_NET_STACK",),
+            },
+        }
+        
+    RETURN_TYPES = ("CONTROL_NET_STACK", "BOOLEAN",)
+    FUNCTION = "InputControlNetStack"
+    CATEGORY = icons.get("JK/Logic")
+
+    def InputControlNetStack(self, boolean_value, control_net_stack_false, control_net_stack_true=None):
+        if control_net_stack_true != None and boolean_value == True:
+            return (control_net_stack_true, boolean_value,)
+        else:
+            return (control_net_stack_false, boolean_value,)
 
 class CR_TextInputSwitch_JK:
     def __init__(self):
@@ -4774,14 +4941,16 @@ NODE_CLASS_MAPPINGS = {
     "Reroute Upscale JK": RerouteUpscale_JK,
     "Reroute Resize JK": RerouteResize_JK,
     "Reroute String JK": RerouteString_JK,
+    "String To Combo JK": StringToCombo_JK,
     ### ControlNet Nodes
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
-    "CR Apply Multi-ControlNet VAE JK": CR_ApplyControlNetStackVAE_JK,
+    "CR Apply Multi-ControlNet Adv JK": CR_ApplyControlNetStackAdv_JK,
     ### LoRA Nodes
     "CR Load LoRA JK": CR_LoraLoader_JK,
     "CR LoRA Stack JK": CR_LoRAStack_JK,
+    "CR Apply LoRA Stack JK": CR_ApplyLoRAStack_JK,
     ### Embedding Nodes
     "Embedding Picker JK": EmbeddingPicker_JK,
     "Embedding Picker Multi JK": EmbeddingPicker_Multi_JK,
@@ -4821,6 +4990,8 @@ NODE_CLASS_MAPPINGS = {
     "Load Image With Metadata JK": LoadImageWithMetadata_JK,
     "HintImageEnchance JK": HintImageEnchance_JK,
     "Image Remove Alpha JK": ImageRemoveAlpha_JK,
+    ### Mask Nodes
+    "Is Mask Empty JK": IsMaskEmpty_JK,
     ### Animation Nodes
     "Animation Prompt JK": AnimPrompt_JK,
     "Animation Value JK": AnimValue_JK,
@@ -4835,6 +5006,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Clip Input Switch JK": CR_ClipInputSwitch_JK,
     "CR Model Input Switch JK": CR_ModelInputSwitch_JK,
     "CR ControlNet Input Switch JK": CR_ControlNetInputSwitch_JK,
+    "CR ControlNet Stack Input Switch JK": CR_ControlNetStackInputSwitch_JK,
     "CR Text Input Switch JK": CR_TextInputSwitch_JK,
     "CR VAE Input Switch JK": CR_VAEInputSwitch_JK,
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
@@ -4926,14 +5098,16 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Reroute Upscale JK": "Reroute Upscale JK🐉",
     "Reroute Resize JK": "Reroute Resize JK🐉",
     "Reroute String JK": "Reroute String JK🐉",
+    "String To Combo JK": "String To Combo JK🐉",
     ### ControlNet Nodes
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
-    "CR Apply Multi-ControlNet VAE JK": "Apply Multi-ControlNet VAE JK🐉",
+    "CR Apply Multi-ControlNet Adv JK": "Apply Multi-ControlNet Adv JK🐉",
     ### LoRA Nodes
     "CR Load LoRA JK": "Load LoRA JK🐉",
     "CR LoRA Stack JK": "LoRA Stack JK🐉",
+    "CR Apply LoRA Stack JK": "Apply LoRA Stack JK🐉",
     ### Embedding Nodes
     "Embedding Picker JK": "Embedding Picker JK🐉",
     "Embedding Picker Multi JK": "Embedding Picker Multi JK🐉",
@@ -4973,6 +5147,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
     "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
     "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
+    ### Mask Nodes
+    "Is Mask Empty JK": "Is Mask Empty JK🐉",
     ### Animation Nodes
     "Animation Prompt JK": "Animation Prompt JK🐉",
     "Animation Value JK": "Animation Value JK🐉",
@@ -4987,6 +5163,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Clip Input Switch JK": "Clip Input Switch JK🐉",
     "CR Model Input Switch JK": "Model Input Switch JK🐉",
     "CR ControlNet Input Switch JK": "ControlNet Input Switch JK🐉",
+    "CR ControlNet Stack Input Switch JK": "ControlNet Stack Input Switch JK🐉",
     "CR Text Input Switch JK": "Text Input Switch JK🐉",
     "CR VAE Input Switch JK": "VAE Input Switch JK🐉",
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",

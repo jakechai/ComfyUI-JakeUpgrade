@@ -304,7 +304,7 @@ class StabilitySD3(StabilityBase):
     ACCEPT = "image/*"
     INPUT_SPEC = {
         "required": {
-            "model": (["sd3", "sd3-turbo"],),
+            "model": (["sd3.5-large", "sd3.5-large-turbo", "sd3-large", "sd3-large-turbo", "sd3-medium"],),
             "prompt": ("STRING", {"multiline": True}),
         },
         "optional": {

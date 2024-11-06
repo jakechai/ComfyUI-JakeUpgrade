@@ -7,6 +7,7 @@ icons = {
     "JK/Loader": "🐉 JK/🐟 Loader",
     "JK/Pipe": "🐉 JK/🎷 Pipe",
     "JK/Image": "🐉 JK/🛩️ Image",
+    "JK/Mask": "🐉 JK/🐓 Mask",
     "JK/Animation": "🐉 JK/⏲️ Animation",
     "JK/Logic": "🐉 JK/🔀 Logic",
     "JK/Math": "🐉 JK/✖️ Math",
