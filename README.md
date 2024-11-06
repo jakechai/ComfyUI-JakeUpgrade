@@ -157,7 +157,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow-Krita SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita%20SDXL.json)
 - [JK_workflow-Krita SDXL Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita%20SDXL%20Adv.json)
 - [JK_workflow-Krita SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita%20SD3.json)
-- [JK_workflow-Krita SD3 Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita%20SD3 Adv.json)
+- [JK_workflow-Krita SD3 Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita%20SD3%20Adv.json)
 - [JK_workflow-Krita Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita%20Flux.json)
 - [JK_workflow-Krita Flux Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/JK_workflow-Krita%20Flux%20Adv.json)
 
