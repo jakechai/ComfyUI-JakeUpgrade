@@ -34,14 +34,16 @@ NODE_CLASS_MAPPINGS = {
     "Reroute Upscale JK": RerouteUpscale_JK,
     "Reroute Resize JK": RerouteResize_JK,
     "Reroute String JK": RerouteString_JK,
+    "String To Combo JK": StringToCombo_JK,
     ### ControlNet Nodes
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
-    "CR Apply Multi-ControlNet VAE JK": CR_ApplyControlNetStackVAE_JK,
+    "CR Apply Multi-ControlNet Adv JK": CR_ApplyControlNetStackAdv_JK,
     ### LoRA Nodes
     "CR Load LoRA JK": CR_LoraLoader_JK,
     "CR LoRA Stack JK": CR_LoRAStack_JK,
+    "CR Apply LoRA Stack JK": CR_ApplyLoRAStack_JK,
     ### Embedding Nodes
     "Embedding Picker JK": EmbeddingPicker_JK,
     "Embedding Picker Multi JK": EmbeddingPicker_Multi_JK,
@@ -81,6 +83,8 @@ NODE_CLASS_MAPPINGS = {
     "Load Image With Metadata JK": LoadImageWithMetadata_JK,
     "HintImageEnchance JK": HintImageEnchance_JK,
     "Image Remove Alpha JK": ImageRemoveAlpha_JK,
+    ### Mask Nodes
+    "Is Mask Empty JK": IsMaskEmpty_JK,
     ### Animation Nodes
     "Animation Prompt JK": AnimPrompt_JK,
     "Animation Value JK": AnimValue_JK,
@@ -95,6 +99,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Clip Input Switch JK": CR_ClipInputSwitch_JK,
     "CR Model Input Switch JK": CR_ModelInputSwitch_JK,
     "CR ControlNet Input Switch JK": CR_ControlNetInputSwitch_JK,
+    "CR ControlNet Stack Input Switch JK": CR_ControlNetStackInputSwitch_JK,
     "CR Text Input Switch JK": CR_TextInputSwitch_JK,
     "CR VAE Input Switch JK": CR_VAEInputSwitch_JK,
     "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
@@ -187,14 +192,16 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Reroute Upscale JK": "Reroute Upscale JK🐉",
     "Reroute Resize JK": "Reroute Resize JK🐉",
     "Reroute String JK": "Reroute String JK🐉",
+    "String To Combo JK": "String To Combo JK🐉",
     ### ControlNet Nodes
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
-    "CR Apply Multi-ControlNet VAE JK": "Apply Multi-ControlNet VAE JK🐉",
+    "CR Apply Multi-ControlNet Adv JK": "Apply Multi-ControlNet Adv JK🐉",
     ### LoRA Nodes
     "CR Load LoRA JK": "Load LoRA JK🐉",
     "CR LoRA Stack JK": "LoRA Stack JK🐉",
+    "CR Apply LoRA Stack JK": "Apply LoRA Stack JK🐉",
     ### Embedding Nodes
     "Embedding Picker JK": "Embedding Picker JK🐉",
     "Embedding Picker Multi JK": "Embedding Picker Multi JK🐉",
@@ -234,6 +241,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
     "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
     "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
+    ### Mask Nodes
+    "Is Mask Empty JK": "Is Mask Empty JK🐉",
     ### Animation Nodes
     "Animation Prompt JK": "Animation Prompt JK🐉",
     "Animation Value JK": "Animation Value JK🐉",
@@ -248,6 +257,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Clip Input Switch JK": "Clip Input Switch JK🐉",
     "CR Model Input Switch JK": "Model Input Switch JK🐉",
     "CR ControlNet Input Switch JK": "ControlNet Input Switch JK🐉",
+    "CR ControlNet Stack Input Switch JK": "ControlNet Stack Input Switch JK🐉",
     "CR Text Input Switch JK": "Text Input Switch JK🐉",
     "CR VAE Input Switch JK": "VAE Input Switch JK🐉",
     "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
