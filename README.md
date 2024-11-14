@@ -182,8 +182,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - Installing a separate version of ComfyUI to work with Krita is recommended.
 > - [Krita AI Plugin - ComyUI Custom Workflows](https://youtu.be/TeALR63-LzE?si=O4b6DijZKrmR7teP)
 > - Krita workflows are used for [Krita](https://krita.org/en/) + [Krita AI Diffusion](https://github.com/Acly/krita-ai-diffusion) + [Krita AI Tools](https://github.com/Acly/krita-ai-tools)
-> - A sync version of Krita workflows can be opened by ComyUI and synchronous with Krita AI Diffusion.
-> - A dev version of Krita workflows can only loaded by Krita AI Diffusion and should be moved to `...\AppData\Roaming\krita\ai_diffusion\workflows`.
+> - Sync version of Krita workflows can be opened by ComyUI and synchronous with Krita AI Diffusion.
+> - Dev version of Krita workflows can only loaded by Krita AI Diffusion and should be moved to `...\AppData\Roaming\krita\ai_diffusion\workflows`.
 
 ## Required Custom Nodes
 
