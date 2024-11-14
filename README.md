@@ -98,13 +98,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	    
 		OR: run install.bat.
       - **Manual/non-Windows installation**
+	  
         `pip install -r requirements.txt`
 
 ## Video Introduction
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
-- Group Nodes - Image Generation and Krita workflow: WIP
+- Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
 - inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
@@ -120,19 +121,18 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_txt2img_img2img_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_SD3.json)
 - [JK_workflow_txt2img_img2img_Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_Flux.json)
 - [JK_workflow_txt2img_img2img_API](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2img_img2img_API.json)
-- [JK_workflow_txt2prompt_img2prompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_txt2prompt_img2prompt.json)
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
 - [JK_workflow_img2mesh_3DGS](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Main/JK_workflow_img2mesh_3DGS.json)
 
 > [!NOTE]
-> - ComfyUI-3D-Pack needs pytorch 2.4.0+cu121 and xformers, but the latest ComfyUI_windows_portable version uses pytorch 2.4.1+cu124 (or higher), you should separate those two ComfyUI.  
+> - Installing a separate version of ComfyUI to work with 3D Pack is recommended.   
 > - ComfyUI-3D-Pack 3DMesh | 3DGS Preview works with the new frontend of ComfyUI with a [restriction](https://github.com/MrForExample/ComfyUI-3D-Pack/issues/343#issuecomment-2423478072).  
-> - [CXH joy caption](https://github.com/StartHua/Comfyui_CXH_joy_caption) conflicts with [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes) and is not included in the prompt generation workflow.
 
 ### Module
 
+- [JK_workflow_txt2prompt_img2prompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_00_txt2prompt_img2prompt.json)
 - [JK_workflow_Image Generation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_01_ImgGen.json)
 - [JK_workflow_Image Generation Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_01_ImgGen_Adv.json)
 - [JK_workflow_Refine](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_04_Refine.json)
@@ -147,6 +147,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_txt2img_Simple](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_txt2img_Simple.json)
 - [JK_workflow_Flux_KSampler](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_workflow_FluxKSampler.json)
 - [JK_Workflow_Mesh-ReMesh_Projection](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Module/JK_Workflow_Mesh-ReMesh_Projection.json)
+
+> [!NOTE]
+> - [CXH joy caption](https://github.com/StartHua/Comfyui_CXH_joy_caption) conflicts with [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes) and is not included in the prompt generation workflow.
+> - [IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools) is not working after its latest update.
 
 ### Krita (sync)
 
@@ -178,7 +182,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - Installing a separate version of ComfyUI to work with Krita is recommended.
 > - [Krita AI Plugin - ComyUI Custom Workflows](https://youtu.be/TeALR63-LzE?si=O4b6DijZKrmR7teP)
 > - Krita workflows are used for [Krita](https://krita.org/en/) + [Krita AI Diffusion](https://github.com/Acly/krita-ai-diffusion) + [Krita AI Tools](https://github.com/Acly/krita-ai-tools)
-> - A synchronous version of Krita workflows can be opened by ComyUI and synchronous with Krita AI Diffusion.
+> - A sync version of Krita workflows can be opened by ComyUI and synchronous with Krita AI Diffusion.
 > - A dev version of Krita workflows can only loaded by Krita AI Diffusion and should be moved to `...\AppData\Roaming\krita\ai_diffusion\workflows`.
 
 ## Required Custom Nodes
@@ -198,7 +202,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
 - [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui)
-- [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle)
 - [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
@@ -226,9 +229,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
 - [Tooling Nodes](https://github.com/Acly/comfyui-tooling-nodes)
-- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
-- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
+- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
+- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
 
 ### Install and copy | replace files (optional)
 
