@@ -171,6 +171,7 @@ function handleWidgetsVisibility(node, countValue, node_type) {
 		"CR LoRA Stack JK": ["lora", "lora_name", "lora_weight", "model_weight", "clip_weight"],
 		"Embedding Picker Multi JK": ["embedding", "embedding_name", "emphasis", "append"],
 		"CR Multi-ControlNet Stack JK": ["ControlNet_Unit", "controlnet", "union_type", "controlnet_strength", "start_percent", "end_percent"],
+		"CR Multi-ControlNet Param Stack JK": ["ControlNet_Unit", "controlnet_strength", "start_percent", "end_percent"],
 	};
 	
  	if (node_type === "Animation Prompt JK") {
@@ -347,6 +348,41 @@ function handleWidgetsVisibility(node, countValue, node_type) {
 			}
 		}
 	}
+	else if (node_type === "CR Multi-ControlNet Param Stack JK") {
+		
+		const inputModeValue = findWidgetByName(node, "input_mode").value;
+		const InvisibleWidgetNames = WidgetInvisibilityNodesMap[node_type];
+		
+		for (let i = 0; i <= 5; i++) {
+			
+			const InvisibleWidget0 = findWidgetByName(node, `${InvisibleWidgetNames[0]}_${i}`);
+			const InvisibleWidget1 = findWidgetByName(node, `${InvisibleWidgetNames[1]}_${i}`);
+			const InvisibleWidget2 = findWidgetByName(node, `${InvisibleWidgetNames[2]}_${i}`);
+			const InvisibleWidget3 = findWidgetByName(node, `${InvisibleWidgetNames[3]}_${i}`);
+
+
+			if (i <= countValue) {
+				if (inputModeValue === "simple") {
+					toggleWidget(node, InvisibleWidget0, true);
+					toggleWidget(node, InvisibleWidget1, true);
+					toggleWidget(node, InvisibleWidget2, false);
+					toggleWidget(node, InvisibleWidget3, false);
+				}
+				else if (inputModeValue === "advanced") {
+					toggleWidget(node, InvisibleWidget0, true);
+					toggleWidget(node, InvisibleWidget1, true);
+					toggleWidget(node, InvisibleWidget2, true);
+					toggleWidget(node, InvisibleWidget3, true);
+				}
+			}
+			else {
+				toggleWidget(node, InvisibleWidget0, false);
+				toggleWidget(node, InvisibleWidget1, false);
+				toggleWidget(node, InvisibleWidget2, false);
+				toggleWidget(node, InvisibleWidget3, false);
+			}
+		}
+	}
 }
 // WIP
 function handleInputsAddRemove(node, countValue, node_type) {
@@ -406,6 +442,10 @@ const nodeWidgetHandlers = {
 		'input_mode': handleCNStackJKInputMode,
 		'controlnet_count': handleCNStackJKCNCount
     },
+		"CR Multi-ControlNet Param Stack JK": {
+		'input_mode': handleCNParamStackJKInputMode,
+		'controlnet_count': handleCNParamStackJKCNCount
+    },
 };
 
 function handleAinmPromptJKInputMode(node, widget) {
@@ -456,6 +496,15 @@ function handleCNStackJKCNCount(node, widget) {
     handleWidgetsVisibility(node, widget.value - 1, "CR Multi-ControlNet Stack JK");
 	//WIP
 	//handleInputsAddRemove(node, widget.value - 1, "CR Multi-ControlNet Stack JK");
+}
+
+function handleCNParamStackJKInputMode(node, widget) {
+
+    handleWidgetsVisibility(node, findWidgetByName(node, "controlnet_count").value - 1, "CR Multi-ControlNet Param Stack JK");
+}
+
+function handleCNParamStackJKCNCount(node, widget) {
+    handleWidgetsVisibility(node, widget.value - 1, "CR Multi-ControlNet Param Stack JK");
 }
 
 function widgetLogic(node, widget) {

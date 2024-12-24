@@ -1,0 +1,385 @@
+{
+  "0": {
+    "inputs": {
+      "name": "01 positive",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "positive"
+    }
+  },
+  "1": {
+    "inputs": {
+      "name": "02 negative",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "negative"
+    }
+  },
+  "2": {
+    "inputs": {
+      "name": "05 fidelity",
+      "type": "number",
+      "default": 0.5,
+      "min": 0,
+      "max": 1
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "fidelity"
+    }
+  },
+  "3": {
+    "inputs": {
+      "name": "08 Image Layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Krita Image Layer"
+    }
+  },
+  "4": {
+    "inputs": {
+      "name": "07 Krita Image Layer",
+      "type": "toggle",
+      "default": false,
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "image layer"
+    }
+  },
+  "5": {
+    "inputs": {},
+    "class_type": "ETN_KritaCanvas",
+    "_meta": {
+      "title": "Krita Canvas"
+    }
+  },
+  "6": {
+    "inputs": {
+      "name": "03 aspect ratio",
+      "type": "choice",
+      "default": "1:1(1024, 1024)",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "aspect ratio"
+    }
+  },
+  "7": {
+    "inputs": {},
+    "class_type": "ETN_KritaSelection",
+    "_meta": {
+      "title": "Krita Selection"
+    }
+  },
+  "8": {
+    "inputs": {
+      "mask": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "Is Mask Empty JK",
+    "_meta": {
+      "title": "Is Mask Empty JK\ud83d\udc09"
+    }
+  },
+  "9": {
+    "inputs": {
+      "op": "Not",
+      "a": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "CM_BoolUnaryOperation JK",
+    "_meta": {
+      "title": "BoolUnaryOp JK\ud83d\udc09"
+    }
+  },
+  "10": {
+    "inputs": {
+      "mask": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "Is Mask Empty JK",
+    "_meta": {
+      "title": "Is Mask Empty JK\ud83d\udc09"
+    }
+  },
+  "11": {
+    "inputs": {
+      "boolean_value": [
+        "4",
+        0
+      ],
+      "image_false": [
+        "5",
+        0
+      ],
+      "image_true": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "12": {
+    "inputs": {
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "Get Size JK",
+    "_meta": {
+      "title": "Get Size JK\ud83d\udc09"
+    }
+  },
+  "13": {
+    "inputs": {
+      "value": 1,
+      "width": [
+        "12",
+        0
+      ],
+      "height": [
+        "12",
+        1
+      ]
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "14": {
+    "inputs": {
+      "boolean_value": [
+        "10",
+        0
+      ],
+      "mask_false": [
+        "7",
+        0
+      ],
+      "mask_true": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "15": {
+    "inputs": {
+      "custom_width": 1024,
+      "custom_height": 1024,
+      "padding": 0,
+      "use_image_res": false,
+      "use_target_res": false,
+      "target_res": 1024,
+      "use_target_mega_pixel": false,
+      "target_mega_pixel": 1,
+      "multiple_of": 8,
+      "image_upscale_method": "lanczos",
+      "latent_upscale_method": "bilinear",
+      "mask": [
+        "14",
+        0
+      ],
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "Image Crop by Mask Resolution JK",
+    "_meta": {
+      "title": "Image Crop by Mask Resolution JK\ud83d\udc09"
+    }
+  },
+  "16": {
+    "inputs": {
+      "width": [
+        "15",
+        0
+      ],
+      "height": [
+        "15",
+        1
+      ],
+      "x": [
+        "15",
+        2
+      ],
+      "y": [
+        "15",
+        3
+      ],
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "ImageCrop",
+    "_meta": {
+      "title": "Image Crop"
+    }
+  },
+  "17": {
+    "inputs": {
+      "x": [
+        "15",
+        2
+      ],
+      "y": [
+        "15",
+        3
+      ],
+      "width": [
+        "15",
+        0
+      ],
+      "height": [
+        "15",
+        1
+      ],
+      "mask": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "CropMask",
+    "_meta": {
+      "title": "CropMask"
+    }
+  },
+  "18": {
+    "inputs": {
+      "boolean_value": [
+        "10",
+        0
+      ],
+      "image_false": [
+        "16",
+        0
+      ],
+      "image_true": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "19": {
+    "inputs": {
+      "boolean_value": [
+        "10",
+        0
+      ],
+      "mask_false": [
+        "17",
+        0
+      ],
+      "mask_true": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "20": {
+    "inputs": {
+      "boolean_value": [
+        "9",
+        0
+      ],
+      "image_false": [
+        "11",
+        0
+      ],
+      "image_true": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "21": {
+    "inputs": {
+      "prompt": [
+        "0",
+        0
+      ],
+      "aspect_ratio": [
+        "6",
+        0
+      ],
+      "fidelity": [
+        "2",
+        0
+      ],
+      "negative_prompt": [
+        "1",
+        0
+      ],
+      "seed": [
+        "5",
+        3
+      ],
+      "output_format": "png",
+      "api_key_override": "",
+      "image": [
+        "20",
+        0
+      ]
+    },
+    "class_type": "Stability Control Style",
+    "_meta": {
+      "title": "Stability Control Style"
+    }
+  },
+  "22": {
+    "inputs": {
+      "images": [
+        "21",
+        0
+      ]
+    },
+    "class_type": "ETN_KritaOutput",
+    "_meta": {
+      "title": "Krita Output"
+    }
+  }
+}

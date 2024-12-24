@@ -1,0 +1,155 @@
+{
+  "0": {
+    "inputs": {
+      "name": "01 positive",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "positive"
+    }
+  },
+  "1": {
+    "inputs": {
+      "name": "02 negative",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "negative"
+    }
+  },
+  "2": {
+    "inputs": {
+      "name": "05 grow mask",
+      "type": "number (integer)",
+      "default": 5,
+      "min": 0,
+      "max": 20
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "grow"
+    }
+  },
+  "3": {
+    "inputs": {
+      "name": "08 Image Layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Krita Image Layer"
+    }
+  },
+  "4": {
+    "inputs": {
+      "name": "07 Krita Image Layer",
+      "type": "toggle",
+      "default": false,
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "image layer"
+    }
+  },
+  "5": {
+    "inputs": {},
+    "class_type": "ETN_KritaCanvas",
+    "_meta": {
+      "title": "Krita Canvas"
+    }
+  },
+  "6": {
+    "inputs": {},
+    "class_type": "ETN_KritaSelection",
+    "_meta": {
+      "title": "Krita Selection"
+    }
+  },
+  "7": {
+    "inputs": {
+      "boolean_value": [
+        "4",
+        0
+      ],
+      "image_false": [
+        "5",
+        0
+      ],
+      "image_true": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "8": {
+    "inputs": {
+      "image": [
+        "7",
+        0
+      ],
+      "alpha": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "JoinImageWithAlpha",
+    "_meta": {
+      "title": "Join Image with Alpha"
+    }
+  },
+  "9": {
+    "inputs": {
+      "prompt": [
+        "0",
+        0
+      ],
+      "negative_prompt": [
+        "1",
+        0
+      ],
+      "grow_mask": [
+        "2",
+        0
+      ],
+      "seed": [
+        "5",
+        3
+      ],
+      "output_format": "png",
+      "api_key_override": "",
+      "image": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "Stability Inpainting",
+    "_meta": {
+      "title": "Stability Inpainting"
+    }
+  },
+  "10": {
+    "inputs": {
+      "images": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "ETN_KritaOutput",
+    "_meta": {
+      "title": "Krita Output"
+    }
+  }
+}

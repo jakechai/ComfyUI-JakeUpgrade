@@ -52,14 +52,36 @@ class StabilityBase:
 
         image = kwargs.get('image', None)
         if image is not None:
-            kwargs["mode"] = "image-to-image"
-            kwargs.pop("aspect_ratio", None)
+            if self.API_ENDPOINT != "stable-image/control/style":
+                kwargs["mode"] = "image-to-image"
+                kwargs.pop("aspect_ratio", None)
             image = ToPILImage()(image.squeeze(0).permute(2,0,1))
             image.save(buffered, format="PNG")
             files = self._get_files(buffered, **kwargs)
         else:
             kwargs.pop("strength", None)
-
+        
+        image_subject = kwargs.get('subject_image', None)
+        if image_subject is not None:
+            buffered_sub = BytesIO() 
+            image_subject = ToPILImage()(image_subject.squeeze(0).permute(2,0,1))
+            image_subject.save(buffered_sub, format="PNG")
+            files["subject_image"] = buffered_sub.getvalue()
+        
+        image_bg_ref = kwargs.get('background_reference', None)
+        if image_bg_ref is not None:
+            buffered_bg_ref = BytesIO()
+            image_bg_ref = ToPILImage()(image_bg_ref.squeeze(0).permute(2,0,1))
+            image_bg_ref.save(buffered_bg_ref, format="PNG")
+            files["background_reference"] = buffered_bg_ref.getvalue()
+        
+        image_lt_ref = kwargs.get('light_reference', None)
+        if image_lt_ref is not None:
+            buffered_lt_ref = BytesIO()
+            image_lt_ref = ToPILImage()(image_lt_ref.squeeze(0).permute(2,0,1))
+            image_lt_ref.save(buffered_lt_ref, format="PNG")
+            files["light_reference"] = buffered_lt_ref.getvalue()
+        
         style = kwargs.get('style', False)
         if style is False:
             kwargs.pop('style_preset', None)
@@ -76,14 +98,35 @@ class StabilityBase:
         headers["Accept"] = self.ACCEPT
 
         data = self._get_data(**kwargs)
-
+        
+        if kwargs.get('aspect_ratio', None) is not None:
+            data['aspect_ratio'] = data['aspect_ratio'].split("(", 1)[0]
+        
+        if kwargs.get('subject_image', None) is not None:
+            if 'subject_image' in data:
+                    del data['subject_image']
+            
+            if 'background_reference' in data:
+                    del data['background_reference']
+            
+            if 'light_reference' in data:
+                    del data['light_reference']
+            
+            if kwargs.get('light_reference', None) is not None:
+                if 'light_source_direction' in data:
+                    del data['light_source_direction']
+            else:
+                if 'light_source_direction' in data and data['light_source_direction'] == 'none':
+                    if 'light_source_strength' in data:
+                        del data['light_source_strength']
+        
         req = PreparedRequest()
         req.prepare_method('POST')
         req.prepare_url(f"{ROOT_API}{self.API_ENDPOINT}", None)
         req.prepare_headers(headers)
         req.prepare_body(data=data, files=files)
         response = requests.Session().send(req)
-
+        
         if response.status_code == 200:
             if self.POLL_ENDPOINT != "":
                 id = response.json().get("id")
@@ -92,7 +135,7 @@ class StabilityBase:
                 while True:
                     response = requests.get(f"{ROOT_API}{self.POLL_ENDPOINT}{id}", headers=headers)
                     if response.status_code == 200:
-                        if self.ACCEPT == "image/*":
+                        if self.ACCEPT == "image/*" or self.ACCEPT == "*/*":
                             return self._return_image(response)
                         if self.ACCEPT == "video/*":
                             return self._return_video(response)
@@ -137,9 +180,9 @@ class StabilityBase:
         return {
             "image": buffered.getvalue()
         }
-
+    
     def _get_data(self, **kwargs):
-        return {k: v for k, v in kwargs.items() if k != "image"}
+        return {k: v for k, v in kwargs.items() if k != "image" and k != "mask"}
 
 
 class StabilityCore(StabilityBase):
@@ -153,7 +196,7 @@ class StabilityCore(StabilityBase):
             "negative_prompt": ("STRING", {"multiline": True}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
             "output_format": (["png", "webp", "jpeg"],),
-            "aspect_ratio": (["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"],),
+            "aspect_ratio": (["1:1(1536, 1536)", "5:4(1632, 1344)", "3:2(1824, 1248)", "16:9(2016, 1152)", "21:9(2304, 960)", "4:5(1344, 1632)", "2:3(1248, 1824)", "9:16(1152, 2016)", "9:21(960, 2304)"],),
             "style": ("BOOLEAN", {"default": False}),
             "style_preset": (["3d-model", "analog-film", "anime", "cinematic", "comic-book", "digital-art", "enhance", "fantasy-art", "isometric", "line-art", "low-poly", "modeling-compound", "neon-punk", "origami", "photographic", "pixel-art", "tile-texture"],),
             "api_key_override": ("STRING", {"multiline": False}),
@@ -169,9 +212,11 @@ class StabilityImageUltra(StabilityBase):
             "prompt": ("STRING", {"multiline": True}),
         },
         "optional": {
+            "image": ("IMAGE",),
             "negative_prompt": ("STRING", {"multiline": True}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
-            "aspect_ratio": (["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"],),
+            "strength": ("FLOAT", {"default": 0.7, "min": 0.0, "max": 1.0, "step": 0.01}),
+            "aspect_ratio": (["1:1(1024, 1024)", "5:4(1088, 896)", "3:2(1216, 832)", "16:9(1344, 768)", "21:9(1536, 640)", "4:5(896, 1088)", "2:3(832, 1216)", "9:16(768, 1344)", "9:21(640, 1536)"],),
             "output_format": (["png", "jpeg"],),
             "api_key_override": ("STRING", {"multiline": False}),
         },
@@ -198,8 +243,8 @@ class StabilityConservativeUpscale(StabilityBase):
 
 class StabilityCreativeUpscale(StabilityBase):
     API_ENDPOINT = "stable-image/upscale/creative"
-    POLL_ENDPOINT  = "stable-image/upscale/creative/result/"
-    ACCEPT = "image/*"
+    POLL_ENDPOINT  = "results/"
+    ACCEPT = "*/*"
     INPUT_SPEC = {
         "required": {
             "image": ("IMAGE",),
@@ -208,7 +253,7 @@ class StabilityCreativeUpscale(StabilityBase):
         "optional": {
             "negative_prompt": ("STRING", {"multiline": True}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
-            "creativity": ("FLOAT", {"default": 0.3, "min": 0.01, "max": 0.35, "step": 0.01}),
+            "creativity": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 0.35, "step": 0.01}),
             "output_format": (["png", "webp", "jpeg"],),
             "api_key_override": ("STRING", {"multiline": False}),
         }
@@ -231,27 +276,32 @@ class StabilityInpainting(StabilityBase):
     INPUT_SPEC = {
         "required": {
             "image": ("IMAGE",),
-            "mask": ("MASK",),
             "prompt": ("STRING", {"multiline": True, "default": ""}),
         },
         "optional": {
+            "mask": ("MASK",),
             "negative_prompt": ("STRING", {"multiline": True, "default": ""}),
+            "grow_mask": ("INT", {"default": 5, "min": 0, "max": 20}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
             "output_format": (["png", "webp", "jpeg"],),
             "api_key_override": ("STRING", {"multiline": False}),
         }
     }
     def _get_files(self, buffered, **kwargs):
-        mask = kwargs.get("mask")
-        to_pil = ToPILImage()
-        mask = mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
-        mask = to_pil(mask.squeeze(0).permute(2,0,1))
-        buffered_mask = BytesIO()
-        mask.save(buffered_mask, format="PNG")
-        return {
-            "image": buffered.getvalue(),
-            "mask": buffered_mask.getvalue(),
-        }
+        mask = kwargs.get("mask", None)
+        if mask != None:
+            mask = mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
+            mask = ToPILImage()(mask.squeeze(0).permute(2,0,1))
+            buffered_mask = BytesIO()
+            mask.save(buffered_mask, format="PNG")
+            return {
+                "image": buffered.getvalue(),
+                "mask": buffered_mask.getvalue(),
+            }
+        else:
+            return {
+                "image": buffered.getvalue(),
+            }
 
 
 class StabilityErase(StabilityBase):
@@ -260,25 +310,30 @@ class StabilityErase(StabilityBase):
     INPUT_SPEC = {
         "required": {
             "image": ("IMAGE",),
-            "mask": ("MASK",)
         },
         "optional": {
+            "mask": ("MASK",),
+            "grow_mask": ("INT", {"default": 5, "min": 0, "max": 20}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
             "output_format": (["png", "webp", "jpeg"],),
             "api_key_override": ("STRING", {"multiline": False}),
         }
     }
     def _get_files(self, buffered, **kwargs):
-        mask = kwargs.get("mask")
-        to_pil = ToPILImage()
-        mask = mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
-        mask = to_pil(mask.squeeze(0).permute(2,0,1))
-        buffered_mask = BytesIO()
-        mask.save(buffered_mask, format="PNG")
-        return {
-            "image": buffered.getvalue(),
-            "mask": buffered_mask.getvalue(),
-        }
+        mask = kwargs.get("mask", None)
+        if mask != None:
+            mask = mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
+            mask = ToPILImage()(mask.squeeze(0).permute(2,0,1))
+            buffered_mask = BytesIO()
+            mask.save(buffered_mask, format="PNG")
+            return {
+                "image": buffered.getvalue(),
+                "mask": buffered_mask.getvalue(),
+            }
+        else:
+            return {
+                "image": buffered.getvalue(),
+            }
 
 
 class StabilitySearchAndReplace(StabilityBase):
@@ -292,6 +347,7 @@ class StabilitySearchAndReplace(StabilityBase):
         },
         "optional": {
             "negative_prompt": ("STRING", {"multiline": True}),
+            "grow_mask": ("INT", {"default": 3, "min": 0, "max": 20}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
             "api_key_override": ("STRING", {"multiline": False}),
             "output_format": (["png", "webp", "jpeg"],),
@@ -304,15 +360,16 @@ class StabilitySD3(StabilityBase):
     ACCEPT = "image/*"
     INPUT_SPEC = {
         "required": {
-            "model": (["sd3.5-large", "sd3.5-large-turbo", "sd3-large", "sd3-large-turbo", "sd3-medium"],),
+            "model": (["sd3.5-large", "sd3.5-large-turbo", "sd3.5-medium", "sd3-large", "sd3-large-turbo", "sd3-medium"],),
             "prompt": ("STRING", {"multiline": True}),
         },
         "optional": {
             "image": ("IMAGE",),
             "negative_prompt": ("STRING", {"multiline": True}),
+            "cfg_scale": ("FLOAT", {"default": 7.0, "min": 1.0, "max": 10.0, "step": 0.01}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
-            "strength": ("FLOAT", {"default": 0.5, "min": 0.01, "max": 1.0, "step": 0.01}),
-            "aspect_ratio": (["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"],),
+            "strength": ("FLOAT", {"default": 0.7, "min": 0.0, "max": 1.0, "step": 0.01}),
+            "aspect_ratio": (["1:1(1024, 1024)", "5:4(1088, 896)", "3:2(1216, 832)", "16:9(1344, 768)", "21:9(1536, 640)", "4:5(896, 1088)", "2:3(832, 1216)", "9:16(768, 1344)", "9:21(640, 1536)"],),
             "output_format": (["png", "jpeg"],),
             "api_key_override": ("STRING", {"multiline": False}),
         },
@@ -332,6 +389,7 @@ class StabilityOutpainting(StabilityBase):
         },
         "optional": {
             "prompt": ("STRING", {"multiline": True}),
+            "creativity": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
             "output_format": (["png", "webp", "jpeg"],),
             "api_key_override": ("STRING", {"multiline": False}),
@@ -394,7 +452,7 @@ class StabilitySearchAndRecolor(StabilityBase):
 
 
 class StabilityControlStyle(StabilityBase):
-    API_ENDPOINT = "stable-image/control/structure"
+    API_ENDPOINT = "stable-image/control/style"
     ACCEPT = "image/*"
     INPUT_SPEC = {
         "required": {
@@ -402,7 +460,7 @@ class StabilityControlStyle(StabilityBase):
             "prompt": ("STRING", {"multiline": True}),
         },
         "optional": {
-            "aspect_ratio": (["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"],),
+            "aspect_ratio": (["1:1(1024, 1024)", "5:4(1144, 915)", "3:2(1254, 836)", "16:9(1365, 768)", "21:9(1564, 670)", "4:5(915, 1144)", "2:3(836, 1254)", "9:16(768, 1365)", "9:21(670, 1564)"],),
             "fidelity": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
             "negative_prompt": ("STRING", {"multiline": True}),
             "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
@@ -420,6 +478,31 @@ class StabilityFastUpscale(StabilityBase):
             "image": ("IMAGE",),
         },
         "optional": {
+            "output_format": (["png", "webp", "jpeg"],),
+            "api_key_override": ("STRING", {"multiline": False}),
+        }
+    }
+
+class StabilityReplaceRelight(StabilityBase):
+    API_ENDPOINT = "stable-image/edit/replace-background-and-relight"
+    POLL_ENDPOINT  = "results/"
+    ACCEPT = "*/*"
+    INPUT_SPEC = {
+        "required": {
+            "subject_image": ("IMAGE",),
+        },
+        "optional": {
+            "background_reference": ("IMAGE",),
+            "background_prompt": ("STRING", {"multiline": True}),
+            "foreground_prompt": ("STRING", {"multiline": True}),
+            "negative_prompt": ("STRING", {"multiline": True}),
+            "preserve_original_subject": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0, "step": 0.01}),
+            "original_background_depth": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
+            "keep_original_background": ("BOOLEAN", {"default": False}),
+            "light_source_direction": (["none", "above", "below", "left", "right"],),
+            "light_reference": ("IMAGE",),
+            "light_source_strength": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 1.0, "step": 0.01}),
+            "seed": ("INT", {"default": 0, "min": 0, "max": 4294967294}),
             "output_format": (["png", "webp", "jpeg"],),
             "api_key_override": ("STRING", {"multiline": False}),
         }

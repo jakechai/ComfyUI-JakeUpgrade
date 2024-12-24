@@ -1,0 +1,149 @@
+{
+  "0": {
+    "inputs": {
+      "name": "01 positive",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "positive"
+    }
+  },
+  "1": {
+    "inputs": {
+      "name": "02 negative",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "negative"
+    }
+  },
+  "2": {
+    "inputs": {
+      "name": "03 search prompt",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "select"
+    }
+  },
+  "3": {
+    "inputs": {
+      "name": "05 grow mask",
+      "type": "number (integer)",
+      "default": 3,
+      "min": 0,
+      "max": 20
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "grow"
+    }
+  },
+  "4": {
+    "inputs": {
+      "name": "08 Image Layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Krita Image Layer"
+    }
+  },
+  "5": {
+    "inputs": {
+      "name": "07 Krita Image Layer",
+      "type": "toggle",
+      "default": false,
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "image layer"
+    }
+  },
+  "6": {
+    "inputs": {},
+    "class_type": "ETN_KritaCanvas",
+    "_meta": {
+      "title": "Krita Canvas"
+    }
+  },
+  "7": {
+    "inputs": {
+      "boolean_value": [
+        "5",
+        0
+      ],
+      "image_false": [
+        "6",
+        0
+      ],
+      "image_true": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "8": {
+    "inputs": {
+      "select_prompt": [
+        "2",
+        0
+      ],
+      "prompt": [
+        "0",
+        0
+      ],
+      "negative_prompt": [
+        "1",
+        0
+      ],
+      "grow_mask": [
+        "3",
+        0
+      ],
+      "seed": [
+        "6",
+        3
+      ],
+      "api_key_override": "",
+      "output_format": "png",
+      "image": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "Stability Search And Recolor",
+    "_meta": {
+      "title": "Stability Search And Recolor"
+    }
+  },
+  "9": {
+    "inputs": {
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "ETN_KritaOutput",
+    "_meta": {
+      "title": "Krita Output"
+    }
+  }
+}

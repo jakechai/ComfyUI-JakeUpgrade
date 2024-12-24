@@ -26,6 +26,12 @@ NODE_CLASS_MAPPINGS = {
     "Tiling Mode JK": TilingMode_JK,
     "Empty Latent Color JK": EmptyLatentColor_JK,
     "Random Beats JK": RandomBeats_JK,
+    "SDXL Target Res JK": SDXL_TargetRes_JK,
+    "Get Size JK": GetSize_JK,
+    "Image Crop by Mask Resolution JK": ImageCropByMaskResolution_JK,
+    "Upscale Method JK": UpscaleMethod_JK,
+    "Latent Crop Offset JK": LatentCropOffset_JK,
+    "Scale To Resolution JK": ScaleToResolution_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
@@ -38,6 +44,8 @@ NODE_CLASS_MAPPINGS = {
     ### ControlNet Nodes
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
+    "CR ControlNet Loader JK": CR_ControlNetLoader_JK,
+    "CR Multi-ControlNet Param Stack JK": CR_ControlNetParamStack_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
     "CR Apply Multi-ControlNet Adv JK": CR_ApplyControlNetStackAdv_JK,
     ### LoRA Nodes
@@ -55,6 +63,8 @@ NODE_CLASS_MAPPINGS = {
     ### Pipe Nodes
     "NodesState JK": NodesState_JK,
     "Ksampler Parameters JK": KsamplerParameters_JK,
+    "Ksampler Parameters Default JK": KsamplerParametersDefault_JK,
+    "Guidance Default JK": GuidanceDefault_JK,
     "Project Setting JK": ProjectSetting_JK,
     "Base Model Parameters JK": BaseModelParameters_JK,
     "Base Model Parameters Extract JK": BaseModelParametersExtract_JK,
@@ -82,7 +92,9 @@ NODE_CLASS_MAPPINGS = {
     "Save Image with Metadata Flow JK": ImageSaveWithMetadata_Flow_JK,
     "Load Image With Metadata JK": LoadImageWithMetadata_JK,
     "HintImageEnchance JK": HintImageEnchance_JK,
+    "Image Resize Mode JK": ImageResizeMode_JK,
     "Image Remove Alpha JK": ImageRemoveAlpha_JK,
+    "Color Grading JK": ColorGrading_JK,
     ### Mask Nodes
     "Is Mask Empty JK": IsMaskEmpty_JK,
     ### Animation Nodes
@@ -116,6 +128,8 @@ NODE_CLASS_MAPPINGS = {
     "CM_IntToBool JK": IntToBool_JK,
     "CM_BoolUnaryOperation JK": BoolUnaryOperation_JK,
     "CM_BoolBinaryOperation JK": BoolBinaryOperation_JK,
+    "Bool Binary And JK": BoolBinaryAnd_JK,
+    "Bool Binary OR JK": BoolBinaryOR_JK,
     "CM_StringBinaryCondition_JK": StringBinaryCondition_JK,
     "CM_PromptCombine_JK": PromptCombine_JK,
     "CM_FloatUnaryCondition JK": FloatUnaryCondition_JK,
@@ -184,6 +198,12 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Tiling Mode JK": "Tiling Mode JK🐉",
     "Empty Latent Color JK": "Empty Latent Color JK🐉",
     "Random Beats JK": "Random Beats JK🐉",
+    "SDXL Target Res JK": "SDXL Target Res JK🐉",
+    "Get Size JK": "Get Size JK🐉",
+    "Image Crop by Mask Resolution JK": "Image Crop by Mask Resolution JK🐉",
+    "Upscale Method JK": "Upscale Method JK🐉",
+    "Latent Crop Offset JK": "Latent Crop Offset JK🐉",
+    "Scale To Resolution JK": "Scale To Resolution JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",
@@ -196,6 +216,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### ControlNet Nodes
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
+    "CR ControlNet Loader JK": "ControlNet Loader JK🐉",
+    "CR Multi-ControlNet Param Stack JK": "Multi-ControlNet Param Stack JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
     "CR Apply Multi-ControlNet Adv JK": "Apply Multi-ControlNet Adv JK🐉",
     ### LoRA Nodes
@@ -213,6 +235,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### Pipe Nodes
     "NodesState JK": "Nodes State JK🐉",
     "Ksampler Parameters JK": "Ksampler Parameters JK🐉",
+    "Ksampler Parameters Default JK": "Ksampler Parameters Default JK🐉",
+    "Guidance Default JK": "Guidance Default JK🐉",
     "Project Setting JK": "Project Setting JK🐉",
     "Base Model Parameters JK": "Base Model Parameters JK🐉",
     "Base Model Parameters Extract JK": "Base Model Parameters Extract JK🐉",
@@ -240,7 +264,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Save Image with Metadata Flow JK": "Save Image With Metadata Flow JK🐉",
     "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
     "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
+    "Image Resize Mode JK": "Image Resize Mode JK🐉",
     "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
+    "Color Grading JK": "Color Grading JK🐉",
     ### Mask Nodes
     "Is Mask Empty JK": "Is Mask Empty JK🐉",
     ### Animation Nodes
@@ -274,6 +300,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CM_IntToBool JK": "IntToBool JK🐉",
     "CM_BoolUnaryOperation JK": "BoolUnaryOp JK🐉",
     "CM_BoolBinaryOperation JK": "BoolBinaryOp JK🐉",
+    "Bool Binary And JK": "Bool And JK🐉",
+    "Bool Binary OR JK": "Bool OR JK🐉",
     "CM_StringBinaryCondition_JK": "StringBinaryCon JK🐉",
     "CM_PromptCombine_JK": "Prompt Combine JK🐉",
     "CM_FloatUnaryCondition JK": "FloatUnaryCon JK🐉",

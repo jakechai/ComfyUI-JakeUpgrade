@@ -38,8 +38,8 @@ import piexif
 import piexif.helper
 from nodes import MAX_RESOLUTION, ControlNetApply, ControlNetApplyAdvanced
 from pathlib import Path
-from typing import Any, Callable, Mapping, TypeAlias
-from PIL import Image, ImageOps
+from typing import Any, Callable, Mapping, TypeAlias, List
+from PIL import Image, ImageOps, ImageEnhance
 from PIL.PngImagePlugin import PngInfo
 from datetime import datetime
 from server import PromptServer
@@ -176,6 +176,29 @@ def get_sd3_resolution(ratio):
     
     return (width, height)
 
+def get_sd3_core_resolution(ratio):
+
+    if ratio == "1:1":
+        width, height = 1536, 1536
+    elif ratio == "5:4":
+        width, height = 1632, 1344
+    elif ratio == "3:2":
+        width, height = 1824, 1248
+    elif ratio == "16:9":
+        width, height = 2016, 1152
+    elif ratio == "21:9":
+        width, height = 2304, 960
+    elif ratio == "4:5":
+        width, height = 1344, 1632
+    elif ratio == "2:3":
+        width, height = 1248, 1824
+    elif ratio == "9:16":
+        width, height = 1152, 2016
+    elif ratio == "9:21":
+        width, height = 960, 2304
+    
+    return (width, height)
+
 # A special class that is always equal in not equal comparisons. Credit to pythongosssss
 class AnyType(str):
 
@@ -183,6 +206,12 @@ class AnyType(str):
     return False
 
 any_type = AnyType("*")
+
+def tensor2pil(t_image: torch.Tensor)  -> Image:
+    return Image.fromarray(numpy.clip(255.0 * t_image.cpu().numpy().squeeze(), 0, 255).astype(numpy.uint8))
+
+def pil2tensor(image:Image) -> torch.Tensor:
+    return torch.from_numpy(numpy.array(image).astype(numpy.float32) / 255.0).unsqueeze(0)
 
 upscalemodels = {
     "1xPSNR.pth": float(1.0),
@@ -227,8 +256,8 @@ class CR_AspectRatioSD15_JK:
             "required": {
                 "resolution": (["Custom", "SD15 512x512", "SD15 680x512", "SD15 768x512", "SD15 912x512", "SD15 952x512", "SD15 1024x512",
                 "SD15 1224x512", "SD15 768x432", "SD15 768x416", "SD15 768x384", "SD15 768x320"],),
-                "custom_width": ("INT", {"default": 512, "min": 64, "max": 2048, "step": 8}),
-                "custom_height": ("INT", {"default": 512, "min": 64, "max": 2048, "step": 8}),
+                "custom_width": ("INT", {"default": 512, "min": 64, "max": 16384, "step": 8}),
+                "custom_height": ("INT", {"default": 512, "min": 64, "max": 16384, "step": 8}),
                 "swap_dimensions": ("BOOLEAN", {"default": False},),
             }
         }
@@ -259,8 +288,8 @@ class CR_AspectRatioSDXL_JK:
             "required": {
                 "resolution": (["Custom", "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SD3 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SD3 1216x832", "SDXL 1280x768",
                 "SD3 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SD3 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
-                "custom_width": ("INT", {"default": 1024, "min": 64, "max": 2048, "step": 8}),
-                "custom_height": ("INT", {"default": 1024, "min": 64, "max": 2048, "step": 8}),
+                "custom_width": ("INT", {"default": 1024, "min": 64, "max": 16384, "step": 8}),
+                "custom_height": ("INT", {"default": 1024, "min": 64, "max": 16384, "step": 8}),
                 "swap_dimensions": ("BOOLEAN", {"default": False},),
             }
         }
@@ -315,8 +344,8 @@ class CR_AspectRatio_JK:
                                 "SD15 1224x512", "SD15 768x432", "SD15 768x416", "SD15 768x384", "SD15 768x320", 
                                 "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SD3 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SD3 1216x832", "SDXL 1280x768",
                                 "SD3 1344x768", "SDXL 1344x704", "SDXL 1408x704", "SDXL 1472x704", "SD3 1536x640", "SDXL 1600x640", "SDXL 1664x576", "SDXL 1728x576"],),
-                "custom_width": ("INT", {"default": 512, "min": 64, "max": 2048, "step": 8}),
-                "custom_height": ("INT", {"default": 512, "min": 64, "max": 2048, "step": 8}),
+                "custom_width": ("INT", {"default": 512, "min": 64, "max": 16384, "step": 8}),
+                "custom_height": ("INT", {"default": 512, "min": 64, "max": 16384, "step": 8}),
                 "swap_dimensions": ("BOOLEAN", {"default": False},),
             }
         }
@@ -378,6 +407,300 @@ class EmptyLatentColor_JK:
 
     def get_value(self,):
         return (8548961, 9077127, 9214099, 8618319)
+
+# functions from KJ nodes with modification: https://github.com/kijai/ComfyUI-KJNodes
+def get_bounding_box(mask):
+
+    _mask = tensor2pil(mask)
+    non_zero_indices = numpy.nonzero(numpy.array(_mask))
+
+    if len(non_zero_indices[0]) == 0:
+        return (0, 0, 0, 0)
+    
+    min_x, max_x = numpy.min(non_zero_indices[1]).astype(int), numpy.max(non_zero_indices[1]).astype(int)
+    min_y, max_y = numpy.min(non_zero_indices[0]).astype(int), numpy.max(non_zero_indices[0]).astype(int)
+    
+    return (int(min_x), int(min_y), int(max_x), int(max_y))
+
+def multipleOfInt(original_int, multiple_of, mode=True):
+    
+    return ((math.ceil(original_int / multiple_of) if mode else math.floor(original_int / multiple_of)) * multiple_of)
+
+class SDXL_TargetRes_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "width": ("INT", {"forceInput": True}),
+                "height": ("INT", {"forceInput": True}),
+                "target_res_scale": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 16.0, "step": 0.01}),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "INT")
+    RETURN_NAMES = ("target_width", "target_height")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, width, height, target_res_scale):
+        
+        target_width = multipleOfInt(width * target_res_scale, 8)
+        target_height = multipleOfInt(height * target_res_scale, 8)
+        
+        return (target_width, target_height)
+
+class GetSize_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "optional": {
+                "image": ("IMAGE", ),
+                "latent": ("LATENT", ),
+                "mask": ("MASK",),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "INT")
+    RETURN_NAMES = ("width", "height")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, image=None, latent=None, mask=None):
+        
+        if image != None:
+            image_width = image.shape[2]
+            image_height = image.shape[1]
+        elif latent != None:
+            image_width = latent['samples'].shape[-1] * 8
+            image_height = latent['samples'].shape[-2] * 8
+        elif mask != None:
+            image_width = mask.shape[2]
+            image_height = mask.shape[1]
+        else:
+            image_width = 0
+            image_height = 0
+        
+        return (image_width, image_height)
+
+class ImageCropByMaskResolution_JK:
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "optional": {
+                "image": ("IMAGE", ),
+                "latent": ("LATENT", ),
+            },
+            "required": {
+                "mask": ("MASK",),
+                "custom_width": ("INT", {"default": 1024, "min": 8, "max": 4096, "step": 8}),
+                "custom_height": ("INT", {"default": 1024, "min": 8, "max": 4096, "step": 8}),
+                "padding": ("INT", {"default": 0, "min": 0, "max": 512, "step": 1}),
+                "use_image_res": ("BOOLEAN", {"default": False},),
+                "use_target_res": ("BOOLEAN", {"default": False},),
+                "target_res": ("INT", {"default": 1024, "min": 0, "max": 16384, "step": 8}),
+                "use_target_mega_pixel": ("BOOLEAN", {"default": False},),
+                "target_mega_pixel": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 16.0, "step": 0.01}),
+                "multiple_of": ("INT", {"default": 8, "min": 0, "max": 16, "step": 8}),
+                "image_upscale_method": (["nearest-exact", "bilinear", "area", "bicubic", "lanczos"],{"default": "lanczos"}),
+                "latent_upscale_method": (["nearest-exact", "bilinear", "area", "bicubic", "bislerp"],{"default": "bilinear"}),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "INT", "INT", "INT", "INT", "INT", "STRING", "STRING")
+    RETURN_NAMES = ("crop_width", "crop_height", "offset_x", "offset_y", "target_width", "target_height", "image_upscale_method", "latent_upscale_method")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, mask, padding, custom_width, custom_height, use_image_res, use_target_mega_pixel, target_mega_pixel, 
+                    use_target_res, target_res, multiple_of, image_upscale_method, latent_upscale_method, image=None, latent=None):
+        
+        multiple_of = 1 if multiple_of == 0 else multiple_of
+        
+        bbox = []
+        
+        if image != None:
+            image_width = image.shape[2]
+            image_height = image.shape[1]
+        elif latent != None:
+            image_width = latent['samples'].shape[-1] * 8
+            image_height = latent['samples'].shape[-2] * 8
+        else:
+            image_width = custom_width
+            image_height = custom_height
+        
+        min_x, min_y, max_x, max_y = get_bounding_box(mask)
+        minimum_crop_size = min(128, image_width)
+        # cropped_mask_width = max(multipleOfInt((max_x - min_x), multiple_of), minimum_crop_size)
+        # cropped_mask_height = max(multipleOfInt((max_y - min_y), multiple_of), minimum_crop_size)
+        cropped_mask_width = max((max_x - min_x), minimum_crop_size)
+        cropped_mask_height = max((max_y - min_y), minimum_crop_size)
+        
+        if (max_x - min_x) < minimum_crop_size:
+            offset = int((minimum_crop_size - (max_x - min_x)) / 2)
+            if min_x <= offset:
+                min_x = 0
+                max_x = min_x + cropped_mask_width
+            else:
+                max_x = image_width
+                min_x = max_x - cropped_mask_width
+        
+        if (max_y - min_y) < minimum_crop_size:
+            offset = int((minimum_crop_size - (max_y - min_y)) / 2)
+            if min_y <= offset:
+                min_y = 0
+                max_y = min_y + cropped_mask_height
+            else:
+                max_y = image_height
+                min_y = max_y - cropped_mask_height
+        
+        if padding >0:
+            min_x = min_x - min(min_x, padding)
+            max_x = max_x + min((image_width - max_x), padding)
+            min_y = min_y - min(min_y, padding)
+            max_y = max_y + min((image_height - max_y), padding)
+            
+            cropped_mask_width = max_x - min_x
+            cropped_mask_height = max_y - min_y
+        
+        bbox.append((min_x, min_y, cropped_mask_width, cropped_mask_height))
+        
+        if use_image_res:
+            
+            if cropped_mask_width >= cropped_mask_height:
+                base_res = multipleOfInt(image_width, multiple_of)
+            else:
+                base_res = multipleOfInt(image_height, multiple_of)
+        
+        elif use_target_res:
+            
+            base_res = multipleOfInt(target_res, multiple_of)
+        
+        elif use_target_mega_pixel:
+             
+            scale_factor = math.sqrt(target_mega_pixel* 1000000 / (cropped_mask_width * cropped_mask_height))
+            
+            if cropped_mask_width >= cropped_mask_height:
+                base_res = multipleOfInt(cropped_mask_width * scale_factor, multiple_of)
+            else:
+                base_res = multipleOfInt(cropped_mask_height * scale_factor, multiple_of)
+        
+        else:
+        
+            if cropped_mask_width >= cropped_mask_height:
+                base_res = multipleOfInt(cropped_mask_width, multiple_of)
+            else:
+                base_res = multipleOfInt(cropped_mask_height, multiple_of)
+        
+        if cropped_mask_width >= cropped_mask_height:
+            target_width = multipleOfInt(base_res, multiple_of)
+            target_height = multipleOfInt(target_width *(cropped_mask_height / cropped_mask_width), multiple_of)
+        else:
+            target_height = multipleOfInt(base_res, multiple_of)
+            target_width = multipleOfInt(target_height *(cropped_mask_width / cropped_mask_height), multiple_of)
+        
+        return (cropped_mask_width, cropped_mask_height, min_x, min_y, target_width, target_height, image_upscale_method, latent_upscale_method)
+
+class UpscaleMethod_JK:
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "image_upscale_method": (["nearest-exact", "bilinear", "area", "bicubic", "lanczos"],{"default": "lanczos"}),
+                "latent_upscale_method": (["nearest-exact", "bilinear", "area", "bicubic", "bislerp"],{"default": "bilinear"}),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING", "STRING")
+    RETURN_NAMES = ("image_upscale_method", "latent_upscale_method")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, image_upscale_method, latent_upscale_method):
+        
+        return (image_upscale_method, latent_upscale_method)
+
+class LatentCropOffset_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "image_offset": ("INT", {"forceInput": True}),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", )
+    RETURN_NAMES = ("latent_offset",)
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, image_offset=0):
+
+        return ((image_offset + 8),)
+
+class ScaleToResolution_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "optional": {
+                "image": ("IMAGE", ),
+                "latent": ("LATENT", ),
+            },
+            "required": {
+                "custom_width": ("INT", {"default": 512, "min": 8, "max": 4096, "step": 8}),
+                "custom_height": ("INT", {"default": 512, "min": 8, "max": 4096, "step": 8}),
+                "direction": ("BOOLEAN", {"default": False, "label_on": "height", "label_off": "width"}),
+                "target_resolution": ("INT", {"default": 512, "min": 8, "max": 16384, "step": 8}),
+                "use_target_mega_pixel": ("BOOLEAN", {"default": False},),
+                "target_mega_pixel": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 16.0, "step": 0.01}),
+                "multiple_of": ("INT", {"default": 8, "min": 0, "max": 16, "step": 8}),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "INT")
+    RETURN_NAMES = ("target_width", "target_height")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+
+    def get_value(self, custom_width, custom_height, direction, target_resolution, use_target_mega_pixel, target_mega_pixel, multiple_of, image=None, latent=None):
+        
+        if image != None:
+            image_width = image.shape[2]
+            image_height = image.shape[1]
+        elif latent != None:
+            image_width = latent['samples'].shape[-1] * 8
+            image_height = latent['samples'].shape[-2] * 8
+        else:
+            image_width = custom_width
+            image_height = custom_height
+        
+        multiple_of = 1 if multiple_of == 0 else multiple_of
+        
+        if use_target_mega_pixel:
+             
+            scale_factor = math.sqrt(target_mega_pixel * 1000000 / (image_width * image_height))
+            width = math.ceil((image_width * scale_factor) / multiple_of) * multiple_of
+            height = math.ceil((image_height * scale_factor) / multiple_of) * multiple_of
+            return (width, height)
+        
+        elif direction:
+        
+            height = math.ceil(target_resolution / multiple_of) * multiple_of
+            width = math.ceil((image_width / image_height * target_resolution) / multiple_of) * multiple_of
+            return (width, height)
+        
+        else:
+            
+            width = math.ceil(target_resolution / multiple_of) * multiple_of
+            height = math.ceil((image_height / image_width * target_resolution) / multiple_of) * multiple_of
+            return (width, height)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes
@@ -563,7 +886,7 @@ class CR_ApplyControlNet_JK:
 
     def apply_controlnet(self, base_positive, base_negative, switch, strength, start_percent, end_percent, image=None, vae=None, mask=None, control_net=None):
         
-        if image is not None and control_net is not None and switch == True and strength != 0.0:
+        if image is not None and control_net is not None and control_net != "" and switch == True and strength != 0.0:
             
             if type(control_net) == str:
                 controlnet_path = folder_paths.get_full_path("controlnet", control_net)
@@ -700,6 +1023,106 @@ class CR_ControlNetStack_JK:
                 control_switch and kwargs.get(f"ControlNet_Unit_4") and controlnet_count >= 5, 
                 control_switch and kwargs.get(f"ControlNet_Unit_5") and controlnet_count == 6)
 
+class CR_ControlNetLoader_JK:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "control_net_name": (["None"] + folder_paths.get_filename_list("controlnet"), ),
+                "union_type": (["None"] + ["auto"] + list(UNION_CONTROLNET_TYPES.keys()),)
+            }
+        }
+
+    RETURN_TYPES = ("CONTROL_NET",)
+    FUNCTION = "load_controlnet"
+    CATEGORY = icons.get("JK/ControlNet")
+
+    def load_controlnet(self, control_net_name, union_type):
+        
+        if control_net_name == "None":
+            
+            return ("",)
+        
+        else:
+            controlnet_path = folder_paths.get_full_path_or_raise("controlnet", control_net_name)
+            controlnet_load = comfy.controlnet.load_controlnet(controlnet_path)
+            
+            type_number = UNION_CONTROLNET_TYPES.get(union_type, -2)
+                        
+            if type_number >= -1:
+                controlnet_load = controlnet_load.copy()
+            
+                if type_number >= 0:
+                    controlnet_load.set_extra_arg("control_type", [type_number])
+                else:
+                    controlnet_load.set_extra_arg("control_type", [])
+
+            return (controlnet_load,)
+
+class CR_ControlNetParamStack_JK:
+    
+    modes = ["simple", "advanced"]
+    controlnets = ["None"] + folder_paths.get_filename_list("controlnet")
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        
+        inputs = {
+            "optional": {
+                "controlnet_0": ("CONTROL_NET",),
+                "image_0": ("IMAGE",),
+                "controlnet_1": ("CONTROL_NET",),
+                "image_1": ("IMAGE",),
+                "controlnet_2": ("CONTROL_NET",),
+                "image_2": ("IMAGE",),
+                "controlnet_3": ("CONTROL_NET",),
+                "image_3": ("IMAGE",),
+                "controlnet_4": ("CONTROL_NET",),
+                "image_4": ("IMAGE",),
+                "controlnet_5": ("CONTROL_NET",),
+                "image_5": ("IMAGE",),
+            },
+            "required": {
+                "control_switch": ("BOOLEAN", {"default": False},),
+                "input_mode": (cls.modes,),
+                "controlnet_count": ("INT", {"default": 3, "min": 1, "max": 6, "step": 1}),
+            },
+        }
+        
+        for i in range(0, 6):
+
+            inputs["required"][f"ControlNet_Unit_{i}"] = ("BOOLEAN", {"default": False},)
+            inputs["required"][f"controlnet_strength_{i}"] = ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01})
+            inputs["required"][f"start_percent_{i}"] = ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.001})
+            inputs["required"][f"end_percent_{i}"] = ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.001})
+
+        return inputs
+
+    RETURN_TYPES = ("CONTROL_NET_STACK", "BOOLEAN", "BOOLEAN", "BOOLEAN", "BOOLEAN", "BOOLEAN", "BOOLEAN", "BOOLEAN")
+    RETURN_NAMES = ("CONTROLNET_STACK", "ContrlNet_Switch", "ContrlNet0_Switch", "ContrlNet1_Switch", "ContrlNet2_Switch", "ContrlNet3_Switch", "ContrlNet4_Switch", "ContrlNet5_Switch")
+    FUNCTION = "controlnet_stacker"
+    CATEGORY = icons.get("JK/ControlNet")
+
+    def controlnet_stacker(self, control_switch, input_mode, controlnet_count, **kwargs):
+
+        # Initialise the list
+        controlnet_list = []
+        
+        if control_switch == True:
+            j = 0
+            for i in range (0, controlnet_count + 1):
+                if kwargs.get(f"controlnet_{i}") != None and kwargs.get(f"controlnet_{i}") != "" and kwargs.get(f"ControlNet_Unit_{i}") == True and kwargs.get(f"image_{i}") is not None:
+                    
+                    controlnet_list.extend([(kwargs.get(f"controlnet_{i}"), kwargs.get(f"image_{i}"), kwargs.get(f"controlnet_strength_{i}"), kwargs.get(f"start_percent_{i}") if input_mode == "simple" else 0.0, kwargs.get(f"end_percent_{i}") if input_mode == "simple" else 1.0)])
+        
+        return (controlnet_list, control_switch, 
+                control_switch and kwargs.get(f"ControlNet_Unit_0"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_1") and controlnet_count >= 2, 
+                control_switch and kwargs.get(f"ControlNet_Unit_2") and controlnet_count >= 3, 
+                control_switch and kwargs.get(f"ControlNet_Unit_3") and controlnet_count >= 4, 
+                control_switch and kwargs.get(f"ControlNet_Unit_4") and controlnet_count >= 5, 
+                control_switch and kwargs.get(f"ControlNet_Unit_5") and controlnet_count == 6)
+
 class CR_ApplyControlNetStack_JK:
     @classmethod
     def INPUT_TYPES(s):
@@ -709,9 +1132,9 @@ class CR_ApplyControlNetStack_JK:
                 "base_negative": ("CONDITIONING",), 
                 "ControlNet_switch": ("BOOLEAN", {"default": False},),
             },
-             "optional": {
+            "optional": {
                 "controlnet_stack": ("CONTROL_NET_STACK", ),
-             }
+            }
         }                    
 
     RETURN_TYPES = ("CONDITIONING", "CONDITIONING", )
@@ -761,7 +1184,7 @@ class CR_ApplyControlNetStackAdv_JK:
 
     def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, vae=None, mask=None, controlnet_stack=None):
         
-        if controlnet_stack is not None and ControlNet_switch == True:
+        if controlnet_stack is not None and len(controlnet_stack) != 0 and ControlNet_switch == True:
             for controlnet_tuple in controlnet_stack:
                 controlnet_name, image, strength, start_percent, end_percent  = controlnet_tuple
                 
@@ -1288,6 +1711,50 @@ class KsamplerParameters_JK:
             return (stop_at_clip_layer, positive, negative, variation, seed, steps, cfg, sampler_name, scheduler, denoise, width, height, batch_size)
         else:
             return (stop_at_clip_layer, positive, negative, variation, seed, steps, cfg, sampler_name, scheduler, denoise, height, width, batch_size)
+
+class KsamplerParametersDefault_JK:
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "steps": ("INT", {"default": 20, "min": 1, "max": 10000}),
+                "cfg": ("FLOAT", {"default": 8.0, "min": 0.0, "max": 100.0, "step": 0.05}),
+                "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "FLOAT", "FLOAT")
+    RETURN_NAMES = ("STEPS", "CFG", "DENOISE")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Pipe")
+
+    def get_value(self, steps, cfg, denoise):
+    
+        return (steps, cfg, denoise)
+
+class GuidanceDefault_JK:
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "guidance": ("FLOAT", {"default": 3.5, "min": 0.0, "max": 100.0, "step": 0.1}),
+            },
+        }
+    
+    RETURN_TYPES = ("FLOAT",)
+    RETURN_NAMES = ("GUIDANCE",)
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Pipe")
+
+    def get_value(self, guidance):
+    
+        return (guidance,)
 
 class ProjectSetting_JK:
     def __init__(self):
@@ -2522,13 +2989,46 @@ class LoadImageWithMetadata_JK:
         return True
 
 #---------------------------------------------------------------------------------------------------------------------#
-# Image Remove Alpha from Layer Style
+# Image Nodes from Layer Style
 #---------------------------------------------------------------------------------------------------------------------#
-def tensor2pil(t_image: torch.Tensor)  -> Image:
-    return Image.fromarray(numpy.clip(255.0 * t_image.cpu().numpy().squeeze(), 0, 255).astype(numpy.uint8))
+def image_gray_offset(image:Image, offset:int) -> Image:
+    image = image.convert('L')
+    width = image.width
+    height = image.height
+    ret_image = Image.new('L', size=(width, height), color='black')
+    for x in range(width):
+        for y in range(height):
+                pixel = image.getpixel((x, y))
+                _pixel = pixel + offset
+                if _pixel > 255:
+                    _pixel = 255
+                if _pixel < 0:
+                    _pixel = 0
+                ret_image.putpixel((x, y), _pixel)
+    return ret_image
 
-def pil2tensor(image:Image) -> torch.Tensor:
-    return torch.from_numpy(numpy.array(image).astype(numpy.float32) / 255.0).unsqueeze(0)
+def RGB2RGBA(image:Image, mask:Image) -> Image:
+    (R, G, B) = image.convert('RGB').split()
+    return Image.merge('RGBA', (R, G, B, mask.convert('L')))
+
+def image_channel_merge(channels:tuple, mode = 'RGB' ) -> Image:
+    channel1 = channels[0].convert('L')
+    channel2 = channels[1].convert('L')
+    channel3 = channels[2].convert('L')
+    channel4 = Image.new('L', size=channel1.size, color='white')
+    if mode == 'RGBA':
+        if len(channels) > 3:
+            channel4 = channels[3].convert('L')
+        ret_image = Image.merge('RGBA',[channel1, channel2, channel3, channel4])
+    elif mode == 'RGB':
+        ret_image = Image.merge('RGB', [channel1, channel2, channel3])
+    elif mode == 'YCbCr':
+        ret_image = Image.merge('YCbCr', [channel1, channel2, channel3]).convert('RGB')
+    elif mode == 'LAB':
+        ret_image = Image.merge('LAB', [channel1, channel2, channel3]).convert('RGB')
+    elif mode == 'HSV':
+        ret_image = Image.merge('HSV', [channel1, channel2, channel3]).convert('RGB')
+    return ret_image
 
 class ImageRemoveAlpha_JK:
     
@@ -2546,7 +3046,7 @@ class ImageRemoveAlpha_JK:
     
     RETURN_TYPES = ("IMAGE", )
     RETURN_NAMES = ("RGB_image", )
-    FUNCTION = 'image_remove_alpha'
+    FUNCTION = "image_remove_alpha"
     CATEGORY = icons.get("JK/Image")
     
     def image_remove_alpha(self, RGBA_image):
@@ -2559,6 +3059,64 @@ class ImageRemoveAlpha_JK:
             ret_images.append(pil2tensor(tensor2pil(img).convert('RGB')))
         
         return (torch.cat(ret_images, dim=0), )
+
+class ColorGrading_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(self):
+
+        return {
+            "required": {
+                "image": ("IMAGE", ),
+                "brightness": ("FLOAT", {"default": 1, "min": 0.0, "max": 3, "step": 0.01}),
+                "contrast": ("FLOAT", {"default": 1, "min": 0.0, "max": 3, "step": 0.01}),
+                "saturation": ("FLOAT", {"default": 1, "min": 0.0, "max": 3, "step": 0.01}),
+                "R": ("INT", {"default": 0, "min": -255, "max": 255, "step": 1}),
+                "G": ("INT", {"default": 0, "min": -255, "max": 255, "step": 1}),
+                "B": ("INT", {"default": 0, "min": -255, "max": 255, "step": 1}),
+            },
+        }
+    
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("IMAGE",)
+    FUNCTION = "color_grading"
+    CATEGORY = icons.get("JK/Image")
+
+    def color_grading(self, image, brightness, contrast, saturation, R, G, B):
+
+        ret_images = []
+
+        for i in image:
+            i = torch.unsqueeze(i,0)
+            __image = tensor2pil(i)
+            ret_image = __image.convert('RGB')
+            if brightness != 1:
+                brightness_image = ImageEnhance.Brightness(ret_image)
+                ret_image = brightness_image.enhance(factor=brightness)
+            if contrast != 1:
+                contrast_image = ImageEnhance.Contrast(ret_image)
+                ret_image = contrast_image.enhance(factor=contrast)
+            if saturation != 1:
+                color_image = ImageEnhance.Color(ret_image)
+                ret_image = color_image.enhance(factor=saturation)
+            
+            if R != 0 or G != 0 or B != 0:
+                _r, _g, _b = ret_image.split()
+                if R != 0 :
+                    _r = image_gray_offset(_r, R)
+                if G != 0 :
+                    _g = image_gray_offset(_g, G)
+                if B != 0 :
+                    _b = image_gray_offset(_b, B)
+                ret_image = image_channel_merge((_r, _g, _b), 'RGB')
+            
+            if __image.mode == 'RGBA':
+                ret_image = RGB2RGBA(ret_image, __image.split()[-1])
+            ret_images.append(pil2tensor(ret_image))
+        
+        return (torch.cat(ret_images, dim=0),)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Image Resize from ControlNet AUX
@@ -2680,8 +3238,8 @@ class HintImageEnchance_JK:
             }
         }
     
-    RETURN_TYPES = ("IMAGE", "STRING",)
-    RETURN_NAMES = ("IMAGE", "METADATA",)
+    RETURN_TYPES = ("IMAGE", "STRING", "STRING")
+    RETURN_NAMES = ("IMAGE", "METADATA", "MODE")
     FUNCTION = "execute"
 
     CATEGORY = "🐉 JK/🛩️ Image"
@@ -2702,7 +3260,7 @@ class HintImageEnchance_JK:
             
             outs.append(torch.from_numpy(np_hint_image.astype(numpy.float32) / 255.0))
         
-        return (torch.stack(outs, dim=0), METADATA,)
+        return (torch.stack(outs, dim=0), METADATA, resize_mode)
     
     def execute_resize(self, detected_map, w, h):
         detected_map = self.high_quality_resize(detected_map, (w, h))
@@ -2804,6 +3362,24 @@ class HintImageEnchance_JK:
             y = numpy.concatenate([y, inpaint_mask], axis=2)
 
         return y
+
+class ImageResizeMode_JK:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "resize_mode": (RESIZE_MODES, {"default": "Just Resize"})
+            }
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("MODE",)
+    FUNCTION = "execute"
+
+    CATEGORY = "🐉 JK/🛩️ Image"
+    def execute(self, resize_mode):
+        
+        return (resize_mode,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Mask Nodes
@@ -3785,6 +4361,40 @@ class BoolBinaryOperation_JK:
 
     def op(self, op: str, a: bool, b: bool) -> tuple[bool]:
         return (BOOL_BINARY_OPERATIONS[op](a, b),)
+
+class BoolBinaryAnd_JK:
+    @classmethod
+    def INPUT_TYPES(cls) -> Mapping[str, Any]:
+        return {
+            "required": {
+                "a": ("BOOLEAN", {"forceInput": True}),
+                "b": ("BOOLEAN", {"forceInput": True}),
+            }
+        }
+
+    RETURN_TYPES = ("BOOLEAN",)
+    FUNCTION = "op"
+    CATEGORY = icons.get("JK/Math/Bool")
+
+    def op(self, a: bool, b: bool) -> tuple[bool]:
+        return (BOOL_BINARY_OPERATIONS["And"](a, b),)
+
+class BoolBinaryOR_JK:
+    @classmethod
+    def INPUT_TYPES(cls) -> Mapping[str, Any]:
+        return {
+            "required": {
+                "a": ("BOOLEAN", {"forceInput": True}),
+                "b": ("BOOLEAN", {"forceInput": True}),
+            }
+        }
+
+    RETURN_TYPES = ("BOOLEAN",)
+    FUNCTION = "op"
+    CATEGORY = icons.get("JK/Math/Bool")
+
+    def op(self, a: bool, b: bool) -> tuple[bool]:
+        return (BOOL_BINARY_OPERATIONS["Or"](a, b),)
 
 class StringBinaryCondition_JK:
     @classmethod
@@ -4934,6 +5544,12 @@ NODE_CLASS_MAPPINGS = {
     "Tiling Mode JK": TilingMode_JK,
     "Empty Latent Color JK": EmptyLatentColor_JK,
     "Random Beats JK": RandomBeats_JK,
+    "SDXL Target Res JK": SDXL_TargetRes_JK,
+    "Get Size JK": GetSize_JK,
+    "Image Crop by Mask Resolution JK": ImageCropByMaskResolution_JK,
+    "Upscale Method JK": UpscaleMethod_JK,
+    "Latent Crop Offset JK": LatentCropOffset_JK,
+    "Scale To Resolution JK": ScaleToResolution_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
@@ -4946,6 +5562,8 @@ NODE_CLASS_MAPPINGS = {
     ### ControlNet Nodes
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
+    "CR ControlNet Loader JK": CR_ControlNetLoader_JK,
+    "CR Multi-ControlNet Param Stack JK": CR_ControlNetParamStack_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
     "CR Apply Multi-ControlNet Adv JK": CR_ApplyControlNetStackAdv_JK,
     ### LoRA Nodes
@@ -4963,6 +5581,8 @@ NODE_CLASS_MAPPINGS = {
     ### Pipe Nodes
     "NodesState JK": NodesState_JK,
     "Ksampler Parameters JK": KsamplerParameters_JK,
+    "Ksampler Parameters Default JK": KsamplerParametersDefault_JK,
+    "Guidance Default JK": GuidanceDefault_JK,
     "Project Setting JK": ProjectSetting_JK,
     "Base Model Parameters JK": BaseModelParameters_JK,
     "Base Model Parameters Extract JK": BaseModelParametersExtract_JK,
@@ -4990,7 +5610,9 @@ NODE_CLASS_MAPPINGS = {
     "Save Image with Metadata Flow JK": ImageSaveWithMetadata_Flow_JK,
     "Load Image With Metadata JK": LoadImageWithMetadata_JK,
     "HintImageEnchance JK": HintImageEnchance_JK,
+    "Image Resize Mode JK": ImageResizeMode_JK,
     "Image Remove Alpha JK": ImageRemoveAlpha_JK,
+    "Color Grading JK": ColorGrading_JK,
     ### Mask Nodes
     "Is Mask Empty JK": IsMaskEmpty_JK,
     ### Animation Nodes
@@ -5024,6 +5646,8 @@ NODE_CLASS_MAPPINGS = {
     "CM_IntToBool JK": IntToBool_JK,
     "CM_BoolUnaryOperation JK": BoolUnaryOperation_JK,
     "CM_BoolBinaryOperation JK": BoolBinaryOperation_JK,
+    "Bool Binary And JK": BoolBinaryAnd_JK,
+    "Bool Binary OR JK": BoolBinaryOR_JK,
     "CM_StringBinaryCondition_JK": StringBinaryCondition_JK,
     "CM_PromptCombine_JK": PromptCombine_JK,
     "CM_FloatUnaryCondition JK": FloatUnaryCondition_JK,
@@ -5091,6 +5715,12 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Tiling Mode JK": "Tiling Mode JK🐉",
     "Empty Latent Color JK": "Empty Latent Color JK🐉",
     "Random Beats JK": "Random Beats JK🐉",
+    "SDXL Target Res JK": "SDXL Target Res JK🐉",
+    "Get Size JK": "Get Size JK🐉",
+    "Image Crop by Mask Resolution JK": "Image Crop by Mask Resolution JK🐉",
+    "Upscale Method JK": "Upscale Method JK🐉",
+    "Latent Crop Offset JK": "Latent Crop Offset JK🐉",
+    "Scale To Resolution JK": "Scale To Resolution JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",
@@ -5103,6 +5733,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### ControlNet Nodes
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
+    "CR ControlNet Loader JK": "ControlNet Loader JK🐉",
+    "CR Multi-ControlNet Param Stack JK": "Multi-ControlNet Param Stack JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
     "CR Apply Multi-ControlNet Adv JK": "Apply Multi-ControlNet Adv JK🐉",
     ### LoRA Nodes
@@ -5120,6 +5752,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### Pipe Nodes
     "NodesState JK": "Nodes State JK🐉",
     "Ksampler Parameters JK": "Ksampler Parameters JK🐉",
+    "Ksampler Parameters Default JK": "Ksampler Parameters Default JK🐉",
+    "Guidance Default JK": "Guidance Default JK🐉",
     "Project Setting JK": "Project Setting JK🐉",
     "Base Model Parameters JK": "Base Model Parameters JK🐉",
     "Base Model Parameters Extract JK": "Base Model Parameters Extract JK🐉",
@@ -5147,7 +5781,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Save Image with Metadata Flow JK": "Save Image With Metadata Flow JK🐉",
     "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
     "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
+    "Image Resize Mode JK": "Image Resize Mode JK🐉",
     "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
+    "Color Grading JK": "Color Grading JK🐉",
     ### Mask Nodes
     "Is Mask Empty JK": "Is Mask Empty JK🐉",
     ### Animation Nodes
@@ -5181,6 +5817,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CM_IntToBool JK": "IntToBool JK🐉",
     "CM_BoolUnaryOperation JK": "BoolUnaryOp JK🐉",
     "CM_BoolBinaryOperation JK": "BoolBinaryOp JK🐉",
+    "Bool Binary And JK": "Bool And JK🐉",
+    "Bool Binary OR JK": "Bool OR JK🐉",
     "CM_StringBinaryCondition_JK": "StringBinaryCon JK🐉",
     "CM_PromptCombine_JK": "Prompt Combine JK🐉",
     "CM_FloatUnaryCondition JK": "FloatUnaryCon JK🐉",
