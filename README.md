@@ -91,7 +91,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 5. Update img2mesh MV upscale method to achieve better results: SD15 img2img + SDXL Refine + Ultimate Upscale.
 6. Add Bool_Or and Bool_And nodes for workflows need to be group. Replace Bool Binary Operation node (Or as default) with Bool_Or.
 7. Add Color Grading Node.
-8. Seperate Multi-ControlNet Param Stack node to ControlNet Loader and Multi-ControlNet Param Stack.
+8. Seperate Multi-ControlNet Stack node to ControlNet Loader and Multi-ControlNet Param Stack.
 9. Add "None" selection as default to IPAdapter Unified Loader for better workflow control, especially in API mode.
 10. Add Image Refine Group Node.
 11. Krita image generation workflows updated.
