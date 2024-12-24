@@ -1,0 +1,227 @@
+{
+  "0": {
+    "inputs": {
+      "name": "01 foreground prompt",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "foreground"
+    }
+  },
+  "1": {
+    "inputs": {
+      "name": "02 negative",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "negative"
+    }
+  },
+  "2": {
+    "inputs": {
+      "name": "03 background prompt",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "background"
+    }
+  },
+  "3": {
+    "inputs": {
+      "name": "04 preserve original subject",
+      "type": "number",
+      "default": 0.6,
+      "min": 0,
+      "max": 1
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "preserve"
+    }
+  },
+  "4": {
+    "inputs": {
+      "name": "05 original bg depth",
+      "type": "number",
+      "default": 0.5,
+      "min": 0,
+      "max": 1
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "original"
+    }
+  },
+  "5": {
+    "inputs": {
+      "name": "06 keep original bg",
+      "type": "toggle",
+      "default": false,
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "keep"
+    }
+  },
+  "6": {
+    "inputs": {
+      "name": "09 Original Image Layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Krita Image Layer"
+    }
+  },
+  "7": {
+    "inputs": {
+      "name": "08 Krita Original Image Layer",
+      "type": "toggle",
+      "default": false,
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "image layer"
+    }
+  },
+  "8": {
+    "inputs": {},
+    "class_type": "ETN_KritaCanvas",
+    "_meta": {
+      "title": "Krita Canvas"
+    }
+  },
+  "9": {
+    "inputs": {
+      "name": "07 light source strength",
+      "type": "number",
+      "default": 0.3,
+      "min": 0,
+      "max": 1
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "strength"
+    }
+  },
+  "10": {
+    "inputs": {
+      "name": "10 BG Reference Layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Krita Image Layer"
+    }
+  },
+  "11": {
+    "inputs": {
+      "name": "11 Light Reference Layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Krita Image Layer"
+    }
+  },
+  "12": {
+    "inputs": {
+      "boolean_value": [
+        "7",
+        0
+      ],
+      "image_false": [
+        "8",
+        0
+      ],
+      "image_true": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "13": {
+    "inputs": {
+      "background_prompt": [
+        "2",
+        0
+      ],
+      "foreground_prompt": [
+        "0",
+        0
+      ],
+      "negative_prompt": [
+        "1",
+        0
+      ],
+      "preserve_original_subject": [
+        "3",
+        0
+      ],
+      "original_background_depth": [
+        "4",
+        0
+      ],
+      "keep_original_background": [
+        "5",
+        0
+      ],
+      "light_source_direction": "none",
+      "light_source_strength": [
+        "9",
+        0
+      ],
+      "seed": [
+        "8",
+        3
+      ],
+      "output_format": "png",
+      "api_key_override": "",
+      "subject_image": [
+        "12",
+        0
+      ],
+      "background_reference": [
+        "10",
+        0
+      ],
+      "light_reference": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "Stability Replace Background and Relight",
+    "_meta": {
+      "title": "Stability Replace Background and Relight"
+    }
+  },
+  "14": {
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "ETN_KritaOutput",
+    "_meta": {
+      "title": "Krita Output"
+    }
+  }
+}

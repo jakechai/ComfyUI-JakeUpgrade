@@ -1,0 +1,121 @@
+{
+  "0": {
+    "inputs": {
+      "name": "05 grow mask",
+      "type": "number (integer)",
+      "default": 5,
+      "min": 0,
+      "max": 20
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "grow"
+    }
+  },
+  "1": {
+    "inputs": {
+      "name": "08 Image Layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Krita Image Layer"
+    }
+  },
+  "2": {
+    "inputs": {
+      "name": "07 Krita Image Layer",
+      "type": "toggle",
+      "default": false,
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "image layer"
+    }
+  },
+  "3": {
+    "inputs": {},
+    "class_type": "ETN_KritaCanvas",
+    "_meta": {
+      "title": "Krita Canvas"
+    }
+  },
+  "4": {
+    "inputs": {},
+    "class_type": "ETN_KritaSelection",
+    "_meta": {
+      "title": "Krita Selection"
+    }
+  },
+  "5": {
+    "inputs": {
+      "boolean_value": [
+        "2",
+        0
+      ],
+      "image_false": [
+        "3",
+        0
+      ],
+      "image_true": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "6": {
+    "inputs": {
+      "image": [
+        "5",
+        0
+      ],
+      "alpha": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "JoinImageWithAlpha",
+    "_meta": {
+      "title": "Join Image with Alpha"
+    }
+  },
+  "7": {
+    "inputs": {
+      "grow_mask": [
+        "0",
+        0
+      ],
+      "seed": [
+        "3",
+        3
+      ],
+      "output_format": "png",
+      "api_key_override": "",
+      "image": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "Stability Erase",
+    "_meta": {
+      "title": "Stability Erase"
+    }
+  },
+  "8": {
+    "inputs": {
+      "images": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "ETN_KritaOutput",
+    "_meta": {
+      "title": "Krita Output"
+    }
+  }
+}

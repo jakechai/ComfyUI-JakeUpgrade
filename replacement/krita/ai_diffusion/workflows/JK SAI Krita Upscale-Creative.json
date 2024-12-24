@@ -1,0 +1,439 @@
+{
+  "0": {
+    "inputs": {
+      "name": "01 positive",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "positive"
+    }
+  },
+  "1": {
+    "inputs": {
+      "name": "02 negative",
+      "type": "text",
+      "default": "",
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "negative"
+    }
+  },
+  "2": {
+    "inputs": {
+      "name": "05 creativity-creative",
+      "type": "number",
+      "default": 0.3,
+      "min": 0,
+      "max": 0.35
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "creativity"
+    }
+  },
+  "3": {
+    "inputs": {
+      "name": "08 Image Layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Krita Image Layer"
+    }
+  },
+  "4": {
+    "inputs": {
+      "name": "07 Krita Image Layer",
+      "type": "toggle",
+      "default": false,
+      "min": 0,
+      "max": 0
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "image layer"
+    }
+  },
+  "5": {
+    "inputs": {},
+    "class_type": "ETN_KritaCanvas",
+    "_meta": {
+      "title": "Krita Canvas"
+    }
+  },
+  "6": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1,
+      "color": 0
+    },
+    "class_type": "EmptyImage",
+    "_meta": {
+      "title": "EmptyImage"
+    }
+  },
+  "7": {
+    "inputs": {
+      "text": "Upscale your canvas to at least\n10 mega pixel (3152 x 3152).\nThen make select region for upscale.",
+      "font": "ShareTechMono-Regular.ttf",
+      "size": 50,
+      "color": "#FFFFFF",
+      "background_color": "#00000000",
+      "shadow_distance": 0,
+      "shadow_blur": 0,
+      "shadow_color": "#000000",
+      "horizontal_align": "center",
+      "vertical_align": "center",
+      "offset_x": 0,
+      "offset_y": 0,
+      "direction": "ltr",
+      "img_composite": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "DrawText+",
+    "_meta": {
+      "title": "\ud83d\udd27 Draw Text"
+    }
+  },
+  "8": {
+    "inputs": {},
+    "class_type": "ETN_KritaSelection",
+    "_meta": {
+      "title": "Krita Selection"
+    }
+  },
+  "9": {
+    "inputs": {
+      "mask": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "Is Mask Empty JK",
+    "_meta": {
+      "title": "Is Mask Empty JK\ud83d\udc09"
+    }
+  },
+  "10": {
+    "inputs": {
+      "mask": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "Is Mask Empty JK",
+    "_meta": {
+      "title": "Is Mask Empty JK\ud83d\udc09"
+    }
+  },
+  "11": {
+    "inputs": {
+      "boolean_value": [
+        "4",
+        0
+      ],
+      "image_false": [
+        "5",
+        0
+      ],
+      "image_true": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "12": {
+    "inputs": {
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "GetImageSize+",
+    "_meta": {
+      "title": "\ud83d\udd27 Get Image Size"
+    }
+  },
+  "13": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "width": [
+        "12",
+        0
+      ],
+      "height": [
+        "12",
+        1
+      ],
+      "crop": "disabled",
+      "image": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "14": {
+    "inputs": {
+      "op": "Not",
+      "a": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "CM_BoolUnaryOperation JK",
+    "_meta": {
+      "title": "BoolUnaryOp JK\ud83d\udc09"
+    }
+  },
+  "15": {
+    "inputs": {
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "Get Size JK",
+    "_meta": {
+      "title": "Get Size JK\ud83d\udc09"
+    }
+  },
+  "16": {
+    "inputs": {
+      "value": 1,
+      "width": [
+        "15",
+        0
+      ],
+      "height": [
+        "15",
+        1
+      ]
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "17": {
+    "inputs": {
+      "boolean_value": [
+        "10",
+        0
+      ],
+      "mask_false": [
+        "8",
+        0
+      ],
+      "mask_true": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "18": {
+    "inputs": {
+      "custom_width": 1024,
+      "custom_height": 1024,
+      "padding": 0,
+      "use_image_res": false,
+      "use_target_res": false,
+      "target_res": 1024,
+      "use_target_mega_pixel": false,
+      "target_mega_pixel": 1,
+      "multiple_of": 8,
+      "image_upscale_method": "lanczos",
+      "latent_upscale_method": "bilinear",
+      "mask": [
+        "17",
+        0
+      ],
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "Image Crop by Mask Resolution JK",
+    "_meta": {
+      "title": "Image Crop by Mask Resolution JK\ud83d\udc09"
+    }
+  },
+  "19": {
+    "inputs": {
+      "width": [
+        "18",
+        0
+      ],
+      "height": [
+        "18",
+        1
+      ],
+      "x": [
+        "18",
+        2
+      ],
+      "y": [
+        "18",
+        3
+      ],
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "ImageCrop",
+    "_meta": {
+      "title": "Image Crop"
+    }
+  },
+  "20": {
+    "inputs": {
+      "x": [
+        "18",
+        2
+      ],
+      "y": [
+        "18",
+        3
+      ],
+      "width": [
+        "18",
+        0
+      ],
+      "height": [
+        "18",
+        1
+      ],
+      "mask": [
+        "17",
+        0
+      ]
+    },
+    "class_type": "CropMask",
+    "_meta": {
+      "title": "CropMask"
+    }
+  },
+  "21": {
+    "inputs": {
+      "boolean_value": [
+        "10",
+        0
+      ],
+      "image_false": [
+        "19",
+        0
+      ],
+      "image_true": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "22": {
+    "inputs": {
+      "boolean_value": [
+        "10",
+        0
+      ],
+      "mask_false": [
+        "20",
+        0
+      ],
+      "mask_true": [
+        "17",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "23": {
+    "inputs": {
+      "prompt": [
+        "0",
+        0
+      ],
+      "negative_prompt": [
+        "1",
+        0
+      ],
+      "seed": [
+        "5",
+        3
+      ],
+      "creativity": [
+        "2",
+        0
+      ],
+      "output_format": "png",
+      "api_key_override": "",
+      "image": [
+        "21",
+        0
+      ]
+    },
+    "class_type": "Stability Creative Upscale",
+    "_meta": {
+      "title": "Stability Creative Upscale"
+    }
+  },
+  "24": {
+    "inputs": {
+      "boolean_value": [
+        "14",
+        0
+      ],
+      "image_false": [
+        "13",
+        0
+      ],
+      "image_true": [
+        "23",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "25": {
+    "inputs": {
+      "images": [
+        "24",
+        0
+      ]
+    },
+    "class_type": "ETN_KritaOutput",
+    "_meta": {
+      "title": "Krita Output"
+    }
+  }
+}
