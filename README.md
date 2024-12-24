@@ -133,8 +133,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## JakeUpgrade Workflow
 
 ### ComfyUI
-<details>
-<summary><b>Workflow</b></summary>
+#### Workflow
 - [JK_workflow_txt2img_img2img_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_txt2img_img2img_SD15.json)
 - [JK_workflow_txt2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_txt2img_img2img_SDXL.json)
 - [JK_workflow_txt2img_img2img_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_txt2img_img2img_SD3.json)
@@ -144,10 +143,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
 - [JK_workflow_img2mesh_3DGS](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_3DGS.json)
-</details>
 
-</details>
-<summary><b>Module</b></summary>
+#### Module
 - [JK_module_txt2prompt_img2prompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_00_txt2prompt_img2prompt.json)
 - [JK_module_Image Generation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_01_ImgGen.json)
 - [JK_module_Image Generation Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_01_ImgGen_Adv.json)
@@ -165,7 +162,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_module_Seamless Texture](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Seamless%20Texture.json)
 - [JK_module_Flux_KSampler](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_FluxKSampler.json)
 - [JK_module_Mesh-ReMesh_Projection](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Mesh-ReMesh_Projection.json)
-</details>
 
 > [!NOTE]
 > - [All JK (Group) Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Nodes-JK.json)
@@ -174,8 +170,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - ComfyUI-3D-Pack 3DMesh | 3DGS Preview works with the new frontend of ComfyUI with a [restriction](https://github.com/MrForExample/ComfyUI-3D-Pack/issues/343#issuecomment-2423478072).  
 
 ### Krita (sync)
-<details>
-<summary><b>Workflow</b></summary>
+#### Workflow
 - [JK_workflow-Krita Common](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20Common.json)
 - [JK_workflow-Krita Common Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20Common%20Adv.json)
 - [JK_workflow-Krita SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20SD15.json)
@@ -186,10 +181,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow-Krita SD3 Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20SD3%20Adv.json)
 - [JK_workflow-Krita Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20Flux.json)
 - [JK_workflow-Krita Flux Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20Flux%20Adv.json)
-</details>
 
-</details>
-<summary><b>Module</b></summary>
+#### Module
 - [JK_module-Krita RemBG](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Module/JK_module-Krita%20RemBG.json)
 - [JK_module-Krita CN preprocessor](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Module/JK_module-Krita%20CN%20preprocessor.json)
 - [JK_module-Krita HandFix Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Module/JK_module-Krita%20HandFix%20Flux.json)
@@ -204,10 +197,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_module-Krita UpscaleRefine SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Module/JK_module-Krita%20UpscaleRefine%20SD3.json)
 - [JK_module-Krita UpscaleRefine SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Module/JK_module-Krita%20UpscaleRefine%20SD15.json)
 - [JK_module-Krita UpscaleRefine SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Module/JK_module-Krita%20UpscaleRefine%20SDXL.json)
-</details>
 
-</details>
-<summary><b>SAI</b></summary>
+#### SAI
 - [JK_SAI-Krita Gen Core-txt2img](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/SAI/JK_SAI-Krita%20Gen%20Core-txt2img.json)
 - [JK_SAI-Krita Gen SD3-img2img](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/SAI/JK_SAI-Krita%20Gen%20SD3-img2img.json)
 - [JK_SAI-Krita Gen SD3-txt2img](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/SAI/JK_SAI-Krita%20Gen%20SD3-txt2img.json)
@@ -225,12 +216,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_SAI-Krita Upscale-Conservative](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/SAI/JK_SAI-Krita%20Upscale-Conservative.json)
 - [JK_SAI-Krita Upscale-Creative](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/SAI/JK_SAI-Krita%20Upscale-Creative.json)
 - [JK_SAI-Krita Upscale-Fast](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/SAI/JK_SAI-Krita%20Upscale-Fast.json)
-</details>
 
 ### Krita (dev)
-<details>
-<summary><b>Workflow</b></summary>
-</details>
+#### Workflow
 - [JK Krita Common](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Krita%20Common.json)
 - [JK Krita Common Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Krita%20Common%20Adv.json)
 - [JK Krita SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Krita%20SD15.json)
@@ -241,9 +229,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK Krita SD3 Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Krita%20SD3%20Adv.json)
 - [JK Krita Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Krita%20Flux.json)
 - [JK Krita Flux Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Krita%20Flux%20Adv.json)
-</details>
 
-<summary><b>Module</b></summary>
+#### Module
 - [JK Module Krita RemBG](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Module%20Krita%20RemBG.json)
 - [JK Module Krita CN Preprocessor](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Module%20Krita%20CN%20Preprocessor.json)
 - [JK Module Krita HandFix Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Module%20Krita%20HandFix%20Flux.json)
@@ -258,10 +245,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK Module Krita UpscaleRefine SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Module%20Krita%20UpscaleRefine%20SD3.json)
 - [JK Module Krita UpscaleRefine SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Module%20Krita%20UpscaleRefine%20SD15.json)
 - [JK Module Krita UpscaleRefine SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Module%20Krita%20UpscaleRefine%20SDXL.json)
-</details>
 
-</details>
-<summary><b>SAI</b></summary>
+#### SAI
 - [JK SAI Krita Gen Core-txt2img](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20SAI%20Krita%20Gen%20Core-txt2img.json)
 - [JK SAI Krita Gen SD3-img2img](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20SAI%20Krita%20Gen%20SD3-img2img.json)
 - [JK SAI Krita Gen SD3-txt2img](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20SAI%20Krita%20Gen%20SD3-txt2img.json)
@@ -279,7 +264,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK SAI Krita Upscale-Conservative](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20SAI%20Krita%20Upscale-Conservative.json)
 - [JK SAI Krita Upscale-Creative](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20SAI%20Krita%20Upscale-Creative.json)
 - [JK SAI Krita Upscale-Fast](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20SAI%20Krita%20Upscale-Fast.json)
-</details>
 
 > [!NOTE]
 > - Installing a separate version of ComfyUI to work with Krita is recommended.
@@ -290,8 +274,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ## Required Custom Nodes
 
-</details>
-<summary><b>Common</b></summary>
+### Common
 - [rgthree](https://github.com/rgthree/rgthree-comfy)
 - [pythongosssss](https://github.com/pythongosssss/ComfyUI-Custom-Scripts)
 - [ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
@@ -302,10 +285,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Detail Daemon](https://github.com/Jonseed/ComfyUI-Detail-Daemon)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
-</details>
 
-</details>
-<summary><b>txt2img_img2img workflow</b></summary>
+### txt2img_img2img workflow
 - [Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
 - [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
 - [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
@@ -326,22 +307,17 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 - [ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
 - [ComfyUI FLUX BFL API](https://github.com/gelasdev/ComfyUI-FLUX-BFL-API)
-</details>
 
-</details>
-<summary><b>img2mesh workflow</b></summary>
+### img2mesh workflow
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
-</details>
 
-</details>
-<summary><b>Krita workflow</b></summary>
+### Krita workflow
 - [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
 - [Tooling Nodes](https://github.com/Acly/comfyui-tooling-nodes)
 - [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
-</details>
 
 > [!NOTE]
 > - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) is for SAI API workflow.
