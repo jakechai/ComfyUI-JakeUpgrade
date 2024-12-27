@@ -604,6 +604,32 @@ class ImageCropByMaskResolution_JK:
         
         return (cropped_mask_width, cropped_mask_height, min_x, min_y, target_width, target_height, image_upscale_method, latent_upscale_method)
 
+class ImageCropByMaskParams_JK:
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "inpaint_crop_and_stitch": ("BOOLEAN", {"default": False},),
+                "padding": ("INT", {"default": 0, "min": 0, "max": 512, "step": 1}),
+                "use_image_res": ("BOOLEAN", {"default": False},),
+                "use_target_res": ("BOOLEAN", {"default": False},),
+                "target_res": ("INT", {"default": 1024, "min": 0, "max": 16384, "step": 8}),
+                "use_target_mega_pixel": ("BOOLEAN", {"default": False},),
+                "target_mega_pixel": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 16.0, "step": 0.01}),
+            },
+        }
+    
+    RETURN_TYPES = ("BOOLEAN", "INT", "BOOLEAN", "BOOLEAN", "INT", "BOOLEAN", "FLOAT")
+    RETURN_NAMES = ("inpaint_crop_and_stitch", "padding", "use_image_res", "use_target_res", "target_res", "use_target_mega_pixel", "target_mega_pixel")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, inpaint_crop_and_stitch, padding, use_image_res, use_target_res, target_res, use_target_mega_pixel, target_mega_pixel):
+        
+        return (inpaint_crop_and_stitch, padding, use_image_res, use_target_res, target_res, use_target_mega_pixel, target_mega_pixel)
+
 class UpscaleMethod_JK:
     
     @classmethod
@@ -5547,6 +5573,7 @@ NODE_CLASS_MAPPINGS = {
     "SDXL Target Res JK": SDXL_TargetRes_JK,
     "Get Size JK": GetSize_JK,
     "Image Crop by Mask Resolution JK": ImageCropByMaskResolution_JK,
+    "Image Crop by Mask Params JK": ImageCropByMaskParams_JK,
     "Upscale Method JK": UpscaleMethod_JK,
     "Latent Crop Offset JK": LatentCropOffset_JK,
     "Scale To Resolution JK": ScaleToResolution_JK,
@@ -5718,6 +5745,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SDXL Target Res JK": "SDXL Target Res JK🐉",
     "Get Size JK": "Get Size JK🐉",
     "Image Crop by Mask Resolution JK": "Image Crop by Mask Resolution JK🐉",
+    "Image Crop by Mask Params JK": "Image Crop by Mask Params JK🐉",
     "Upscale Method JK": "Upscale Method JK🐉",
     "Latent Crop Offset JK": "Latent Crop Offset JK🐉",
     "Scale To Resolution JK": "Scale To Resolution JK🐉",

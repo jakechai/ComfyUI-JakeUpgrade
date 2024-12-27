@@ -101,6 +101,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 15. Remove useless Group Nodes: JK🐉::Image to Prompt (LLava Local), JK🐉::Image to Prompt Advanced (LLava Local), JK🐉::SegAnythingMask, JK🐉::txt2img.
 16. SD3 | Flux image generation workflow | group nodes support Stop At Clip Layer (needs ComfyUI v0.3.8up).
 
+- 2024-12-27 - v1.8.5
+1. Add new Detailer Module.
+2. Add new image generation workflow.
+3. Fix Krita HandFix workflow bug.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -133,12 +138,17 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ## JakeUpgrade Workflow
 
 ### ComfyUI
+
 #### Workflow
-- [JK_workflow_txt2img_img2img_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_txt2img_img2img_SD15.json)
-- [JK_workflow_txt2img_img2img_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_txt2img_img2img_SDXL.json)
-- [JK_workflow_txt2img_img2img_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_txt2img_img2img_SD3.json)
-- [JK_workflow_txt2img_img2img_Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_txt2img_img2img_Flux.json)
-- [JK_workflow_txt2img_img2img_API](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_txt2img_img2img_API.json)
+- [JK_workflow_imgen_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SD15.json)
+- [JK_workflow_imgen_SD15 legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SD15_legacy.json)
+- [JK_workflow_imgen_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SDXL.json)
+- [JK_workflow_imgen_SDXL legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SDXL_legacy.json)
+- [JK_workflow_imgen_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SD3.json)
+- [JK_workflow_imgen_SD3 legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SD3_legacy.json)
+- [JK_workflow_imgen_Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_Flux.json)
+- [JK_workflow_imgen_Flux legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_Flux_legacy.json)
+- [JK_workflow_imgen_API](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_API.json)
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
@@ -154,6 +164,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_module_Upscale 1st legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_1st_legacy.json)
 - [JK_module_Upscale 2nd](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_2nd.json)
 - [JK_module_Detailer](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_Detailer.json)
+- [JK_module_Detailer legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_Detailer_legacy.json)
 - [JK_module_HandFix](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_HandFix.json)
 - [JK_module_HandFix legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_HandFix_legacy.json)
 - [JK_module_Inpaint](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_07_Inpaint.json)
@@ -164,12 +175,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_module_Mesh-ReMesh_Projection](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Mesh-ReMesh_Projection.json)
 
 > [!NOTE]
-> - [All JK (Group) Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Nodes-JK.json)
 > - You need ComfyUI v0.3.8up to use SD3 | Flux Image Gen workflows.
 > - Installing a separate version of ComfyUI to work with 3D Pack is recommended.   
 > - ComfyUI-3D-Pack 3DMesh | 3DGS Preview works with the new frontend of ComfyUI with a [restriction](https://github.com/MrForExample/ComfyUI-3D-Pack/issues/343#issuecomment-2423478072).  
 
 ### Krita (sync)
+
 #### Workflow
 - [JK_workflow-Krita Common](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20Common.json)
 - [JK_workflow-Krita Common Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20Common%20Adv.json)
@@ -218,6 +229,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_SAI-Krita Upscale-Fast](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/SAI/JK_SAI-Krita%20Upscale-Fast.json)
 
 ### Krita (dev)
+
 #### Workflow
 - [JK Krita Common](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Workflow%20Krita%20Common.json)
 - [JK Krita Common Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows/JK%20Workflow%20Krita%20Common%20Adv.json)
@@ -331,6 +343,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 > [!NOTE]
 > - Group Nodes can be copied and pasted between workflows in the latest ComfyUI. See details in my Video Introduction of Group Nodes.
+> - Load [All JK (Group) Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Nodes-JK.json) for all JK Group Nodes.
 
 ## JK_workflow : txt2img_img2img
 <details>
@@ -516,6 +529,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		SDXL Target Res JK🐉
 		Get Size JK🐉
 		Image Crop by Mask Resolution JK🐉
+		Image Crop by Mask Params JK🐉,
 		Latent Crop Offset JK🐉
 		Scale To Resolution JK🐉
     Reroute Nodes
@@ -681,11 +695,13 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	Tools
 		JK🐉::Image Crop by Mask
 		JK🐉::Image Crop by Mask and Resize
+		JK🐉::Image Crop by Mask and Resize (Input)
 		JK🐉::Image RemBG
 		JK🐉::Image Resize
 		JK🐉::Image Stitch by Mask
 		JK🐉::Latent Crop by Mask
 		JK🐉::Latent Crop by Mask and Resize
+		JK🐉::Latent Crop by Mask and Resize (Input)
 		JK🐉::Latent Resize
 		JK🐉::Latent Stitch by Mask
 	Workflow
