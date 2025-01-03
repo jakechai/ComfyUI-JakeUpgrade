@@ -36,9 +36,10 @@ import re
 import cv2
 import piexif
 import piexif.helper
+import torchvision.transforms.functional as TF
 from nodes import MAX_RESOLUTION, ControlNetApply, ControlNetApplyAdvanced
 from pathlib import Path
-from typing import Any, Callable, Mapping, TypeAlias, List
+from typing import Any, Callable, Mapping, TypeAlias, List, Union
 from PIL import Image, ImageOps, ImageEnhance
 from PIL.PngImagePlugin import PngInfo
 from datetime import datetime
@@ -914,23 +915,38 @@ class CR_ApplyControlNet_JK:
         
         if image is not None and control_net is not None and control_net != "" and switch == True and strength != 0.0:
             
+            from comfy_extras.nodes_compositing import SplitImageWithAlpha
+            
             if type(control_net) == str:
                 controlnet_path = folder_paths.get_full_path("controlnet", control_net)
                 controlnet = comfy.sd.load_controlnet(controlnet_path)
             else:
                 controlnet = control_net
             
+            image, mask_from_image = SplitImageWithAlpha().split_image_with_alpha(image)
+            
+            # the mask from the image overrides the input mask
+            if mask == None or torch.all(mask_from_image == 0).int().item() == 0:
+                mask_cal = mask_from_image
+            else:
+                mask_cal = mask
+            
             extra_concat = []
-            if mask != None and control_net.concat_mask:
-                mask = 1.0 - mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1]))
-                mask_apply = comfy.utils.common_upscale(mask, image.shape[2], image.shape[1], "bilinear", "center").round()
+            if control_net.concat_mask:
+                mask_cal = 1.0 - mask_cal.reshape((-1, 1, mask_cal.shape[-2], mask_cal.shape[-1]))
+                mask_apply = comfy.utils.common_upscale(mask_cal, image.shape[2], image.shape[1], "bilinear", "center").round()
                 image = image * mask_apply.movedim(1, -1).repeat(1, 1, 1, image.shape[3])
-                extra_concat = [mask]
+                extra_concat = [mask_cal]
                 
             controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae=vae, extra_concat=extra_concat)
             
-            base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
-
+            if torch.all(mask_cal == 0).int().item() == 0:
+                from node_helpers import conditioning_set_values
+                base_positive = conditioning_set_values(controlnet_conditioning[0], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_positive, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
+                base_negative = conditioning_set_values(controlnet_conditioning[1], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_negative, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
+            else:
+                base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
+        
         return (base_positive, base_negative, )
 
 UNION_CONTROLNET_TYPES = {
@@ -1183,8 +1199,6 @@ class CR_ApplyControlNetStack_JK:
                 
                 controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent)
                 
-                base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
-                
         return (base_positive, base_negative, )
 
 class CR_ApplyControlNetStackAdv_JK:
@@ -1210,6 +1224,8 @@ class CR_ApplyControlNetStackAdv_JK:
 
     def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, vae=None, mask=None, controlnet_stack=None):
         
+        from comfy_extras.nodes_compositing import SplitImageWithAlpha
+        
         if controlnet_stack is not None and len(controlnet_stack) != 0 and ControlNet_switch == True:
             for controlnet_tuple in controlnet_stack:
                 controlnet_name, image, strength, start_percent, end_percent  = controlnet_tuple
@@ -1220,17 +1236,29 @@ class CR_ApplyControlNetStackAdv_JK:
                 else:
                     controlnet = controlnet_name
                 
-                # controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae)
+                image, mask_from_image = SplitImageWithAlpha().split_image_with_alpha(image)
+                
+                # the mask from the image overrides the input mask
+                if mask == None or torch.all(mask_from_image == 0).int().item() == 0:
+                    mask_cal = mask_from_image
+                else:
+                    mask_cal = mask
+                
                 extra_concat = []
-                if mask != None and controlnet.concat_mask:
-                    mask = 1.0 - mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1]))
-                    mask_apply = comfy.utils.common_upscale(mask, image.shape[2], image.shape[1], "bilinear", "center").round()
+                if  controlnet.concat_mask:
+                    mask_cal = 1.0 - mask_cal.reshape((-1, 1, mask_cal.shape[-2], mask_cal.shape[-1]))
+                    mask_apply = comfy.utils.common_upscale(mask_cal, image.shape[2], image.shape[1], "bilinear", "center").round()
                     image = image * mask_apply.movedim(1, -1).repeat(1, 1, 1, image.shape[3])
-                    extra_concat = [mask]
-                    
+                    extra_concat = [mask_cal]
+                
                 controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae=vae, extra_concat=extra_concat)
                 
-                base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
+                if torch.all(mask_cal == 0).int().item() == 0:
+                    from node_helpers import conditioning_set_values
+                    base_positive = conditioning_set_values(controlnet_conditioning[0], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_positive, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
+                    base_negative = conditioning_set_values(controlnet_conditioning[1], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_negative, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
+                else:
+                    base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
                 
         return (base_positive, base_negative, )
 
@@ -3013,6 +3041,232 @@ class LoadImageWithMetadata_JK:
         if not folder_paths.exists_annotated_filepath(image):
             return "Invalid image file: {}".format(image)
         return True
+
+class LoadImageWithAlpha_JK:
+    files = []
+
+    @classmethod
+    def INPUT_TYPES(s):
+
+        input_dir = folder_paths.get_input_directory()
+        LoadImageWithMetadata_JK.files = sorted(
+            [
+                f
+                for f in os.listdir(input_dir)
+                if os.path.isfile(os.path.join(input_dir, f))
+            ]
+        )
+        return {
+            "required": {
+                "image": (LoadImageWithMetadata_JK.files, {"image_upload": True}),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("IMAGE",)
+
+    FUNCTION = "load_image"
+    CATEGORY = icons.get("JK/Image")
+    OUTPUT_NODE = True
+
+    def load_image(self, image):
+        if image in LoadImageWithMetadata_JK.files:
+            image_path = folder_paths.get_annotated_filepath(image)
+        else:
+            image_path = image
+        image = Image.open(image_path)
+        image = ImageOps.exif_transpose(image)
+        image = numpy.array(image).astype(numpy.float32) / 255.0
+        image = torch.from_numpy(image)[None,]
+        
+        return {"result": (image,),}
+
+    @classmethod
+    def IS_CHANGED(s, image):
+        image_path = folder_paths.get_annotated_filepath(image)
+        m = hashlib.sha256()
+        with open(image_path, 'rb') as f:
+            m.update(f.read())
+        return m.digest().hex()
+
+    @classmethod
+    def VALIDATE_INPUTS(s, image):
+        if not folder_paths.exists_annotated_filepath(image):
+            return "Invalid image file: {}".format(image)
+        return True
+
+#---------------------------------------------------------------------------------------------------------------------#
+# Image Nodes from 3D Pack
+#---------------------------------------------------------------------------------------------------------------------#
+def torch_imgs_to_pils(images, masks=None, alpha_min=0.1):
+    """
+        images (torch): [N, H, W, C] or [H, W, C]
+        masks (torch): [N, H, W] or [H, W]
+    """
+    if len(images.shape) == 3:
+        images = images.unsqueeze(0)
+
+    if masks is not None:
+        masks = masks.to(dtype=images.dtype, device=images.device)
+        
+        if len(masks.shape) == 2:
+            masks = masks.unsqueeze(0)
+
+        inv_mask_index = masks < alpha_min
+        images[inv_mask_index] = 0.
+        
+        masks = masks.unsqueeze(3)
+        images = torch.cat((images, masks), dim=3)
+        mode="RGBA"
+    else:
+        mode="RGB"
+
+    pil_image_list = [Image.fromarray((images[i].detach().cpu().numpy() * 255).astype(numpy.uint8), mode=mode) for i in range(images.shape[0])]
+
+    return pil_image_list
+
+def pils_to_torch_imgs(pils: Union[Image.Image, List[Image.Image]], dtype=torch.float16, device="cuda", force_rgb=True):
+    if isinstance(pils, Image.Image):
+        pils = [pils]
+    
+    images = []
+    for pil in pils:
+        if pil.mode == "RGBA" and force_rgb:
+            pil = pil.convert('RGB')
+
+        images.append(TF.to_tensor(pil).permute(1, 2, 0))
+
+    images = torch.stack(images, dim=0).to(dtype=dtype, device=device)
+
+    return images
+
+def pil_split_image(image, rows=None, cols=None):
+    """
+        inverse function of make_image_grid
+    """
+    # image is in square
+    if rows is None and cols is None:
+        # image.size [W, H]
+        rows = 1
+        cols = image.size[0] // image.size[1]
+        assert cols * image.size[1] == image.size[0]
+        subimg_size = image.size[1]
+    elif rows is None:
+        subimg_size = image.size[0] // cols
+        rows = image.size[1] // subimg_size
+        assert rows * subimg_size == image.size[1]
+    elif cols is None:
+        subimg_size = image.size[1] // rows
+        cols = image.size[0] // subimg_size
+        assert cols * subimg_size == image.size[0]
+    else:
+        subimg_size = image.size[1] // rows
+        assert cols * subimg_size == image.size[0]
+    subimgs = []
+    for i in range(rows):
+        for j in range(cols):
+            subimg = image.crop((j*subimg_size, i*subimg_size, (j+1)*subimg_size, (i+1)*subimg_size))
+            subimgs.append(subimg)
+    return subimgs
+
+def pil_make_image_grid(images, rows=None, cols=None):
+    if rows is None and cols is None:
+        rows = 1
+        cols = len(images)
+    if rows is None:
+        rows = len(images) // cols
+        if len(images) % cols != 0:
+            rows += 1
+    if cols is None:
+        cols = len(images) // rows
+        if len(images) % rows != 0:
+            cols += 1
+    total_imgs = rows * cols
+    if total_imgs > len(images):
+        images += [Image.new(images[0].mode, images[0].size) for _ in range(total_imgs - len(images))]
+
+    w, h = images[0].size
+    grid = Image.new(images[0].mode, size=(cols * w, rows * h))
+
+    for i, img in enumerate(images):
+        grid.paste(img, box=(i % cols * w, i // cols * h))
+    return grid
+
+class MakeImageGrid_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "images": ("IMAGE",),
+                "grid_side": ("BOOLEAN", {"default": True, "label_on": "rows", "label_off": "columns"},),
+                "grid_side_num": ("INT", {"default": 1, "min": 1, "max": 8192}),
+            },
+        }
+        
+    RETURN_TYPES = (
+        "IMAGE",
+    )
+    RETURN_NAMES = (
+        "image_grid",
+    )
+    
+    FUNCTION = "make_image_grid"
+    CATEGORY = icons.get("JK/Image")
+    
+    def make_image_grid(self, images, grid_side_num, grid_side):
+        pil_image_list = torch_imgs_to_pils(images)
+
+        if grid_side:
+            rows = grid_side_num
+            clos = None
+        else:
+            clos = grid_side_num
+            rows = None
+
+        image_grid = pil_make_image_grid(pil_image_list, rows, clos)
+
+        image_grid = TF.to_tensor(image_grid).permute(1, 2, 0).unsqueeze(0)  # [1, H, W, 3]
+
+        return (image_grid,)
+
+class SplitImageGrid_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+                "grid_side": ("BOOLEAN", {"default": True},),
+                "grid_side_num": ("INT", {"default": 1, "min": 1, "max": 8192}),
+            },
+        }
+        
+    RETURN_TYPES = (
+        "IMAGE",
+    )
+    RETURN_NAMES = (
+        "images",
+    )
+    
+    FUNCTION = "split_image_grid"
+    CATEGORY = icons.get("JK/Image")
+    
+    def split_image_grid(self, image, grid_side_num, grid_side):
+        images = []
+        for image_pil in torch_imgs_to_pils(image):
+
+            if grid_side:
+                rows = grid_side_num
+                clos = None
+            else:
+                clos = grid_side_num
+                rows = None
+
+            image_pils = pil_split_image(image_pil, rows, clos)
+
+            images.append(pils_to_torch_imgs(image_pils, image.dtype, image.device))
+            
+        images = torch.cat(images, dim=0)
+        return (images,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Image Nodes from Layer Style
@@ -5636,6 +5890,9 @@ NODE_CLASS_MAPPINGS = {
     "Save Image with Metadata JK": ImageSaveWithMetadata_JK,
     "Save Image with Metadata Flow JK": ImageSaveWithMetadata_Flow_JK,
     "Load Image With Metadata JK": LoadImageWithMetadata_JK,
+    "Load Image With Alpha JK": LoadImageWithAlpha_JK,
+    "Make Image Grid JK": MakeImageGrid_JK,
+    "Split Image Grid JK": SplitImageGrid_JK,
     "HintImageEnchance JK": HintImageEnchance_JK,
     "Image Resize Mode JK": ImageResizeMode_JK,
     "Image Remove Alpha JK": ImageRemoveAlpha_JK,
@@ -5808,6 +6065,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Save Image with Metadata JK": "Save Image With Metadata JK🐉",
     "Save Image with Metadata Flow JK": "Save Image With Metadata Flow JK🐉",
     "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
+    "Load Image With Alpha JK": "Load Image With Alpha JK🐉",
+    "Make Image Grid JK": "Make Image Grid JK🐉",
+    "Split Image Grid JK": "Split Image Grid JK🐉",
     "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
     "Image Resize Mode JK": "Image Resize Mode JK🐉",
     "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
