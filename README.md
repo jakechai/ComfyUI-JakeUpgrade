@@ -183,20 +183,20 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 #### API
 - [JK_API_Imgen_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/JK_API_Imgen_SD15.json)
 - [JK_API_Imgen_SD15 dev](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SD15.json)
-- [JK_API_Imgen_SD15 params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SD15-params.json)
+- [JK_API_Imgen_SD15 params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SD15-params.py)
 - [JK_API_Imgen_SDXL](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/JK_API_Imgen_SDXL.json)
 - [JK_API_Imgen_SDXL dev](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SDXL.json)
-- [JK_API_Imgen_SDXL params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SDXL-params.json)
+- [JK_API_Imgen_SDXL params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SDXL-params.py)
 - [JK_API_Imgen_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/JK_API_Imgen_SD3.json)
 - [JK_API_Imgen_SD3 dev](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SD3.json)
-- [JK_API_Imgen_SD3 params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SD3-params.json)
+- [JK_API_Imgen_SD3 params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20SD3-params.py)
 - [JK_API_Imgen_Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/JK_API_Imgen_Flux.json)
 - [JK_API_Imgen_Flux dev](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20Flux.json)
-- [JK_API_Imgen_Flux params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20Flux-params.json)
+- [JK_API_Imgen_Flux params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev/JK%20API%20Imgen%20Flux-params.py)
 
 > [!NOTE]
 > - You need ComfyUI v0.3.8up to use SD3 | Flux Image Gen workflows.
-> - ComfyUI API workflows are workflows created to allow other software to call ComfyUI, which include non-dev editable workflows and dev-for-call workflows, as well as JSON files with supporting parameters.
+> - ComfyUI API workflows are workflows created to allow other software to call ComfyUI, which include non-dev editable workflows and dev-for-call workflows, as well as python files with supporting parameters.
 > - Installing a separate version of ComfyUI to work with 3D Pack is recommended.   
 > - ComfyUI-3D-Pack 3DMesh | 3DGS Preview works with the new frontend of ComfyUI with a [restriction](https://github.com/MrForExample/ComfyUI-3D-Pack/issues/343#issuecomment-2423478072).  
 
@@ -365,7 +365,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - Group Nodes can be copied and pasted between workflows in the latest ComfyUI. See details in my Video Introduction of Group Nodes.
 > - Load [All JK (Group) Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Nodes-JK.json) for all JK Group Nodes.
 
-## JK_workflow : txt2img_img2img
+## JK_workflow : imgen (legacy)
 <details>
 <summary><b>Introduction</b></summary>
 
