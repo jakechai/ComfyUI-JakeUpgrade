@@ -110,7 +110,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 4. ComfyUI API workflow added.
 5. Get Mesh 3D data workflow added.
 
-- 2025-01-10 - v1.8.7
+- 2025-01-10 - v1.8.8
 1. Add ControlNet Effective Mask switch for all Image Generation Group Nodes.
 2. Fix image resolution bug of Image Generation adv group nodes.
 
@@ -133,7 +133,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
         `pip install -r requirements.txt`
 
 ## Update
-1. ComfyUI Manager - Fetch Update - Search JaKeUpgrade and Update.
+1. ComfyUI Manager - Fetch Update - Search JakeUpgrade and Update.
 2. ComfyUI Manager - Custom Nodes Manager - Search JaKeUpgrade and Try Update (If method 1 fails).
 3. Change to `custom_nodes\ComfyUI-JakeUpgrade` folder, open cmd or PowerShell, type `git pull`  (If method 1 & 2 fails).
 
