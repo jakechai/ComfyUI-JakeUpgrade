@@ -43,10 +43,10 @@ NODE_CLASS_MAPPINGS = {
     "Reroute String JK": RerouteString_JK,
     "String To Combo JK": StringToCombo_JK,
     ### ControlNet Nodes
-    "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
-    "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR ControlNet Loader JK": CR_ControlNetLoader_JK,
+    "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Multi-ControlNet Param Stack JK": CR_ControlNetParamStack_JK,
+    "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
     "CR Apply Multi-ControlNet Adv JK": CR_ApplyControlNetStackAdv_JK,
     ### LoRA Nodes
@@ -219,10 +219,10 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Reroute String JK": "Reroute String JK🐉",
     "String To Combo JK": "String To Combo JK🐉",
     ### ControlNet Nodes
-    "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
-    "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR ControlNet Loader JK": "ControlNet Loader JK🐉",
+    "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Multi-ControlNet Param Stack JK": "Multi-ControlNet Param Stack JK🐉",
+    "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
     "CR Apply Multi-ControlNet Adv JK": "Apply Multi-ControlNet Adv JK🐉",
     ### LoRA Nodes

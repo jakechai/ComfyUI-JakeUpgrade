@@ -13,7 +13,8 @@
     "inputs": {
       "clip_name1": "t5xxl\\clip_l.safetensors",
       "clip_name2": "t5xxl\\t5xxl_fp8_e4m3fn.safetensors",
-      "type": "flux"
+      "type": "flux",
+      "device": "default"
     },
     "class_type": "DualCLIPLoader",
     "_meta": {
@@ -223,7 +224,7 @@
   },
   "26": {
     "inputs": {
-      "value": 512
+      "value": 1024
     },
     "class_type": "INTConstant",
     "_meta": {
@@ -877,7 +878,7 @@
   "73": {
     "inputs": {
       "images": [
-        "6:29",
+        "6:30",
         0
       ]
     },
@@ -889,7 +890,7 @@
   "77": {
     "inputs": {
       "image": [
-        "6:59",
+        "6:61",
         0
       ]
     },
@@ -905,7 +906,7 @@
         0
       ],
       "int_false": [
-        "6:63",
+        "6:60",
         0
       ],
       "int_true": [
@@ -925,7 +926,7 @@
         0
       ],
       "int_false": [
-        "6:63",
+        "6:60",
         1
       ],
       "int_true": [
@@ -1095,7 +1096,7 @@
     "inputs": {
       "boolean_value": false,
       "image_false": [
-        "6:59",
+        "194",
         0
       ]
     },
@@ -1822,7 +1823,7 @@
     "inputs": {
       "boolean_value": false,
       "int_false": [
-        "6:63",
+        "6:60",
         0
       ],
       "int_true": 0
@@ -1836,7 +1837,7 @@
     "inputs": {
       "boolean_value": false,
       "int_false": [
-        "6:63",
+        "6:60",
         1
       ],
       "int_true": 0
@@ -1846,2768 +1847,20 @@
       "title": "Int Input Switch JK🐉"
     }
   },
-  "6:8": {
-    "inputs": {
-      "resolution": "Custom",
-      "custom_width": [
-        "4",
-        0
-      ],
-      "custom_height": [
-        "4",
-        1
-      ],
-      "swap_dimensions": false
-    },
-    "class_type": "CR Aspect Ratio JK",
-    "_meta": {
-      "title": "Aspect Ratio JK🐉"
-    }
-  },
-  "6:9": {
-    "inputs": {
-      "boolean_value": false,
-      "clip_false": [
-        "92",
-        1
-      ],
-      "clip_true": [
-        "6:10",
-        0
-      ]
-    },
-    "class_type": "CR Clip Input Switch JK",
-    "_meta": {
-      "title": "Clip Input Switch JK🐉-stop layer"
-    }
-  },
-  "6:10": {
-    "inputs": {
-      "stop_at_clip_layer": -1,
-      "clip": [
-        "92",
-        1
-      ]
-    },
-    "class_type": "CLIPSetLastLayer",
-    "_meta": {
-      "title": "CLIP Set Last Layer"
-    }
-  },
-  "6:11": {
-    "inputs": {
-      "string": "",
-      "strip_newlines": true
-    },
-    "class_type": "StringConstantMultiline",
-    "_meta": {
-      "title": "positive l"
-    }
-  },
-  "6:12": {
-    "inputs": {
-      "string": "",
-      "strip_newlines": true
-    },
-    "class_type": "StringConstantMultiline",
-    "_meta": {
-      "title": "positive g"
-    }
-  },
-  "6:13": {
-    "inputs": {
-      "string": "",
-      "strip_newlines": true
-    },
-    "class_type": "StringConstantMultiline",
-    "_meta": {
-      "title": "negative l"
-    }
-  },
-  "6:14": {
-    "inputs": {
-      "string": "",
-      "strip_newlines": true
-    },
-    "class_type": "StringConstantMultiline",
-    "_meta": {
-      "title": "negative g"
-    }
-  },
-  "6:15": {
-    "inputs": {
-      "guidance": 3.5
-    },
-    "class_type": "Guidance Default JK",
-    "_meta": {
-      "title": "Guidance Default JK🐉"
-    }
-  },
-  "6:16": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉-switch clip l g"
-    }
-  },
-  "6:17": {
-    "inputs": {
-      "boolean_value": false,
-      "conditioning_false": [
-        "6:134",
-        0
-      ],
-      "conditioning_true": [
-        "6:135",
-        0
-      ]
-    },
-    "class_type": "CR Conditioning Input Switch JK",
-    "_meta": {
-      "title": "Boolean JK🐉-negative clip g"
-    }
-  },
-  "6:18": {
-    "inputs": {
-      "cfg": 1,
-      "neg_scale": 1,
-      "model": [
-        "6:140",
-        0
-      ],
-      "positive": [
-        "6:259",
-        0
-      ],
-      "negative": [
-        "6:259",
-        1
-      ],
-      "empty_conditioning": [
-        "6:174",
-        0
-      ]
-    },
-    "class_type": "PerpNegGuider",
-    "_meta": {
-      "title": "PerpNegGuider"
-    }
-  },
-  "6:19": {
-    "inputs": {
-      "sampler_name": "dpmpp_2m"
-    },
-    "class_type": "KSamplerSelect",
-    "_meta": {
-      "title": "KSamplerSelect"
-    }
-  },
-  "6:20": {
-    "inputs": {
-      "scheduler": "simple",
-      "steps": 20,
-      "denoise": 1,
-      "model": [
-        "6:140",
-        0
-      ]
-    },
-    "class_type": "BasicScheduler",
-    "_meta": {
-      "title": "BasicScheduler"
-    }
-  },
-  "6:21": {
-    "inputs": {
-      "noise_seed": [
-        "5",
-        0
-      ],
-      "noise_mode": "CPU",
-      "batch_seed_mode": "incremental",
-      "variation_seed": 0,
-      "variation_strength": 0,
-      "variation_method": "linear"
-    },
-    "class_type": "RandomNoise //Inspire",
-    "_meta": {
-      "title": "RandomNoise (inspire)"
-    }
-  },
-  "6:22": {
-    "inputs": {
-      "boolean_value": false,
-      "sampler_false": [
-        "6:19",
-        0
-      ],
-      "sampler_true": [
-        "6:23",
-        0
-      ]
-    },
-    "class_type": "CR Sampler Input Switch JK",
-    "_meta": {
-      "title": "Sampler Input Switch JK🐉-detail daemon"
-    }
-  },
-  "6:23": {
-    "inputs": {
-      "detail_amount": 0.1,
-      "start": 0.2,
-      "end": 0.8,
-      "bias": 0.5,
-      "exponent": 1,
-      "start_offset": 0,
-      "end_offset": 0,
-      "fade": 0,
-      "smooth": true,
-      "cfg_scale_override": 0,
-      "sampler": [
-        "6:19",
-        0
-      ]
-    },
-    "class_type": "DetailDaemonSamplerNode",
-    "_meta": {
-      "title": "Detail Daemon Sampler"
-    }
-  },
-  "6:24": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉-img2img"
-    }
-  },
-  "6:25": {
-    "inputs": {
-      "image_gen_width": [
-        "6:8",
-        0
-      ],
-      "image_gen_height": [
-        "6:8",
-        1
-      ],
-      "resize_mode": "Just Resize",
-      "hint_image": [
-        "6:128",
-        0
-      ]
-    },
-    "class_type": "HintImageEnchance JK",
-    "_meta": {
-      "title": "Enchance And Resize Hint Images JK🐉-img"
-    }
-  },
-  "6:26": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉-inpaint latent"
-    }
-  },
-  "6:27": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉-inpaint ckpt"
-    }
-  },
-  "6:28": {
-    "inputs": {
-      "noise_mask": true,
-      "positive": [
-        "6:133",
-        0
-      ],
-      "negative": [
-        "6:17",
-        0
-      ],
-      "vae": [
-        "64",
-        0
-      ],
-      "pixels": [
-        "6:59",
-        0
-      ],
-      "mask": [
-        "6:61",
-        0
-      ]
-    },
-    "class_type": "InpaintModelConditioning",
-    "_meta": {
-      "title": "InpaintModelConditioning"
-    }
-  },
-  "6:29": {
-    "inputs": {
-      "boolean_value": false,
-      "image_false": [
-        "6:56",
-        0
-      ],
-      "image_true": [
-        "6:270",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉-final output"
-    }
-  },
-  "6:30": {
-    "inputs": {
-      "boolean_value": [
-        "6:173",
-        0
-      ],
-      "latent_false": [
-        "6:263",
-        0
-      ],
-      "latent_true": [
-        "6:267",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉-output"
-    }
-  },
-  "6:31": {
-    "inputs": {
-      "boolean_value": false,
-      "mask_false": [
-        "6:51",
-        0
-      ],
-      "mask_true": [
-        "6:62",
-        1
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉-blend origin mask"
-    }
-  },
-  "6:32": {
-    "inputs": {
-      "dilation": 10,
-      "mask": [
-        "6:31",
-        0
-      ]
-    },
-    "class_type": "ImpactDilateMask",
-    "_meta": {
-      "title": "Dilate Mask blend"
-    }
-  },
-  "6:33": {
-    "inputs": {
-      "amount": 6,
-      "device": "auto",
-      "mask": [
-        "6:32",
-        0
-      ]
-    },
-    "class_type": "MaskBlur+",
-    "_meta": {
-      "title": "🔧 Mask Blur blend"
-    }
-  },
-  "6:34": {
-    "inputs": {
-      "boolean_value": false,
-      "latent_false": [
-        "6:190",
-        0
-      ],
-      "latent_true": [
-        "6:235",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉-origin"
-    }
-  },
-  "6:35": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉-image fill"
-    }
-  },
-  "6:36": {
-    "inputs": {
-      "image_gen_width": [
-        "6:63",
-        0
-      ],
-      "image_gen_height": [
-        "6:63",
-        1
-      ],
-      "resize_mode": "Just Resize",
-      "hint_image": [
-        "6:139",
-        0
-      ]
-    },
-    "class_type": "HintImageEnchance JK",
-    "_meta": {
-      "title": "Enchance And Resize Hint Images JK🐉-fill"
-    }
-  },
-  "6:37": {
-    "inputs": {
-      "boolean_value": false,
-      "image_false": [
-        "6:36",
-        0
-      ],
-      "image_true": [
-        "6:176",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉-tile"
-    }
-  },
-  "6:38": {
-    "inputs": {
-      "upscale_method": [
-        "6:124",
-        0
-      ],
-      "width": 512,
-      "height": 512,
-      "crop": "disabled",
-      "image": [
-        "6:36",
-        0
-      ]
-    },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image-tile"
-    }
-  },
-  "6:39": {
-    "inputs": {
-      "boolean_value": false,
-      "mask_false": [
-        "6:138",
-        0
-      ],
-      "mask_true": [
-        "6:43",
-        0
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉-input mask"
-    }
-  },
-  "6:40": {
-    "inputs": {
-      "image_gen_width": [
-        "6:63",
-        0
-      ],
-      "image_gen_height": [
-        "6:63",
-        1
-      ],
-      "resize_mode": "Just Resize",
-      "hint_image": [
-        "6:145",
-        0
-      ]
-    },
-    "class_type": "HintImageEnchance JK",
-    "_meta": {
-      "title": "Enchance And Resize Hint Images JK🐉-mask"
-    }
-  },
-  "6:41": {
-    "inputs": {
-      "value": 0
-    },
-    "class_type": "ImpactInt",
-    "_meta": {
-      "title": "Mask Detail Removal Threshold"
-    }
-  },
-  "6:42": {
-    "inputs": {
-      "boolean_value": false,
-      "mask_false": [
-        "6:184",
-        0
-      ],
-      "mask_true": [
-        "6:181",
-        0
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉-invert removal"
-    }
-  },
-  "6:43": {
-    "inputs": {
-      "boolean_value": false,
-      "mask_false": [
-        "6:185",
-        0
-      ],
-      "mask_true": [
-        "6:42",
-        0
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉-invert"
-    }
-  },
-  "6:44": {
-    "inputs": {
-      "value": 0
-    },
-    "class_type": "ImpactInt",
-    "_meta": {
-      "title": "Pad left"
-    }
-  },
-  "6:45": {
-    "inputs": {
-      "value": 0
-    },
-    "class_type": "ImpactInt",
-    "_meta": {
-      "title": "Pad top"
-    }
-  },
-  "6:46": {
-    "inputs": {
-      "value": 0
-    },
-    "class_type": "ImpactInt",
-    "_meta": {
-      "title": "Pad right"
-    }
-  },
-  "6:47": {
-    "inputs": {
-      "value": 0
-    },
-    "class_type": "ImpactInt",
-    "_meta": {
-      "title": "Pad bottom"
-    }
-  },
-  "6:48": {
-    "inputs": {
-      "value": 0
-    },
-    "class_type": "ImpactInt",
-    "_meta": {
-      "title": "Pad feathering"
-    }
-  },
-  "6:49": {
-    "inputs": {
-      "dilation": 10,
-      "mask": [
-        "6:188",
-        1
-      ]
-    },
-    "class_type": "ImpactDilateMask",
-    "_meta": {
-      "title": "Dilate Mask-mask"
-    }
-  },
-  "6:50": {
-    "inputs": {
-      "amount": 6,
-      "device": "auto",
-      "mask": [
-        "6:49",
-        0
-      ]
-    },
-    "class_type": "MaskBlur+",
-    "_meta": {
-      "title": "🔧 Mask Blur-mask"
-    }
-  },
-  "6:51": {
-    "inputs": {
-      "boolean_value": false,
-      "mask_false": [
-        "6:50",
-        0
-      ],
-      "mask_true": [
-        "6:234",
-        0
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉-Binary"
-    }
-  },
-  "6:52": {
-    "inputs": {
-      "boolean_value": [
-        "7",
-        0
-      ]
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉-crop"
-    }
-  },
-  "6:53": {
-    "inputs": {
-      "boolean_value": false,
-      "latent_false": [
-        "6:250",
-        0
-      ],
-      "latent_true": [
-        "6:252",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉-latent crop"
-    }
-  },
-  "6:54": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉-ignore latent crop offset"
-    }
-  },
-  "6:55": {
-    "inputs": {
-      "custom_width": 1024,
-      "custom_height": 1024,
-      "padding": [
-        "7",
-        1
-      ],
-      "use_image_res": [
-        "7",
-        2
-      ],
-      "use_target_res": [
-        "7",
-        3
-      ],
-      "target_res": [
-        "7",
-        4
-      ],
-      "use_target_mega_pixel": [
-        "7",
-        5
-      ],
-      "target_mega_pixel": [
-        "7",
-        6
-      ],
-      "multiple_of": 8,
-      "image_upscale_method": "lanczos",
-      "latent_upscale_method": "bilinear",
-      "mask": [
-        "6:51",
-        0
-      ],
-      "image": [
-        "6:239",
-        0
-      ]
-    },
-    "class_type": "Image Crop by Mask Resolution JK",
-    "_meta": {
-      "title": "Image Crop by Mask Resolution JK🐉"
-    }
-  },
-  "6:56": {
-    "inputs": {
-      "boolean_value": false,
-      "image_false": [
-        "6:269",
-        0
-      ],
-      "image_true": [
-        "6:57",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉-grading"
-    }
-  },
-  "6:57": {
-    "inputs": {
-      "brightness": 1,
-      "contrast": 1,
-      "saturation": 1,
-      "R": 0,
-      "G": 0,
-      "B": 0,
-      "image": [
-        "6:269",
-        0
-      ]
-    },
-    "class_type": "Color Grading JK",
-    "_meta": {
-      "title": "Color Grading JK🐉"
-    }
-  },
-  "6:58": {
-    "inputs": {
-      "image_upscale_method": "lanczos",
-      "latent_upscale_method": "bilinear"
-    },
-    "class_type": "Upscale Method JK",
-    "_meta": {
-      "title": "Upscale Method JK🐉"
-    }
-  },
-  "6:59": {
-    "inputs": {
-      "boolean_value": [
-        "6:173",
-        0
-      ],
-      "image_false": [
-        "6:239",
-        0
-      ],
-      "image_true": [
-        "6:247",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉-preview"
-    }
-  },
-  "6:60": {
-    "inputs": {
-      "amount": 1,
-      "samples": [
-        "6:260",
-        0
-      ]
-    },
-    "class_type": "RepeatLatentBatch",
-    "_meta": {
-      "title": "Repeat Latent Batch"
-    }
-  },
-  "6:61": {
-    "inputs": {
-      "boolean_value": [
-        "6:173",
-        0
-      ],
-      "mask_false": [
-        "6:51",
-        0
-      ],
-      "mask_true": [
-        "6:251",
-        0
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉-preview"
-    }
-  },
-  "6:62": {
-    "inputs": {
-      "left": [
-        "6:44",
-        0
-      ],
-      "top": [
-        "6:45",
-        0
-      ],
-      "right": [
-        "6:46",
-        0
-      ],
-      "bottom": [
-        "6:47",
-        0
-      ],
-      "feathering": [
-        "6:48",
-        0
-      ],
-      "image": [
-        "6:128",
-        0
-      ],
-      "mask": [
-        "6:187",
-        0
-      ]
-    },
-    "class_type": "ImagePadForOutpaintMasked",
-    "_meta": {
-      "title": "Image Pad For Outpaint Masked-output original mask"
-    }
-  },
-  "6:63": {
+  "194": {
     "inputs": {
       "image": [
-        "6:128",
-        0
-      ]
-    },
-    "class_type": "GetImageSize+",
-    "_meta": {
-      "title": "🔧 Get Image Size-output"
-    }
-  },
-  "6:75": {
-    "inputs": {
-      "op": "Not",
-      "a": false
-    },
-    "class_type": "CM_BoolUnaryOperation JK",
-    "_meta": {
-      "title": "BoolUnaryOp JK🐉"
-    }
-  },
-  "6:76": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉"
-    }
-  },
-  "6:77": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK🐉"
-    }
-  },
-  "6:78": {
-    "inputs": {},
-    "class_type": "Empty Latent Color JK",
-    "_meta": {
-      "title": "Empty Latent Color JK🐉"
-    }
-  },
-  "6:79": {
-    "inputs": {
-      "model": [
-        "97",
-        0
-      ]
-    },
-    "class_type": "DifferentialDiffusion",
-    "_meta": {
-      "title": "Differential Diffusion"
-    }
-  },
-  "6:80": {
-    "inputs": {
-      "boolean_value": [
-        "6:16",
-        0
-      ],
-      "text_false": [
-        "6:12",
-        0
-      ],
-      "text_true": [
-        "6:14",
-        0
-      ]
-    },
-    "class_type": "CR Text Input Switch JK",
-    "_meta": {
-      "title": "Text Input Switch JK🐉"
-    }
-  },
-  "6:81": {
-    "inputs": {
-      "boolean_value": [
-        "6:16",
-        0
-      ],
-      "text_false": [
-        "6:14",
-        0
-      ],
-      "text_true": [
-        "6:12",
-        0
-      ]
-    },
-    "class_type": "CR Text Input Switch JK",
-    "_meta": {
-      "title": "Text Input Switch JK🐉"
-    }
-  },
-  "6:82": {
-    "inputs": {
-      "boolean_value": [
-        "6:16",
-        0
-      ],
-      "text_false": [
-        "6:11",
-        0
-      ],
-      "text_true": [
-        "6:13",
-        0
-      ]
-    },
-    "class_type": "CR Text Input Switch JK",
-    "_meta": {
-      "title": "Text Input Switch JK🐉"
-    }
-  },
-  "6:83": {
-    "inputs": {
-      "boolean_value": [
-        "6:16",
-        0
-      ],
-      "text_false": [
-        "6:13",
-        0
-      ],
-      "text_true": [
-        "6:11",
-        0
-      ]
-    },
-    "class_type": "CR Text Input Switch JK",
-    "_meta": {
-      "title": "Text Input Switch JK🐉"
-    }
-  },
-  "6:84": {
-    "inputs": {
-      "a": [
-        "6:26",
-        0
-      ],
-      "b": [
-        "6:27",
-        0
-      ]
-    },
-    "class_type": "Bool Binary OR JK",
-    "_meta": {
-      "title": "Bool OR JK🐉"
-    }
-  },
-  "6:85": {
-    "inputs": {
-      "op": "Neg",
-      "a": [
-        "6:41",
-        0
-      ]
-    },
-    "class_type": "CM_IntUnaryOperation JK",
-    "_meta": {
-      "title": "IntUnaryOp JK🐉"
-    }
-  },
-  "6:86": {
-    "inputs": {
-      "op": "Neg",
-      "a": [
-        "6:41",
-        0
-      ]
-    },
-    "class_type": "CM_IntUnaryOperation JK",
-    "_meta": {
-      "title": "IntUnaryOp JK🐉"
-    }
-  },
-  "6:87": {
-    "inputs": {
-      "a": [
-        "6:44",
-        0
-      ]
-    },
-    "class_type": "CM_IntToBool JK",
-    "_meta": {
-      "title": "IntToBool JK🐉"
-    }
-  },
-  "6:88": {
-    "inputs": {
-      "a": [
-        "6:45",
-        0
-      ]
-    },
-    "class_type": "CM_IntToBool JK",
-    "_meta": {
-      "title": "IntToBool JK🐉"
-    }
-  },
-  "6:89": {
-    "inputs": {
-      "a": [
-        "6:46",
-        0
-      ]
-    },
-    "class_type": "CM_IntToBool JK",
-    "_meta": {
-      "title": "IntToBool JK🐉"
-    }
-  },
-  "6:90": {
-    "inputs": {
-      "a": [
-        "6:47",
-        0
-      ]
-    },
-    "class_type": "CM_IntToBool JK",
-    "_meta": {
-      "title": "IntToBool JK🐉"
-    }
-  },
-  "6:91": {
-    "inputs": {
-      "a": [
-        "6:75",
-        0
-      ]
-    },
-    "class_type": "CM_BoolToInt JK",
-    "_meta": {
-      "title": "BoolToInt JK🐉"
-    }
-  },
-  "6:92": {
-    "inputs": {
-      "op": "Not",
-      "a": [
-        "6:76",
-        0
-      ]
-    },
-    "class_type": "CM_BoolUnaryOperation JK",
-    "_meta": {
-      "title": "BoolUnaryOp JK🐉"
-    }
-  },
-  "6:93": {
-    "inputs": {
-      "op": "Not",
-      "a": [
-        "6:77",
-        0
-      ]
-    },
-    "class_type": "CM_BoolUnaryOperation JK",
-    "_meta": {
-      "title": "BoolUnaryOp JK🐉"
-    }
-  },
-  "6:94": {
-    "inputs": {
-      "width": [
-        "6:8",
-        0
-      ],
-      "height": [
-        "6:8",
-        1
-      ],
-      "batch_size": 1,
-      "color": [
-        "6:78",
-        3
-      ]
-    },
-    "class_type": "EmptyImage",
-    "_meta": {
-      "title": "EmptyImage"
-    }
-  },
-  "6:95": {
-    "inputs": {
-      "width": [
-        "6:8",
-        0
-      ],
-      "height": [
-        "6:8",
-        1
-      ],
-      "batch_size": 1
-    },
-    "class_type": "EmptySD3LatentImage",
-    "_meta": {
-      "title": "EmptySD3LatentImage"
-    }
-  },
-  "6:96": {
-    "inputs": {
-      "prompt_1": [
-        "6:83",
-        0
-      ],
-      "prompt_2": [
-        "6:81",
-        0
-      ]
-    },
-    "class_type": "CM_PromptCombine_JK",
-    "_meta": {
-      "title": "Prompt Combine JK🐉"
-    }
-  },
-  "6:97": {
-    "inputs": {
-      "a": [
-        "6:24",
-        0
-      ],
-      "b": [
-        "6:84",
-        0
-      ]
-    },
-    "class_type": "Bool Binary OR JK",
-    "_meta": {
-      "title": "Bool OR JK🐉"
-    }
-  },
-  "6:98": {
-    "inputs": {
-      "a": [
-        "6:87",
-        0
-      ],
-      "b": [
-        "6:88",
-        0
-      ]
-    },
-    "class_type": "Bool Binary OR JK",
-    "_meta": {
-      "title": "Bool OR JK🐉"
-    }
-  },
-  "6:124": {
-    "inputs": {
-      "string": [
-        "6:58",
-        0
-      ]
-    },
-    "class_type": "String To Combo JK",
-    "_meta": {
-      "title": "String To Combo JK🐉"
-    }
-  },
-  "6:125": {
-    "inputs": {
-      "string": [
-        "6:58",
-        1
-      ]
-    },
-    "class_type": "String To Combo JK",
-    "_meta": {
-      "title": "String To Combo JK🐉"
-    }
-  },
-  "6:126": {
-    "inputs": {
-      "string": [
-        "6:58",
-        1
-      ]
-    },
-    "class_type": "String To Combo JK",
-    "_meta": {
-      "title": "String To Combo JK🐉"
-    }
-  },
-  "6:127": {
-    "inputs": {
-      "string": [
-        "6:58",
-        1
-      ]
-    },
-    "class_type": "String To Combo JK",
-    "_meta": {
-      "title": "String To Combo JK🐉"
-    }
-  },
-  "6:128": {
-    "inputs": {
-      "boolean_value": [
-        "6:97",
-        0
-      ],
-      "image_false": [
-        "6:94",
-        0
-      ],
-      "image_true": [
-        "3",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉"
-    }
-  },
-  "6:129": {
-    "inputs": {
-      "a": [
-        "6:98",
-        0
-      ],
-      "b": [
-        "6:89",
-        0
-      ]
-    },
-    "class_type": "Bool Binary OR JK",
-    "_meta": {
-      "title": "Bool OR JK🐉"
-    }
-  },
-  "6:130": {
-    "inputs": {
-      "string": [
-        "6:58",
-        0
-      ]
-    },
-    "class_type": "String To Combo JK",
-    "_meta": {
-      "title": "String To Combo JK🐉"
-    }
-  },
-  "6:131": {
-    "inputs": {
-      "string": [
-        "6:58",
-        0
-      ]
-    },
-    "class_type": "String To Combo JK",
-    "_meta": {
-      "title": "String To Combo JK🐉"
-    }
-  },
-  "6:132": {
-    "inputs": {
-      "string": [
-        "6:58",
-        0
-      ]
-    },
-    "class_type": "String To Combo JK",
-    "_meta": {
-      "title": "String To Combo JK🐉"
-    }
-  },
-  "6:133": {
-    "inputs": {
-      "clip_l": [
-        "6:82",
-        0
-      ],
-      "t5xxl": [
-        "6:80",
-        0
-      ],
-      "guidance": [
-        "6:15",
-        0
-      ],
-      "clip": [
-        "6:9",
-        0
-      ]
-    },
-    "class_type": "CLIPTextEncodeFlux",
-    "_meta": {
-      "title": "CLIPTextEncodeFlux"
-    }
-  },
-  "6:134": {
-    "inputs": {
-      "text": [
-        "6:96",
-        0
-      ],
-      "clip": [
-        "6:9",
-        0
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
-  },
-  "6:135": {
-    "inputs": {
-      "clip_l": [
-        "6:83",
-        0
-      ],
-      "t5xxl": [
-        "6:81",
-        0
-      ],
-      "guidance": [
-        "6:15",
-        0
-      ],
-      "clip": [
-        "6:9",
-        0
-      ]
-    },
-    "class_type": "CLIPTextEncodeFlux",
-    "_meta": {
-      "title": "CLIPTextEncodeFlux"
-    }
-  },
-  "6:136": {
-    "inputs": {
-      "op": "Not",
-      "a": [
-        "6:24",
-        0
-      ]
-    },
-    "class_type": "CM_BoolUnaryOperation JK",
-    "_meta": {
-      "title": "BoolUnaryOp JK🐉"
-    }
-  },
-  "6:137": {
-    "inputs": {
-      "a": [
-        "6:129",
-        0
-      ],
-      "b": [
-        "6:90",
-        0
-      ]
-    },
-    "class_type": "Bool Binary OR JK",
-    "_meta": {
-      "title": "Bool OR JK🐉"
-    }
-  },
-  "6:138": {
-    "inputs": {
-      "value": 1,
-      "width": [
-        "6:63",
-        0
-      ],
-      "height": [
-        "6:63",
-        1
-      ]
-    },
-    "class_type": "SolidMask",
-    "_meta": {
-      "title": "SolidMask"
-    }
-  },
-  "6:139": {
-    "inputs": {
-      "boolean_value": [
-        "6:84",
-        0
-      ],
-      "image_false": [
-        "6:128",
-        0
-      ],
-      "image_true": [
-        "3",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉"
-    }
-  },
-  "6:140": {
-    "inputs": {
-      "boolean_value": [
-        "6:84",
-        0
-      ],
-      "model_false": [
-        "97",
-        0
-      ],
-      "model_true": [
-        "6:79",
-        0
-      ]
-    },
-    "class_type": "CR Model Input Switch JK",
-    "_meta": {
-      "title": "Model Input Switch JK🐉"
-    }
-  },
-  "6:141": {
-    "inputs": {
-      "pixels": [
-        "6:25",
-        0
-      ],
-      "vae": [
-        "64",
-        0
-      ]
-    },
-    "class_type": "VAEEncode",
-    "_meta": {
-      "title": "VAE Encode"
-    }
-  },
-  "6:142": {
-    "inputs": {
-      "boolean_value": [
-        "6:84",
-        0
-      ],
-      "mask_false": [
-        "6:138",
-        0
-      ],
-      "mask_true": [
-        "3",
-        1
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉"
-    }
-  },
-  "6:143": {
-    "inputs": {
-      "op": "Not",
-      "a": [
-        "6:137",
-        0
-      ]
-    },
-    "class_type": "CM_BoolUnaryOperation JK",
-    "_meta": {
-      "title": "BoolUnaryOp JK🐉"
-    }
-  },
-  "6:144": {
-    "inputs": {
-      "boolean_value": [
-        "6:24",
-        0
-      ],
-      "latent_false": [
-        "6:95",
-        0
-      ],
-      "latent_true": [
-        "6:141",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉"
-    }
-  },
-  "6:145": {
-    "inputs": {
-      "mask": [
-        "6:142",
-        0
-      ]
-    },
-    "class_type": "MaskToImage",
-    "_meta": {
-      "title": "Convert Mask to Image"
-    }
-  },
-  "6:170": {
-    "inputs": {
-      "pixels": [
-        "6:128",
-        0
-      ],
-      "vae": [
-        "64",
-        0
-      ]
-    },
-    "class_type": "VAEEncode",
-    "_meta": {
-      "title": "VAE Encode"
-    }
-  },
-  "6:171": {
-    "inputs": {
-      "a": [
-        "6:136",
-        0
-      ],
-      "b": [
-        "6:143",
-        0
-      ]
-    },
-    "class_type": "Bool Binary And JK",
-    "_meta": {
-      "title": "Bool And JK🐉"
-    }
-  },
-  "6:172": {
-    "inputs": {
-      "boolean_value": [
-        "6:92",
-        0
-      ],
-      "latent_false": [
-        "6:170",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉"
-    }
-  },
-  "6:173": {
-    "inputs": {
-      "a": [
-        "6:52",
-        0
-      ],
-      "b": [
-        "6:171",
-        0
-      ]
-    },
-    "class_type": "Bool Binary And JK",
-    "_meta": {
-      "title": "Bool And JK🐉"
-    }
-  },
-  "6:174": {
-    "inputs": {
-      "conditioning": [
-        "6:17",
-        0
-      ]
-    },
-    "class_type": "ConditioningZeroOut",
-    "_meta": {
-      "title": "ConditioningZeroOut"
-    }
-  },
-  "6:175": {
-    "inputs": {
-      "channel": "red",
-      "image": [
-        "6:40",
-        0
-      ]
-    },
-    "class_type": "ImageToMask",
-    "_meta": {
-      "title": "Convert Image to Mask"
-    }
-  },
-  "6:176": {
-    "inputs": {
-      "upscale_method": [
-        "6:124",
-        0
-      ],
-      "width": [
-        "6:63",
-        0
-      ],
-      "height": [
-        "6:63",
-        1
-      ],
-      "crop": "disabled",
-      "image": [
-        "6:38",
-        0
-      ]
-    },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image"
-    }
-  },
-  "6:177": {
-    "inputs": {
-      "mask": [
-        "6:175",
-        0
-      ]
-    },
-    "class_type": "InvertMask",
-    "_meta": {
-      "title": "InvertMask"
-    }
-  },
-  "6:178": {
-    "inputs": {
-      "dilation": [
-        "6:41",
-        0
-      ],
-      "mask": [
-        "6:175",
-        0
-      ]
-    },
-    "class_type": "ImpactDilateMask",
-    "_meta": {
-      "title": "Dilate Mask"
-    }
-  },
-  "6:179": {
-    "inputs": {
-      "mask": [
-        "6:175",
-        0
-      ]
-    },
-    "class_type": "InvertMask",
-    "_meta": {
-      "title": "InvertMask"
-    }
-  },
-  "6:180": {
-    "inputs": {
-      "dilation": [
-        "6:41",
-        0
-      ],
-      "mask": [
-        "6:177",
-        0
-      ]
-    },
-    "class_type": "ImpactDilateMask",
-    "_meta": {
-      "title": "Dilate Mask"
-    }
-  },
-  "6:181": {
-    "inputs": {
-      "dilation": [
-        "6:86",
-        0
-      ],
-      "mask": [
-        "6:178",
-        0
-      ]
-    },
-    "class_type": "ImpactDilateMask",
-    "_meta": {
-      "title": "Dilate Mask"
-    }
-  },
-  "6:182": {
-    "inputs": {
-      "pixels": [
-        "6:37",
-        0
-      ],
-      "vae": [
-        "64",
-        0
-      ]
-    },
-    "class_type": "VAEEncode",
-    "_meta": {
-      "title": "VAE Encode"
-    }
-  },
-  "6:183": {
-    "inputs": {
-      "dilation": [
-        "6:85",
-        0
-      ],
-      "mask": [
-        "6:180",
-        0
-      ]
-    },
-    "class_type": "ImpactDilateMask",
-    "_meta": {
-      "title": "Dilate Mask"
-    }
-  },
-  "6:184": {
-    "inputs": {
-      "mask": [
-        "6:183",
-        0
-      ]
-    },
-    "class_type": "InvertMask",
-    "_meta": {
-      "title": "InvertMask"
-    }
-  },
-  "6:185": {
-    "inputs": {
-      "mask": [
-        "6:42",
-        0
-      ]
-    },
-    "class_type": "InvertMask",
-    "_meta": {
-      "title": "InvertMask"
-    }
-  },
-  "6:186": {
-    "inputs": {
-      "boolean_value": [
-        "6:43",
-        1
-      ],
-      "mask_false": [
-        "6:179",
-        0
-      ],
-      "mask_true": [
-        "6:175",
-        0
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉"
-    }
-  },
-  "6:187": {
-    "inputs": {
-      "boolean_value": [
-        "6:39",
-        1
-      ],
-      "mask_false": [
-        "6:138",
-        0
-      ],
-      "mask_true": [
-        "6:186",
-        0
-      ]
-    },
-    "class_type": "CR Mask Input Switch JK",
-    "_meta": {
-      "title": "Mask Input Switch JK🐉"
-    }
-  },
-  "6:188": {
-    "inputs": {
-      "left": [
-        "6:44",
-        0
-      ],
-      "top": [
-        "6:45",
-        0
-      ],
-      "right": [
-        "6:46",
-        0
-      ],
-      "bottom": [
-        "6:47",
-        0
-      ],
-      "feathering": [
-        "6:48",
-        0
-      ],
-      "image": [
-        "6:128",
-        0
-      ],
-      "mask": [
-        "6:39",
-        0
-      ]
-    },
-    "class_type": "ImagePadForOutpaintMasked",
-    "_meta": {
-      "title": "Image Pad For Outpaint Masked"
-    }
-  },
-  "6:189": {
-    "inputs": {
-      "image": [
-        "6:188",
-        0
-      ]
-    },
-    "class_type": "GetImageSize+",
-    "_meta": {
-      "title": "🔧 Get Image Size"
-    }
-  },
-  "6:190": {
-    "inputs": {
-      "width": [
-        "6:189",
-        0
-      ],
-      "height": [
-        "6:189",
-        1
-      ],
-      "batch_size": 1
-    },
-    "class_type": "EmptySD3LatentImage",
-    "_meta": {
-      "title": "EmptySD3LatentImage"
-    }
-  },
-  "6:191": {
-    "inputs": {
-      "upscale_method": [
-        "6:130",
-        0
-      ],
-      "width": [
-        "6:189",
-        0
-      ],
-      "height": [
-        "6:189",
-        1
-      ],
-      "crop": "disabled",
-      "image": [
-        "6:37",
-        0
-      ]
-    },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image"
-    }
-  },
-  "6:232": {
-    "inputs": {
-      "boolean_value": [
-        "6:26",
-        0
-      ],
-      "latent_false": [
-        "6:190",
-        0
-      ],
-      "latent_true": [
-        "6:172",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉"
-    }
-  },
-  "6:233": {
-    "inputs": {
-      "upscale_method": [
-        "6:125",
-        0
-      ],
-      "width": [
-        "6:189",
-        0
-      ],
-      "height": [
-        "6:189",
-        1
-      ],
-      "crop": "disabled",
-      "samples": [
-        "6:182",
-        0
-      ]
-    },
-    "class_type": "LatentUpscale",
-    "_meta": {
-      "title": "Upscale Latent"
-    }
-  },
-  "6:234": {
-    "inputs": {
-      "threshold": [
-        "6:91",
-        0
-      ],
-      "mask": [
-        "6:50",
-        0
-      ]
-    },
-    "class_type": "ToBinaryMask",
-    "_meta": {
-      "title": "ToBinaryMask"
-    }
-  },
-  "6:235": {
-    "inputs": {
-      "upscale_method": [
-        "6:125",
-        0
-      ],
-      "width": [
-        "6:189",
-        0
-      ],
-      "height": [
-        "6:189",
-        1
-      ],
-      "crop": "disabled",
-      "samples": [
-        "6:232",
-        0
-      ]
-    },
-    "class_type": "LatentUpscale",
-    "_meta": {
-      "title": "Upscale Latent"
-    }
-  },
-  "6:236": {
-    "inputs": {
-      "boolean_value": [
-        "6:35",
-        0
-      ],
-      "latent_false": [
-        "6:34",
-        0
-      ],
-      "latent_true": [
-        "6:233",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉"
-    }
-  },
-  "6:237": {
-    "inputs": {
-      "x": 0,
-      "y": 0,
-      "resize_source": false,
-      "destination": [
-        "6:188",
-        0
-      ],
-      "source": [
-        "6:191",
-        0
-      ],
-      "mask": [
-        "6:51",
-        0
-      ]
-    },
-    "class_type": "ImageCompositeMasked",
-    "_meta": {
-      "title": "ImageCompositeMasked"
-    }
-  },
-  "6:238": {
-    "inputs": {
-      "x": [
-        "6:44",
-        0
-      ],
-      "y": [
-        "6:45",
-        0
-      ],
-      "resize_source": false,
-      "destination": [
-        "6:236",
-        0
-      ],
-      "source": [
-        "6:232",
-        0
-      ],
-      "mask": [
-        "6:39",
-        0
-      ]
-    },
-    "class_type": "LatentCompositeMasked",
-    "_meta": {
-      "title": "LatentCompositeMasked"
-    }
-  },
-  "6:239": {
-    "inputs": {
-      "boolean_value": [
-        "6:35",
-        0
-      ],
-      "image_false": [
-        "6:188",
-        0
-      ],
-      "image_true": [
-        "6:237",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉"
-    }
-  },
-  "6:240": {
-    "inputs": {
-      "image_offset": [
-        "6:55",
-        2
-      ]
-    },
-    "class_type": "Latent Crop Offset JK",
-    "_meta": {
-      "title": "Latent Crop Offset JK🐉"
-    }
-  },
-  "6:241": {
-    "inputs": {
-      "x": [
-        "6:55",
-        2
-      ],
-      "y": [
-        "6:55",
-        3
-      ],
-      "width": [
-        "6:55",
-        0
-      ],
-      "height": [
-        "6:55",
-        1
-      ],
-      "mask": [
-        "6:51",
-        0
-      ]
-    },
-    "class_type": "CropMask",
-    "_meta": {
-      "title": "CropMask"
-    }
-  },
-  "6:242": {
-    "inputs": {
-      "image_offset": [
-        "6:55",
-        3
-      ]
-    },
-    "class_type": "Latent Crop Offset JK",
-    "_meta": {
-      "title": "Latent Crop Offset JK🐉"
-    }
-  },
-  "6:243": {
-    "inputs": {
-      "width": [
-        "6:55",
-        0
-      ],
-      "height": [
-        "6:55",
-        1
-      ],
-      "x": [
-        "6:55",
-        2
-      ],
-      "y": [
-        "6:55",
-        3
-      ],
-      "image": [
-        "6:239",
-        0
-      ]
-    },
-    "class_type": "ImageCrop",
-    "_meta": {
-      "title": "Image Crop"
-    }
-  },
-  "6:244": {
-    "inputs": {
-      "boolean_value": [
-        "6:54",
-        0
-      ],
-      "int_false": [
-        "6:240",
-        0
-      ],
-      "int_true": [
-        "6:55",
-        2
-      ]
-    },
-    "class_type": "CR Int Input Switch JK",
-    "_meta": {
-      "title": "Int Input Switch JK🐉"
-    }
-  },
-  "6:245": {
-    "inputs": {
-      "mask": [
-        "6:241",
-        0
-      ]
-    },
-    "class_type": "MaskToImage",
-    "_meta": {
-      "title": "Convert Mask to Image"
-    }
-  },
-  "6:246": {
-    "inputs": {
-      "boolean_value": [
-        "6:54",
-        0
-      ],
-      "int_false": [
-        "6:242",
-        0
-      ],
-      "int_true": [
-        "6:55",
-        3
-      ]
-    },
-    "class_type": "CR Int Input Switch JK",
-    "_meta": {
-      "title": "Int Input Switch JK🐉"
-    }
-  },
-  "6:247": {
-    "inputs": {
-      "upscale_method": [
-        "6:131",
-        0
-      ],
-      "width": [
-        "6:55",
-        4
-      ],
-      "height": [
-        "6:55",
-        5
-      ],
-      "crop": "disabled",
-      "image": [
-        "6:243",
-        0
-      ]
-    },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image"
-    }
-  },
-  "6:248": {
-    "inputs": {
-      "upscale_method": [
-        "6:131",
-        0
-      ],
-      "width": [
-        "6:55",
-        4
-      ],
-      "height": [
-        "6:55",
-        5
-      ],
-      "crop": "disabled",
-      "image": [
-        "6:245",
-        0
-      ]
-    },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image"
-    }
-  },
-  "6:249": {
-    "inputs": {
-      "width": [
-        "6:55",
-        0
-      ],
-      "height": [
-        "6:55",
-        1
-      ],
-      "x": [
-        "6:244",
-        0
-      ],
-      "y": [
-        "6:246",
-        0
-      ],
-      "samples": [
-        "6:238",
-        0
-      ]
-    },
-    "class_type": "LatentCrop",
-    "_meta": {
-      "title": "Crop Latent"
-    }
-  },
-  "6:250": {
-    "inputs": {
-      "pixels": [
-        "6:247",
-        0
-      ],
-      "vae": [
-        "64",
-        0
-      ]
-    },
-    "class_type": "VAEEncode",
-    "_meta": {
-      "title": "VAE Encode"
-    }
-  },
-  "6:251": {
-    "inputs": {
-      "channel": "red",
-      "image": [
-        "6:248",
-        0
-      ]
-    },
-    "class_type": "ImageToMask",
-    "_meta": {
-      "title": "Convert Image to Mask"
-    }
-  },
-  "6:252": {
-    "inputs": {
-      "upscale_method": [
-        "6:126",
-        0
-      ],
-      "width": [
-        "6:55",
-        4
-      ],
-      "height": [
-        "6:55",
-        5
-      ],
-      "crop": "disabled",
-      "samples": [
-        "6:249",
-        0
-      ]
-    },
-    "class_type": "LatentUpscale",
-    "_meta": {
-      "title": "Upscale Latent"
-    }
-  },
-  "6:253": {
-    "inputs": {
-      "boolean_value": [
-        "6:173",
-        0
-      ],
-      "latent_false": [
-        "6:238",
-        0
-      ],
-      "latent_true": [
-        "6:53",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉"
-    }
-  },
-  "6:254": {
-    "inputs": {
-      "samples": [
-        "6:253",
-        0
-      ],
-      "mask": [
-        "6:61",
-        0
-      ]
-    },
-    "class_type": "SetLatentNoiseMask",
-    "_meta": {
-      "title": "Set Latent Noise Mask"
-    }
-  },
-  "6:255": {
-    "inputs": {
-      "boolean_value": [
-        "6:27",
-        0
-      ],
-      "conditioning_false": [
-        "6:133",
-        0
-      ],
-      "conditioning_true": [
-        "6:28",
-        0
-      ]
-    },
-    "class_type": "CR Conditioning Input Switch JK",
-    "_meta": {
-      "title": "Conditioning Input Switch JK🐉"
-    }
-  },
-  "6:256": {
-    "inputs": {
-      "boolean_value": [
-        "6:27",
-        0
-      ],
-      "conditioning_false": [
-        "6:17",
-        0
-      ],
-      "conditioning_true": [
-        "6:28",
-        1
-      ]
-    },
-    "class_type": "CR Conditioning Input Switch JK",
-    "_meta": {
-      "title": "Conditioning Input Switch JK🐉"
-    }
-  },
-  "6:257": {
-    "inputs": {
-      "boolean_value": [
-        "6:26",
-        0
-      ],
-      "latent_false": [
-        "6:190",
-        0
-      ],
-      "latent_true": [
-        "6:254",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉"
-    }
-  },
-  "6:258": {
-    "inputs": {
-      "boolean_value": [
-        "6:27",
-        0
-      ],
-      "latent_false": [
-        "6:257",
-        0
-      ],
-      "latent_true": [
-        "6:28",
-        2
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉"
-    }
-  },
-  "6:259": {
-    "inputs": {
-      "ControlNet_switch": [
-        "6:93",
-        0
-      ],
-      "base_positive": [
-        "6:255",
-        0
-      ],
-      "base_negative": [
-        "6:256",
-        0
-      ],
-      "mask": [
         "6:61",
         0
       ],
-      "vae": [
-        "64",
-        0
-      ],
-      "controlnet_stack": [
-        "63",
+      "alpha": [
+        "6:63",
         0
       ]
     },
-    "class_type": "CR Apply Multi-ControlNet Adv JK",
+    "class_type": "JoinImageWithAlpha",
     "_meta": {
-      "title": "Apply Multi-ControlNet Adv JK🐉"
-    }
-  },
-  "6:260": {
-    "inputs": {
-      "boolean_value": [
-        "6:24",
-        0
-      ],
-      "latent_false": [
-        "6:258",
-        0
-      ],
-      "latent_true": [
-        "6:144",
-        0
-      ]
-    },
-    "class_type": "CR Latent Input Switch JK",
-    "_meta": {
-      "title": "Latent Input Switch JK🐉"
-    }
-  },
-  "6:261": {
-    "inputs": {
-      "noise": [
-        "6:21",
-        0
-      ],
-      "guider": [
-        "6:18",
-        0
-      ],
-      "sampler": [
-        "6:22",
-        0
-      ],
-      "sigmas": [
-        "6:20",
-        0
-      ],
-      "latent_image": [
-        "6:60",
-        0
-      ]
-    },
-    "class_type": "SamplerCustomAdvanced",
-    "_meta": {
-      "title": "SamplerCustomAdvanced"
-    }
-  },
-  "6:262": {
-    "inputs": {
-      "samples": [
-        "6:261",
-        1
-      ],
-      "vae": [
-        "64",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "VAE Decode"
-    }
-  },
-  "6:263": {
-    "inputs": {
-      "batch_size": 1,
-      "latents": [
-        "6:261",
-        1
-      ]
-    },
-    "class_type": "RebatchLatents",
-    "_meta": {
-      "title": "Rebatch Latents"
-    }
-  },
-  "6:264": {
-    "inputs": {
-      "batch_size": 1,
-      "images": [
-        "6:262",
-        0
-      ]
-    },
-    "class_type": "RebatchImages",
-    "_meta": {
-      "title": "Rebatch Images"
-    }
-  },
-  "6:265": {
-    "inputs": {
-      "upscale_method": [
-        "6:127",
-        0
-      ],
-      "width": [
-        "6:55",
-        0
-      ],
-      "height": [
-        "6:55",
-        1
-      ],
-      "crop": "disabled",
-      "samples": [
-        "6:263",
-        0
-      ]
-    },
-    "class_type": "LatentUpscale",
-    "_meta": {
-      "title": "Upscale Latent"
-    }
-  },
-  "6:266": {
-    "inputs": {
-      "upscale_method": [
-        "6:132",
-        0
-      ],
-      "width": [
-        "6:55",
-        0
-      ],
-      "height": [
-        "6:55",
-        1
-      ],
-      "crop": "disabled",
-      "image": [
-        "6:264",
-        0
-      ]
-    },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image"
-    }
-  },
-  "6:267": {
-    "inputs": {
-      "x": [
-        "6:55",
-        2
-      ],
-      "y": [
-        "6:55",
-        3
-      ],
-      "resize_source": false,
-      "destination": [
-        "6:238",
-        0
-      ],
-      "source": [
-        "6:265",
-        0
-      ],
-      "mask": [
-        "6:241",
-        0
-      ]
-    },
-    "class_type": "LatentCompositeMasked",
-    "_meta": {
-      "title": "LatentCompositeMasked"
-    }
-  },
-  "6:268": {
-    "inputs": {
-      "x": [
-        "6:55",
-        2
-      ],
-      "y": [
-        "6:55",
-        3
-      ],
-      "resize_source": false,
-      "destination": [
-        "6:239",
-        0
-      ],
-      "source": [
-        "6:266",
-        0
-      ],
-      "mask": [
-        "6:241",
-        0
-      ]
-    },
-    "class_type": "ImageCompositeMasked",
-    "_meta": {
-      "title": "ImageCompositeMasked"
-    }
-  },
-  "6:269": {
-    "inputs": {
-      "boolean_value": [
-        "6:173",
-        0
-      ],
-      "image_false": [
-        "6:264",
-        0
-      ],
-      "image_true": [
-        "6:268",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉"
-    }
-  },
-  "6:270": {
-    "inputs": {
-      "x": 0,
-      "y": 0,
-      "resize_source": false,
-      "destination": [
-        "6:188",
-        0
-      ],
-      "source": [
-        "6:56",
-        0
-      ],
-      "mask": [
-        "6:33",
-        0
-      ]
-    },
-    "class_type": "ImageCompositeMasked",
-    "_meta": {
-      "title": "ImageCompositeMasked"
+      "title": "Join Image with Alpha"
     }
   },
   "134:4": {
@@ -6864,6 +4117,2773 @@
     "class_type": "ImageToMask",
     "_meta": {
       "title": "Convert Image to Mask"
+    }
+  },
+  "6:8": {
+    "inputs": {
+      "resolution": "Custom",
+      "custom_width": [
+        "4",
+        0
+      ],
+      "custom_height": [
+        "4",
+        1
+      ],
+      "swap_dimensions": false
+    },
+    "class_type": "CR Aspect Ratio JK",
+    "_meta": {
+      "title": "Aspect Ratio JK🐉"
+    }
+  },
+  "6:9": {
+    "inputs": {
+      "boolean_value": false,
+      "clip_false": [
+        "92",
+        1
+      ],
+      "clip_true": [
+        "6:10",
+        0
+      ]
+    },
+    "class_type": "CR Clip Input Switch JK",
+    "_meta": {
+      "title": "Clip Input Switch JK🐉-stop layer"
+    }
+  },
+  "6:10": {
+    "inputs": {
+      "stop_at_clip_layer": -1,
+      "clip": [
+        "92",
+        1
+      ]
+    },
+    "class_type": "CLIPSetLastLayer",
+    "_meta": {
+      "title": "CLIP Set Last Layer"
+    }
+  },
+  "6:11": {
+    "inputs": {
+      "boolean_value": false
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-cn effective mask"
+    }
+  },
+  "6:12": {
+    "inputs": {
+      "string": "",
+      "strip_newlines": true
+    },
+    "class_type": "StringConstantMultiline",
+    "_meta": {
+      "title": "positive l"
+    }
+  },
+  "6:13": {
+    "inputs": {
+      "string": "",
+      "strip_newlines": true
+    },
+    "class_type": "StringConstantMultiline",
+    "_meta": {
+      "title": "positive g"
+    }
+  },
+  "6:14": {
+    "inputs": {
+      "string": "",
+      "strip_newlines": true
+    },
+    "class_type": "StringConstantMultiline",
+    "_meta": {
+      "title": "negative l"
+    }
+  },
+  "6:15": {
+    "inputs": {
+      "string": "",
+      "strip_newlines": true
+    },
+    "class_type": "StringConstantMultiline",
+    "_meta": {
+      "title": "negative g"
+    }
+  },
+  "6:16": {
+    "inputs": {
+      "guidance": 3.5
+    },
+    "class_type": "Guidance Default JK",
+    "_meta": {
+      "title": "Guidance Default JK🐉"
+    }
+  },
+  "6:17": {
+    "inputs": {
+      "boolean_value": false
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-switch clip l g"
+    }
+  },
+  "6:18": {
+    "inputs": {
+      "boolean_value": false,
+      "conditioning_false": [
+        "6:140",
+        0
+      ],
+      "conditioning_true": [
+        "6:141",
+        0
+      ]
+    },
+    "class_type": "CR Conditioning Input Switch JK",
+    "_meta": {
+      "title": "Boolean JK🐉-negative clip g"
+    }
+  },
+  "6:19": {
+    "inputs": {
+      "cfg": 1,
+      "neg_scale": 1,
+      "model": [
+        "6:146",
+        0
+      ],
+      "positive": [
+        "6:264",
+        0
+      ],
+      "negative": [
+        "6:264",
+        1
+      ],
+      "empty_conditioning": [
+        "6:183",
+        0
+      ]
+    },
+    "class_type": "PerpNegGuider",
+    "_meta": {
+      "title": "PerpNegGuider"
+    }
+  },
+  "6:20": {
+    "inputs": {
+      "sampler_name": "dpmpp_2m"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "6:21": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1,
+      "model": [
+        "6:146",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "6:22": {
+    "inputs": {
+      "noise_seed": [
+        "5",
+        0
+      ],
+      "noise_mode": "CPU",
+      "batch_seed_mode": "incremental",
+      "variation_seed": 0,
+      "variation_strength": 0,
+      "variation_method": "linear"
+    },
+    "class_type": "RandomNoise //Inspire",
+    "_meta": {
+      "title": "RandomNoise (inspire)"
+    }
+  },
+  "6:23": {
+    "inputs": {
+      "boolean_value": false,
+      "sampler_false": [
+        "6:20",
+        0
+      ],
+      "sampler_true": [
+        "6:24",
+        0
+      ]
+    },
+    "class_type": "CR Sampler Input Switch JK",
+    "_meta": {
+      "title": "Sampler Input Switch JK🐉-detail daemon"
+    }
+  },
+  "6:24": {
+    "inputs": {
+      "detail_amount": 0.1,
+      "start": 0.2,
+      "end": 0.8,
+      "bias": 0.5,
+      "exponent": 1,
+      "start_offset": 0,
+      "end_offset": 0,
+      "fade": 0,
+      "smooth": true,
+      "cfg_scale_override": 0,
+      "sampler": [
+        "6:20",
+        0
+      ]
+    },
+    "class_type": "DetailDaemonSamplerNode",
+    "_meta": {
+      "title": "Detail Daemon Sampler"
+    }
+  },
+  "6:25": {
+    "inputs": {
+      "boolean_value": false
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-img2img"
+    }
+  },
+  "6:26": {
+    "inputs": {
+      "image_gen_width": [
+        "6:8",
+        0
+      ],
+      "image_gen_height": [
+        "6:8",
+        1
+      ],
+      "resize_mode": "Just Resize",
+      "hint_image": [
+        "6:134",
+        0
+      ]
+    },
+    "class_type": "HintImageEnchance JK",
+    "_meta": {
+      "title": "Enchance And Resize Hint Images JK🐉-img"
+    }
+  },
+  "6:27": {
+    "inputs": {
+      "boolean_value": false
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-inpaint latent"
+    }
+  },
+  "6:28": {
+    "inputs": {
+      "boolean_value": false
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-inpaint ckpt"
+    }
+  },
+  "6:29": {
+    "inputs": {
+      "noise_mask": true,
+      "positive": [
+        "6:139",
+        0
+      ],
+      "negative": [
+        "6:18",
+        0
+      ],
+      "vae": [
+        "64",
+        0
+      ],
+      "pixels": [
+        "6:61",
+        0
+      ],
+      "mask": [
+        "6:63",
+        0
+      ]
+    },
+    "class_type": "InpaintModelConditioning",
+    "_meta": {
+      "title": "InpaintModelConditioning"
+    }
+  },
+  "6:30": {
+    "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "6:57",
+        0
+      ],
+      "image_true": [
+        "6:275",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉-final output"
+    }
+  },
+  "6:31": {
+    "inputs": {
+      "boolean_value": [
+        "6:182",
+        0
+      ],
+      "latent_false": [
+        "6:268",
+        0
+      ],
+      "latent_true": [
+        "6:272",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉-output"
+    }
+  },
+  "6:32": {
+    "inputs": {
+      "boolean_value": false,
+      "mask_false": [
+        "6:52",
+        0
+      ],
+      "mask_true": [
+        "6:64",
+        1
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉-blend origin mask"
+    }
+  },
+  "6:33": {
+    "inputs": {
+      "dilation": 10,
+      "mask": [
+        "6:32",
+        0
+      ]
+    },
+    "class_type": "ImpactDilateMask",
+    "_meta": {
+      "title": "Dilate Mask blend"
+    }
+  },
+  "6:34": {
+    "inputs": {
+      "amount": 6,
+      "device": "auto",
+      "mask": [
+        "6:33",
+        0
+      ]
+    },
+    "class_type": "MaskBlur+",
+    "_meta": {
+      "title": "🔧 Mask Blur blend"
+    }
+  },
+  "6:35": {
+    "inputs": {
+      "boolean_value": false,
+      "latent_false": [
+        "6:199",
+        0
+      ],
+      "latent_true": [
+        "6:204",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉-origin"
+    }
+  },
+  "6:36": {
+    "inputs": {
+      "boolean_value": false
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-image fill"
+    }
+  },
+  "6:37": {
+    "inputs": {
+      "image_gen_width": [
+        "6:8",
+        0
+      ],
+      "image_gen_height": [
+        "6:8",
+        1
+      ],
+      "resize_mode": "Just Resize",
+      "hint_image": [
+        "6:149",
+        0
+      ]
+    },
+    "class_type": "HintImageEnchance JK",
+    "_meta": {
+      "title": "Enchance And Resize Hint Images JK🐉-fill"
+    }
+  },
+  "6:38": {
+    "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "6:37",
+        0
+      ],
+      "image_true": [
+        "6:184",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉-tile"
+    }
+  },
+  "6:39": {
+    "inputs": {
+      "upscale_method": [
+        "6:99",
+        0
+      ],
+      "width": 512,
+      "height": 512,
+      "crop": "disabled",
+      "image": [
+        "6:37",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image-tile"
+    }
+  },
+  "6:40": {
+    "inputs": {
+      "boolean_value": false,
+      "mask_false": [
+        "6:142",
+        0
+      ],
+      "mask_true": [
+        "6:44",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉-input mask"
+    }
+  },
+  "6:41": {
+    "inputs": {
+      "image_gen_width": [
+        "6:8",
+        0
+      ],
+      "image_gen_height": [
+        "6:8",
+        1
+      ],
+      "resize_mode": "Just Resize",
+      "hint_image": [
+        "6:150",
+        0
+      ]
+    },
+    "class_type": "HintImageEnchance JK",
+    "_meta": {
+      "title": "Enchance And Resize Hint Images JK🐉-mask"
+    }
+  },
+  "6:42": {
+    "inputs": {
+      "value": 0
+    },
+    "class_type": "ImpactInt",
+    "_meta": {
+      "title": "Mask Detail Removal Threshold"
+    }
+  },
+  "6:43": {
+    "inputs": {
+      "boolean_value": false,
+      "mask_false": [
+        "6:193",
+        0
+      ],
+      "mask_true": [
+        "6:190",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉-invert removal"
+    }
+  },
+  "6:44": {
+    "inputs": {
+      "boolean_value": false,
+      "mask_false": [
+        "6:194",
+        0
+      ],
+      "mask_true": [
+        "6:43",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉-invert"
+    }
+  },
+  "6:45": {
+    "inputs": {
+      "value": 0
+    },
+    "class_type": "ImpactInt",
+    "_meta": {
+      "title": "Pad left"
+    }
+  },
+  "6:46": {
+    "inputs": {
+      "value": 0
+    },
+    "class_type": "ImpactInt",
+    "_meta": {
+      "title": "Pad top"
+    }
+  },
+  "6:47": {
+    "inputs": {
+      "value": 0
+    },
+    "class_type": "ImpactInt",
+    "_meta": {
+      "title": "Pad right"
+    }
+  },
+  "6:48": {
+    "inputs": {
+      "value": 0
+    },
+    "class_type": "ImpactInt",
+    "_meta": {
+      "title": "Pad bottom"
+    }
+  },
+  "6:49": {
+    "inputs": {
+      "value": 0
+    },
+    "class_type": "ImpactInt",
+    "_meta": {
+      "title": "Pad feathering"
+    }
+  },
+  "6:50": {
+    "inputs": {
+      "dilation": 10,
+      "mask": [
+        "6:197",
+        1
+      ]
+    },
+    "class_type": "ImpactDilateMask",
+    "_meta": {
+      "title": "Dilate Mask-mask"
+    }
+  },
+  "6:51": {
+    "inputs": {
+      "amount": 6,
+      "device": "auto",
+      "mask": [
+        "6:50",
+        0
+      ]
+    },
+    "class_type": "MaskBlur+",
+    "_meta": {
+      "title": "🔧 Mask Blur-mask"
+    }
+  },
+  "6:52": {
+    "inputs": {
+      "boolean_value": false,
+      "mask_false": [
+        "6:51",
+        0
+      ],
+      "mask_true": [
+        "6:203",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉-Binary"
+    }
+  },
+  "6:53": {
+    "inputs": {
+      "boolean_value": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-crop"
+    }
+  },
+  "6:54": {
+    "inputs": {
+      "boolean_value": false,
+      "latent_false": [
+        "6:255",
+        0
+      ],
+      "latent_true": [
+        "6:257",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉-latent crop"
+    }
+  },
+  "6:55": {
+    "inputs": {
+      "boolean_value": false
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-ignore latent crop offset"
+    }
+  },
+  "6:56": {
+    "inputs": {
+      "custom_width": 1024,
+      "custom_height": 1024,
+      "padding": [
+        "7",
+        1
+      ],
+      "use_image_res": [
+        "7",
+        2
+      ],
+      "use_target_res": [
+        "7",
+        3
+      ],
+      "target_res": [
+        "7",
+        4
+      ],
+      "use_target_mega_pixel": [
+        "7",
+        5
+      ],
+      "target_mega_pixel": [
+        "7",
+        6
+      ],
+      "multiple_of": 8,
+      "image_upscale_method": "lanczos",
+      "latent_upscale_method": "bilinear",
+      "mask": [
+        "6:52",
+        0
+      ],
+      "image": [
+        "6:244",
+        0
+      ]
+    },
+    "class_type": "Image Crop by Mask Resolution JK",
+    "_meta": {
+      "title": "Image Crop by Mask Resolution JK🐉"
+    }
+  },
+  "6:57": {
+    "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "6:274",
+        0
+      ],
+      "image_true": [
+        "6:58",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉-grading"
+    }
+  },
+  "6:58": {
+    "inputs": {
+      "brightness": 1,
+      "contrast": 1,
+      "saturation": 1,
+      "R": 0,
+      "G": 0,
+      "B": 0,
+      "image": [
+        "6:274",
+        0
+      ]
+    },
+    "class_type": "Color Grading JK",
+    "_meta": {
+      "title": "Color Grading JK🐉"
+    }
+  },
+  "6:59": {
+    "inputs": {
+      "image_upscale_method": "lanczos",
+      "latent_upscale_method": "bilinear"
+    },
+    "class_type": "Upscale Method JK",
+    "_meta": {
+      "title": "Upscale Method JK🐉"
+    }
+  },
+  "6:60": {
+    "inputs": {
+      "image": [
+        "6:26",
+        0
+      ]
+    },
+    "class_type": "GetImageSize+",
+    "_meta": {
+      "title": "🔧 Get Image Size-output"
+    }
+  },
+  "6:61": {
+    "inputs": {
+      "boolean_value": [
+        "6:182",
+        0
+      ],
+      "image_false": [
+        "6:244",
+        0
+      ],
+      "image_true": [
+        "6:252",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉-preview"
+    }
+  },
+  "6:62": {
+    "inputs": {
+      "amount": 1,
+      "samples": [
+        "6:265",
+        0
+      ]
+    },
+    "class_type": "RepeatLatentBatch",
+    "_meta": {
+      "title": "Repeat Latent Batch"
+    }
+  },
+  "6:63": {
+    "inputs": {
+      "boolean_value": [
+        "6:182",
+        0
+      ],
+      "mask_false": [
+        "6:52",
+        0
+      ],
+      "mask_true": [
+        "6:256",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉-preview"
+    }
+  },
+  "6:64": {
+    "inputs": {
+      "left": [
+        "6:45",
+        0
+      ],
+      "top": [
+        "6:46",
+        0
+      ],
+      "right": [
+        "6:47",
+        0
+      ],
+      "bottom": [
+        "6:48",
+        0
+      ],
+      "feathering": [
+        "6:49",
+        0
+      ],
+      "image": [
+        "6:26",
+        0
+      ],
+      "mask": [
+        "6:196",
+        0
+      ]
+    },
+    "class_type": "ImagePadForOutpaintMasked",
+    "_meta": {
+      "title": "Image Pad For Outpaint Masked-output original mask"
+    }
+  },
+  "6:77": {
+    "inputs": {
+      "op": "Not",
+      "a": false
+    },
+    "class_type": "CM_BoolUnaryOperation JK",
+    "_meta": {
+      "title": "BoolUnaryOp JK🐉"
+    }
+  },
+  "6:78": {
+    "inputs": {
+      "boolean_value": false
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉"
+    }
+  },
+  "6:79": {
+    "inputs": {},
+    "class_type": "Empty Latent Color JK",
+    "_meta": {
+      "title": "Empty Latent Color JK🐉"
+    }
+  },
+  "6:80": {
+    "inputs": {
+      "model": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "DifferentialDiffusion",
+    "_meta": {
+      "title": "Differential Diffusion"
+    }
+  },
+  "6:81": {
+    "inputs": {
+      "boolean_value": [
+        "6:17",
+        0
+      ],
+      "text_false": [
+        "6:13",
+        0
+      ],
+      "text_true": [
+        "6:15",
+        0
+      ]
+    },
+    "class_type": "CR Text Input Switch JK",
+    "_meta": {
+      "title": "Text Input Switch JK🐉"
+    }
+  },
+  "6:82": {
+    "inputs": {
+      "boolean_value": [
+        "6:17",
+        0
+      ],
+      "text_false": [
+        "6:15",
+        0
+      ],
+      "text_true": [
+        "6:13",
+        0
+      ]
+    },
+    "class_type": "CR Text Input Switch JK",
+    "_meta": {
+      "title": "Text Input Switch JK🐉"
+    }
+  },
+  "6:83": {
+    "inputs": {
+      "boolean_value": [
+        "6:17",
+        0
+      ],
+      "text_false": [
+        "6:12",
+        0
+      ],
+      "text_true": [
+        "6:14",
+        0
+      ]
+    },
+    "class_type": "CR Text Input Switch JK",
+    "_meta": {
+      "title": "Text Input Switch JK🐉"
+    }
+  },
+  "6:84": {
+    "inputs": {
+      "boolean_value": [
+        "6:17",
+        0
+      ],
+      "text_false": [
+        "6:14",
+        0
+      ],
+      "text_true": [
+        "6:12",
+        0
+      ]
+    },
+    "class_type": "CR Text Input Switch JK",
+    "_meta": {
+      "title": "Text Input Switch JK🐉"
+    }
+  },
+  "6:85": {
+    "inputs": {
+      "a": [
+        "6:27",
+        0
+      ],
+      "b": [
+        "6:28",
+        0
+      ]
+    },
+    "class_type": "Bool Binary OR JK",
+    "_meta": {
+      "title": "Bool OR JK🐉"
+    }
+  },
+  "6:86": {
+    "inputs": {
+      "op": "Neg",
+      "a": [
+        "6:42",
+        0
+      ]
+    },
+    "class_type": "CM_IntUnaryOperation JK",
+    "_meta": {
+      "title": "IntUnaryOp JK🐉"
+    }
+  },
+  "6:87": {
+    "inputs": {
+      "op": "Neg",
+      "a": [
+        "6:42",
+        0
+      ]
+    },
+    "class_type": "CM_IntUnaryOperation JK",
+    "_meta": {
+      "title": "IntUnaryOp JK🐉"
+    }
+  },
+  "6:88": {
+    "inputs": {
+      "a": [
+        "6:45",
+        0
+      ]
+    },
+    "class_type": "CM_IntToBool JK",
+    "_meta": {
+      "title": "IntToBool JK🐉"
+    }
+  },
+  "6:89": {
+    "inputs": {
+      "a": [
+        "6:46",
+        0
+      ]
+    },
+    "class_type": "CM_IntToBool JK",
+    "_meta": {
+      "title": "IntToBool JK🐉"
+    }
+  },
+  "6:90": {
+    "inputs": {
+      "a": [
+        "6:47",
+        0
+      ]
+    },
+    "class_type": "CM_IntToBool JK",
+    "_meta": {
+      "title": "IntToBool JK🐉"
+    }
+  },
+  "6:91": {
+    "inputs": {
+      "a": [
+        "6:48",
+        0
+      ]
+    },
+    "class_type": "CM_IntToBool JK",
+    "_meta": {
+      "title": "IntToBool JK🐉"
+    }
+  },
+  "6:92": {
+    "inputs": {
+      "a": [
+        "6:77",
+        0
+      ]
+    },
+    "class_type": "CM_BoolToInt JK",
+    "_meta": {
+      "title": "BoolToInt JK🐉"
+    }
+  },
+  "6:93": {
+    "inputs": {
+      "op": "Not",
+      "a": [
+        "6:78",
+        0
+      ]
+    },
+    "class_type": "CM_BoolUnaryOperation JK",
+    "_meta": {
+      "title": "BoolUnaryOp JK🐉"
+    }
+  },
+  "6:94": {
+    "inputs": {
+      "width": [
+        "6:8",
+        0
+      ],
+      "height": [
+        "6:8",
+        1
+      ],
+      "batch_size": 1,
+      "color": [
+        "6:79",
+        3
+      ]
+    },
+    "class_type": "EmptyImage",
+    "_meta": {
+      "title": "EmptyImage"
+    }
+  },
+  "6:95": {
+    "inputs": {
+      "width": [
+        "6:8",
+        0
+      ],
+      "height": [
+        "6:8",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "EmptySD3LatentImage"
+    }
+  },
+  "6:96": {
+    "inputs": {
+      "prompt_1": [
+        "6:84",
+        0
+      ],
+      "prompt_2": [
+        "6:82",
+        0
+      ]
+    },
+    "class_type": "CM_PromptCombine_JK",
+    "_meta": {
+      "title": "Prompt Combine JK🐉"
+    }
+  },
+  "6:97": {
+    "inputs": {
+      "a": [
+        "6:25",
+        0
+      ],
+      "b": [
+        "6:85",
+        0
+      ]
+    },
+    "class_type": "Bool Binary OR JK",
+    "_meta": {
+      "title": "Bool OR JK🐉"
+    }
+  },
+  "6:98": {
+    "inputs": {
+      "a": [
+        "6:88",
+        0
+      ],
+      "b": [
+        "6:89",
+        0
+      ]
+    },
+    "class_type": "Bool Binary OR JK",
+    "_meta": {
+      "title": "Bool OR JK🐉"
+    }
+  },
+  "6:99": {
+    "inputs": {
+      "string": [
+        "6:59",
+        0
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "6:100": {
+    "inputs": {
+      "string": [
+        "6:59",
+        1
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "6:101": {
+    "inputs": {
+      "string": [
+        "6:59",
+        1
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "6:102": {
+    "inputs": {
+      "string": [
+        "6:59",
+        1
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "6:134": {
+    "inputs": {
+      "boolean_value": [
+        "6:97",
+        0
+      ],
+      "image_false": [
+        "6:94",
+        0
+      ],
+      "image_true": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉"
+    }
+  },
+  "6:135": {
+    "inputs": {
+      "a": [
+        "6:98",
+        0
+      ],
+      "b": [
+        "6:90",
+        0
+      ]
+    },
+    "class_type": "Bool Binary OR JK",
+    "_meta": {
+      "title": "Bool OR JK🐉"
+    }
+  },
+  "6:136": {
+    "inputs": {
+      "string": [
+        "6:59",
+        0
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "6:137": {
+    "inputs": {
+      "string": [
+        "6:59",
+        0
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "6:138": {
+    "inputs": {
+      "string": [
+        "6:59",
+        0
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "6:139": {
+    "inputs": {
+      "clip_l": [
+        "6:83",
+        0
+      ],
+      "t5xxl": [
+        "6:81",
+        0
+      ],
+      "guidance": [
+        "6:16",
+        0
+      ],
+      "clip": [
+        "6:9",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncodeFlux",
+    "_meta": {
+      "title": "CLIPTextEncodeFlux"
+    }
+  },
+  "6:140": {
+    "inputs": {
+      "text": [
+        "6:96",
+        0
+      ],
+      "clip": [
+        "6:9",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "6:141": {
+    "inputs": {
+      "clip_l": [
+        "6:84",
+        0
+      ],
+      "t5xxl": [
+        "6:82",
+        0
+      ],
+      "guidance": [
+        "6:16",
+        0
+      ],
+      "clip": [
+        "6:9",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncodeFlux",
+    "_meta": {
+      "title": "CLIPTextEncodeFlux"
+    }
+  },
+  "6:142": {
+    "inputs": {
+      "value": 1,
+      "width": [
+        "6:8",
+        0
+      ],
+      "height": [
+        "6:8",
+        1
+      ]
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "6:143": {
+    "inputs": {
+      "op": "Not",
+      "a": [
+        "6:25",
+        0
+      ]
+    },
+    "class_type": "CM_BoolUnaryOperation JK",
+    "_meta": {
+      "title": "BoolUnaryOp JK🐉"
+    }
+  },
+  "6:144": {
+    "inputs": {
+      "a": [
+        "6:85",
+        0
+      ],
+      "b": [
+        "6:11",
+        0
+      ]
+    },
+    "class_type": "Bool Binary OR JK",
+    "_meta": {
+      "title": "Bool OR JK🐉"
+    }
+  },
+  "6:145": {
+    "inputs": {
+      "a": [
+        "6:135",
+        0
+      ],
+      "b": [
+        "6:91",
+        0
+      ]
+    },
+    "class_type": "Bool Binary OR JK",
+    "_meta": {
+      "title": "Bool OR JK🐉"
+    }
+  },
+  "6:146": {
+    "inputs": {
+      "boolean_value": [
+        "6:85",
+        0
+      ],
+      "model_false": [
+        "97",
+        0
+      ],
+      "model_true": [
+        "6:80",
+        0
+      ]
+    },
+    "class_type": "CR Model Input Switch JK",
+    "_meta": {
+      "title": "Model Input Switch JK🐉"
+    }
+  },
+  "6:147": {
+    "inputs": {
+      "boolean_value": [
+        "6:144",
+        0
+      ],
+      "mask_false": [
+        "6:142",
+        0
+      ],
+      "mask_true": [
+        "3",
+        1
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉"
+    }
+  },
+  "6:148": {
+    "inputs": {
+      "pixels": [
+        "6:26",
+        0
+      ],
+      "vae": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "6:149": {
+    "inputs": {
+      "boolean_value": [
+        "6:85",
+        0
+      ],
+      "image_false": [
+        "6:26",
+        0
+      ],
+      "image_true": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉"
+    }
+  },
+  "6:150": {
+    "inputs": {
+      "mask": [
+        "6:147",
+        0
+      ]
+    },
+    "class_type": "MaskToImage",
+    "_meta": {
+      "title": "Convert Mask to Image"
+    }
+  },
+  "6:151": {
+    "inputs": {
+      "op": "Not",
+      "a": [
+        "6:145",
+        0
+      ]
+    },
+    "class_type": "CM_BoolUnaryOperation JK",
+    "_meta": {
+      "title": "BoolUnaryOp JK🐉"
+    }
+  },
+  "6:152": {
+    "inputs": {
+      "boolean_value": [
+        "6:25",
+        0
+      ],
+      "latent_false": [
+        "6:95",
+        0
+      ],
+      "latent_true": [
+        "6:148",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉"
+    }
+  },
+  "6:153": {
+    "inputs": {
+      "a": [
+        "6:143",
+        0
+      ],
+      "b": [
+        "6:151",
+        0
+      ]
+    },
+    "class_type": "Bool Binary And JK",
+    "_meta": {
+      "title": "Bool And JK🐉"
+    }
+  },
+  "6:180": {
+    "inputs": {
+      "pixels": [
+        "6:26",
+        0
+      ],
+      "vae": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "6:181": {
+    "inputs": {
+      "channel": "red",
+      "image": [
+        "6:41",
+        0
+      ]
+    },
+    "class_type": "ImageToMask",
+    "_meta": {
+      "title": "Convert Image to Mask"
+    }
+  },
+  "6:182": {
+    "inputs": {
+      "a": [
+        "6:53",
+        0
+      ],
+      "b": [
+        "6:153",
+        0
+      ]
+    },
+    "class_type": "Bool Binary And JK",
+    "_meta": {
+      "title": "Bool And JK🐉"
+    }
+  },
+  "6:183": {
+    "inputs": {
+      "conditioning": [
+        "6:18",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "6:184": {
+    "inputs": {
+      "upscale_method": [
+        "6:99",
+        0
+      ],
+      "width": [
+        "6:8",
+        0
+      ],
+      "height": [
+        "6:8",
+        1
+      ],
+      "crop": "disabled",
+      "image": [
+        "6:39",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "6:185": {
+    "inputs": {
+      "boolean_value": [
+        "6:93",
+        0
+      ],
+      "latent_false": [
+        "6:180",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉"
+    }
+  },
+  "6:186": {
+    "inputs": {
+      "mask": [
+        "6:181",
+        0
+      ]
+    },
+    "class_type": "InvertMask",
+    "_meta": {
+      "title": "InvertMask"
+    }
+  },
+  "6:187": {
+    "inputs": {
+      "dilation": [
+        "6:42",
+        0
+      ],
+      "mask": [
+        "6:181",
+        0
+      ]
+    },
+    "class_type": "ImpactDilateMask",
+    "_meta": {
+      "title": "Dilate Mask"
+    }
+  },
+  "6:188": {
+    "inputs": {
+      "mask": [
+        "6:181",
+        0
+      ]
+    },
+    "class_type": "InvertMask",
+    "_meta": {
+      "title": "InvertMask"
+    }
+  },
+  "6:189": {
+    "inputs": {
+      "dilation": [
+        "6:42",
+        0
+      ],
+      "mask": [
+        "6:186",
+        0
+      ]
+    },
+    "class_type": "ImpactDilateMask",
+    "_meta": {
+      "title": "Dilate Mask"
+    }
+  },
+  "6:190": {
+    "inputs": {
+      "dilation": [
+        "6:87",
+        0
+      ],
+      "mask": [
+        "6:187",
+        0
+      ]
+    },
+    "class_type": "ImpactDilateMask",
+    "_meta": {
+      "title": "Dilate Mask"
+    }
+  },
+  "6:191": {
+    "inputs": {
+      "pixels": [
+        "6:38",
+        0
+      ],
+      "vae": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "6:192": {
+    "inputs": {
+      "dilation": [
+        "6:86",
+        0
+      ],
+      "mask": [
+        "6:189",
+        0
+      ]
+    },
+    "class_type": "ImpactDilateMask",
+    "_meta": {
+      "title": "Dilate Mask"
+    }
+  },
+  "6:193": {
+    "inputs": {
+      "mask": [
+        "6:192",
+        0
+      ]
+    },
+    "class_type": "InvertMask",
+    "_meta": {
+      "title": "InvertMask"
+    }
+  },
+  "6:194": {
+    "inputs": {
+      "mask": [
+        "6:43",
+        0
+      ]
+    },
+    "class_type": "InvertMask",
+    "_meta": {
+      "title": "InvertMask"
+    }
+  },
+  "6:195": {
+    "inputs": {
+      "boolean_value": [
+        "6:44",
+        1
+      ],
+      "mask_false": [
+        "6:188",
+        0
+      ],
+      "mask_true": [
+        "6:181",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉"
+    }
+  },
+  "6:196": {
+    "inputs": {
+      "boolean_value": [
+        "6:40",
+        1
+      ],
+      "mask_false": [
+        "6:142",
+        0
+      ],
+      "mask_true": [
+        "6:195",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK🐉"
+    }
+  },
+  "6:197": {
+    "inputs": {
+      "left": [
+        "6:45",
+        0
+      ],
+      "top": [
+        "6:46",
+        0
+      ],
+      "right": [
+        "6:47",
+        0
+      ],
+      "bottom": [
+        "6:48",
+        0
+      ],
+      "feathering": [
+        "6:49",
+        0
+      ],
+      "image": [
+        "6:26",
+        0
+      ],
+      "mask": [
+        "6:40",
+        0
+      ]
+    },
+    "class_type": "ImagePadForOutpaintMasked",
+    "_meta": {
+      "title": "Image Pad For Outpaint Masked"
+    }
+  },
+  "6:198": {
+    "inputs": {
+      "image": [
+        "6:197",
+        0
+      ]
+    },
+    "class_type": "GetImageSize+",
+    "_meta": {
+      "title": "🔧 Get Image Size"
+    }
+  },
+  "6:199": {
+    "inputs": {
+      "width": [
+        "6:198",
+        0
+      ],
+      "height": [
+        "6:198",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "EmptySD3LatentImage"
+    }
+  },
+  "6:200": {
+    "inputs": {
+      "boolean_value": [
+        "6:27",
+        0
+      ],
+      "latent_false": [
+        "6:199",
+        0
+      ],
+      "latent_true": [
+        "6:185",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉"
+    }
+  },
+  "6:201": {
+    "inputs": {
+      "upscale_method": [
+        "6:100",
+        0
+      ],
+      "width": [
+        "6:198",
+        0
+      ],
+      "height": [
+        "6:198",
+        1
+      ],
+      "crop": "disabled",
+      "samples": [
+        "6:191",
+        0
+      ]
+    },
+    "class_type": "LatentUpscale",
+    "_meta": {
+      "title": "Upscale Latent"
+    }
+  },
+  "6:202": {
+    "inputs": {
+      "upscale_method": [
+        "6:136",
+        0
+      ],
+      "width": [
+        "6:198",
+        0
+      ],
+      "height": [
+        "6:198",
+        1
+      ],
+      "crop": "disabled",
+      "image": [
+        "6:38",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "6:203": {
+    "inputs": {
+      "threshold": [
+        "6:92",
+        0
+      ],
+      "mask": [
+        "6:51",
+        0
+      ]
+    },
+    "class_type": "ToBinaryMask",
+    "_meta": {
+      "title": "ToBinaryMask"
+    }
+  },
+  "6:204": {
+    "inputs": {
+      "upscale_method": [
+        "6:100",
+        0
+      ],
+      "width": [
+        "6:198",
+        0
+      ],
+      "height": [
+        "6:198",
+        1
+      ],
+      "crop": "disabled",
+      "samples": [
+        "6:200",
+        0
+      ]
+    },
+    "class_type": "LatentUpscale",
+    "_meta": {
+      "title": "Upscale Latent"
+    }
+  },
+  "6:241": {
+    "inputs": {
+      "boolean_value": [
+        "6:36",
+        0
+      ],
+      "latent_false": [
+        "6:35",
+        0
+      ],
+      "latent_true": [
+        "6:201",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉"
+    }
+  },
+  "6:242": {
+    "inputs": {
+      "x": 0,
+      "y": 0,
+      "resize_source": false,
+      "destination": [
+        "6:197",
+        0
+      ],
+      "source": [
+        "6:202",
+        0
+      ],
+      "mask": [
+        "6:52",
+        0
+      ]
+    },
+    "class_type": "ImageCompositeMasked",
+    "_meta": {
+      "title": "ImageCompositeMasked"
+    }
+  },
+  "6:243": {
+    "inputs": {
+      "x": [
+        "6:45",
+        0
+      ],
+      "y": [
+        "6:46",
+        0
+      ],
+      "resize_source": false,
+      "destination": [
+        "6:241",
+        0
+      ],
+      "source": [
+        "6:200",
+        0
+      ],
+      "mask": [
+        "6:40",
+        0
+      ]
+    },
+    "class_type": "LatentCompositeMasked",
+    "_meta": {
+      "title": "LatentCompositeMasked"
+    }
+  },
+  "6:244": {
+    "inputs": {
+      "boolean_value": [
+        "6:36",
+        0
+      ],
+      "image_false": [
+        "6:197",
+        0
+      ],
+      "image_true": [
+        "6:242",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉"
+    }
+  },
+  "6:245": {
+    "inputs": {
+      "image_offset": [
+        "6:56",
+        2
+      ]
+    },
+    "class_type": "Latent Crop Offset JK",
+    "_meta": {
+      "title": "Latent Crop Offset JK🐉"
+    }
+  },
+  "6:246": {
+    "inputs": {
+      "x": [
+        "6:56",
+        2
+      ],
+      "y": [
+        "6:56",
+        3
+      ],
+      "width": [
+        "6:56",
+        0
+      ],
+      "height": [
+        "6:56",
+        1
+      ],
+      "mask": [
+        "6:52",
+        0
+      ]
+    },
+    "class_type": "CropMask",
+    "_meta": {
+      "title": "CropMask"
+    }
+  },
+  "6:247": {
+    "inputs": {
+      "image_offset": [
+        "6:56",
+        3
+      ]
+    },
+    "class_type": "Latent Crop Offset JK",
+    "_meta": {
+      "title": "Latent Crop Offset JK🐉"
+    }
+  },
+  "6:248": {
+    "inputs": {
+      "width": [
+        "6:56",
+        0
+      ],
+      "height": [
+        "6:56",
+        1
+      ],
+      "x": [
+        "6:56",
+        2
+      ],
+      "y": [
+        "6:56",
+        3
+      ],
+      "image": [
+        "6:244",
+        0
+      ]
+    },
+    "class_type": "ImageCrop",
+    "_meta": {
+      "title": "Image Crop"
+    }
+  },
+  "6:249": {
+    "inputs": {
+      "boolean_value": [
+        "6:55",
+        0
+      ],
+      "int_false": [
+        "6:245",
+        0
+      ],
+      "int_true": [
+        "6:56",
+        2
+      ]
+    },
+    "class_type": "CR Int Input Switch JK",
+    "_meta": {
+      "title": "Int Input Switch JK🐉"
+    }
+  },
+  "6:250": {
+    "inputs": {
+      "mask": [
+        "6:246",
+        0
+      ]
+    },
+    "class_type": "MaskToImage",
+    "_meta": {
+      "title": "Convert Mask to Image"
+    }
+  },
+  "6:251": {
+    "inputs": {
+      "boolean_value": [
+        "6:55",
+        0
+      ],
+      "int_false": [
+        "6:247",
+        0
+      ],
+      "int_true": [
+        "6:56",
+        3
+      ]
+    },
+    "class_type": "CR Int Input Switch JK",
+    "_meta": {
+      "title": "Int Input Switch JK🐉"
+    }
+  },
+  "6:252": {
+    "inputs": {
+      "upscale_method": [
+        "6:137",
+        0
+      ],
+      "width": [
+        "6:56",
+        4
+      ],
+      "height": [
+        "6:56",
+        5
+      ],
+      "crop": "disabled",
+      "image": [
+        "6:248",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "6:253": {
+    "inputs": {
+      "upscale_method": [
+        "6:137",
+        0
+      ],
+      "width": [
+        "6:56",
+        4
+      ],
+      "height": [
+        "6:56",
+        5
+      ],
+      "crop": "disabled",
+      "image": [
+        "6:250",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "6:254": {
+    "inputs": {
+      "width": [
+        "6:56",
+        0
+      ],
+      "height": [
+        "6:56",
+        1
+      ],
+      "x": [
+        "6:249",
+        0
+      ],
+      "y": [
+        "6:251",
+        0
+      ],
+      "samples": [
+        "6:243",
+        0
+      ]
+    },
+    "class_type": "LatentCrop",
+    "_meta": {
+      "title": "Crop Latent"
+    }
+  },
+  "6:255": {
+    "inputs": {
+      "pixels": [
+        "6:252",
+        0
+      ],
+      "vae": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "6:256": {
+    "inputs": {
+      "channel": "red",
+      "image": [
+        "6:253",
+        0
+      ]
+    },
+    "class_type": "ImageToMask",
+    "_meta": {
+      "title": "Convert Image to Mask"
+    }
+  },
+  "6:257": {
+    "inputs": {
+      "upscale_method": [
+        "6:101",
+        0
+      ],
+      "width": [
+        "6:56",
+        4
+      ],
+      "height": [
+        "6:56",
+        5
+      ],
+      "crop": "disabled",
+      "samples": [
+        "6:254",
+        0
+      ]
+    },
+    "class_type": "LatentUpscale",
+    "_meta": {
+      "title": "Upscale Latent"
+    }
+  },
+  "6:258": {
+    "inputs": {
+      "boolean_value": [
+        "6:182",
+        0
+      ],
+      "latent_false": [
+        "6:243",
+        0
+      ],
+      "latent_true": [
+        "6:54",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉"
+    }
+  },
+  "6:259": {
+    "inputs": {
+      "samples": [
+        "6:258",
+        0
+      ],
+      "mask": [
+        "6:63",
+        0
+      ]
+    },
+    "class_type": "SetLatentNoiseMask",
+    "_meta": {
+      "title": "Set Latent Noise Mask"
+    }
+  },
+  "6:260": {
+    "inputs": {
+      "boolean_value": [
+        "6:28",
+        0
+      ],
+      "conditioning_false": [
+        "6:139",
+        0
+      ],
+      "conditioning_true": [
+        "6:29",
+        0
+      ]
+    },
+    "class_type": "CR Conditioning Input Switch JK",
+    "_meta": {
+      "title": "Conditioning Input Switch JK🐉"
+    }
+  },
+  "6:261": {
+    "inputs": {
+      "boolean_value": [
+        "6:28",
+        0
+      ],
+      "conditioning_false": [
+        "6:18",
+        0
+      ],
+      "conditioning_true": [
+        "6:29",
+        1
+      ]
+    },
+    "class_type": "CR Conditioning Input Switch JK",
+    "_meta": {
+      "title": "Conditioning Input Switch JK🐉"
+    }
+  },
+  "6:262": {
+    "inputs": {
+      "boolean_value": [
+        "6:27",
+        0
+      ],
+      "latent_false": [
+        "6:199",
+        0
+      ],
+      "latent_true": [
+        "6:259",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉"
+    }
+  },
+  "6:263": {
+    "inputs": {
+      "boolean_value": [
+        "6:28",
+        0
+      ],
+      "latent_false": [
+        "6:262",
+        0
+      ],
+      "latent_true": [
+        "6:29",
+        2
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉"
+    }
+  },
+  "6:264": {
+    "inputs": {
+      "effective_mask": [
+        "6:11",
+        0
+      ],
+      "base_positive": [
+        "6:260",
+        0
+      ],
+      "base_negative": [
+        "6:261",
+        0
+      ],
+      "mask": [
+        "6:63",
+        0
+      ],
+      "vae": [
+        "64",
+        0
+      ],
+      "controlnet_stack": [
+        "63",
+        0
+      ]
+    },
+    "class_type": "CR Apply Multi-ControlNet Adv JK",
+    "_meta": {
+      "title": "Apply Multi-ControlNet Adv JK🐉"
+    }
+  },
+  "6:265": {
+    "inputs": {
+      "boolean_value": [
+        "6:25",
+        0
+      ],
+      "latent_false": [
+        "6:263",
+        0
+      ],
+      "latent_true": [
+        "6:152",
+        0
+      ]
+    },
+    "class_type": "CR Latent Input Switch JK",
+    "_meta": {
+      "title": "Latent Input Switch JK🐉"
+    }
+  },
+  "6:266": {
+    "inputs": {
+      "noise": [
+        "6:22",
+        0
+      ],
+      "guider": [
+        "6:19",
+        0
+      ],
+      "sampler": [
+        "6:23",
+        0
+      ],
+      "sigmas": [
+        "6:21",
+        0
+      ],
+      "latent_image": [
+        "6:62",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "6:267": {
+    "inputs": {
+      "samples": [
+        "6:266",
+        1
+      ],
+      "vae": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "6:268": {
+    "inputs": {
+      "batch_size": 1,
+      "latents": [
+        "6:266",
+        1
+      ]
+    },
+    "class_type": "RebatchLatents",
+    "_meta": {
+      "title": "Rebatch Latents"
+    }
+  },
+  "6:269": {
+    "inputs": {
+      "batch_size": 1,
+      "images": [
+        "6:267",
+        0
+      ]
+    },
+    "class_type": "RebatchImages",
+    "_meta": {
+      "title": "Rebatch Images"
+    }
+  },
+  "6:270": {
+    "inputs": {
+      "upscale_method": [
+        "6:102",
+        0
+      ],
+      "width": [
+        "6:56",
+        0
+      ],
+      "height": [
+        "6:56",
+        1
+      ],
+      "crop": "disabled",
+      "samples": [
+        "6:268",
+        0
+      ]
+    },
+    "class_type": "LatentUpscale",
+    "_meta": {
+      "title": "Upscale Latent"
+    }
+  },
+  "6:271": {
+    "inputs": {
+      "upscale_method": [
+        "6:138",
+        0
+      ],
+      "width": [
+        "6:56",
+        0
+      ],
+      "height": [
+        "6:56",
+        1
+      ],
+      "crop": "disabled",
+      "image": [
+        "6:269",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "6:272": {
+    "inputs": {
+      "x": [
+        "6:56",
+        2
+      ],
+      "y": [
+        "6:56",
+        3
+      ],
+      "resize_source": false,
+      "destination": [
+        "6:243",
+        0
+      ],
+      "source": [
+        "6:270",
+        0
+      ],
+      "mask": [
+        "6:246",
+        0
+      ]
+    },
+    "class_type": "LatentCompositeMasked",
+    "_meta": {
+      "title": "LatentCompositeMasked"
+    }
+  },
+  "6:273": {
+    "inputs": {
+      "x": [
+        "6:56",
+        2
+      ],
+      "y": [
+        "6:56",
+        3
+      ],
+      "resize_source": false,
+      "destination": [
+        "6:244",
+        0
+      ],
+      "source": [
+        "6:271",
+        0
+      ],
+      "mask": [
+        "6:246",
+        0
+      ]
+    },
+    "class_type": "ImageCompositeMasked",
+    "_meta": {
+      "title": "ImageCompositeMasked"
+    }
+  },
+  "6:274": {
+    "inputs": {
+      "boolean_value": [
+        "6:182",
+        0
+      ],
+      "image_false": [
+        "6:269",
+        0
+      ],
+      "image_true": [
+        "6:273",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉"
+    }
+  },
+  "6:275": {
+    "inputs": {
+      "x": 0,
+      "y": 0,
+      "resize_source": false,
+      "destination": [
+        "6:197",
+        0
+      ],
+      "source": [
+        "6:57",
+        0
+      ],
+      "mask": [
+        "6:34",
+        0
+      ]
+    },
+    "class_type": "ImageCompositeMasked",
+    "_meta": {
+      "title": "ImageCompositeMasked"
     }
   }
 }
