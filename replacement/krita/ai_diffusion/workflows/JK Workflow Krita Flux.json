@@ -119,7 +119,7 @@
   },
   "10": {
     "inputs": {
-      "name": "Negative Scale",
+      "name": "B12 Negative Scale",
       "type": "number",
       "default": 1,
       "min": 0,
@@ -857,7 +857,8 @@
         "4",
         0
       ],
-      "type": "flux"
+      "type": "flux",
+      "device": "default"
     },
     "class_type": "DualCLIPLoader",
     "_meta": {
@@ -1400,6 +1401,15 @@
   },
   "91": {
     "inputs": {
+      "boolean_value": -1
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK\ud83d\udc09-cn effective mask"
+    }
+  },
+  "92": {
+    "inputs": {
       "string": [
         "6",
         0
@@ -1411,7 +1421,7 @@
       "title": "positive l"
     }
   },
-  "92": {
+  "93": {
     "inputs": {
       "string": [
         "7",
@@ -1424,7 +1434,7 @@
       "title": "positive g"
     }
   },
-  "93": {
+  "94": {
     "inputs": {
       "string": [
         "8",
@@ -1437,7 +1447,7 @@
       "title": "negative l"
     }
   },
-  "94": {
+  "95": {
     "inputs": {
       "string": "",
       "strip_newlines": true
@@ -1447,7 +1457,7 @@
       "title": "negative g"
     }
   },
-  "95": {
+  "96": {
     "inputs": {
       "guidance": [
         "9",
@@ -1459,16 +1469,16 @@
       "title": "Guidance Default JK\ud83d\udc09"
     }
   },
-  "96": {
+  "97": {
     "inputs": {
-      "boolean_value": false
+      "boolean_value": 3.5
     },
     "class_type": "CR Boolean JK",
     "_meta": {
       "title": "Boolean JK\ud83d\udc09-switch clip l g"
     }
   },
-  "97": {
+  "98": {
     "inputs": {
       "sampler_name": [
         "12",
@@ -1480,7 +1490,7 @@
       "title": "KSamplerSelect"
     }
   },
-  "98": {
+  "99": {
     "inputs": {
       "noise_seed": [
         "0",
@@ -1497,7 +1507,7 @@
       "title": "RandomNoise (inspire)"
     }
   },
-  "99": {
+  "100": {
     "inputs": {
       "dishonesty_factor": [
         "17",
@@ -1512,7 +1522,7 @@
         0
       ],
       "sampler": [
-        "97",
+        "98",
         0
       ]
     },
@@ -1521,7 +1531,7 @@
       "title": "Lying Sigma Sampler"
     }
   },
-  "100": {
+  "101": {
     "inputs": {
       "boolean_value": [
         "20",
@@ -1533,7 +1543,7 @@
       "title": "Boolean JK\ud83d\udc09-img2img"
     }
   },
-  "101": {
+  "102": {
     "inputs": {
       "boolean_value": [
         "23",
@@ -1545,7 +1555,7 @@
       "title": "Boolean JK\ud83d\udc09-latent mask"
     }
   },
-  "102": {
+  "103": {
     "inputs": {
       "boolean_value": [
         "26",
@@ -1557,7 +1567,7 @@
       "title": "Boolean JK\ud83d\udc09-crop"
     }
   },
-  "103": {
+  "104": {
     "inputs": {
       "boolean_value": false
     },
@@ -1566,34 +1576,25 @@
       "title": "Boolean JK\ud83d\udc09-ignore latent crop offset"
     }
   },
-  "104": {
+  "105": {
     "inputs": {},
     "class_type": "Empty Latent Color JK",
     "_meta": {
       "title": "Empty Latent Color JK\ud83d\udc09"
     }
   },
-  "105": {
-    "inputs": {
-      "boolean_value": false
-    },
-    "class_type": "CR Boolean JK",
-    "_meta": {
-      "title": "Boolean JK\ud83d\udc09"
-    }
-  },
   "106": {
     "inputs": {
       "boolean_value": [
-        "96",
+        "97",
         0
       ],
       "text_false": [
-        "92",
+        "93",
         0
       ],
       "text_true": [
-        "94",
+        "95",
         0
       ]
     },
@@ -1605,7 +1606,47 @@
   "107": {
     "inputs": {
       "boolean_value": [
-        "96",
+        "97",
+        0
+      ],
+      "text_false": [
+        "95",
+        0
+      ],
+      "text_true": [
+        "93",
+        0
+      ]
+    },
+    "class_type": "CR Text Input Switch JK",
+    "_meta": {
+      "title": "Text Input Switch JK\ud83d\udc09"
+    }
+  },
+  "108": {
+    "inputs": {
+      "boolean_value": [
+        "97",
+        0
+      ],
+      "text_false": [
+        "92",
+        0
+      ],
+      "text_true": [
+        "94",
+        0
+      ]
+    },
+    "class_type": "CR Text Input Switch JK",
+    "_meta": {
+      "title": "Text Input Switch JK\ud83d\udc09"
+    }
+  },
+  "109": {
+    "inputs": {
+      "boolean_value": [
+        "97",
         0
       ],
       "text_false": [
@@ -1622,57 +1663,20 @@
       "title": "Text Input Switch JK\ud83d\udc09"
     }
   },
-  "108": {
-    "inputs": {
-      "op": "Not",
-      "a": [
-        "105",
-        0
-      ]
-    },
-    "class_type": "CM_BoolUnaryOperation JK",
-    "_meta": {
-      "title": "BoolUnaryOp JK\ud83d\udc09"
-    }
-  },
-  "109": {
-    "inputs": {
-      "boolean_value": [
-        "96",
-        0
-      ],
-      "text_false": [
-        "91",
-        0
-      ],
-      "text_true": [
-        "93",
-        0
-      ]
-    },
-    "class_type": "CR Text Input Switch JK",
-    "_meta": {
-      "title": "Text Input Switch JK\ud83d\udc09"
-    }
-  },
   "110": {
     "inputs": {
-      "boolean_value": [
-        "96",
+      "a": [
+        "102",
         0
       ],
-      "text_false": [
-        "93",
-        0
-      ],
-      "text_true": [
+      "b": [
         "91",
         0
       ]
     },
-    "class_type": "CR Text Input Switch JK",
+    "class_type": "Bool Binary OR JK",
     "_meta": {
-      "title": "Text Input Switch JK\ud83d\udc09"
+      "title": "Bool OR JK\ud83d\udc09"
     }
   },
   "111": {
@@ -1687,7 +1691,7 @@
       ],
       "batch_size": 1,
       "color": [
-        "104",
+        "105",
         3
       ]
     },
@@ -1716,7 +1720,7 @@
   "113": {
     "inputs": {
       "prompt_1": [
-        "110",
+        "109",
         0
       ],
       "prompt_2": [
@@ -1732,7 +1736,7 @@
   "114": {
     "inputs": {
       "boolean_value": [
-        "101",
+        "110",
         0
       ],
       "mask_false": [
@@ -1752,11 +1756,11 @@
   "115": {
     "inputs": {
       "a": [
-        "100",
+        "101",
         0
       ],
       "b": [
-        "101",
+        "102",
         0
       ]
     },
@@ -2155,11 +2159,11 @@
         0
       ],
       "sampler_false": [
-        "97",
+        "98",
         0
       ],
       "sampler_true": [
-        "99",
+        "100",
         0
       ]
     },
@@ -2498,7 +2502,7 @@
   "156": {
     "inputs": {
       "boolean_value": [
-        "103",
+        "104",
         0
       ],
       "int_false": [
@@ -2518,7 +2522,7 @@
   "157": {
     "inputs": {
       "boolean_value": [
-        "103",
+        "104",
         0
       ],
       "int_false": [
@@ -2759,7 +2763,7 @@
   "169": {
     "inputs": {
       "boolean_value": [
-        "102",
+        "103",
         0
       ],
       "image_false": [
@@ -2779,7 +2783,7 @@
   "170": {
     "inputs": {
       "boolean_value": [
-        "102",
+        "103",
         0
       ],
       "mask_false": [
@@ -2799,7 +2803,7 @@
   "171": {
     "inputs": {
       "clip_l": [
-        "109",
+        "108",
         0
       ],
       "t5xxl": [
@@ -2807,7 +2811,7 @@
         0
       ],
       "guidance": [
-        "95",
+        "96",
         0
       ],
       "clip": [
@@ -2823,7 +2827,7 @@
   "172": {
     "inputs": {
       "clip_l": [
-        "110",
+        "109",
         0
       ],
       "t5xxl": [
@@ -2831,7 +2835,7 @@
         0
       ],
       "guidance": [
-        "95",
+        "96",
         0
       ],
       "clip": [
@@ -2863,7 +2867,7 @@
   "174": {
     "inputs": {
       "boolean_value": [
-        "102",
+        "103",
         0
       ],
       "latent_false": [
@@ -2919,7 +2923,7 @@
   "177": {
     "inputs": {
       "boolean_value": [
-        "101",
+        "102",
         0
       ],
       "latent_false": [
@@ -3310,8 +3314,8 @@
   },
   "196": {
     "inputs": {
-      "ControlNet_switch": [
-        "108",
+      "effective_mask": [
+        "91",
         0
       ],
       "base_positive": [
@@ -3375,7 +3379,7 @@
   "198": {
     "inputs": {
       "noise": [
-        "98",
+        "99",
         0
       ],
       "guider": [
@@ -3418,7 +3422,7 @@
   },
   "200": {
     "inputs": {
-      "batch_size": 1,
+      "batch_size": false,
       "latents": [
         "198",
         1
@@ -3456,7 +3460,7 @@
         "148",
         1
       ],
-      "crop": "disabled",
+      "crop": 1,
       "samples": [
         "200",
         0
@@ -3502,7 +3506,7 @@
         "148",
         3
       ],
-      "resize_source": false,
+      "resize_source": "disabled",
       "destination": [
         "139",
         0
@@ -3553,7 +3557,7 @@
   "206": {
     "inputs": {
       "boolean_value": [
-        "102",
+        "103",
         0
       ],
       "image_false": [
@@ -3573,7 +3577,7 @@
   "207": {
     "inputs": {
       "boolean_value": [
-        "102",
+        "103",
         0
       ],
       "latent_false": [

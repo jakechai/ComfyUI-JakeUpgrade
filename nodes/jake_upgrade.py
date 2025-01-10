@@ -885,70 +885,6 @@ class StringToCombo_JK:
 #---------------------------------------------------------------------------------------------------------------------#
 # ControlNet Nodes
 #---------------------------------------------------------------------------------------------------------------------#
-class CR_ApplyControlNet_JK:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "base_positive": ("CONDITIONING",),
-                "base_negative": ("CONDITIONING",),
-                
-                "switch": ("BOOLEAN", {"default": False},),
-                "strength": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01}),
-                "start_percent": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.001}),
-                "end_percent": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.001}),
-            },
-            "optional": {
-                "image": ("IMAGE", ),
-                "mask": ("MASK", ),
-                "vae": ("VAE",),
-                "control_net": ("CONTROL_NET", ),
-             }
-        }
-    RETURN_TYPES = ("CONDITIONING", "CONDITIONING",)
-    RETURN_NAMES = ("base_pos", "base_neg", )
-    FUNCTION = "apply_controlnet"
-
-    CATEGORY = icons.get("JK/ControlNet")
-
-    def apply_controlnet(self, base_positive, base_negative, switch, strength, start_percent, end_percent, image=None, vae=None, mask=None, control_net=None):
-        
-        if image is not None and control_net is not None and control_net != "" and switch == True and strength != 0.0:
-            
-            from comfy_extras.nodes_compositing import SplitImageWithAlpha
-            
-            if type(control_net) == str:
-                controlnet_path = folder_paths.get_full_path("controlnet", control_net)
-                controlnet = comfy.sd.load_controlnet(controlnet_path)
-            else:
-                controlnet = control_net
-            
-            image, mask_from_image = SplitImageWithAlpha().split_image_with_alpha(image)
-            
-            # the mask from the image overrides the input mask
-            if mask == None or torch.all(mask_from_image == 0).int().item() == 0:
-                mask_cal = mask_from_image
-            else:
-                mask_cal = mask
-            
-            extra_concat = []
-            if control_net.concat_mask:
-                mask_cal = 1.0 - mask_cal.reshape((-1, 1, mask_cal.shape[-2], mask_cal.shape[-1]))
-                mask_apply = comfy.utils.common_upscale(mask_cal, image.shape[2], image.shape[1], "bilinear", "center").round()
-                image = image * mask_apply.movedim(1, -1).repeat(1, 1, 1, image.shape[3])
-                extra_concat = [mask_cal]
-                
-            controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae=vae, extra_concat=extra_concat)
-            
-            if torch.all(mask_cal == 0).int().item() == 0:
-                from node_helpers import conditioning_set_values
-                base_positive = conditioning_set_values(controlnet_conditioning[0], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_positive, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
-                base_negative = conditioning_set_values(controlnet_conditioning[1], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_negative, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
-            else:
-                base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
-        
-        return (base_positive, base_negative, )
-
 UNION_CONTROLNET_TYPES = {
     "sdxl_xinsir_openpose": 0,
     "sdxl_xinsir_depth": 1,
@@ -966,6 +902,42 @@ UNION_CONTROLNET_TYPES = {
     "flux_shakker_gray": 5,
     "flux_shakker_low quality": 6,
 }
+
+class CR_ControlNetLoader_JK:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "control_net_name": (["None"] + folder_paths.get_filename_list("controlnet"), ),
+                "union_type": (["None"] + ["auto"] + list(UNION_CONTROLNET_TYPES.keys()),)
+            }
+        }
+
+    RETURN_TYPES = ("CONTROL_NET",)
+    FUNCTION = "load_controlnet"
+    CATEGORY = icons.get("JK/ControlNet")
+
+    def load_controlnet(self, control_net_name, union_type):
+        
+        if control_net_name == "None":
+            
+            return ("",)
+        
+        else:
+            controlnet_path = folder_paths.get_full_path_or_raise("controlnet", control_net_name)
+            controlnet_load = comfy.controlnet.load_controlnet(controlnet_path)
+            
+            type_number = UNION_CONTROLNET_TYPES.get(union_type, -2)
+                        
+            if type_number >= -1:
+                controlnet_load = controlnet_load.copy()
+            
+                if type_number >= 0:
+                    controlnet_load.set_extra_arg("control_type", [type_number])
+                else:
+                    controlnet_load.set_extra_arg("control_type", [])
+
+            return (controlnet_load,)
 
 class CR_ControlNetStack_JK:
     
@@ -1065,42 +1037,6 @@ class CR_ControlNetStack_JK:
                 control_switch and kwargs.get(f"ControlNet_Unit_4") and controlnet_count >= 5, 
                 control_switch and kwargs.get(f"ControlNet_Unit_5") and controlnet_count == 6)
 
-class CR_ControlNetLoader_JK:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "control_net_name": (["None"] + folder_paths.get_filename_list("controlnet"), ),
-                "union_type": (["None"] + ["auto"] + list(UNION_CONTROLNET_TYPES.keys()),)
-            }
-        }
-
-    RETURN_TYPES = ("CONTROL_NET",)
-    FUNCTION = "load_controlnet"
-    CATEGORY = icons.get("JK/ControlNet")
-
-    def load_controlnet(self, control_net_name, union_type):
-        
-        if control_net_name == "None":
-            
-            return ("",)
-        
-        else:
-            controlnet_path = folder_paths.get_full_path_or_raise("controlnet", control_net_name)
-            controlnet_load = comfy.controlnet.load_controlnet(controlnet_path)
-            
-            type_number = UNION_CONTROLNET_TYPES.get(union_type, -2)
-                        
-            if type_number >= -1:
-                controlnet_load = controlnet_load.copy()
-            
-                if type_number >= 0:
-                    controlnet_load.set_extra_arg("control_type", [type_number])
-                else:
-                    controlnet_load.set_extra_arg("control_type", [])
-
-            return (controlnet_load,)
-
 class CR_ControlNetParamStack_JK:
     
     modes = ["simple", "advanced"]
@@ -1165,6 +1101,70 @@ class CR_ControlNetParamStack_JK:
                 control_switch and kwargs.get(f"ControlNet_Unit_4") and controlnet_count >= 5, 
                 control_switch and kwargs.get(f"ControlNet_Unit_5") and controlnet_count == 6)
 
+class CR_ApplyControlNet_JK:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "base_positive": ("CONDITIONING",),
+                "base_negative": ("CONDITIONING",),
+                
+                "effective_mask": ("BOOLEAN", {"default": False},),
+                "strength": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01}),
+                "start_percent": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.001}),
+                "end_percent": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.001}),
+            },
+            "optional": {
+                "image": ("IMAGE", ),
+                "mask": ("MASK", ),
+                "vae": ("VAE",),
+                "control_net": ("CONTROL_NET", ),
+             }
+        }
+    RETURN_TYPES = ("CONDITIONING", "CONDITIONING",)
+    RETURN_NAMES = ("base_pos", "base_neg", )
+    FUNCTION = "apply_controlnet"
+
+    CATEGORY = icons.get("JK/ControlNet")
+
+    def apply_controlnet(self, base_positive, base_negative, effective_mask, strength, start_percent, end_percent, image=None, vae=None, mask=None, control_net=None):
+        
+        if image is not None and control_net is not None and control_net != "" and strength != 0.0:
+            
+            from comfy_extras.nodes_compositing import SplitImageWithAlpha
+            
+            if type(control_net) == str:
+                controlnet_path = folder_paths.get_full_path("controlnet", control_net)
+                controlnet = comfy.sd.load_controlnet(controlnet_path)
+            else:
+                controlnet = control_net
+            
+            image, mask_from_image = SplitImageWithAlpha().split_image_with_alpha(image)
+            
+            # the mask from the image overrides the input mask
+            if mask == None or torch.all(mask_from_image == 0).int().item() == 0:
+                mask_cal = mask_from_image
+            else:
+                mask_cal = mask
+            
+            extra_concat = []
+            if control_net.concat_mask:
+                mask_cal = 1.0 - mask_cal.reshape((-1, 1, mask_cal.shape[-2], mask_cal.shape[-1]))
+                mask_apply = comfy.utils.common_upscale(mask_cal, image.shape[2], image.shape[1], "bilinear", "center").round()
+                image = image * mask_apply.movedim(1, -1).repeat(1, 1, 1, image.shape[3])
+                extra_concat = [mask_cal]
+                
+            controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae=vae, extra_concat=extra_concat)
+            
+            if effective_mask and torch.all(mask_cal == 0).int().item() == 0:
+                from node_helpers import conditioning_set_values
+                base_positive = conditioning_set_values(controlnet_conditioning[0], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_positive, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
+                base_negative = conditioning_set_values(controlnet_conditioning[1], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_negative, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
+            else:
+                base_positive, base_negative = controlnet_conditioning[0], controlnet_conditioning[1]
+        
+        return (base_positive, base_negative, )
+
 class CR_ApplyControlNetStack_JK:
     @classmethod
     def INPUT_TYPES(s):
@@ -1172,7 +1172,6 @@ class CR_ApplyControlNetStack_JK:
             "required": {
                 "base_positive": ("CONDITIONING",),
                 "base_negative": ("CONDITIONING",), 
-                "ControlNet_switch": ("BOOLEAN", {"default": False},),
             },
             "optional": {
                 "controlnet_stack": ("CONTROL_NET_STACK", ),
@@ -1184,9 +1183,9 @@ class CR_ApplyControlNetStack_JK:
     FUNCTION = "apply_controlnet_stack"
     CATEGORY = icons.get("JK/ControlNet")
 
-    def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, controlnet_stack=None):
+    def apply_controlnet_stack(self, base_positive, base_negative, controlnet_stack=None):
 
-        if controlnet_stack is not None and ControlNet_switch == True:
+        if controlnet_stack is not None and len(controlnet_stack) != 0:
         
             for controlnet_tuple in controlnet_stack:
                 controlnet_name, image, strength, start_percent, end_percent  = controlnet_tuple
@@ -1208,7 +1207,7 @@ class CR_ApplyControlNetStackAdv_JK:
             "required": {
                 "base_positive": ("CONDITIONING",),
                 "base_negative": ("CONDITIONING",),
-                "ControlNet_switch": ("BOOLEAN", {"default": False},),
+                "effective_mask": ("BOOLEAN", {"default": False},),
             },
              "optional": {
                 "mask": ("MASK", ),
@@ -1222,11 +1221,11 @@ class CR_ApplyControlNetStackAdv_JK:
     FUNCTION = "apply_controlnet_stack"
     CATEGORY = icons.get("JK/ControlNet")
 
-    def apply_controlnet_stack(self, base_positive, base_negative, ControlNet_switch, vae=None, mask=None, controlnet_stack=None):
+    def apply_controlnet_stack(self, base_positive, base_negative, effective_mask, vae=None, mask=None, controlnet_stack=None):
         
         from comfy_extras.nodes_compositing import SplitImageWithAlpha
         
-        if controlnet_stack is not None and len(controlnet_stack) != 0 and ControlNet_switch == True:
+        if controlnet_stack is not None and len(controlnet_stack) != 0:
             for controlnet_tuple in controlnet_stack:
                 controlnet_name, image, strength, start_percent, end_percent  = controlnet_tuple
                 
@@ -1253,7 +1252,7 @@ class CR_ApplyControlNetStackAdv_JK:
                 
                 controlnet_conditioning = ControlNetApplyAdvanced().apply_controlnet(base_positive, base_negative, controlnet, image, strength, start_percent, end_percent, vae=vae, extra_concat=extra_concat)
                 
-                if torch.all(mask_cal == 0).int().item() == 0:
+                if effective_mask and torch.all(mask_cal == 0).int().item() == 0:
                     from node_helpers import conditioning_set_values
                     base_positive = conditioning_set_values(controlnet_conditioning[0], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_positive, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
                     base_negative = conditioning_set_values(controlnet_conditioning[1], {"mask": mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0}) + conditioning_set_values(base_negative, {"mask": 1.0 - mask_cal, "set_area_to_bounds": False, "mask_strength": 1.0})
@@ -3235,7 +3234,7 @@ class SplitImageGrid_JK:
         return {
             "required": {
                 "image": ("IMAGE",),
-                "grid_side": ("BOOLEAN", {"default": True},),
+                "grid_side": ("BOOLEAN", {"default": True, "label_on": "rows", "label_off": "columns"},),
                 "grid_side_num": ("INT", {"default": 1, "min": 1, "max": 8192}),
             },
         }
@@ -5841,10 +5840,10 @@ NODE_CLASS_MAPPINGS = {
     "Reroute String JK": RerouteString_JK,
     "String To Combo JK": StringToCombo_JK,
     ### ControlNet Nodes
-    "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
-    "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR ControlNet Loader JK": CR_ControlNetLoader_JK,
+    "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Multi-ControlNet Param Stack JK": CR_ControlNetParamStack_JK,
+    "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
     "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
     "CR Apply Multi-ControlNet Adv JK": CR_ApplyControlNetStackAdv_JK,
     ### LoRA Nodes
@@ -6016,10 +6015,10 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Reroute String JK": "Reroute String JK🐉",
     "String To Combo JK": "String To Combo JK🐉",
     ### ControlNet Nodes
-    "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
-    "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR ControlNet Loader JK": "ControlNet Loader JK🐉",
+    "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Multi-ControlNet Param Stack JK": "Multi-ControlNet Param Stack JK🐉",
+    "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
     "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
     "CR Apply Multi-ControlNet Adv JK": "Apply Multi-ControlNet Adv JK🐉",
     ### LoRA Nodes

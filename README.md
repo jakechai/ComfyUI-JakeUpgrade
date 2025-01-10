@@ -110,6 +110,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 4. ComfyUI API workflow added.
 5. Get Mesh 3D data workflow added.
 
+- 2025-01-10 - v1.8.7
+1. Add ControlNet Effective Mask switch for all Image Generation Group Nodes.
+2. Fix image resolution bug of Image Generation adv group nodes.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -128,6 +132,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	  
         `pip install -r requirements.txt`
 
+## Update
+1. ComfyUI Manager - Fetch Update - Search JaKeUpgrade and Update.
+2. ComfyUI Manager - Custom Nodes Manager - Search JaKeUpgrade and Try Update (If method 1 fails).
+3. Change to `custom_nodes\ComfyUI-JakeUpgrade` folder, open cmd or PowerShell, type `git pull`  (If method 1 & 2 fails).
+
 ## Video Introduction
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
@@ -135,7 +144,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
 - inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
-- 1.8.x Update(Detail Daemon | Crop and Stitch | Stop At Clip Layer | ControlNet Loader | ControlNet Efficiency Mask | "None" selection for IPAdapter Unified Loader| ComfyUI API workflows | Krita workflows | Get Mesh 3D data): WIP
+- 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer | ControlNet Loader | ControlNet Efficiency Mask | "None" selection for IPAdapter Unified Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): WIP
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - 3D-Pack Installation Tips： [Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - 3D-Pack Algorithm Comparison： [Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
@@ -316,11 +325,13 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 - [KJ Nodes](https://github.com/kijai/ComfyUI-KJNodes)
 - [Essentials](https://github.com/cubiq/ComfyUI_essentials)
+- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
 - [Detail Daemon](https://github.com/Jonseed/ComfyUI-Detail-Daemon)
+- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
 
-### txt2img_img2img workflow
+### imgen workflow
 - [Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
 - [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
@@ -328,7 +339,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - [Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - [StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
-- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
 - [Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
 - [One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
 - [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
@@ -347,8 +357,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ### Krita workflow
 - [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
 - [Tooling Nodes](https://github.com/Acly/comfyui-tooling-nodes)
-- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
-- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 
 > [!NOTE]
@@ -356,7 +364,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ### Copy files in the replacement folder(optional)
 
-- [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` to `custom_nodes\ComfyUI-Manager\component` for saving all JK Group Nodes within each workflow file.
+- [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` to `...\ComfyUI\user\default\ComfyUI-Manager\components` for saving all JK Group Nodes within each workflow file.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy and replace files to `custom_nodes\ComfyUi_PromptStylers` for new styles.
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) : (Workaround before ComfyUI SAI API approves my pull request) Copy and replace files to `custom_nodes\ComfyUI-SAI_API` for all SAI API methods.
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus) : (Workaround before IPAdapter approves my pull request) Copy and replace files to `custom_nodes\ComfyUI_IPAdapter_plus` for better API workflow control by adding "None" selection.
