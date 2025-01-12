@@ -138,13 +138,13 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 3. Change to `custom_nodes\ComfyUI-JakeUpgrade` folder, open cmd or PowerShell, type `git pull`  (If method 1 & 2 fails).
 
 ## Video Introduction
+- 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
 - Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
 - inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
-- 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer | ControlNet Loader | ControlNet Efficiency Mask | "None" selection for IPAdapter Unified Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): WIP
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - 3D-Pack Installation Tips： [Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - 3D-Pack Algorithm Comparison： [Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
@@ -316,7 +316,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ## Required Custom Nodes
 
-### Common
+### Common (ComfyUI API)
 - [rgthree](https://github.com/rgthree/rgthree-comfy)
 - [pythongosssss](https://github.com/pythongosssss/ComfyUI-Custom-Scripts)
 - [ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
@@ -329,13 +329,13 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Detail Daemon](https://github.com/Jonseed/ComfyUI-Detail-Daemon)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
+- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 - [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
 
 ### imgen workflow
 - [Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
 - [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
-- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - [Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - [StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
@@ -347,7 +347,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
 - [IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
-- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 - [ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
 - [ComfyUI FLUX BFL API](https://github.com/gelasdev/ComfyUI-FLUX-BFL-API)
 
@@ -357,7 +356,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ### Krita workflow
 - [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
 - [Tooling Nodes](https://github.com/Acly/comfyui-tooling-nodes)
-- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 
 > [!NOTE]
 > - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) is for SAI API workflow.
