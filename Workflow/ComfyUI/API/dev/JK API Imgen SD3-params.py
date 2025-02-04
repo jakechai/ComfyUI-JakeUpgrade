@@ -5,31 +5,53 @@
 # ["4"]["inputs"]["custom_width"] = 
 # ["4"]["inputs"]["custom_height"] = 
 # # positive l
-# ["6:12"]["inputs"]["string"] = 
+# ["6:12"]["inputs"]["clip_l"] = 
 # # positive g
-# ["6:13"]["inputs"]["string"] = 
+# ["6:12"]["inputs"]["clip_g"] = 
+# # positive t5xxl
+# ["6:12"]["inputs"]["t5xxl"] = 
+# # positive l prompt
+# ["6:12"]["inputs"]["clip_l_prompt"] = 
+# # positive g prompt
+# ["6:12"]["inputs"]["clip_g_prompt"] = 
+# # positive t5xxl prompt
+# ["6:12"]["inputs"]["t5xxl_prompt"] = 
 # # negative l
-# ["6:14"]["inputs"]["string"] = 
+# ["6:13"]["inputs"]["clip_l"] = 
 # # negative g
-# ["6:15"]["inputs"]["string"] = 
+# ["6:13"]["inputs"]["clip_g"] = 
+# # negative t5xxl
+# ["6:13"]["inputs"]["t5xxl"] = 
+# # negative l prompt
+# ["6:13"]["inputs"]["clip_l_prompt"] = 
+# # negative g prompt
+# ["6:13"]["inputs"]["clip_g_prompt"] = 
+# # negative t5xxl prompt
+# ["6:13"]["inputs"]["t5xxl_prompt"] = 
 # # sd3 negative end
-# ["6:16"]["inputs"]["end"] = 
-# # switch clip l g
-# ["6:17"]["inputs"]["boolean_value"] = 
+# ["6:14"]["inputs"]["end"] = 
 # # negative clip g
-# ["6:18"]["inputs"]["boolean_value"] = 
-# ["6:19"]["inputs"]["cfg"] = 
-# ["6:20"]["inputs"]["sampler_name"] = 
-# ["6:21"]["inputs"]["scheduler"] = 
-# ["6:21"]["inputs"]["steps"] = 
-# ["6:21"]["inputs"]["denoise"] = 
+# ["6:15"]["inputs"]["boolean_value"] = 
+# ["6:16"]["inputs"]["cfg"] = 
+# ["6:17"]["inputs"]["sampler_name"] = 
+# ["6:18"]["inputs"]["scheduler"] = 
+# ["6:18"]["inputs"]["steps"] = 
+# ["6:18"]["inputs"]["denoise"] = 
 # # seed
 # ["5"]["inputs"]["value"] = 
-# ["6:22"]["inputs"]["noise_mode"] = 
-# ["6:22"]["inputs"]["batch_seed_mode"] = 
-# ["6:22"]["inputs"]["variation_seed"] = 
-# ["6:22"]["inputs"]["variation_strength"] = 
-# ["6:22"]["inputs"]["variation_method"] = 
+# ["6:19"]["inputs"]["noise_mode"] = 
+# ["6:19"]["inputs"]["batch_seed_mode"] = 
+# ["6:19"]["inputs"]["variation_seed"] = 
+# ["6:19"]["inputs"]["variation_strength"] = 
+# ["6:19"]["inputs"]["variation_method"] = 
+# ["6:19"]["inputs"]["internal_seed"] = 
+# # inject noise
+# ["6:20"]["inputs"]["boolean_value"] = 
+# # inject noise mask
+# ["6:21"]["inputs"]["boolean_value"] = 
+# ["6:22"]["inputs"]["noise_seed"] = 
+# ["6:22"]["inputs"]["noise_strength"] = 
+# ["6:22"]["inputs"]["normalize"] = 
 # # detail daemon
 # ["6:23"]["inputs"]["boolean_value"] = 
 # ["6:24"]["inputs"]["detail_amount"] = 
@@ -62,6 +84,7 @@
 # ["6:35"]["inputs"]["boolean_value"] = 
 # # image fill
 # ["6:36"]["inputs"]["boolean_value"] = 
+# ["196"]["inputs"]["image"] = 
 # # image fill resize
 # ["6:37"]["inputs"]["resize_mode"] = 
 # # image fill tile

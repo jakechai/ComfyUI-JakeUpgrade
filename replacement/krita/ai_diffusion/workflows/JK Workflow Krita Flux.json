@@ -80,7 +80,7 @@
   },
   "7": {
     "inputs": {
-      "name": "B02 positive t5xxl",
+      "name": "B03 positive t5xxl",
       "type": "text",
       "default": "",
       "min": 0,
@@ -93,7 +93,7 @@
   },
   "8": {
     "inputs": {
-      "name": "B03 negative",
+      "name": "B07 negative",
       "type": "text",
       "default": "",
       "min": 0,
@@ -106,7 +106,7 @@
   },
   "9": {
     "inputs": {
-      "name": "B11 guidance",
+      "name": "B19 guidance",
       "type": "number",
       "default": 3.5,
       "min": 0,
@@ -119,7 +119,7 @@
   },
   "10": {
     "inputs": {
-      "name": "B12 Negative Scale",
+      "name": "B20 Negative Scale",
       "type": "number",
       "default": 1,
       "min": 0,
@@ -1401,7 +1401,7 @@
   },
   "91": {
     "inputs": {
-      "boolean_value": -1
+      "boolean_value": false
     },
     "class_type": "CR Boolean JK",
     "_meta": {
@@ -1471,7 +1471,7 @@
   },
   "97": {
     "inputs": {
-      "boolean_value": 3.5
+      "boolean_value": false
     },
     "class_type": "CR Boolean JK",
     "_meta": {
@@ -1498,9 +1498,10 @@
       ],
       "noise_mode": "CPU",
       "batch_seed_mode": "incremental",
-      "variation_seed": 0,
+      "variation_seed": 1,
       "variation_strength": 0,
-      "variation_method": "linear"
+      "variation_method": "linear",
+      "internal_seed": 0
     },
     "class_type": "RandomNoise //Inspire",
     "_meta": {
@@ -1585,22 +1586,18 @@
   },
   "106": {
     "inputs": {
-      "boolean_value": [
-        "97",
+      "a": [
+        "102",
         0
       ],
-      "text_false": [
-        "93",
-        0
-      ],
-      "text_true": [
-        "95",
+      "b": [
+        "91",
         0
       ]
     },
-    "class_type": "CR Text Input Switch JK",
+    "class_type": "Bool Binary OR JK",
     "_meta": {
-      "title": "Text Input Switch JK\ud83d\udc09"
+      "title": "Bool OR JK\ud83d\udc09"
     }
   },
   "107": {
@@ -1610,11 +1607,11 @@
         0
       ],
       "text_false": [
-        "95",
+        "93",
         0
       ],
       "text_true": [
-        "93",
+        "92",
         0
       ]
     },
@@ -1630,7 +1627,7 @@
         0
       ],
       "text_false": [
-        "92",
+        "95",
         0
       ],
       "text_true": [
@@ -1650,11 +1647,11 @@
         0
       ],
       "text_false": [
-        "94",
+        "92",
         0
       ],
       "text_true": [
-        "92",
+        "93",
         0
       ]
     },
@@ -1665,18 +1662,22 @@
   },
   "110": {
     "inputs": {
-      "a": [
-        "102",
+      "boolean_value": [
+        "97",
         0
       ],
-      "b": [
-        "91",
+      "text_false": [
+        "94",
+        0
+      ],
+      "text_true": [
+        "95",
         0
       ]
     },
-    "class_type": "Bool Binary OR JK",
+    "class_type": "CR Text Input Switch JK",
     "_meta": {
-      "title": "Bool OR JK\ud83d\udc09"
+      "title": "Text Input Switch JK\ud83d\udc09"
     }
   },
   "111": {
@@ -1720,11 +1721,11 @@
   "113": {
     "inputs": {
       "prompt_1": [
-        "109",
+        "110",
         0
       ],
       "prompt_2": [
-        "107",
+        "108",
         0
       ]
     },
@@ -1736,7 +1737,7 @@
   "114": {
     "inputs": {
       "boolean_value": [
-        "110",
+        "106",
         0
       ],
       "mask_false": [
@@ -2803,11 +2804,11 @@
   "171": {
     "inputs": {
       "clip_l": [
-        "108",
+        "109",
         0
       ],
       "t5xxl": [
-        "106",
+        "107",
         0
       ],
       "guidance": [
@@ -2827,11 +2828,11 @@
   "172": {
     "inputs": {
       "clip_l": [
-        "109",
+        "110",
         0
       ],
       "t5xxl": [
-        "107",
+        "108",
         0
       ],
       "guidance": [
@@ -3422,7 +3423,7 @@
   },
   "200": {
     "inputs": {
-      "batch_size": false,
+      "batch_size": 1,
       "latents": [
         "198",
         1
@@ -3460,7 +3461,7 @@
         "148",
         1
       ],
-      "crop": 1,
+      "crop": "disabled",
       "samples": [
         "200",
         0
@@ -3506,7 +3507,7 @@
         "148",
         3
       ],
-      "resize_source": "disabled",
+      "resize_source": false,
       "destination": [
         "139",
         0

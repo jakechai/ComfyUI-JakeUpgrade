@@ -67,7 +67,7 @@
   },
   "6": {
     "inputs": {
-      "name": "B03 negative",
+      "name": "B07 negative",
       "type": "text",
       "default": "",
       "min": 0,
@@ -80,7 +80,7 @@
   },
   "7": {
     "inputs": {
-      "name": "B07 Target Resolution Scale",
+      "name": "B15 Target Resolution Scale",
       "type": "number",
       "default": 1,
       "min": 0.01,
@@ -1515,7 +1515,7 @@
   },
   "101": {
     "inputs": {
-      "boolean_value": "disable"
+      "boolean_value": false
     },
     "class_type": "CR Boolean JK",
     "_meta": {
@@ -1593,7 +1593,7 @@
   },
   "107": {
     "inputs": {
-      "boolean_value": 1
+      "boolean_value": false
     },
     "class_type": "CR Boolean JK",
     "_meta": {
@@ -1620,9 +1620,10 @@
       ],
       "noise_mode": "CPU",
       "batch_seed_mode": "incremental",
-      "variation_seed": 0,
+      "variation_seed": 1,
       "variation_strength": 0,
-      "variation_method": "linear"
+      "variation_method": "linear",
+      "internal_seed": 0
     },
     "class_type": "RandomNoise //Inspire",
     "_meta": {
@@ -1719,22 +1720,18 @@
   },
   "117": {
     "inputs": {
-      "boolean_value": [
-        "107",
+      "a": [
+        "112",
         0
       ],
-      "text_false": [
-        "103",
-        0
-      ],
-      "text_true": [
-        "105",
+      "b": [
+        "101",
         0
       ]
     },
-    "class_type": "CR Text Input Switch JK",
+    "class_type": "Bool Binary OR JK",
     "_meta": {
-      "title": "Text Input Switch JK\ud83d\udc09"
+      "title": "Bool OR JK\ud83d\udc09"
     }
   },
   "118": {
@@ -1744,11 +1741,11 @@
         0
       ],
       "text_false": [
-        "105",
+        "103",
         0
       ],
       "text_true": [
-        "103",
+        "102",
         0
       ]
     },
@@ -1764,7 +1761,7 @@
         0
       ],
       "text_false": [
-        "102",
+        "105",
         0
       ],
       "text_true": [
@@ -1784,11 +1781,11 @@
         0
       ],
       "text_false": [
-        "104",
+        "102",
         0
       ],
       "text_true": [
-        "102",
+        "103",
         0
       ]
     },
@@ -1799,18 +1796,22 @@
   },
   "121": {
     "inputs": {
-      "a": [
-        "112",
+      "boolean_value": [
+        "107",
         0
       ],
-      "b": [
-        "101",
+      "text_false": [
+        "104",
+        0
+      ],
+      "text_true": [
+        "105",
         0
       ]
     },
-    "class_type": "Bool Binary OR JK",
+    "class_type": "CR Text Input Switch JK",
     "_meta": {
-      "title": "Bool OR JK\ud83d\udc09"
+      "title": "Text Input Switch JK\ud83d\udc09"
     }
   },
   "122": {
@@ -1833,11 +1834,11 @@
   "123": {
     "inputs": {
       "prompt_1": [
-        "120",
+        "121",
         0
       ],
       "prompt_2": [
-        "118",
+        "119",
         0
       ]
     },
@@ -1943,7 +1944,7 @@
   "129": {
     "inputs": {
       "boolean_value": [
-        "121",
+        "117",
         0
       ],
       "mask_false": [
@@ -2790,11 +2791,11 @@
         1
       ],
       "text_g": [
-        "117",
+        "118",
         0
       ],
       "text_l": [
-        "119",
+        "120",
         0
       ],
       "clip": [
@@ -2828,11 +2829,11 @@
         1
       ],
       "text_g": [
-        "118",
+        "119",
         0
       ],
       "text_l": [
-        "120",
+        "121",
         0
       ],
       "clip": [
@@ -3788,7 +3789,7 @@
   },
   "221": {
     "inputs": {
-      "batch_size": false,
+      "batch_size": 1,
       "latents": [
         "219",
         1
@@ -3826,7 +3827,7 @@
         "168",
         1
       ],
-      "crop": 1,
+      "crop": "disabled",
       "samples": [
         "221",
         0
@@ -3872,7 +3873,7 @@
         "168",
         3
       ],
-      "resize_source": "disabled",
+      "resize_source": false,
       "destination": [
         "156",
         0

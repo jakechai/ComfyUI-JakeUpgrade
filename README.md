@@ -96,23 +96,28 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 				14. Remove [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui) and [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle) Custom Node from must-have-list for their complexity.
 				15. Remove useless Group Nodes: JK🐉::Image to Prompt (LLava Local), JK🐉::Image to Prompt Advanced (LLava Local), JK🐉::SegAnythingMask, JK🐉::txt2img.
 				16. SD3 | Flux image generation workflow | group nodes support Stop At Clip Layer (needs ComfyUI v0.3.8up).
+	- 2024-12-27 - v1.8.5	1. Add new Detailer Module.
+				2. Add new image generation workflow.
+				3. Fix Krita HandFix workflow bug.
+	- 2025-01-03 - v1.8.6	1. ControlNet image supports alpha. Add A1111-ControlNet-like effective mask for ControlNet (Stack) Apply nodes.
+				2. Load Image With Alpha, Make Image Grid, and Split Image Grid nodes added.
+				3. IF AI nodes recreated.
+				4. ComfyUI API workflow added.
+				5. Get Mesh 3D data workflow added.
 </details>
-
-- 2024-12-27 - v1.8.5
-1. Add new Detailer Module.
-2. Add new image generation workflow.
-3. Fix Krita HandFix workflow bug.
-
-- 2025-01-03 - v1.8.6
-1. ControlNet image supports alpha. Add A1111-ControlNet-like effective mask for ControlNet (Stack) Apply nodes.
-2. Load Image With Alpha, Make Image Grid, and Split Image Grid nodes added.
-3. IF AI nodes recreated.
-4. ComfyUI API workflow added.
-5. Get Mesh 3D data workflow added.
 
 - 2025-01-10 - v1.8.8
 1. Add ControlNet Effective Mask switch for all Image Generation Group Nodes.
 2. Fix image resolution bug of Image Generation adv group nodes.
+3. First Comfy Org Registry version.
+
+- 2025-02-04 - v1.9.0
+1. Add Inject Latent Noise to advanced imgen group nodes.
+2. Fix the Input Mask logic of advanced imgen group nodes.
+3. Add "SD3 Prompts switch" for advanced SD3 imgen group nodes.
+4. Switch clip l and g bug fix.
+5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
+6. Image Generation | API | Kirta workflows updated.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -132,10 +137,24 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	  
         `pip install -r requirements.txt`
 
+## Copy files in the replacement folder(optional)
+
+- [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` to `...\ComfyUI\user\default\ComfyUI-Manager\components` for saving all JK Group Nodes within each workflow file.
+- [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy and replace files to `custom_nodes\ComfyUi_PromptStylers` for new styles.
+- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) : (Workaround before ComfyUI SAI API approves my pull request) Copy and replace files to `custom_nodes\ComfyUI-SAI_API` for all SAI API methods.
+- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus) : (Workaround before IPAdapter approves my pull request) Copy and replace files to `custom_nodes\ComfyUI_IPAdapter_plus` for better API workflow control by adding "None" selection.
+
+> [!NOTE]
+> - Group Nodes can be copied and pasted between workflows in the latest ComfyUI. See details in my Video Introduction of Group Nodes.
+> - Load [All JK (Group) Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Nodes-JK.json) for all JK Group Nodes.
+
 ## Update
 1. ComfyUI Manager - Fetch Update - Search JakeUpgrade and Update.
 2. ComfyUI Manager - Custom Nodes Manager - Search JaKeUpgrade and Try Update (If method 1 fails).
 3. Change to `custom_nodes\ComfyUI-JakeUpgrade` folder, open cmd or PowerShell, type `git pull`  (If method 1 & 2 fails).
+
+> [!NOTE]
+> - Files in the replacement folder need to be updated by hand if needed.
 
 ## Video Introduction
 - 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
@@ -143,6 +162,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
 - Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
+- SD3 Prompts Switch: WIP
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
 - inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
@@ -360,17 +380,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > [!NOTE]
 > - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) is for SAI API workflow.
 
-### Copy files in the replacement folder(optional)
-
-- [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` to `...\ComfyUI\user\default\ComfyUI-Manager\components` for saving all JK Group Nodes within each workflow file.
-- [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy and replace files to `custom_nodes\ComfyUi_PromptStylers` for new styles.
-- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) : (Workaround before ComfyUI SAI API approves my pull request) Copy and replace files to `custom_nodes\ComfyUI-SAI_API` for all SAI API methods.
-- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus) : (Workaround before IPAdapter approves my pull request) Copy and replace files to `custom_nodes\ComfyUI_IPAdapter_plus` for better API workflow control by adding "None" selection.
-
-> [!NOTE]
-> - Group Nodes can be copied and pasted between workflows in the latest ComfyUI. See details in my Video Introduction of Group Nodes.
-> - Load [All JK (Group) Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Nodes-JK.json) for all JK Group Nodes.
-
 ## JK_workflow : imgen (legacy)
 <details>
 <summary><b>Introduction</b></summary>
@@ -558,6 +567,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Image Crop by Mask Params JK🐉,
 		Latent Crop Offset JK🐉
 		Scale To Resolution JK🐉
+		Inject Noise Params JK🐉
+		SD3 Prompts Switch JK🐉
     Reroute Nodes
 		Reroute List JK🐉
 		Reroute Ckpt JK🐉
