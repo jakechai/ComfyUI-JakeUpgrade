@@ -54,7 +54,7 @@
   },
   "5": {
     "inputs": {
-      "name": "B02 positive t5xxl",
+      "name": "B03 positive t5xxl",
       "type": "text",
       "default": "",
       "min": 0,
@@ -67,7 +67,7 @@
   },
   "6": {
     "inputs": {
-      "name": "B03 negative",
+      "name": "B07 negative",
       "type": "text",
       "default": "",
       "min": 0,
@@ -1463,7 +1463,7 @@
   },
   "98": {
     "inputs": {
-      "boolean_value": "disable"
+      "boolean_value": false
     },
     "class_type": "CR Boolean JK",
     "_meta": {
@@ -1581,9 +1581,10 @@
       ],
       "noise_mode": "CPU",
       "batch_seed_mode": "incremental",
-      "variation_seed": 0,
+      "variation_seed": 1,
       "variation_strength": 0,
-      "variation_method": "linear"
+      "variation_method": "linear",
+      "internal_seed": 0
     },
     "class_type": "RandomNoise //Inspire",
     "_meta": {
@@ -1676,42 +1677,30 @@
   },
   "116": {
     "inputs": {
-      "boolean_value": [
-        "104",
-        0
-      ],
-      "text_false": [
-        "100",
-        0
-      ],
-      "text_true": [
-        "102",
-        0
+      "string": [
+        "105",
+        2
       ]
     },
-    "class_type": "CR Text Input Switch JK",
+    "class_type": "String To Combo JK",
     "_meta": {
-      "title": "Text Input Switch JK\ud83d\udc09"
+      "title": "String To Combo JK\ud83d\udc09"
     }
   },
   "117": {
     "inputs": {
-      "boolean_value": [
-        "104",
+      "a": [
+        "109",
         0
       ],
-      "text_false": [
-        "102",
-        0
-      ],
-      "text_true": [
-        "100",
+      "b": [
+        "98",
         0
       ]
     },
-    "class_type": "CR Text Input Switch JK",
+    "class_type": "Bool Binary OR JK",
     "_meta": {
-      "title": "Text Input Switch JK\ud83d\udc09"
+      "title": "Bool OR JK\ud83d\udc09"
     }
   },
   "118": {
@@ -1721,11 +1710,11 @@
         0
       ],
       "text_false": [
-        "99",
+        "100",
         0
       ],
       "text_true": [
-        "101",
+        "99",
         0
       ]
     },
@@ -1741,11 +1730,11 @@
         0
       ],
       "text_false": [
-        "101",
+        "102",
         0
       ],
       "text_true": [
-        "99",
+        "101",
         0
       ]
     },
@@ -1756,30 +1745,42 @@
   },
   "120": {
     "inputs": {
-      "string": [
-        "105",
-        2
+      "boolean_value": [
+        "104",
+        0
+      ],
+      "text_false": [
+        "99",
+        0
+      ],
+      "text_true": [
+        "100",
+        0
       ]
     },
-    "class_type": "String To Combo JK",
+    "class_type": "CR Text Input Switch JK",
     "_meta": {
-      "title": "String To Combo JK\ud83d\udc09"
+      "title": "Text Input Switch JK\ud83d\udc09"
     }
   },
   "121": {
     "inputs": {
-      "a": [
-        "109",
+      "boolean_value": [
+        "104",
         0
       ],
-      "b": [
-        "98",
+      "text_false": [
+        "101",
+        0
+      ],
+      "text_true": [
+        "102",
         0
       ]
     },
-    "class_type": "Bool Binary OR JK",
+    "class_type": "CR Text Input Switch JK",
     "_meta": {
-      "title": "Bool OR JK\ud83d\udc09"
+      "title": "Text Input Switch JK\ud83d\udc09"
     }
   },
   "122": {
@@ -1839,38 +1840,6 @@
   },
   "125": {
     "inputs": {
-      "prompt_1": [
-        "118",
-        0
-      ],
-      "prompt_2": [
-        "116",
-        0
-      ]
-    },
-    "class_type": "CM_PromptCombine_JK",
-    "_meta": {
-      "title": "Prompt Combine JK\ud83d\udc09"
-    }
-  },
-  "126": {
-    "inputs": {
-      "prompt_1": [
-        "119",
-        0
-      ],
-      "prompt_2": [
-        "117",
-        0
-      ]
-    },
-    "class_type": "CM_PromptCombine_JK",
-    "_meta": {
-      "title": "Prompt Combine JK\ud83d\udc09"
-    }
-  },
-  "127": {
-    "inputs": {
       "string": [
         "105",
         0
@@ -1881,7 +1850,7 @@
       "title": "String To Combo JK\ud83d\udc09"
     }
   },
-  "128": {
+  "126": {
     "inputs": {
       "string": [
         "105",
@@ -1893,10 +1862,42 @@
       "title": "String To Combo JK\ud83d\udc09"
     }
   },
+  "127": {
+    "inputs": {
+      "prompt_1": [
+        "120",
+        0
+      ],
+      "prompt_2": [
+        "118",
+        0
+      ]
+    },
+    "class_type": "CM_PromptCombine_JK",
+    "_meta": {
+      "title": "Prompt Combine JK\ud83d\udc09"
+    }
+  },
+  "128": {
+    "inputs": {
+      "prompt_1": [
+        "121",
+        0
+      ],
+      "prompt_2": [
+        "119",
+        0
+      ]
+    },
+    "class_type": "CM_PromptCombine_JK",
+    "_meta": {
+      "title": "Prompt Combine JK\ud83d\udc09"
+    }
+  },
   "129": {
     "inputs": {
       "boolean_value": [
-        "121",
+        "117",
         0
       ],
       "mask_false": [
@@ -1936,7 +1937,7 @@
   "131": {
     "inputs": {
       "sampler_name": [
-        "127",
+        "125",
         0
       ]
     },
@@ -2801,7 +2802,7 @@
   "176": {
     "inputs": {
       "text": [
-        "126",
+        "128",
         0
       ],
       "clip": [
@@ -2817,7 +2818,7 @@
   "177": {
     "inputs": {
       "text": [
-        "125",
+        "127",
         0
       ],
       "clip": [
@@ -2833,7 +2834,7 @@
   "178": {
     "inputs": {
       "scheduler": [
-        "120",
+        "116",
         0
       ],
       "steps": [
@@ -2860,40 +2861,36 @@
   },
   "179": {
     "inputs": {
-      "text": [
-        "116",
+      "scheduler": [
+        "126",
         0
       ],
-      "text_clip": [
-        "118",
+      "steps": [
+        "106",
         0
       ],
-      "ella": [
-        "178",
-        0
+      "denoise": [
+        "106",
+        2
       ],
-      "text_encoder": [
-        "112",
-        0
-      ],
-      "clip": [
-        "169",
+      "model": [
+        "175",
         0
       ]
     },
-    "class_type": "EllaTextEncode",
+    "class_type": "BasicScheduler",
     "_meta": {
-      "title": "ELLA Text Encode"
+      "title": "BasicScheduler"
     }
   },
   "180": {
     "inputs": {
       "text": [
-        "117",
+        "118",
         0
       ],
       "text_clip": [
-        "119",
+        "120",
         0
       ],
       "ella": [
@@ -2916,26 +2913,30 @@
   },
   "181": {
     "inputs": {
-      "scheduler": [
-        "128",
+      "text": [
+        "119",
         0
       ],
-      "steps": [
-        "106",
+      "text_clip": [
+        "121",
         0
       ],
-      "denoise": [
-        "106",
-        2
+      "ella": [
+        "178",
+        0
       ],
-      "model": [
-        "175",
+      "text_encoder": [
+        "112",
+        0
+      ],
+      "clip": [
+        "169",
         0
       ]
     },
-    "class_type": "BasicScheduler",
+    "class_type": "EllaTextEncode",
     "_meta": {
-      "title": "BasicScheduler"
+      "title": "ELLA Text Encode"
     }
   },
   "182": {
@@ -2949,7 +2950,7 @@
         0
       ],
       "conditioning_true": [
-        "179",
+        "180",
         0
       ]
     },
@@ -2969,7 +2970,7 @@
         0
       ],
       "conditioning_true": [
-        "180",
+        "181",
         0
       ]
     },
@@ -2979,18 +2980,6 @@
     }
   },
   "184": {
-    "inputs": {
-      "image_offset": [
-        "173",
-        2
-      ]
-    },
-    "class_type": "Latent Crop Offset JK",
-    "_meta": {
-      "title": "Latent Crop Offset JK\ud83d\udc09"
-    }
-  },
-  "185": {
     "inputs": {
       "width": [
         "173",
@@ -3016,6 +3005,18 @@
     "class_type": "ImageCrop",
     "_meta": {
       "title": "Image Crop"
+    }
+  },
+  "185": {
+    "inputs": {
+      "image_offset": [
+        "173",
+        2
+      ]
+    },
+    "class_type": "Latent Crop Offset JK",
+    "_meta": {
+      "title": "Latent Crop Offset JK\ud83d\udc09"
     }
   },
   "186": {
@@ -3089,7 +3090,7 @@
         2
       ],
       "int_true": [
-        "184",
+        "185",
         0
       ]
     },
@@ -3134,7 +3135,7 @@
       ],
       "crop": "disabled",
       "image": [
-        "185",
+        "184",
         0
       ]
     },
@@ -3866,7 +3867,7 @@
         0
       ],
       "sigmas": [
-        "181",
+        "179",
         0
       ],
       "latent_image": [
@@ -3897,7 +3898,7 @@
   },
   "230": {
     "inputs": {
-      "batch_size": false,
+      "batch_size": 1,
       "latents": [
         "228",
         1
@@ -3935,7 +3936,7 @@
         "173",
         1
       ],
-      "crop": 1,
+      "crop": "disabled",
       "samples": [
         "230",
         0
@@ -3981,7 +3982,7 @@
         "173",
         3
       ],
-      "resize_source": "disabled",
+      "resize_source": false,
       "destination": [
         "160",
         0

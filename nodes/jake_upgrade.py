@@ -729,6 +729,55 @@ class ScaleToResolution_JK:
             height = math.ceil((image_height / image_width * target_resolution) / multiple_of) * multiple_of
             return (width, height)
 
+class Inject_Noise_Params_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "noise_seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "noise_strength": ("FLOAT", {"default": 1.0, "min": -20.0, "max": 20.0, "step":0.01, "round": 0.01}),
+                "normalize": (["false", "true"], {"default": "false"}),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "FLOAT", ["false", "true"])
+    RETURN_NAMES = ("Seed", "Strength", "Normalize")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, noise_seed, noise_strength, normalize):
+
+        return (noise_seed, noise_strength, normalize)
+
+class SD3_Prompts_Switch_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "clip_l": ("STRING", {"default": '', "multiline": True}),
+                "clip_g": ("STRING", {"default": '', "multiline": True}),
+                "t5xxl": ("STRING", {"default": '', "multiline": True}),
+                "clip_l_prompt": (["clip_l", "clip_g", "t5xxl"], {"default": "clip_l"}),
+                "clip_g_prompt": (["clip_l", "clip_g", "t5xxl"], {"default": "clip_g"}),
+                "t5xxl_prompt": (["clip_l", "clip_g", "t5xxl"], {"default": "t5xxl"}),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING", "STRING", "STRING")
+    RETURN_NAMES = ("clip_l", "clip_g", "t5xxl")
+    OUTPUT_NODE = True
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, clip_l, clip_g, t5xxl, clip_l_prompt, clip_g_prompt, t5xxl_prompt):
+        
+        _clip_l = clip_l if clip_l_prompt == "clip_l" else (clip_g if clip_l_prompt == "clip_g" else t5xxl)
+        _clip_g = clip_l if clip_g_prompt == "clip_l" else (clip_g if clip_g_prompt == "clip_g" else t5xxl)
+        _t5xxl = clip_l if t5xxl_prompt == "clip_l" else (clip_g if t5xxl_prompt == "clip_g" else t5xxl)
+        
+        return (_clip_l, _clip_g, _t5xxl)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes
 #---------------------------------------------------------------------------------------------------------------------#
@@ -5830,6 +5879,8 @@ NODE_CLASS_MAPPINGS = {
     "Upscale Method JK": UpscaleMethod_JK,
     "Latent Crop Offset JK": LatentCropOffset_JK,
     "Scale To Resolution JK": ScaleToResolution_JK,
+    "Inject Noise Params JK": Inject_Noise_Params_JK,
+    "SD3 Prompts Switch JK": SD3_Prompts_Switch_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
@@ -6005,6 +6056,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Upscale Method JK": "Upscale Method JK🐉",
     "Latent Crop Offset JK": "Latent Crop Offset JK🐉",
     "Scale To Resolution JK": "Scale To Resolution JK🐉",
+    "Inject Noise Params JK": "Inject Noise Params JK🐉",
+    "SD3 Prompts Switch JK": "SD3 Prompts Switch JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",

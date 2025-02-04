@@ -33,6 +33,8 @@ NODE_CLASS_MAPPINGS = {
     "Upscale Method JK": UpscaleMethod_JK,
     "Latent Crop Offset JK": LatentCropOffset_JK,
     "Scale To Resolution JK": ScaleToResolution_JK,
+    "Inject Noise Params JK": Inject_Noise_Params_JK,
+    "SD3 Prompts Switch JK": SD3_Prompts_Switch_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
@@ -209,6 +211,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Upscale Method JK": "Upscale Method JK🐉",
     "Latent Crop Offset JK": "Latent Crop Offset JK🐉",
     "Scale To Resolution JK": "Scale To Resolution JK🐉",
+    "Inject Noise Params JK": "Inject Noise Params JK🐉",
+    "SD3 Prompts Switch JK": "SD3 Prompts Switch JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",
