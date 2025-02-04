@@ -114,7 +114,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2025-02-04 - v1.9.0
 1. Add Inject Latent Noise to advanced imgen group nodes.
 2. Fix the Input Mask logic of advanced imgen group nodes.
-3. Add "SD3 Prompts switch" for advanced SD3 imgen group nodes.
+3. Add "SD3 Prompts switch" for SD3 imgen group nodes.
 4. Switch clip l and g bug fix.
 5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
 6. Image Generation | API | Kirta workflows updated.
@@ -162,7 +162,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
 - Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
-- SD3 Prompts Switch: WIP
+- Prompts Switch: [Youtube](https://youtu.be/M8lVr1lP82U) [Bilibili](https://www.bilibili.com/video/BV1ZRNwerEev/)
 - prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
 - inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
 - img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
