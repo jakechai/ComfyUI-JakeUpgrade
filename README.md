@@ -108,6 +108,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 				2. Fix image resolution bug of Image Generation adv group nodes.
 				3. First Comfy Org Registry version.
 </details>
+
 - 2025-02-04 - v1.9.0
 1. Add Inject Latent Noise to advanced imgen group nodes.
 2. Fix the Input Mask logic of advanced imgen group nodes.
@@ -116,7 +117,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
 6. Image Generation | API | Kirta workflows updated.
 
-- 2025-02-06 - v1.9.1
+- 2025-02-08 - v1.9.1
 1. Add Stop At Clip Layer to image refine group nodes.
 2. Add Flux Guidance to common imgen | refine group nodes.
 3. Add ComfyUI API workflows: controlnet preprocessor | upscale | refine.
