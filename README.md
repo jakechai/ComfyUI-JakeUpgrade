@@ -104,13 +104,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 				3. IF AI nodes recreated.
 				4. ComfyUI API workflow added.
 				5. Get Mesh 3D data workflow added.
+	- 2025-01-10 - v1.8.8	1. Add ControlNet Effective Mask switch for all Image Generation Group Nodes.
+				2. Fix image resolution bug of Image Generation adv group nodes.
+				3. First Comfy Org Registry version.
 </details>
-
-- 2025-01-10 - v1.8.8
-1. Add ControlNet Effective Mask switch for all Image Generation Group Nodes.
-2. Fix image resolution bug of Image Generation adv group nodes.
-3. First Comfy Org Registry version.
-
 - 2025-02-04 - v1.9.0
 1. Add Inject Latent Noise to advanced imgen group nodes.
 2. Fix the Input Mask logic of advanced imgen group nodes.
@@ -118,6 +115,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 4. Switch clip l and g bug fix.
 5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
 6. Image Generation | API | Kirta workflows updated.
+
+- 2025-02-06 - v1.9.1
+1. Add Stop At Clip Layer to image refine group nodes.
+2. Add Flux Guidance to common imgen | refine group nodes.
+3. Add ComfyUI API workflows: controlnet preprocessor | upscale | refine.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 

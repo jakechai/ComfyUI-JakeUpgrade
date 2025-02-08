@@ -135,6 +135,7 @@
 # # sag
 # ["10"]["inputs"]["boolean_value"] = 
 # ["11"]["inputs"]["scale"] = 
+# ["11"]["inputs"]["blur_sigma"] = 
 # # freeu
 # ["12"]["inputs"]["boolean_value"] = 
 # ["13"]["inputs"]["b1"] = 
