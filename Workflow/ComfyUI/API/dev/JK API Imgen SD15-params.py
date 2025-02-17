@@ -123,7 +123,7 @@
 # ["6:67"]["inputs"]["amount"] = 
 # # stop at clip layer
 # ["6:9"]["inputs"]["boolean_value"] = 
-# ["6:10":]["inputs"]["stop_at_clip_layer"] = 
+# ["6:10"]["inputs"]["stop_at_clip_layer"] = 
 # # tiling
 # ["6:11"]["inputs"]["boolean_value"] = 
 # ["6:12"]["inputs"]["tiling"] = 
@@ -132,6 +132,9 @@
 # ["9"]["inputs"]["downscale_factor"] = 
 # ["9"]["inputs"]["start_percent"] = 
 # ["9"]["inputs"]["end_percent"] = 
+# ["9"]["inputs"]["downscale_after_skip"] = 
+# ["9"]["inputs"]["downscale_method"] = 
+# ["9"]["inputs"]["upscale_method"] = 
 # # sag
 # ["10"]["inputs"]["boolean_value"] = 
 # ["11"]["inputs"]["scale"] = 
@@ -167,6 +170,8 @@
 # ["19"]["inputs"]["lora_weight_4"] = 
 # # ipa 1
 # ["21"]["inputs"]["image"] = 
+# # ipa 1 invert mask
+# ["210"]["inputs"]["boolean_value"] = 
 # # ipa 1 - adv
 # ["20"]["inputs"]["preset"] = 
 # ["22"]["inputs"]["weight"] = 
@@ -197,6 +202,8 @@
 # ["195"]["inputs"]["embeds_scaling"] = 
 # # ipa 2
 # ["24"]["inputs"]["image"] = 
+# # ipa 2 invert mask
+# ["211"]["inputs"]["boolean_value"] = 
 # # ipa 2 - adv
 # ["23"]["inputs"]["preset"] = 
 # ["25"]["inputs"]["weight"] = 
@@ -236,6 +243,8 @@
 # ["28"]["inputs"]["boolean_value"] = 
 # ["29"]["inputs"]["image"] = 
 # ["30"]["inputs"]["resize_mode"] = 
+# # CN 0 invert mask
+# ["212"]["inputs"]["boolean_value"] = 
 # # CN 0 inpaint
 # ["31"]["inputs"]["boolean_value"] = 
 # ["32"]["inputs"]["preprocessor"] = 
@@ -249,6 +258,8 @@
 # ["34"]["inputs"]["boolean_value"] = 
 # ["35"]["inputs"]["image"] = 
 # ["36"]["inputs"]["resize_mode"] = 
+# # CN 1 invert mask
+# ["213"]["inputs"]["boolean_value"] = 
 # # CN 1 inpaint
 # ["37"]["inputs"]["boolean_value"] = 
 # ["38"]["inputs"]["preprocessor"] = 
@@ -262,6 +273,8 @@
 # ["40"]["inputs"]["boolean_value"] = 
 # ["41"]["inputs"]["image"] = 
 # ["42"]["inputs"]["resize_mode"] = 
+# # CN 2 invert mask
+# ["214"]["inputs"]["boolean_value"] = 
 # # CN 2 inpaint
 # ["43"]["inputs"]["boolean_value"] = 
 # ["44"]["inputs"]["preprocessor"] = 
@@ -275,6 +288,8 @@
 # ["46"]["inputs"]["boolean_value"] = 
 # ["47"]["inputs"]["image"] = 
 # ["48"]["inputs"]["resize_mode"] = 
+# # CN 3 invert mask
+# ["215"]["inputs"]["boolean_value"] = 
 # # CN 3 inpaint
 # ["49"]["inputs"]["boolean_value"] = 
 # ["50"]["inputs"]["preprocessor"] = 
@@ -288,6 +303,8 @@
 # ["52"]["inputs"]["boolean_value"] = 
 # ["53"]["inputs"]["image"] = 
 # ["54"]["inputs"]["resize_mode"] = 
+# # CN 4 invert mask
+# ["216"]["inputs"]["boolean_value"] = 
 # # CN 4 inpaint
 # ["55"]["inputs"]["boolean_value"] = 
 # ["56"]["inputs"]["preprocessor"] = 
@@ -301,6 +318,8 @@
 # ["58"]["inputs"]["boolean_value"] = 
 # ["59"]["inputs"]["image"] = 
 # ["60"]["inputs"]["resize_mode"] = 
+# # CN 5 invert mask
+# ["217"]["inputs"]["boolean_value"] = 
 # # CN 5 inpaint
 # ["61"]["inputs"]["boolean_value"] = 
 # ["62"]["inputs"]["preprocessor"] = 

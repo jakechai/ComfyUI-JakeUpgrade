@@ -49,6 +49,9 @@
 # ["4:23"]["inputs"]["strength"] = 
 # # batch size
 # ["4:24"]["inputs"]["amount"] = 
+# # stop at clip layer
+# ["4:5"]["inputs"]["boolean_value"] = 
+# ["4:6"]["inputs"]["stop_at_clip_layer"] = 
 # # sampling
 # ["9"]["inputs"]["boolean_value"] = 
 # ["10"]["inputs"]["shift"] = 

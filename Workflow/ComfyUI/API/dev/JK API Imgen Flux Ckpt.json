@@ -1,24 +1,20 @@
 {
   "1": {
     "inputs": {
-      "unet_name": "Flux\\bf\\flux1-dev.sft",
-      "weight_dtype": "fp8_e4m3fn"
+      "ckpt_name": "Flux\\ComfyOrg\\flux1-dev-fp8.safetensors"
     },
-    "class_type": "UNETLoader",
+    "class_type": "CheckpointLoaderSimple",
     "_meta": {
-      "title": "Load Diffusion Model"
+      "title": "Load Checkpoint"
     }
   },
   "2": {
     "inputs": {
-      "clip_name1": "t5xxl\\clip_l.safetensors",
-      "clip_name2": "t5xxl\\t5xxl_fp8_e4m3fn.safetensors",
-      "type": "flux",
-      "device": "default"
+      "vae_name": "FLUX\\ae.sft"
     },
-    "class_type": "DualCLIPLoader",
+    "class_type": "VAELoader",
     "_meta": {
-      "title": "DualCLIPLoader"
+      "title": "Load VAE"
     }
   },
   "3": {
@@ -866,15 +862,6 @@
       "title": "Multi-ControlNet Param Stack JK🐉"
     }
   },
-  "64": {
-    "inputs": {
-      "vae_name": "FLUX\\ae.sft"
-    },
-    "class_type": "VAELoader",
-    "_meta": {
-      "title": "Load VAE"
-    }
-  },
   "73": {
     "inputs": {
       "images": [
@@ -946,8 +933,8 @@
         0
       ],
       "clip": [
-        "2",
-        0
+        "1",
+        1
       ],
       "lora_stack": [
         "19",
@@ -4631,7 +4618,7 @@
         0
       ],
       "vae": [
-        "64",
+        "2",
         0
       ],
       "pixels": [
@@ -5828,7 +5815,7 @@
         0
       ],
       "vae": [
-        "64",
+        "2",
         0
       ]
     },
@@ -5926,7 +5913,7 @@
         0
       ],
       "vae": [
-        "64",
+        "2",
         0
       ]
     },
@@ -6083,7 +6070,7 @@
         0
       ],
       "vae": [
-        "64",
+        "2",
         0
       ]
     },
@@ -6657,7 +6644,7 @@
         0
       ],
       "vae": [
-        "64",
+        "2",
         0
       ]
     },
@@ -6839,7 +6826,7 @@
         0
       ],
       "vae": [
-        "64",
+        "2",
         0
       ],
       "controlnet_stack": [
@@ -6999,7 +6986,7 @@
         1
       ],
       "vae": [
-        "64",
+        "2",
         0
       ]
     },

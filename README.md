@@ -107,20 +107,24 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	- 2025-01-10 - v1.8.8	1. Add ControlNet Effective Mask switch for all Image Generation Group Nodes.
 				2. Fix image resolution bug of Image Generation adv group nodes.
 				3. First Comfy Org Registry version.
+	- 2025-02-04 - v1.9.0	1. Add Inject Latent Noise to advanced imgen group nodes.
+				2. Fix the Input Mask logic of advanced imgen group nodes.
+				3. Add "SD3 Prompts switch" for SD3 imgen group nodes.
+				4. Switch clip l and g bug fix.
+				5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
+				6. Image Generation | API | Kirta workflows updated.
 </details>
-
-- 2025-02-04 - v1.9.0
-1. Add Inject Latent Noise to advanced imgen group nodes.
-2. Fix the Input Mask logic of advanced imgen group nodes.
-3. Add "SD3 Prompts switch" for SD3 imgen group nodes.
-4. Switch clip l and g bug fix.
-5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
-6. Image Generation | API | Kirta workflows updated.
 
 - 2025-02-08 - v1.9.1
 1. Add Stop At Clip Layer to image refine group nodes.
 2. Add Flux Guidance to common imgen | refine group nodes.
 3. Add ComfyUI API workflows: controlnet preprocessor | upscale | refine.
+
+- 2025-02-17 - v1.9.2
+1. Update JK_module_Mesh-Get_3D_data module workflow.
+2. Imgen SDXL API workflow bug fixed.
+3. Add checkpoint version flux API workflows.
+4. Add image grid API workflows.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
