@@ -49,7 +49,7 @@
 # ["4:24"]["inputs"]["amount"] = 
 # # stop at clip layer
 # ["4:5"]["inputs"]["boolean_value"] = 
-# ["4:6":]["inputs"]["stop_at_clip_layer"] = 
+# ["4:6"]["inputs"]["stop_at_clip_layer"] = 
 # # sag
 # ["5"]["inputs"]["boolean_value"] = 
 # ["6"]["inputs"]["scale"] = 

@@ -1,8 +1,5 @@
-# ["1"]["inputs"]["unet_name"] = 
-# ["1"]["inputs"]["weight_dtype"] = 
-# ["2"]["inputs"]["clip_name1"] = 
-# ["2"]["inputs"]["clip_name2"] = 
-# ["24"]["inputs"]["vae_name"] = 
+# ["1"]["inputs"]["ckpt_name"] = 
+# ["2"]["inputs"]["vae_name"] = 
 # ["3"]["inputs"]["image"] = 
 # # positive
 # ["4:7"]["inputs"]["string"] = 
