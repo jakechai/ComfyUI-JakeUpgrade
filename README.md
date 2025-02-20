@@ -1,7 +1,7 @@
 ## ComfyUI Jake Upgrade
 
 A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by Jake.
-
+Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
 ## Changelog
@@ -125,6 +125,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 2. Imgen SDXL API workflow bug fixed.
 3. Add checkpoint version flux API workflows.
 4. Add image grid API workflows.
+
+- 2025-02-20 - v1.9.3
+1. Update IPAdapter nodes along with the Main branch.
+2. Add Discord server.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
