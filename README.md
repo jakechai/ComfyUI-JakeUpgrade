@@ -1,7 +1,7 @@
 ## ComfyUI Jake Upgrade
 
-A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by Jake.
-Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).
+A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by Jake.  
+Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).  
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
 ## Changelog
@@ -113,22 +113,22 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 				4. Switch clip l and g bug fix.
 				5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
 				6. Image Generation | API | Kirta workflows updated.
+	- 2025-02-08 - v1.9.1	1. Add Stop At Clip Layer to image refine group nodes.
+				2. Add Flux Guidance to common imgen | refine group nodes.
+				3. Add ComfyUI API workflows: controlnet preprocessor | upscale | refine.
+	- 2025-02-17 - v1.9.2	1. Update JK_module_Mesh-Get_3D_data module workflow.
+				2. Imgen SDXL API workflow bug fixed.
+				3. Add checkpoint version flux API workflows.
+				4. Add image grid API workflows.
 </details>
-
-- 2025-02-08 - v1.9.1
-1. Add Stop At Clip Layer to image refine group nodes.
-2. Add Flux Guidance to common imgen | refine group nodes.
-3. Add ComfyUI API workflows: controlnet preprocessor | upscale | refine.
-
-- 2025-02-17 - v1.9.2
-1. Update JK_module_Mesh-Get_3D_data module workflow.
-2. Imgen SDXL API workflow bug fixed.
-3. Add checkpoint version flux API workflows.
-4. Add image grid API workflows.
 
 - 2025-02-20 - v1.9.3
 1. Update IPAdapter nodes along with the Main branch.
 2. Add Discord server.
+
+- 2025-02-24 - v1.9.4
+1. Update Mesh-Get 3D data workflow along with the Load 3D node.
+2. Update auto-prompt workflows along with the Flux Prompt Generater node.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
