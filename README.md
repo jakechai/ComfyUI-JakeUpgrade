@@ -120,15 +120,18 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 				2. Imgen SDXL API workflow bug fixed.
 				3. Add checkpoint version flux API workflows.
 				4. Add image grid API workflows.
+	- 2025-02-20 - v1.9.3	1. Update IPAdapter nodes along with the Main branch.
+				2. Add Discord server.
 </details>
-
-- 2025-02-20 - v1.9.3
-1. Update IPAdapter nodes along with the Main branch.
-2. Add Discord server.
 
 - 2025-02-24 - v1.9.4
 1. Update Mesh-Get 3D data workflow along with the Load 3D node.
 2. Update auto-prompt workflows along with the Flux Prompt Generater node.
+
+- 2025-02-27 - v1.9.5
+1. Add new parameters to SAI API nodes.
+2. All SAI API nodes have been approved by [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API).
+3. Update IPAdapter nodes along with the Main branch.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -152,7 +155,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` to `...\ComfyUI\user\default\ComfyUI-Manager\components` for saving all JK Group Nodes within each workflow file.
 - [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy and replace files to `custom_nodes\ComfyUi_PromptStylers` for new styles.
-- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) : (Workaround before ComfyUI SAI API approves my pull request) Copy and replace files to `custom_nodes\ComfyUI-SAI_API` for all SAI API methods.
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus) : (Workaround before IPAdapter approves my pull request) Copy and replace files to `custom_nodes\ComfyUI_IPAdapter_plus` for better API workflow control by adding "None" selection.
 
 > [!NOTE]
