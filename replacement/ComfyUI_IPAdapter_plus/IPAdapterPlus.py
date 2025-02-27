@@ -573,6 +573,15 @@ class IPAdapterUnifiedLoader:
         else:        
             if ipadapter is not None:
                 pipeline = ipadapter
+            
+            if 'insightface' not in pipeline:
+                pipeline['insightface'] = { 'provider': None, 'model': None }
+
+            if 'ipadapter' not in pipeline:
+                pipeline['ipadapter'] = { 'file': None, 'model': None }
+
+            if 'clipvision' not in pipeline:
+                pipeline['clipvision'] = { 'file': None, 'model': None }
 
             # 1. Load the clipvision model
             clipvision_file = get_clipvision_file(preset)
