@@ -5805,6 +5805,34 @@ class OrbitPoses_to_OrbitLists_JK:
         
         return (orbit_lists,)
 
+class Get_OrbitPoses_From_List_JK:
+    
+    RETURN_TYPES = ("ORBIT_CAMPOSES",)
+    FUNCTION = "get_indexed_camposes"
+    CATEGORY = icons.get("JK/3D")
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "original_orbit_camera_poses": ("ORBIT_CAMPOSES",),    # [orbit radius, elevation, azimuth, orbit center X,  orbit center Y,  orbit center Z]
+                "indexes": ("STRING", {"default": "0, 1, 2", "multiline": True}),
+            },
+        }
+    
+    def get_indexed_camposes(self, original_orbit_camera_poses, indexes):
+        
+        # Parse the indexes string into a list of integers
+        index_list = [int(index.strip()) for index in indexes.split(',')]
+        
+        # Select the camposes at the specified indices
+        orbit_camera_poses = []
+        for i in index_list:
+            new_pose_list = original_orbit_camera_poses[i]
+            orbit_camera_poses.append(new_pose_list)
+
+        return (orbit_camera_poses,)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # Test Nodes
 #---------------------------------------------------------------------------------------------------------------------#
@@ -6039,6 +6067,7 @@ NODE_CLASS_MAPPINGS = {
     "Orbit Poses JK": OrbitPoses_JK,
     "OrbitLists to OrbitPoses JK": OrbitLists_to_OrbitPoses_JK,
     "OrbitPoses to OrbitLists JK": OrbitPoses_to_OrbitLists_JK,
+    "Get OrbitPoses From List JK": Get_OrbitPoses_From_List_JK,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     ### Misc Nodes
@@ -6216,5 +6245,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Orbit Poses JK": "Orbit Poses JK🐉",
     "OrbitLists to OrbitPoses JK": "OrbitLists to OrbitPoses JK🐉",
     "OrbitPoses to OrbitLists JK": "OrbitPoses to OrbitLists JK🐉",
+    "Get OrbitPoses From List JK": "Get OrbitPoses From List JK🐉",
 }    
 '''

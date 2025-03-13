@@ -193,6 +193,7 @@ NODE_CLASS_MAPPINGS = {
     "Orbit Poses JK": OrbitPoses_JK,
     "OrbitLists to OrbitPoses JK": OrbitLists_to_OrbitPoses_JK,
     "OrbitPoses to OrbitLists JK": OrbitPoses_to_OrbitLists_JK,
+    "Get OrbitPoses From List JK": Get_OrbitPoses_From_List_JK,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -371,6 +372,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Orbit Poses JK": "Orbit Poses JK🐉",
     "OrbitLists to OrbitPoses JK": "OrbitLists to OrbitPoses JK🐉",
     "OrbitPoses to OrbitLists JK": "OrbitPoses to OrbitLists JK🐉",
+    "Get OrbitPoses From List JK": "Get OrbitPoses From List JK🐉",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
