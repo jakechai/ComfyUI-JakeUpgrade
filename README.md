@@ -122,16 +122,18 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 				4. Add image grid API workflows.
 	- 2025-02-20 - v1.9.3	1. Update IPAdapter nodes along with the Main branch.
 				2. Add Discord server.
+	- 2025-02-24 - v1.9.4	1. Update Mesh-Get 3D data workflow along with the Load 3D node.
+				2. Update auto-prompt workflows along with the Flux Prompt Generater node.
 </details>
-
-- 2025-02-24 - v1.9.4
-1. Update Mesh-Get 3D data workflow along with the Load 3D node.
-2. Update auto-prompt workflows along with the Flux Prompt Generater node.
 
 - 2025-02-27 - v1.9.5
 1. Add new parameters to SAI API nodes.
-2. All SAI API nodes have been approved by [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API).
+2. All SAI API nodes have been approved by [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) and been removed from replacement folder..
 3. Update IPAdapter nodes along with the Main branch.
+
+- 2025-03-13 - v1.9.6
+1. Save MVs/CCMs/Depths/Images in both png and exr for img2mesh workflows. Add Load png|exr switch.
+2. Add Get OrbitPoses From List JK🐉 node. Replace Get CamPoses From List node.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -409,6 +411,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ### img2mesh workflow
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
+- [ComfyUI-HQ-Image-Save](https://github.com/spacepxl/ComfyUI-HQ-Image-Save)
 
 ### Krita workflow
 - [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
@@ -764,6 +767,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Orbit Poses JK🐉
 		OrbitLists to OrbitPoses JK🐉
 		OrbitPoses to OrbitLists JK🐉
+		Get OrbitPoses From List JK🐉
 </details>
 
 <details>
