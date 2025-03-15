@@ -135,6 +135,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Save MVs/CCMs/Depths/Images in both png and exr for img2mesh workflows. Add Load png|exr switch.
 2. Add Get OrbitPoses From List JK🐉 node. Replace Get CamPoses From List node of 3D Pack.
 3. Fix HandFix workflow issue.
+4. Update Get Mesh 3D Data workflow using the new Load 3D Node.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
