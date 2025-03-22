@@ -129,6 +129,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Mesh Input Switch JK": CR_MeshInputSwitch_JK,
     "CR Ply Input Switch JK": CR_PlyInputSwitch_JK,
     "CR Orbit Pose Input Switch JK": CR_OrbitPoseInputSwitch_JK,
+    "CR TriMesh Input Switch JK": CR_TriMeshInputSwitch_JK,
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": BoolToInt_JK,
     "CM_IntToBool JK": IntToBool_JK,
@@ -308,6 +309,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
     "CR Ply Input Switch JK": "Ply Input Switch JK🐉",
     "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
+    "CR TriMesh Input Switch JK": "CR TriMesh Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
     "CM_IntToBool JK": "IntToBool JK🐉",
