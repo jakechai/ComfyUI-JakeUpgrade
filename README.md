@@ -428,6 +428,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 > [!NOTE]
 > - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) is for SAI API workflow.
+> - [Comfy mtb](https://github.com/melMass/comfy_mtb): It is recommended to use `git clone` to install and block line 27 of `endpoint.py` to `# import_install("requirements")`, so the requirements will not be installed.
 
 ## JK_workflow : imgen (legacy)
 <details>
