@@ -3901,10 +3901,10 @@ class CR_FloatInputSwitch_JK:
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "float_false": ("FLOAT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
+                "float_false": ("FLOAT", {"default": 0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 0.0001}),
             },
             "optional": {
-                "float_true": ("FLOAT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
+                "float_true": ("FLOAT", {"default": 0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 0.0001}),
             },
         }
 
@@ -4412,6 +4412,32 @@ class CR_OrbitPoseInputSwitch_JK:
             return (orbit_camposes_true, boolean_value)
         else:
             return (orbit_camposes_false, boolean_value)
+
+class CR_TriMeshInputSwitch_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {"default": False}),
+                "trimesh_false": ("TRIMESH", {"forceInput": True}),
+            },
+            "optional": {
+                "trimesh_true": ("TRIMESH", {"forceInput": True}),
+            },
+        }
+    
+    RETURN_TYPES = ("TRIMESH", "BOOLEAN",)   
+    FUNCTION = "trimesh_switch"
+    CATEGORY = icons.get("JK/Logic")
+
+    def trimesh_switch(self, boolean_value, trimesh_false, trimesh_true=None):
+        if trimesh_true != None and boolean_value == True:
+            return (trimesh_true, boolean_value)
+        else:
+            return (trimesh_false, boolean_value)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # ComfyMath Fix Nodes
@@ -6003,6 +6029,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Mesh Input Switch JK": CR_MeshInputSwitch_JK,
     "CR Ply Input Switch JK": CR_PlyInputSwitch_JK,
     "CR Obit Pose Input Switch JK": CR_ObitPoseInputSwitch_JK,
+    "CR TriMesh Input Switch JK": CR_TriMeshInputSwitch_JK,
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": BoolToInt_JK,
     "CM_IntToBool JK": IntToBool_JK,
@@ -6181,6 +6208,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
     "CR Ply Input Switch JK": "Ply Input Switch JK🐉",
     "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
+    "CR TriMesh Input Switch JK": "CR TriMesh Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
     "CM_IntToBool JK": "IntToBool JK🐉",

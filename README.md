@@ -124,18 +124,21 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 				2. Add Discord server.
 	- 2025-02-24 - v1.9.4	1. Update Mesh-Get 3D data workflow along with the Load 3D node.
 				2. Update auto-prompt workflows along with the Flux Prompt Generater node.
+	- 2025-02-27 - v1.9.5	1. Add new parameters to SAI API nodes.
+				2. All SAI API nodes have been approved by [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) and been removed from replacement folder..
+				3. Update IPAdapter nodes along with the Main branch.
 </details>
-
-- 2025-02-27 - v1.9.5
-1. Add new parameters to SAI API nodes.
-2. All SAI API nodes have been approved by [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) and been removed from replacement folder..
-3. Update IPAdapter nodes along with the Main branch.
 
 - 2025-03-13 - v1.9.6
 1. Save MVs/CCMs/Depths/Images in both png and exr for img2mesh workflows. Add Load png|exr switch.
 2. Add Get OrbitPoses From List JK🐉 node. Replace Get CamPoses From List node of 3D Pack.
 3. Fix HandFix workflow issue.
 4. Update Get Mesh 3D Data workflow using the new Load 3D Node.
+
+- 2025-03-22 - v1.9.7
+1. CR TriMesh Input Switch JK🐉 added for Hunyuan 3D Wrapper workflow.
+2. Add Hunyuan 3D Wrapper img2mesh workflow.
+3. Updage MV upscale and refine process for img2mesh workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -174,6 +177,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - Files in the replacement folder need to be updated by hand if needed.
 
 ## Video Introduction
+- img2mesh Hunyuan3D Wrapper workflow: WIP
 - 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
@@ -200,6 +204,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JK_workflow_imgen_Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_Flux.json)
 - [JK_workflow_imgen_Flux legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_Flux_legacy.json)
 - [JK_workflow_imgen_API](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_API.json)
+- [JK_workflow_img2mesh_Hunyuan3DWrapper](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Hunyuan3DWrapper.json)
 - [JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_CRM&Zero123plus&MVDream&CharacterGen.json)
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
@@ -413,6 +418,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ### img2mesh workflow
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
+- [ComfyUI Hunyuan3D Wrapper](https://github.com/kijai/ComfyUI-Hunyuan3DWrapper)
+- [Comfy mtb](https://github.com/melMass/comfy_mtb)
 - [ComfyUI-HQ-Image-Save](https://github.com/spacepxl/ComfyUI-HQ-Image-Save)
 
 ### Krita workflow
@@ -421,6 +428,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 > [!NOTE]
 > - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) is for SAI API workflow.
+> - [Comfy mtb](https://github.com/melMass/comfy_mtb): It is recommended to use `git clone` to install and block line 27 of `endpoint.py` to `# import_install("requirements")`, so the requirements will not be installed.
 
 ## JK_workflow : imgen (legacy)
 <details>
@@ -705,6 +713,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Mesh Input Switch JK🐉
 		Ply Input Switch JK🐉
 		Orbit Pose Input Switch JK🐉
+		TriMesh Input Switch JK🐉
     ComfyMath Fix Nodes
 		BoolToInt JK🐉
 		IntToBool JK🐉
