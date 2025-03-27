@@ -177,7 +177,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - Files in the replacement folder need to be updated by hand if needed.
 
 ## Video Introduction
-- img2mesh Hunyuan3D Wrapper workflow: WIP
+- img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/)
 - 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
