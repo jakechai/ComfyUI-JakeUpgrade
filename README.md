@@ -4,6 +4,12 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).  
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
+Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
+Please check the [video](https://youtu.be/eyjy10T201M).  
+<a href="https://youtu.be/eyjy10T201M" target="_blank">
+ <img src="https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/ComfyUIAPIUI.png" alt="UI for ComfyUI API" />
+</a>
+
 ## Changelog
 <details>
 <summary><b>Previous Version</b></summary>
@@ -139,6 +145,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. CR TriMesh Input Switch JK🐉 added for Hunyuan 3D Wrapper workflow.
 2. Add Hunyuan 3D Wrapper img2mesh workflow.
 3. Updage MV upscale and refine process for img2mesh workflow.
+
+- 2025-04-05 - v1.9.8
+1. Cleaning up the codes.
+2. UI for ComfyUI API released.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -399,22 +409,21 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
 
 ### imgen workflow
-- [Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
-- [Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
-- [NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
-- [ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
-- [Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
-- [StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
-- [Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
-- [One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
-- [Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
-- [Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
-- [Merlin Magic Photo Prompter](https://github.com/Xclbr7/ComfyUI-Merlin)
-- [WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
-- [VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
-- [IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
-- [ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
-- [ComfyUI FLUX BFL API](https://github.com/gelasdev/ComfyUI-FLUX-BFL-API)
+- (auto prompt)[Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
+- (auto prompt)[One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
+- (auto prompt)[Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
+- (auto prompt)[Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
+- (auto prompt)[Merlin Magic Photo Prompter](https://github.com/Xclbr7/ComfyUI-Merlin)
+- (auto prompt)[WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
+- (auto prompt)[VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
+- (auto prompt)[IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
+- (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
+- (refine)[Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
+- (detailer)[Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
+- (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
+- (legacy)[NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
+- (legacy)[ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
+- (legacy)[StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
 
 ### img2mesh workflow
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
