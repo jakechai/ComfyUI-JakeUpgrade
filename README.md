@@ -392,21 +392,22 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 ## Required Custom Nodes
 
-### Common (ComfyUI API)
-- [rgthree](https://github.com/rgthree/rgthree-comfy)
-- [pythongosssss](https://github.com/pythongosssss/ComfyUI-Custom-Scripts)
-- [ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
-- [Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
-- [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
-- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
-- [KJ Nodes](https://github.com/kijai/ComfyUI-KJNodes)
-- [Essentials](https://github.com/cubiq/ComfyUI_essentials)
-- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
-- [Detail Daemon](https://github.com/Jonseed/ComfyUI-Detail-Daemon)
-- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
-- [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
-- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
-- [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
+### Common & ComfyUI API
+
+- (Common & API)[ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
+- (Common & API)[Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
+- (Common & API)[Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
+- (Common & API)[IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
+- (Common & API)[KJ Nodes](https://github.com/kijai/ComfyUI-KJNodes)
+- (Common & API)[Essentials](https://github.com/cubiq/ComfyUI_essentials)
+- (Common & API)[ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
+- (Common & API)[Detail Daemon](https://github.com/Jonseed/ComfyUI-Detail-Daemon)
+- (Common & API)[Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
+- (Common & API)[JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
+- (Common)[rgthree](https://github.com/rgthree/rgthree-comfy)
+- (Common)[pythongosssss](https://github.com/pythongosssss/ComfyUI-Custom-Scripts)
+- (Common)[Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
+- (Common)[ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 
 ### imgen workflow
 - (auto prompt)[Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
@@ -436,6 +437,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [Tooling Nodes](https://github.com/Acly/comfyui-tooling-nodes)
 
 > [!NOTE]
+> - [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA) is optional if you are not using SD15 workflow.
 > - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) is for SAI API workflow.
 > - [Comfy mtb](https://github.com/melMass/comfy_mtb): It is recommended to use `git clone` to install and block line 27 of `endpoint.py` to `# import_install("requirements")`, so the requirements will not be installed.
 
