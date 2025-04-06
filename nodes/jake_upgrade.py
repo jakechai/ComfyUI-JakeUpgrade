@@ -381,7 +381,6 @@ class TilingMode_JK:
     
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("TILING",)
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
 
@@ -402,7 +401,6 @@ class EmptyLatentColor_JK:
     
     RETURN_TYPES = ("INT", "INT", "INT", "INT")
     RETURN_NAMES = ("SD15", "SDXL", "SD3", "FLUX")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
 
@@ -440,7 +438,6 @@ class SDXL_TargetRes_JK:
     
     RETURN_TYPES = ("INT", "INT")
     RETURN_NAMES = ("target_width", "target_height")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
     
@@ -464,7 +461,6 @@ class GetSize_JK:
     
     RETURN_TYPES = ("INT", "INT")
     RETURN_NAMES = ("width", "height")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
     
@@ -512,7 +508,6 @@ class ImageCropByMaskResolution_JK:
     
     RETURN_TYPES = ("INT", "INT", "INT", "INT", "INT", "INT", "STRING", "STRING")
     RETURN_NAMES = ("crop_width", "crop_height", "offset_x", "offset_y", "target_width", "target_height", "image_upscale_method", "latent_upscale_method")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
     
@@ -623,7 +618,6 @@ class ImageCropByMaskParams_JK:
     
     RETURN_TYPES = ("BOOLEAN", "INT", "BOOLEAN", "BOOLEAN", "INT", "BOOLEAN", "FLOAT")
     RETURN_NAMES = ("inpaint_crop_and_stitch", "padding", "use_image_res", "use_target_res", "target_res", "use_target_mega_pixel", "target_mega_pixel")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
     
@@ -644,7 +638,6 @@ class UpscaleMethod_JK:
     
     RETURN_TYPES = ("STRING", "STRING")
     RETURN_NAMES = ("image_upscale_method", "latent_upscale_method")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
     
@@ -663,7 +656,6 @@ class LatentCropOffset_JK:
     
     RETURN_TYPES = ("INT", )
     RETURN_NAMES = ("latent_offset",)
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
     
@@ -692,7 +684,6 @@ class ScaleToResolution_JK:
     
     RETURN_TYPES = ("INT", "INT")
     RETURN_NAMES = ("target_width", "target_height")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
 
@@ -742,7 +733,6 @@ class Inject_Noise_Params_JK:
     
     RETURN_TYPES = ("INT", "FLOAT", ["false", "true"])
     RETURN_NAMES = ("Seed", "Strength", "Normalize")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
     
@@ -766,7 +756,6 @@ class SD3_Prompts_Switch_JK:
     
     RETURN_TYPES = ("STRING", "STRING", "STRING")
     RETURN_NAMES = ("clip_l", "clip_g", "t5xxl")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
     
@@ -1530,8 +1519,6 @@ class EmbeddingPicker_JK:
     RETURN_TYPES = ("STRING", "STRING")
     RETURN_NAMES = ("Text", "METADATA",)
     FUNCTION = "concat_embedding"
-    #OUTPUT_NODE = False
-
     CATEGORY = icons.get("JK/Embedding")
 
     def concat_embedding(self, embedding, emphasis, append, save_hash, text_in=None, metadata_in=None):
@@ -1587,8 +1574,6 @@ class EmbeddingPicker_Multi_JK:
     RETURN_TYPES = ("STRING", "STRING")
     RETURN_NAMES = ("Text", "METADATA",)
     FUNCTION = "concat_embedding"
-    #OUTPUT_NODE = False
-
     CATEGORY = icons.get("JK/Embedding")
 
     def concat_embedding(self, input_mode, embedding_count, save_hash, text_in=None, metadata_in=None, **kwargs):
@@ -1751,7 +1736,6 @@ class NodesState_JK:
     RETURN_TYPES = ()
     RETURN_NAMES = ()
     CATEGORY = icons.get("JK/Pipe")
-    OUTPUT_NODE = True
 
     def doit(self, node_id_list, mute_state, bypass_state):
         node_ids = re.split('[.,;:]', node_id_list)
@@ -1876,9 +1860,6 @@ class ProjectSetting_JK:
     RETURN_TYPES = ("STRING", "STRING", "INT")
     RETURN_NAMES = ("Image_Name", "Path_Name", "Counter")
     FUNCTION = "get_value"
-
-    OUTPUT_NODE = True
-
     CATEGORY = icons.get("JK/Pipe")
 
     def get_value(self, project_name, image_name, path_name, seed):
@@ -1941,7 +1922,6 @@ class BaseModelParameters_JK:
     
     RETURN_TYPES = ("STRING", "PIPE_LINE", "PIPE_LINE")
     RETURN_NAMES = ("Base_Model_MetaData", "Base_Model_Pipe", "Base_Image_Pipe")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
@@ -2050,7 +2030,6 @@ class BaseModelPipe_JK:
     
     RETURN_TYPES = ("PIPE_LINE", "STRING")
     RETURN_NAMES = ("Base_PIPE", "Base_Prompt")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
@@ -2154,7 +2133,6 @@ class NoiseInjectionParameters_JK:
     
     RETURN_TYPES = ("STRING", "PIPE_LINE")
     RETURN_NAMES = ("Noise_Injection_MetaData", "Noise_Injection_Pipe")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
@@ -2243,7 +2221,6 @@ class RefineModelParameters_JK:
     
     RETURN_TYPES = ("STRING", "PIPE_LINE", "PIPE_LINE", "INT", "INT")
     RETURN_NAMES = ("Refine_MetaData", "refine_1_pipe", "refine_2_pipe", "Batch_Index", "Refine_Length")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
@@ -2338,7 +2315,6 @@ class RefinePipe_JK:
     
     RETURN_TYPES = ("PIPE_LINE",)
     RETURN_NAMES = ("Refine_PIPE",)
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
@@ -2423,7 +2399,6 @@ class UpscaleModelParameters_JK:
     
     RETURN_TYPES = ("STRING", "PIPE_LINE", "PIPE_LINE", "PIPE_LINE", "INT", "INT")
     RETURN_NAMES = ("Upscale_MetaData", "Image_Upscale_Pipe", "Latent_Upscale_Pipe", "Upscale_Model_Pipe", "Batch_Index", "Upscale_Length")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
@@ -2550,7 +2525,6 @@ class DetailerParameters_JK:
     
     RETURN_TYPES = ("INT", "INT", "FLOAT")
     RETURN_NAMES = ("Batch_Index", "Detailer_Length", "Refiner_On_Ratio")
-    OUTPUT_NODE = True
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
 
@@ -2571,7 +2545,6 @@ class PipeEnd_JK:
     RETURN_TYPES = ()
     RETURN_NAMES = ()
     CATEGORY = icons.get("JK/Pipe")
-    OUTPUT_NODE = True
 
     def doit(self, any_in=None):
         return ()
@@ -2600,7 +2573,6 @@ class MetadataPipe_JK:
     RETURN_NAMES = ("META_PIPE",)
     FUNCTION = "doit"
     CATEGORY = icons.get("JK/Pipe")
-    OUTPUT_NODE = True
 
     def doit(self, base_model_prompt=None, base_model_metadata=None, lora_metadata=None, positive_embedding_metadata=None, negative_embedding_metadata=None, 
                    controlnet_metadata=None, refine_metadata=None, upscale_metadata=None, noise_injection_metadata=None,
@@ -2746,9 +2718,7 @@ class ImageSaveWithMetadata_JK:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("METADATA",)
     FUNCTION = "save_files"
-
     OUTPUT_NODE = True
-
     CATEGORY = icons.get("JK/Image")
 
     def save_files(self, images, positive, negative, variation, seed_value, width, height, steps, sampler_name, scheduler, cfg, ckpt_name, specified_vae, vae_name, stop_at_clip_layer, img2img, img2img_denoise, 
@@ -2930,9 +2900,7 @@ class ImageSaveWithMetadata_Flow_JK:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("METADATA",)
     FUNCTION = "save_files"
-
     OUTPUT_NODE = True
-
     CATEGORY = icons.get("JK/Image")
 
     def save_files(self, images, other_prompt, image_name, path_name, counter, extension, lossless_webp, quality_jpeg_or_webp, 
@@ -3042,10 +3010,8 @@ class LoadImageWithMetadata_JK:
 
     RETURN_TYPES = ("IMAGE", "MASK", "STRING",)
     RETURN_NAMES = ("IMAGE", "MASK", "Prompt")
-
     FUNCTION = "load_image"
     CATEGORY = icons.get("JK/Image")
-    OUTPUT_NODE = True
 
     def load_image(self, image, load_metadata):
         if image in LoadImageWithMetadata_JK.files:
@@ -3112,10 +3078,8 @@ class LoadImageWithAlpha_JK:
 
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("IMAGE",)
-
     FUNCTION = "load_image"
     CATEGORY = icons.get("JK/Image")
-    OUTPUT_NODE = True
 
     def load_image(self, image):
         if image in LoadImageWithMetadata_JK.files:
@@ -5624,7 +5588,6 @@ class EvaluateInts_JK:
         }
 
     RETURN_TYPES = ("INT", "FLOAT", "STRING",)
-    OUTPUT_NODE = True
     FUNCTION = "evaluate"
     CATEGORY = icons.get("JK/Math")
 
@@ -5647,7 +5610,6 @@ class EvaluateFloats_JK:
         }
 
     RETURN_TYPES = ("INT", "FLOAT", "STRING",)
-    OUTPUT_NODE = True
     FUNCTION = "evaluate"
     CATEGORY = icons.get("JK/Math")
 
@@ -5670,7 +5632,6 @@ class EvaluateStrs_JK:
         }
 
     RETURN_TYPES = ("STRING",)
-    OUTPUT_NODE = True
     FUNCTION = "evaluate"
     CATEGORY = icons.get("JK/Math")
 
