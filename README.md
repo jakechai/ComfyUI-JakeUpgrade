@@ -133,13 +133,11 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	- 2025-02-27 - v1.9.5	1. Add new parameters to SAI API nodes.
 				2. All SAI API nodes have been approved by [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) and been removed from replacement folder..
 				3. Update IPAdapter nodes along with the Main branch.
+	- 2025-03-13 - v1.9.6	1. Save MVs/CCMs/Depths/Images in both png and exr for img2mesh workflows. Add Load png|exr switch.
+				2. Add Get OrbitPoses From List JK🐉 node. Replace Get CamPoses From List node of 3D Pack.
+				3. Fix HandFix workflow issue.
+				4. Update Get Mesh 3D Data workflow using the new Load 3D Node.
 </details>
-
-- 2025-03-13 - v1.9.6
-1. Save MVs/CCMs/Depths/Images in both png and exr for img2mesh workflows. Add Load png|exr switch.
-2. Add Get OrbitPoses From List JK🐉 node. Replace Get CamPoses From List node of 3D Pack.
-3. Fix HandFix workflow issue.
-4. Update Get Mesh 3D Data workflow using the new Load 3D Node.
 
 - 2025-03-22 - v1.9.7
 1. CR TriMesh Input Switch JK🐉 added for Hunyuan 3D Wrapper workflow.
@@ -149,6 +147,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - 2025-04-05 - v1.9.8
 1. Cleaning up the codes.
 2. UI for ComfyUI API released.
+3. Update Seamless Texture workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -422,6 +421,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - (refine)[Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - (detailer)[Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
 - (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
+- (Seamless Texture)[Comfy mtb](https://github.com/melMass/comfy_mtb)
 - (legacy)[NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - (legacy)[ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - (legacy)[StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
