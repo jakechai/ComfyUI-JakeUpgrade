@@ -4,6 +4,10 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).  
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
+> [!NOTE]
+> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17. Please stay in v1.15 for now until they release the Sub Graph, which replaces Group node.
+> - "embeded python.exe" -m pip install --force-reinstall comfyui-frontend-package==1.15.12
+
 Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
 Please check the [video](https://youtu.be/eyjy10T201M).  
 <a href="https://youtu.be/eyjy10T201M" target="_blank">
