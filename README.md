@@ -180,7 +180,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 > [!NOTE]
 > - Group Nodes can be copied and pasted between workflows in the latest ComfyUI. See details in my Video Introduction of Group Nodes.
 > - Load [All JK (Group) Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Nodes-JK.json) for all JK Group Nodes.
-> - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded.
+> - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded them.
 
 ## Update
 1. ComfyUI Manager - Fetch Update - Search JakeUpgrade and Update.
