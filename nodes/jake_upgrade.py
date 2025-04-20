@@ -4345,7 +4345,7 @@ class CR_PlyInputSwitch_JK:
     FUNCTION = "ply_switch"
     CATEGORY = icons.get("JK/Logic")
 
-    def mesh_switch(self, boolean_value, ply_false, ply_true=None):
+    def ply_switch(self, boolean_value, ply_false, ply_true=None):
         if ply_true != None and boolean_value == True:
             return (ply_true, boolean_value)
         else:
