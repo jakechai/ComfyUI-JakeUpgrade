@@ -5,8 +5,7 @@ Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
 > [!NOTE]
-> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17. Please stay in v1.15 for now until they release the Sub Graph, which replaces Group node.
-> - "embeded python.exe" -m pip install --force-reinstall comfyui-frontend-package==1.15.12
+> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17. Please stay in v1.15 for now until they release the Sub Graph, which replaces Group node. "embeded python.exe" -m pip install --force-reinstall comfyui-frontend-package==1.15.12
 > - ComfyUI frontend breaks the Impact-Pack Switch(Any) node. Though it's been fixed in the latest version(v8.12), but it only supports comfyui-frontend-package>=1.16.9. Please switch Impact-Pack to v8.8.1 In the ComfyUI Manager which works fine with Group node while comfyui-frontend-package==1.15.12. 
 
 Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
