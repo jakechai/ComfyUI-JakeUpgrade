@@ -767,6 +767,27 @@ class SD3_Prompts_Switch_JK:
         
         return (_clip_l, _clip_g, _t5xxl)
 
+class GuidanceDefault_JK:
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "guidance": ("FLOAT", {"default": 3.5, "min": 0.0, "max": 100.0, "step": 0.1}),
+            },
+        }
+    
+    RETURN_TYPES = ("FLOAT",)
+    RETURN_NAMES = ("GUIDANCE",)
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+
+    def get_value(self, guidance):
+    
+        return (guidance,)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes
 #---------------------------------------------------------------------------------------------------------------------#
@@ -1820,27 +1841,6 @@ class KsamplerParametersDefault_JK:
     def get_value(self, steps, cfg, denoise):
     
         return (steps, cfg, denoise)
-
-class GuidanceDefault_JK:
-    def __init__(self):
-        pass
-    
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "guidance": ("FLOAT", {"default": 3.5, "min": 0.0, "max": 100.0, "step": 0.1}),
-            },
-        }
-    
-    RETURN_TYPES = ("FLOAT",)
-    RETURN_NAMES = ("GUIDANCE",)
-    FUNCTION = "get_value"
-    CATEGORY = icons.get("JK/Pipe")
-
-    def get_value(self, guidance):
-    
-        return (guidance,)
 
 class ProjectSetting_JK:
     def __init__(self):
@@ -3106,6 +3106,224 @@ class LoadImageWithAlpha_JK:
         if not folder_paths.exists_annotated_filepath(image):
             return "Invalid image file: {}".format(image)
         return True
+
+class RoughOutline_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "images": ("IMAGE",),
+                "blur_size": ("INT", {"default": 4, "min": 0, "max": 30, "step": 2}),
+                "canny_low": ("INT", {"default": 50, "min": 1, "max": 255, "step": 1}),
+                "canny_high": ("INT", {"default": 150, "min": 1, "max": 255, "step": 1}),
+                "simplify_mode": (["dynamic", "fixed"], {"default": "dynamic"}),
+                "simplify_tolerance": ("FLOAT", {"default": 0.5, "min": 0.1, "max": 20.0, "step": 0.1}),
+                "morph_kernel": ("INT", {"default": 10, "min": 0, "max": 20, "step": 2}),
+                "thickness": ("INT", {"default": 4, "min": 1, "max": 10, "step": 1}),
+            },
+        }
+        
+    RETURN_TYPES = ("IMAGE", "IMAGE", "IMAGE")
+    RETURN_NAMES = ("outline_image", "overlay_image", "canny_image")
+    FUNCTION = "rough_outline"
+    CATEGORY = icons.get("JK/Image")
+    
+    def rough_outline(self, images, blur_size, canny_low, canny_high, simplify_mode, simplify_tolerance, morph_kernel, thickness):
+    
+        batch_size = images.shape[0]
+        np_images = images.cpu().numpy() * 255.0
+        np_images = np_images.astype(numpy.uint8)
+        
+        overlay_list = []
+        contour_list = []
+        edges_list = []
+        
+        for i in range(batch_size):
+            img = np_images[i]
+            img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+            
+            # 高斯模糊处理
+            if blur_size > 0:
+                blur_size_adj = blur_size + 1 if blur_size % 2 == 0 else blur_size
+                gray = cv2.GaussianBlur(gray, (blur_size_adj, blur_size_adj), 0)
+            
+            # Canny边缘检测
+            edges = cv2.Canny(gray, canny_low, canny_high)
+            edges_rgb = cv2.cvtColor(edges, cv2.COLOR_GRAY2RGB)
+            
+            # 形态学闭合操作
+            if morph_kernel > 0:
+                kernel = numpy.ones((morph_kernel, morph_kernel), numpy.uint8)
+                edges = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
+            
+            # 查找并处理轮廓
+            contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            
+            valid_contours = []
+            for contour in contours:
+                arc_len = cv2.arcLength(contour, True)
+                
+                # 动态简化策略
+                if simplify_mode == "dynamic":
+                    epsilon = max(1.0, (arc_len * 0.01) * simplify_tolerance)
+                else:
+                    epsilon = simplify_tolerance
+                
+                approx = cv2.approxPolyDP(contour, epsilon, True)
+                if len(approx) >= 2:
+                    approx = self.connect_breakpoints(approx, max_gap=5)
+                    valid_contours.append(approx)
+            
+            # 创建输出图像
+            overlay_img = img_bgr.copy()
+            white_bg = numpy.ones_like(img_bgr) * 255
+            
+            if valid_contours:
+                # 绘制红色轮廓 (BGR格式)
+                cv2.drawContours(overlay_img, valid_contours, -1, (0, 0, 255), thickness)
+                cv2.drawContours(white_bg, valid_contours, -1, (0, 0, 0), thickness)
+            
+            # 转换并归一化
+            overlay_rgb = cv2.cvtColor(overlay_img, cv2.COLOR_BGR2RGB) / 255.0
+            contour_rgb = cv2.cvtColor(white_bg, cv2.COLOR_BGR2RGB) / 255.0
+            edges_rgb = edges_rgb / 255.0
+            
+            overlay_list.append(torch.from_numpy(overlay_rgb))
+            contour_list.append(torch.from_numpy(contour_rgb))
+            edges_list.append(torch.from_numpy(edges_rgb))
+        
+        return (
+            torch.stack(contour_list),
+            torch.stack(overlay_list),
+            torch.stack(edges_list)
+        )
+
+    def connect_breakpoints(self, contour, max_gap=5):
+        # 连接相邻点之间的断裂，保持形状一致性
+        new_contour = []
+        if len(contour) == 0:
+            return contour
+        
+        # 确保初始点形状正确
+        last_point = numpy.array(contour[0], dtype=numpy.int32).reshape(1,1,2)
+        new_contour.append(last_point)
+        
+        for point in contour[1:]:
+            current_point = numpy.array(point, dtype=numpy.int32).reshape(1,1,2)
+            distance = numpy.linalg.norm(current_point - last_point)
+            
+            if distance > max_gap:
+                # 生成中间点并保持三维形状 (N,1,2)
+                num_intermediate = int(distance // max_gap) + 1
+                intermediate = numpy.linspace(
+                    last_point[0,0], 
+                    current_point[0,0], 
+                    num=num_intermediate+2,
+                    dtype=numpy.int32
+                )
+                # 重塑为 (N,1,2) 形状
+                intermediate = intermediate.reshape(-1,1,2)
+                
+                # 跳过首尾点（已包含）
+                for p in intermediate[1:-1]:
+                    new_contour.append(p.reshape(1,1,2))
+            
+            new_contour.append(current_point)
+            last_point = current_point
+        
+        # 统一形状后拼接
+        return numpy.concatenate(new_contour, axis=0)
+
+# Original code: https://github.com/AInseven/ComfyUI-fastblend
+class OpenDWPose_JK:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "DWPose": ("IMAGE",),
+                "OpenPose": ("IMAGE",),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("pose_image",)
+    FUNCTION = "add_images"
+    CATEGORY = icons.get("JK/Image")
+
+    def hex_to_rgb(self, hex_color):
+        hex_color = hex_color.lstrip("#")
+        return [int(hex_color[i:i + 2], 16) for i in (0, 2, 4)]
+
+    def remove_color(self, image, hex_color="#000099"):
+        target_rgb = self.hex_to_rgb(hex_color)
+
+        # Convert PyTorch tensor to NumPy array
+        if isinstance(image, torch.Tensor):
+            image = image.cpu().numpy()
+
+        # Convert the target color to the same scale as the image
+        target_rgb_normalized = [c / 255.0 for c in target_rgb]
+
+        # Apply the color removal with a tolerance for small differences
+        tolerance = 0.01
+        mask = numpy.all(numpy.abs(image - target_rgb_normalized) < tolerance, axis=-1)
+        image[mask] = 0
+
+        # Convert back to PyTorch tensor
+        image = torch.from_numpy(image)
+
+        return image
+
+    def reserve_color(self, image, reserved_colors=["#000099", "#00FF00"]):
+        # Convert PyTorch tensor to NumPy array
+        if isinstance(image, torch.Tensor):
+            image = image.cpu().numpy()
+
+        # Convert the reserved colors to the same scale as the image
+        reserved_colors_normalized = []
+        for each in reserved_colors:
+            target_rgb = self.hex_to_rgb(each)
+            reserved_colors_normalized.append([c / 255.0 for c in target_rgb])
+
+        # Create a mask to reserve specified colors
+        mask = None
+        for color_normalized in reserved_colors_normalized:
+            color_mask = numpy.all(numpy.abs(image - color_normalized) < 0.01, axis=-1)
+            if mask is None:
+                mask = color_mask
+            else:
+                mask |= color_mask
+
+        # Set non-reserved colors to zero
+        image[~mask] = 0
+
+        # Convert back to PyTorch tensor
+        image = torch.from_numpy(image)
+
+        return image
+
+    def add_images(self, DWPose, OpenPose):
+        print("type(DWPose)",type(DWPose))
+        print("DWPose shape",DWPose.shape)
+        # Remove the color #000099 from the input images
+        dwpose_color_to_remove = ['#000099', '#990066', '#990099',  # 三条线
+                                  '#aa00ff', '#ff0000', '#ff00aa', '#ff00ff', '#ff0055',
+                                  '#660099', '#330099']
+        for each in dwpose_color_to_remove:
+            DWPose = self.remove_color(DWPose, hex_color=each)
+
+        OpenPose = self.reserve_color(OpenPose, reserved_colors=['#ff0055', '#ff00aa',
+                                                                 '#ffffff',
+                                                                 '#000099','#660099','#330099','#990099','#990066'
+                                                                 '#ff00aa','#ff0000','#ff0055'])
+
+        # Add the numpy arrays of the input images
+        result_image = numpy.add(DWPose, OpenPose)
+        return (result_image,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Image Nodes from 3D Pack
@@ -5962,6 +6180,8 @@ NODE_CLASS_MAPPINGS = {
     "Image Resize Mode JK": ImageResizeMode_JK,
     "Image Remove Alpha JK": ImageRemoveAlpha_JK,
     "Color Grading JK": ColorGrading_JK,
+    "Rough Outline JK": RoughOutline_JK,
+    "OpenDWPose_JK": OpenDWPose_JK,
     ### Mask Nodes
     "Is Mask Empty JK": IsMaskEmpty_JK,
     ### Animation Nodes
@@ -6141,6 +6361,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Image Resize Mode JK": "Image Resize Mode JK🐉",
     "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
     "Color Grading JK": "Color Grading JK🐉",
+    "Rough Outline JK": "Rough Outline JK🐉",
+    "OpenDWPose_JK": "Open+DW Pose JK🐉",
     ### Mask Nodes
     "Is Mask Empty JK": "Is Mask Empty JK🐉",
     ### Animation Nodes
@@ -6169,7 +6391,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
     "CR Ply Input Switch JK": "Ply Input Switch JK🐉",
     "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
-    "CR TriMesh Input Switch JK": "CR TriMesh Input Switch JK🐉",
+    "CR TriMesh Input Switch JK": "TriMesh Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
     "CM_IntToBool JK": "IntToBool JK🐉",

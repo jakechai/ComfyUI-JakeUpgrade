@@ -101,6 +101,8 @@ NODE_CLASS_MAPPINGS = {
     "Image Resize Mode JK": ImageResizeMode_JK,
     "Image Remove Alpha JK": ImageRemoveAlpha_JK,
     "Color Grading JK": ColorGrading_JK,
+    "Rough Outline JK": RoughOutline_JK,
+    "OpenDWPose_JK": OpenDWPose_JK,
     ### Mask Nodes
     "Is Mask Empty JK": IsMaskEmpty_JK,
     ### Animation Nodes
@@ -281,6 +283,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Image Resize Mode JK": "Image Resize Mode JK🐉",
     "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
     "Color Grading JK": "Color Grading JK🐉",
+    "Rough Outline JK": "Rough Outline JK🐉",
+    "OpenDWPose_JK": "Open+DW Pose JK🐉",
     ### Mask Nodes
     "Is Mask Empty JK": "Is Mask Empty JK🐉",
     ### Animation Nodes
@@ -309,7 +313,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
     "CR Ply Input Switch JK": "Ply Input Switch JK🐉",
     "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
-    "CR TriMesh Input Switch JK": "CR TriMesh Input Switch JK🐉",
+    "CR TriMesh Input Switch JK": "TriMesh Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
     "CM_IntToBool JK": "IntToBool JK🐉",
