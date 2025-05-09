@@ -5,7 +5,7 @@ Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
 > [!NOTE]
-> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17. Please stay in v1.15 for now until they release the Sub Graph, which replaces Group node. "embeded python.exe" -m pip install --force-reinstall comfyui-frontend-package==1.15.12
+> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17. Please stay in v1.15 for now until they release the [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), which replaces Group node. "embeded python.exe" -m pip install --force-reinstall comfyui-frontend-package==1.15.12
 > - ComfyUI frontend breaks the Impact-Pack Switch(Any) node. Though it's been fixed in the latest version(v8.12), but it only supports comfyui-frontend-package>=1.16.9. Please switch Impact-Pack to v8.8.1 In the ComfyUI Manager which works fine with Group node while comfyui-frontend-package==1.15.12. 
 
 Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
@@ -141,17 +141,23 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 				2. Add Get OrbitPoses From List JK🐉 node. Replace Get CamPoses From List node of 3D Pack.
 				3. Fix HandFix workflow issue.
 				4. Update Get Mesh 3D Data workflow using the new Load 3D Node.
+	- 2025-03-22 - v1.9.7	1. CR TriMesh Input Switch JK🐉 added for Hunyuan 3D Wrapper workflow.
+				2. Add Hunyuan 3D Wrapper img2mesh workflow.
+				3. Updage MV upscale and refine process for img2mesh workflow.
 </details>
-
-- 2025-03-22 - v1.9.7
-1. CR TriMesh Input Switch JK🐉 added for Hunyuan 3D Wrapper workflow.
-2. Add Hunyuan 3D Wrapper img2mesh workflow.
-3. Updage MV upscale and refine process for img2mesh workflow.
 
 - 2025-04-05 - v1.9.8
 1. Cleaning up the codes.
 2. UI for ComfyUI API released.
 3. Update Seamless Texture workflow.
+
+- 2025-05-09 - v1.9.9
+1. Add Florence 2 to Auto Prompt Workflow.
+2. Add Segment Anything 2 to Detailer Workflow.
+3. Add Flux Fill to Flux imgen group node and workflow.
+4. Add RoughOutline_JK node to generate motion outline.
+5. Add OpenDWPose_JK node to combine openpose and dwpose.
+6. Add Wan Video main workflow and module workflows.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -191,6 +197,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 > - Files in the replacement folder need to be updated by hand if needed.
 
 ## Video Introduction
+- Wan Video workflows: Youtube(WIP) | Bilibili(WIP)
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) | [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
@@ -224,6 +231,13 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Unique3D&Wonder3D&Era3D.json)
 - [JK_workflow_img2mesh_Zero123&SV3D](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Zero123&SV3D.json)
 - [JK_workflow_img2mesh_3DGS](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_3DGS.json)
+- [JK_workflow_Video-Wan_txt2vid](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_txt2vid.json)
+- [JK_workflow_Video-Wan_img2vid_ref](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_img2vid_ref.json)
+- [JK_workflow_Video-Wan_img2vid_flf](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_img2vid_flf.json)
+- [JK_workflow_Video-Wan_vid2vid](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_vid2vid.json)
+- [JK_workflow_Video-Wan__VACE](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__VACE.json)
+- [JK_workflow_Video-Wan__SkyreelDF](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__SkyreelDF.json)
+- [JK_workflow_Video-FramePack](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack.json)
 
 #### Module
 - [JK_module_AutoPrompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_00_AutoPrompt.json)
@@ -245,6 +259,11 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_module_Flux_KSampler](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_FluxKSampler.json)
 - [JK_module_Mesh-ReMesh_Projection](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Mesh-ReMesh_Projection.json)
 - [JK_module_Mesh-Get_3D_data](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Mesh-Get_3D_data.json)
+- [JK_module_Video-AutoMask](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-AutoMask.json)
+- [JK_module_Video-AutoMotion](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-AutoMotion.json)
+- [JK_module_Video-Control](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-Control.json)
+- [JK_module_Video-Upscale&Interpolation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-Upscale&Interpolation.json)
+- [JK_module_Video-WanExplanation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-WanExplanation.json)
 
 #### API
 - [JK_API_Imgen_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/JK_API_Imgen_SD15.json)
@@ -424,10 +443,12 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - (auto prompt)[WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - (auto prompt)[VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
 - (auto prompt)[IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
+- (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
 - (refine)[Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - (detailer)[Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
 - (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
+- (detailer)[Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - (Seamless Texture)[Comfy mtb](https://github.com/melMass/comfy_mtb)
 - (legacy)[NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - (legacy)[ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
@@ -438,6 +459,15 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [ComfyUI Hunyuan3D Wrapper](https://github.com/kijai/ComfyUI-Hunyuan3DWrapper)
 - [Comfy mtb](https://github.com/melMass/comfy_mtb)
 - [ComfyUI-HQ-Image-Save](https://github.com/spacepxl/ComfyUI-HQ-Image-Save)
+
+### video workflow
+- [Wan Video Wrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
+- [AnimateDiff](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
+- [Video Helper Suite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite)
+- [Frame Interpolation](https://github.com/Fannovel16/ComfyUI-Frame-Interpolation)
+- [Florence 2](https://github.com/kijai/ComfyUI-Florence2)
+- [Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
+- [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
 
 ### Krita workflow
 - [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
@@ -703,6 +733,8 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		Image Resize Mode JK🐉
 		Remove Image Alpha JK🐉
 		Color Grading JK🐉
+		Rough Outline JK🐉
+		Open+DW Pose JK🐉
 	Mask Nodes
 		Is Mask Empty JK🐉
     Animation Nodes
