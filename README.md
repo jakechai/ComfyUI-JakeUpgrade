@@ -144,12 +144,10 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	- 2025-03-22 - v1.9.7	1. CR TriMesh Input Switch JK🐉 added for Hunyuan 3D Wrapper workflow.
 				2. Add Hunyuan 3D Wrapper img2mesh workflow.
 				3. Updage MV upscale and refine process for img2mesh workflow.
+	- 2025-04-05 - v1.9.8	1. Cleaning up the codes.
+				2. UI for ComfyUI API released.
+				3. Update Seamless Texture workflow.
 </details>
-
-- 2025-04-05 - v1.9.8
-1. Cleaning up the codes.
-2. UI for ComfyUI API released.
-3. Update Seamless Texture workflow.
 
 - 2025-05-09 - v1.9.9
 1. Add Florence 2 to Auto Prompt Workflow.
@@ -158,6 +156,9 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 4. Add RoughOutline_JK node to generate motion outline.
 5. Add OpenDWPose_JK node to combine openpose and dwpose.
 6. Add Wan Video main workflow and module workflows.
+
+- 2025-05-11 - v1.9.10
+1. Update Wan Video repaint workflows.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 

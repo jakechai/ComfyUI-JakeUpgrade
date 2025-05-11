@@ -3113,12 +3113,12 @@ class RoughOutline_JK:
         return {
             "required": {
                 "images": ("IMAGE",),
-                "blur_size": ("INT", {"default": 4, "min": 0, "max": 30, "step": 2}),
+                "blur_size": ("INT", {"default": 5, "min": 0, "max": 30, "step": 2}),
                 "canny_low": ("INT", {"default": 50, "min": 1, "max": 255, "step": 1}),
                 "canny_high": ("INT", {"default": 150, "min": 1, "max": 255, "step": 1}),
                 "simplify_mode": (["dynamic", "fixed"], {"default": "dynamic"}),
                 "simplify_tolerance": ("FLOAT", {"default": 0.5, "min": 0.1, "max": 20.0, "step": 0.1}),
-                "morph_kernel": ("INT", {"default": 10, "min": 0, "max": 20, "step": 2}),
+                "morph_kernel": ("INT", {"default": 9, "min": 0, "max": 20, "step": 2}),
                 "thickness": ("INT", {"default": 4, "min": 1, "max": 10, "step": 1}),
             },
         }
