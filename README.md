@@ -160,6 +160,9 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - 2025-05-11 - v1.9.10
 1. Update Wan Video repaint workflows.
 
+- 2025-05-12 - v1.9.11
+1. Add Wan Video VACE ff/flf2vid repaint workflows.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
