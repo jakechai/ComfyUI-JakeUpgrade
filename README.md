@@ -169,6 +169,10 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - 2025-05-18 - v1.9.13
 1. Update Wan Video VACE workflow.
 
+- 2025-05-20 - v1.9.14
+1. Add Trim Video Latent Node ot Native Wan VACE workflow. Update Native t2v and r2v Wan VACE workflow.
+2. Remove Save Image and Save Webm nodes for Auto Mask | Auto Motion | Control Video Module workflow. Video Combine can save as both.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
