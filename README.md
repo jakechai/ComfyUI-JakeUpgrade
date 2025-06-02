@@ -156,14 +156,11 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	- 2025-05-11 - v1.9.10	1. Update Wan Video repaint workflows.
 	- 2025-05-12 - v1.9.11	1. Add Wan Video VACE ff/flf2vid repaint workflows.
 	- 2025-05-12 - v1.9.12	1. Update Wan Video VACE workflow.
+	- 2025-05-18 - v1.9.13	1. Update Wan Video VACE workflow.
+	- 2025-05-20 - v1.9.14	1. Add Trim Video Latent Node ot Native Wan VACE workflow. Update Native t2v and r2v Wan VACE workflow.
+				2. Remove Save Image and Save Webm nodes for Auto Mask | Auto Motion | Control Video Module workflow. Video Combine can save as both.
+
 </details>
-
-- 2025-05-18 - v1.9.13
-1. Update Wan Video VACE workflow.
-
-- 2025-05-20 - v1.9.14
-1. Add Trim Video Latent Node ot Native Wan VACE workflow. Update Native t2v and r2v Wan VACE workflow.
-2. Remove Save Image and Save Webm nodes for Auto Mask | Auto Motion | Control Video Module workflow. Video Combine can save as both.
 
 - 2025-05-29 - v1.9.15
 1. Use 10 camera for Hy3D MV Sampling by default.
