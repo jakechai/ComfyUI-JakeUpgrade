@@ -156,20 +156,26 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	- 2025-05-11 - v1.9.10	1. Update Wan Video repaint workflows.
 	- 2025-05-12 - v1.9.11	1. Add Wan Video VACE ff/flf2vid repaint workflows.
 	- 2025-05-12 - v1.9.12	1. Update Wan Video VACE workflow.
+	- 2025-05-18 - v1.9.13	1. Update Wan Video VACE workflow.
+	- 2025-05-20 - v1.9.14	1. Add Trim Video Latent Node ot Native Wan VACE workflow. Update Native t2v and r2v Wan VACE workflow.
+				2. Remove Save Image and Save Webm nodes for Auto Mask | Auto Motion | Control Video Module workflow. Video Combine can save as both.
+
 </details>
 
-- 2025-05-18 - v1.9.13
-1. Update Wan Video VACE workflow.
-
-- 2025-05-20 - v1.9.14
-1. Add Trim Video Latent Node ot Native Wan VACE workflow. Update Native t2v and r2v Wan VACE workflow.
-2. Remove Save Image and Save Webm nodes for Auto Mask | Auto Motion | Control Video Module workflow. Video Combine can save as both.
-
 - 2025-05-29 - v1.9.15
-1. Use 10 camera for MV Sampling by default.
+1. Use 10 camera for Hy3D MV Sampling by default.
 2. Add Mesh MV sample generation module workflow using IG2MV, MV Adapter and Stable X Delight.
 3. Add Multi-GPU version of Wan Video Generation workflows.
-4. Add the Wan Vace fp16 model to the model list instruction.
+4. Add the Wan Vace 14B fp16 model to the model list instruction.
+
+- 2025-06-02 - v1.9.16
+1. Add Dilated ControlNet for Wan Video t2v workflows.
+2. Add Canny & HED Control Video generation methods for Dilated ControlNet.
+3. Add Save|Load StringListToJSON nodes to save|load ATI Trajectory presets.
+4. Add ATI Trajectory generation method to Video-Auto Motion module.
+5. Add Wan Video ATI Trajectory ff2vid workflow.
+6. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
+7. Add Multi-GPU version of Flux Image Generation workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -210,6 +216,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 ## Video Introduction
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
+- Wan Video update 1(Dilated CN | ATI | Uni3C preview): [Youtube](WIP) | [Bilibili](WIP)
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
 - 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) | [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
@@ -237,6 +244,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_workflow_imgen_SD3](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SD3.json)
 - [JK_workflow_imgen_SD3 legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SD3_legacy.json)
 - [JK_workflow_imgen_Flux](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_Flux.json)
+- [JK_workflow_imgen_Flux_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_Flux_mGPU.json)
 - [JK_workflow_imgen_Flux legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_Flux_legacy.json)
 - [JK_workflow_imgen_API](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_API.json)
 - [JK_workflow_img2mesh_Hunyuan3DWrapper](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_img2mesh_Hunyuan3DWrapper.json)
@@ -255,22 +263,23 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_workflow_Video-Wan__VACE](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__VACE.json)
 - [JK_workflow_Video-Wan__VACE_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__VACE_mGPU.json)
 - [JK_workflow_Video-Wan__SkyreelDF](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__SkyreelDF.json)
+- [JK_workflow_Video-Wan__SkyreelDF_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__SkyreelDF_mGPU.json)
 - [JK_workflow_Video-FramePack](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack.json)
 
 #### Module
-- [JK_module_AutoPrompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_00_AutoPrompt.json)
-- [JK_module_Image Generation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_01_ImgGen.json)
-- [JK_module_Image Generation Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_01_ImgGen_Adv.json)
-- [JK_module_Refine](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_04_Refine.json)
-- [JK_module_Refine legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_04_Refine_legacy.json)
-- [JK_module_Upscale 1st](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_1st.json)
-- [JK_module_Upscale 1st legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_1st_legacy.json)
-- [JK_module_Upscale 2nd](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_2nd.json)
-- [JK_module_Detailer](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_Detailer.json)
-- [JK_module_Detailer legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_Detailer_legacy.json)
-- [JK_module_HandFix](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_HandFix.json)
-- [JK_module_HandFix legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_HandFix_legacy.json)
-- [JK_module_Inpaint](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_07_Inpaint.json)
+- [JK_module_00_AutoPrompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_00_AutoPrompt.json)
+- [JK_module_01_Image Generation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_01_ImgGen.json)
+- [JK_module_01_Image Generation Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_01_ImgGen_Adv.json)
+- [JK_module_04_Refine](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_04_Refine.json)
+- [JK_module_04_Refine legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_04_Refine_legacy.json)
+- [JK_module_05_Upscale 1st](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_1st.json)
+- [JK_module_05_Upscale 1st legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_1st_legacy.json)
+- [JK_module_05_Upscale 2nd](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_2nd.json)
+- [JK_module_06_Detailer](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_Detailer.json)
+- [JK_module_06_Detailer legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_Detailer_legacy.json)
+- [JK_module_06_HandFix](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_HandFix.json)
+- [JK_module_06_HandFix legacy](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_06_HandFix_legacy.json)
+- [JK_module_07_Inpaint](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_07_Inpaint.json)
 - [JK_module_NoiseInjectionVariation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_NoiseInjectionVariation.json)
 - [JK_module_Concept](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Concept.json)
 - [JK_module_Seamless Texture](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Seamless%20Texture.json)
@@ -280,6 +289,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_module_Mesh-Gen18MVTex](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Mesh-Gen18MVTex.json)
 - [JK_module_Video-AutoMask](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-AutoMask.json)
 - [JK_module_Video-AutoMotion](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-AutoMotion.json)
+- [JK_module_Video-AutoPrompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-AutoPrompt.json)
 - [JK_module_Video-Control](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-Control.json)
 - [JK_module_Video-Upscale&Interpolation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-Upscale&Interpolation.json)
 - [JK_module_Video-Upscale&Interpolation_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_Video-Upscale&Interpolation_mGPU.json)
@@ -491,7 +501,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - [Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
-- (multi-gpu)[ComfyUI MultiGPU](https://github.com/neuratech-ai/ComfyUI-MultiGPU)
+- (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 
 ### Krita workflow
 - [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
@@ -691,6 +701,8 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		Scale To Resolution JK🐉
 		Inject Noise Params JK🐉
 		SD3 Prompts Switch JK🐉
+		Save String List To JSON JK🐉
+		Load String List From JSON JK🐉
     Reroute Nodes
 		Reroute List JK🐉
 		Reroute Ckpt JK🐉

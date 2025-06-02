@@ -61,14 +61,25 @@ def parse_name(path_name):
     return filename
 
 def calculate_sha256(file_path):
+    if not os.path.exists(file_path):
+        print(f"Warning: File not found at {file_path}. Cannot calculate hash.")
+        return None
+    
     sha256_hash = hashlib.sha256()
-
-    with open(file_path, "rb") as f:
-        # Read the file in chunks to avoid loading the entire file into memory
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256_hash.update(byte_block)
-
-    return sha256_hash.hexdigest()
+    
+    try:
+        # 以二进制模式读取文件，分块处理大文件
+        with open(file_path, "rb") as f:
+            for byte_block in iter(lambda: f.read(8192), b""):
+                sha256_hash.update(byte_block)
+        
+        return sha256_hash.hexdigest()
+    except IOError as e:
+        print(f"Error reading file {file_path} for hash calculation: {e}")
+        return None
+    except Exception as e:
+        print(f"Error calculating hash for {file_path}: {e}")
+        return None
 
 def handle_whitespace(string: str):
     return string.strip().replace("\n", " ").replace("\r", " ").replace("\t", " ")
@@ -787,6 +798,147 @@ class GuidanceDefault_JK:
     def get_value(self, guidance):
     
         return (guidance,)
+
+class SaveStringListToJSON_JK:
+    def __init__(self):
+        pass
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "string_input": ("STRING", {"default": ''}), 
+                "file_path":  ("STRING", {"default": ''}),
+                "overwrite": ("BOOLEAN", {"default": True}),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("string_output",) 
+    FUNCTION = "save_strlist"
+    CATEGORY = "JK/Misc"
+
+    def save_strlist(self, string_input, file_path, overwrite):
+        
+        # 1. 检查文件路径是否为空
+        if not file_path:
+            print("Error: file_path is empty. Cannot save JSON.")
+            return ("",) # 返回空字符串以表示操作未成功
+
+        # 2. 处理覆盖逻辑
+        # 如果文件已存在且不允许覆盖，则跳过保存
+        if os.path.exists(file_path) and not overwrite:
+            print(f"File '{file_path}' already exists and overwrite is set to False. Skipping save.")
+            return (string_input,)
+
+        # 3. 确保目标目录存在
+        # 获取文件所在目录的路径
+        parent_dir = os.path.dirname(file_path)
+        if parent_dir and not os.path.exists(parent_dir):
+            try:
+                os.makedirs(parent_dir, exist_ok=True)
+                print(f"Created directory: {parent_dir}")
+            except Exception as e:
+                print(f"Error creating directory {parent_dir}: {e}")
+                return (string_input,)
+
+        # 4. 保存STRING数据到文件
+        try:
+            # 'w' 模式会创建文件（如果不存在）或截断文件（如果存在）
+            # 编码设置为utf-8以支持各种字符
+            # indent=4 使JSON文件格式化，更易读
+            with open(file_path, 'w', encoding='utf-8') as file:
+                json.dump(string_input, file, indent=4)
+            print(f"Successfully saved JSON to {file_path}")
+        except Exception as e:
+            print(f"Error saving JSON to {file_path}: {e}")
+            return (string_input,)
+        
+        # 5. 返回原始输入字符串，作为下游节点的输入
+        return (string_input,)
+
+class LoadStringListFromJSON_JK:
+    def __init__(self):
+        # 缓存变量：每个节点实例都会有自己的缓存
+        self._cached_file_path = None
+        self._cached_file_hash = None
+        self._cached_data = None
+        self._last_force_reload_value = 0
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "file_path": ("STRING", {"default": ''}),
+            },
+            "optional": {
+                "force_reload": ("INT", {"default": 0, "min": 0, "max": 100000}),
+            }
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("string_output",)
+    FUNCTION = "load_strlist"
+    CATEGORY = "JK/Misc"
+
+    def load_strlist(self, file_path, force_reload=0):
+        # 1. 检查文件路径是否为空
+        if not file_path:
+            print("Warning: file_path is empty. Returning empty JSON string.")
+            self._cached_file_path = None
+            self._cached_file_hash = None
+            self._cached_data = None
+            return ("",)
+        
+        # 2. 检查文件是否存在
+        if not os.path.exists(file_path):
+            print(f"Error: File not found at {file_path}. Returning empty JSON string.")
+            self._cached_file_path = None
+            self._cached_file_hash = None
+            self._cached_data = None
+            return ("",)
+        
+        # 3. 计算当前文件的哈希值
+        current_file_hash = calculate_sha256(file_path)
+        
+        # 4. 判断是否需要重新加载文件
+        if (file_path != self._cached_file_path or
+            current_file_hash != self._cached_file_hash or
+            force_reload != self._last_force_reload_value):
+            
+            print(f"Loading JSON from {file_path} (reloaded due to change or force_reload).")
+            try:
+                with open(file_path, 'r') as file:
+                    str_lists = json.load(file) # json.load() 返回的是Python对象
+                
+                # 更新缓存
+                self._cached_file_path = file_path
+                self._cached_file_hash = current_file_hash
+                self._cached_data = str_lists
+                self._last_force_reload_value = force_reload
+                
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON from {file_path}: {e}")
+                # 解码失败时，清除缓存，避免下次仍然使用错误的数据
+                self._cached_file_path = None
+                self._cached_file_hash = None
+                self._cached_data = None
+                return ("",)
+                
+            except Exception as e:
+                print(f"An unexpected error occurred while reading {file_path}: {e}")
+                self._cached_file_path = None
+                self._cached_file_hash = None
+                self._cached_data = None
+                return ("",)
+        else:
+            print(f"Using cached JSON data for {file_path} (no change detected).")
+        
+        # 5. 返回结果
+        if self._cached_data is not None:
+            return (self._cached_data,)
+        else:
+            return ("",)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes
@@ -6114,6 +6266,9 @@ NODE_CLASS_MAPPINGS = {
     "Scale To Resolution JK": ScaleToResolution_JK,
     "Inject Noise Params JK": Inject_Noise_Params_JK,
     "SD3 Prompts Switch JK": SD3_Prompts_Switch_JK,
+    "Guidance Default JK": GuidanceDefault_JK,
+    "Save String List To JSON JK": SaveStringListToJSON_JK,
+    "Load String List From JSON JK": LoadStringListFromJSON_JK,
     ### Reroute Nodes
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
@@ -6146,7 +6301,6 @@ NODE_CLASS_MAPPINGS = {
     "NodesState JK": NodesState_JK,
     "Ksampler Parameters JK": KsamplerParameters_JK,
     "Ksampler Parameters Default JK": KsamplerParametersDefault_JK,
-    "Guidance Default JK": GuidanceDefault_JK,
     "Project Setting JK": ProjectSetting_JK,
     "Base Model Parameters JK": BaseModelParameters_JK,
     "Base Model Parameters Extract JK": BaseModelParametersExtract_JK,
@@ -6295,6 +6449,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Scale To Resolution JK": "Scale To Resolution JK🐉",
     "Inject Noise Params JK": "Inject Noise Params JK🐉",
     "SD3 Prompts Switch JK": "SD3 Prompts Switch JK🐉",
+    "Guidance Default JK": "Guidance Default JK🐉",
+    "Save String List To JSON JK": "Save String List To JSON JK🐉",
+    "Load String List From JSON JK": "Load String List From JSON JK🐉",
     ### Reroute Nodes
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",
@@ -6327,7 +6484,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "NodesState JK": "Nodes State JK🐉",
     "Ksampler Parameters JK": "Ksampler Parameters JK🐉",
     "Ksampler Parameters Default JK": "Ksampler Parameters Default JK🐉",
-    "Guidance Default JK": "Guidance Default JK🐉",
     "Project Setting JK": "Project Setting JK🐉",
     "Base Model Parameters JK": "Base Model Parameters JK🐉",
     "Base Model Parameters Extract JK": "Base Model Parameters Extract JK🐉",
