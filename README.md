@@ -174,10 +174,11 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - 2025-06-02 - v1.9.16
 1. Add Dilated ControlNet for Wan Video t2v workflows.
 2. Add Canny & HED Control Video generation methods for Dilated ControlNet.
-3. Add ATI Trajectory generation method to Video-Auto Motion module.
-4. Add Save|Load StringListToJSON nodes to save|load ATI Trajectory presets.
-5. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
-6. Add Multi-GPU version of Flux Image Generation workflow.
+3. Add Save|Load StringListToJSON nodes to save|load ATI Trajectory presets.
+4. Add ATI Trajectory generation method to Video-Auto Motion module.
+5. Add Wan Video ATI Trajectory ff2vid workflow.
+6. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
+7. Add Multi-GPU version of Flux Image Generation workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
