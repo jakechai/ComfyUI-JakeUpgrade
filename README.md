@@ -216,7 +216,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 ## Video Introduction
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
-- Wan Video update 1(Dilated CN | ATI | Uni3C preview): [Youtube](WIP) | [Bilibili](WIP)
+- Wan Video update 1(multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
 - 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) | [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
@@ -480,6 +480,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - (detailer)[Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - (Seamless Texture)[Comfy mtb](https://github.com/melMass/comfy_mtb)
+- (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 - (legacy)[NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - (legacy)[ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - (legacy)[StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
