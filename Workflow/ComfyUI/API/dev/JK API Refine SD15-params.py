@@ -67,13 +67,13 @@
 # ["12"]["inputs"]["multiplier"] = 
 # # lora 1-4
 # ["13"]["inputs"]["lora_name_1"] = 
-# ["13"]["inputs"]["lora_weight_1"] = 
+# ["13"]["inputs"]["model_weight_1"] = 
 # ["13"]["inputs"]["lora_name_2"] = 
-# ["13"]["inputs"]["lora_weight_2"] = 
+# ["13"]["inputs"]["model_weight_2"] = 
 # ["13"]["inputs"]["lora_name_3"] = 
-# ["13"]["inputs"]["lora_weight_3"] = 
+# ["13"]["inputs"]["model_weight_3"] = 
 # ["13"]["inputs"]["lora_name_4"] = 
-# ["13"]["inputs"]["lora_weight_4"] = 
+# ["13"]["inputs"]["model_weight_4"] = 
 # # cn res
 # ["14"]["inputs"]["value"] = 
 # # cn 0

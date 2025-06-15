@@ -93,16 +93,16 @@
 # # Pad bottom
 # ["6:53"]["inputs"]["value"] = 
 # # mask dilation
-# ["6:55"]["inputs"]["dilation"] = 
+# ["6:54"]["inputs"]["dilation"] = 
 # # mask blur
-# ["6:56"]["inputs"]["amount"] = 
+# ["6:55"]["inputs"]["amount"] = 
 # # mask binary
-# ["6:57"]["inputs"]["boolean_value"] = 
+# ["6:56"]["inputs"]["boolean_value"] = 
 # ["7"]["inputs"]["inpaint_crop_and_stitch"] = 
 # # latent crop
-# ["6:59"]["inputs"]["boolean_value"] = 
+# ["6:58"]["inputs"]["boolean_value"] = 
 # # ignore latent crop offset
-# ["6:60"]["inputs"]["boolean_value"] = 
+# ["6:59"]["inputs"]["boolean_value"] = 
 # ["7"]["inputs"]["padding"] = 
 # ["7"]["inputs"]["use_image_res"] = 
 # ["7"]["inputs"]["use_target_res"] = 
@@ -110,17 +110,17 @@
 # ["7"]["inputs"]["use_target_mega_pixel"] = 
 # ["7"]["inputs"]["target_mega_pixel"] = 
 # # color grading
-# ["6:62"]["inputs"]["boolean_value"] = 
-# ["6:63"]["inputs"]["brightness"] = 
-# ["6:63"]["inputs"]["contrast"] = 
-# ["6:63"]["inputs"]["saturation"] = 
-# ["6:63"]["inputs"]["R"] = 
-# ["6:63"]["inputs"]["G"] = 
-# ["6:63"]["inputs"]["B"] = 
-# ["6:64"]["inputs"]["image_upscale_method"] = 
-# ["6:64"]["inputs"]["latent_upscale_method"] = 
+# ["6:61"]["inputs"]["boolean_value"] = 
+# ["6:62"]["inputs"]["brightness"] = 
+# ["6:62"]["inputs"]["contrast"] = 
+# ["6:62"]["inputs"]["saturation"] = 
+# ["6:62"]["inputs"]["R"] = 
+# ["6:62"]["inputs"]["G"] = 
+# ["6:62"]["inputs"]["B"] = 
+# ["6:63"]["inputs"]["image_upscale_method"] = 
+# ["6:63"]["inputs"]["latent_upscale_method"] = 
 # # batch size
-# ["6:67"]["inputs"]["amount"] = 
+# ["6:66"]["inputs"]["amount"] = 
 # # stop at clip layer
 # ["6:9"]["inputs"]["boolean_value"] = 
 # ["6:10"]["inputs"]["stop_at_clip_layer"] = 
@@ -152,22 +152,22 @@
 # ["17"]["inputs"]["multiplier"] = 
 # # lora 1-4
 # ["18"]["inputs"]["lora_name_1"] = 
-# ["18"]["inputs"]["lora_weight_1"] = 
+# ["18"]["inputs"]["model_weight_1"] = 
 # ["18"]["inputs"]["lora_name_2"] = 
-# ["18"]["inputs"]["lora_weight_2"] = 
+# ["18"]["inputs"]["model_weight_2"] = 
 # ["18"]["inputs"]["lora_name_3"] = 
-# ["18"]["inputs"]["lora_weight_3"] = 
+# ["18"]["inputs"]["model_weight_3"] = 
 # ["18"]["inputs"]["lora_name_4"] = 
-# ["18"]["inputs"]["lora_weight_4"] = 
+# ["18"]["inputs"]["model_weight_4"] = 
 # # lora 5-8
 # ["19"]["inputs"]["lora_name_1"] = 
-# ["19"]["inputs"]["lora_weight_1"] = 
+# ["19"]["inputs"]["model_weight_1"] = 
 # ["19"]["inputs"]["lora_name_2"] = 
-# ["19"]["inputs"]["lora_weight_2"] = 
+# ["19"]["inputs"]["model_weight_2"] = 
 # ["19"]["inputs"]["lora_name_3"] = 
-# ["19"]["inputs"]["lora_weight_3"] = 
+# ["19"]["inputs"]["model_weight_3"] = 
 # ["19"]["inputs"]["lora_name_4"] = 
-# ["19"]["inputs"]["lora_weight_4"] = 
+# ["19"]["inputs"]["model_weight_4"] = 
 # # ipa 1
 # ["21"]["inputs"]["image"] = 
 # # ipa 1 invert mask

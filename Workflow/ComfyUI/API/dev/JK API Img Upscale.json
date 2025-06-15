@@ -1,8 +1,7 @@
 {
   "1": {
     "inputs": {
-      "image": "example.png",
-      "upload": "image"
+      "image": "example.png"
     },
     "class_type": "LoadImage",
     "_meta": {
@@ -37,7 +36,7 @@
   "5": {
     "inputs": {
       "images": [
-        "3:2",
+        "3:3",
         0
       ]
     },
@@ -47,11 +46,16 @@
     }
   },
   "3:1": {
+    "inputs": {},
+    "class_type": "Remove Input JK",
+    "_meta": {
+      "title": "Remove Input JK🐉"
+    }
+  },
+  "3:2": {
     "inputs": {
-      "custom_width": 512,
-      "custom_height": 512,
       "direction": false,
-      "target_resolution": 2048,
+      "target_resolution": 512,
       "use_target_mega_pixel": false,
       "target_mega_pixel": 1,
       "multiple_of": 8,
@@ -65,18 +69,21 @@
       "title": "Scale To Resolution JK🐉"
     }
   },
-  "3:2": {
+  "3:3": {
     "inputs": {
-      "upscale_method": "lanczos",
+      "upscale_method": "nearest-exact",
       "width": [
-        "3:1",
+        "3:2",
         0
       ],
       "height": [
-        "3:1",
+        "3:2",
         1
       ],
-      "crop": "disabled",
+      "crop": [
+        "3:1",
+        0
+      ],
       "image": [
         "4",
         0

@@ -3,9 +3,7 @@
     "inputs": {
       "name": "01 positive",
       "type": "text",
-      "default": "",
-      "min": 0,
-      "max": 0
+      "default": ""
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -16,9 +14,7 @@
     "inputs": {
       "name": "02 negative",
       "type": "text",
-      "default": "",
-      "min": 0,
-      "max": 0
+      "default": ""
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -27,7 +23,7 @@
   },
   "2": {
     "inputs": {
-      "name": "05 fidelity",
+      "name": "06 fidelity",
       "type": "number",
       "default": 0.5,
       "min": 0,
@@ -51,9 +47,7 @@
     "inputs": {
       "name": "07 Krita Image Layer",
       "type": "toggle",
-      "default": false,
-      "min": 0,
-      "max": 0
+      "default": false
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -71,9 +65,7 @@
     "inputs": {
       "name": "03 aspect ratio",
       "type": "choice",
-      "default": "1:1(1024, 1024)",
-      "min": 0,
-      "max": 0
+      "default": "1:1(1024, 1024)"
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -114,6 +106,28 @@
   },
   "10": {
     "inputs": {
+      "name": "05 style preset",
+      "type": "choice",
+      "default": "photographic"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "preset"
+    }
+  },
+  "11": {
+    "inputs": {
+      "name": "04 style",
+      "type": "toggle",
+      "default": false
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "style"
+    }
+  },
+  "12": {
+    "inputs": {
       "mask": [
         "7",
         0
@@ -124,7 +138,16 @@
       "title": "Is Mask Empty JK\ud83d\udc09"
     }
   },
-  "11": {
+  "13": {
+    "inputs": {
+      "string": ""
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "Grp End Dummy"
+    }
+  },
+  "14": {
     "inputs": {
       "boolean_value": [
         "4",
@@ -144,10 +167,10 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "12": {
+  "15": {
     "inputs": {
       "image": [
-        "11",
+        "14",
         0
       ]
     },
@@ -156,15 +179,15 @@
       "title": "Get Size JK\ud83d\udc09"
     }
   },
-  "13": {
+  "16": {
     "inputs": {
       "value": 1,
       "width": [
-        "12",
+        "15",
         0
       ],
       "height": [
-        "12",
+        "15",
         1
       ]
     },
@@ -173,10 +196,10 @@
       "title": "SolidMask"
     }
   },
-  "14": {
+  "17": {
     "inputs": {
       "boolean_value": [
-        "10",
+        "12",
         0
       ],
       "mask_false": [
@@ -184,7 +207,7 @@
         0
       ],
       "mask_true": [
-        "13",
+        "16",
         0
       ]
     },
@@ -193,81 +216,48 @@
       "title": "Mask Input Switch JK\ud83d\udc09"
     }
   },
-  "15": {
+  "18": {
     "inputs": {
-      "custom_width": 1024,
-      "custom_height": 1024,
       "padding": 0,
       "use_image_res": false,
       "use_target_res": false,
       "target_res": 1024,
       "use_target_mega_pixel": false,
       "target_mega_pixel": 1,
-      "multiple_of": 8,
-      "image_upscale_method": "lanczos",
-      "latent_upscale_method": "bilinear",
       "mask": [
-        "14",
+        "17",
         0
       ],
       "image": [
-        "11",
+        "14",
         0
       ]
     },
-    "class_type": "Image Crop by Mask Resolution JK",
+    "class_type": "Image Crop By Mask Resolution Grp JK",
     "_meta": {
-      "title": "Image Crop by Mask Resolution JK\ud83d\udc09"
+      "title": "Image Crop by Mask Resolution Grp JK\ud83d\udc09"
     }
   },
-  "16": {
+  "19": {
     "inputs": {
-      "width": [
-        "15",
-        0
-      ],
-      "height": [
-        "15",
-        1
-      ],
       "x": [
-        "15",
+        "18",
         2
       ],
       "y": [
-        "15",
-        3
-      ],
-      "image": [
-        "11",
-        0
-      ]
-    },
-    "class_type": "ImageCrop",
-    "_meta": {
-      "title": "Image Crop"
-    }
-  },
-  "17": {
-    "inputs": {
-      "x": [
-        "15",
-        2
-      ],
-      "y": [
-        "15",
+        "18",
         3
       ],
       "width": [
-        "15",
+        "18",
         0
       ],
       "height": [
-        "15",
+        "18",
         1
       ],
       "mask": [
-        "14",
+        "17",
         0
       ]
     },
@@ -276,18 +266,46 @@
       "title": "CropMask"
     }
   },
-  "18": {
+  "20": {
+    "inputs": {
+      "width": [
+        "18",
+        0
+      ],
+      "height": [
+        "18",
+        1
+      ],
+      "x": [
+        "18",
+        2
+      ],
+      "y": [
+        "18",
+        3
+      ],
+      "image": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "ImageCrop",
+    "_meta": {
+      "title": "Image Crop"
+    }
+  },
+  "21": {
     "inputs": {
       "boolean_value": [
-        "10",
+        "12",
         0
       ],
       "image_false": [
-        "16",
+        "20",
         0
       ],
       "image_true": [
-        "11",
+        "14",
         0
       ]
     },
@@ -296,18 +314,18 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "19": {
+  "22": {
     "inputs": {
       "boolean_value": [
-        "10",
+        "12",
         0
       ],
       "mask_false": [
-        "17",
+        "19",
         0
       ],
       "mask_true": [
-        "14",
+        "17",
         0
       ]
     },
@@ -316,18 +334,18 @@
       "title": "Mask Input Switch JK\ud83d\udc09"
     }
   },
-  "20": {
+  "23": {
     "inputs": {
       "boolean_value": [
         "9",
         0
       ],
       "image_false": [
-        "11",
+        "14",
         0
       ],
       "image_true": [
-        "18",
+        "21",
         0
       ]
     },
@@ -336,7 +354,7 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "21": {
+  "24": {
     "inputs": {
       "prompt": [
         "0",
@@ -358,10 +376,18 @@
         "5",
         3
       ],
+      "style": [
+        "11",
+        0
+      ],
+      "style_preset": [
+        "10",
+        0
+      ],
       "output_format": "png",
       "api_key_override": "",
       "image": [
-        "20",
+        "23",
         0
       ]
     },
@@ -370,10 +396,10 @@
       "title": "Stability Control Style"
     }
   },
-  "22": {
+  "25": {
     "inputs": {
       "images": [
-        "21",
+        "24",
         0
       ]
     },

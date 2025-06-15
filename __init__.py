@@ -1,34 +1,20 @@
-import shutil
-import folder_paths
-import os
 from .nodes.jake_upgrade import *
-
-def setup_js():
-    import nodes
-    js_dest_path = os.path.join(os.path.dirname(folder_paths.__file__), "web", "extensions", "jake_upgrade")
-
-    if not os.path.exists(js_dest_path):
-        os.makedirs(js_dest_path)
-
-    js_src_path = os.path.join(os.path.join(os.path.dirname(__file__)), "js", "jake_upgrade.js")
-    shutil.copy(js_src_path, js_dest_path)
-
-setup_js()
-
-# nodes.EXTENSION_WEB_DIRS["ComfyUI-Impact-Pack"] = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'js')
 
 NODE_CLASS_MAPPINGS = {
     ### Misc Nodes
-    "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
-    "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
-    "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
+    "Project Setting JK": ProjectSetting_JK,
+    "Ksampler Parameters Default JK": KsamplerParametersDefault_JK,
+    "Base Model Parameters SD3API JK": BaseModelParametersSD3API_JK,
     "CR Aspect Ratio JK": CR_AspectRatio_JK,
     "Tiling Mode JK": TilingMode_JK,
     "Empty Latent Color JK": EmptyLatentColor_JK,
-    "Random Beats JK": RandomBeats_JK,
     "SDXL Target Res JK": SDXL_TargetRes_JK,
     "Get Size JK": GetSize_JK,
-    "Image Crop by Mask Resolution JK": ImageCropByMaskResolution_JK,
+    "String To Combo JK": StringToCombo_JK,
+    "Remove Input JK": RemoveInput_JK,
+    "Image Resize Mode JK": ImageResizeMode_JK,
+    "Sampler Loader JK": SamplerLoader_JK,
+    "Image Crop By Mask Resolution Grp JK": ImageCropByMaskResolutionGrp_JK,
     "Image Crop by Mask Params JK": ImageCropByMaskParams_JK,
     "Upscale Method JK": UpscaleMethod_JK,
     "Latent Crop Offset JK": LatentCropOffset_JK,
@@ -38,7 +24,13 @@ NODE_CLASS_MAPPINGS = {
     "Guidance Default JK": GuidanceDefault_JK,
     "Save String List To JSON JK": SaveStringListToJSON_JK,
     "Load String List From JSON JK": LoadStringListFromJSON_JK,
-    ### Reroute Nodes
+    ### Misc Nodes [Deprecated]
+    "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
+    "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
+    "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
+    "Pipe End JK": PipeEnd_JK,
+    "Image Crop by Mask Resolution JK": ImageCropByMaskResolution_JK,
+    ### Reroute Nodes [Deprecated]
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
     "Reroute Vae JK": RerouteVae_JK,
@@ -46,68 +38,63 @@ NODE_CLASS_MAPPINGS = {
     "Reroute Upscale JK": RerouteUpscale_JK,
     "Reroute Resize JK": RerouteResize_JK,
     "Reroute String JK": RerouteString_JK,
-    "String To Combo JK": StringToCombo_JK,
     ### ControlNet Nodes
     "CR ControlNet Loader JK": CR_ControlNetLoader_JK,
-    "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
     "CR Multi-ControlNet Param Stack JK": CR_ControlNetParamStack_JK,
     "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
-    "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
     "CR Apply Multi-ControlNet Adv JK": CR_ApplyControlNetStackAdv_JK,
+    ### ControlNet Nodes [Deprecated]
+    "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
+    "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
     ### LoRA Nodes
-    "CR Load LoRA JK": CR_LoraLoader_JK,
     "CR LoRA Stack JK": CR_LoRAStack_JK,
     "CR Apply LoRA Stack JK": CR_ApplyLoRAStack_JK,
-    ### Embedding Nodes
+    ### LoRA Nodes [Deprecated]
+    "CR Load LoRA JK": CR_LoraLoader_JK,
+    ### Embedding Nodes [Deprecated]
     "Embedding Picker JK": EmbeddingPicker_JK,
     "Embedding Picker Multi JK": EmbeddingPicker_Multi_JK,
-    ### Loader Nodes
+    ### Loader Nodes [Deprecated]
     "Ckpt Loader JK": CkptLoader_JK,
     "Vae Loader JK": VaeLoader_JK,
-    "Sampler Loader JK": SamplerLoader_JK,
     "Upscale Model Loader JK": UpscaleModelLoader_JK,
-    ### Pipe Nodes
+    ### Pipe Nodes [Deprecated]
     "NodesState JK": NodesState_JK,
     "Ksampler Parameters JK": KsamplerParameters_JK,
-    "Ksampler Parameters Default JK": KsamplerParametersDefault_JK,
-    "Project Setting JK": ProjectSetting_JK,
     "Base Model Parameters JK": BaseModelParameters_JK,
     "Base Model Parameters Extract JK": BaseModelParametersExtract_JK,
     "Base Image Parameters Extract JK": BaseImageParametersExtract_JK,
     "Base Model Pipe JK": BaseModelPipe_JK,
     "Base Model Pipe Extract JK": BaseModelPipeExtract_JK,
-    "Base Model Parameters SD3API JK": BaseModelParametersSD3API_JK,
-    "Refine Pipe JK": RefinePipe_JK,
-    "Refine Pipe Extract JK": RefinePipeExtract_JK,
     "Noise Injection Parameters JK": NoiseInjectionParameters_JK,
     "Noise Injection Pipe Extract JK": NoiseInjectionPipeExtract_JK,
     "Refine Model Parameters JK": RefineModelParameters_JK,
     "Refine 1 Parameters Extract JK": Refine1ParametersExtract_JK,
     "Refine 2 Parameters Extract JK": Refine2ParametersExtract_JK,
+    "Refine Pipe JK": RefinePipe_JK,
+    "Refine Pipe Extract JK": RefinePipeExtract_JK,
     "Upscale Model Parameters JK": UpscaleModelParameters_JK,
     "Image Upscale Parameters Extract JK": ImageUpscaleParametersExtract_JK,
     "Latent Upscale Parameters Extract JK": LatentUpscaleParametersExtract_JK,
     "Upscale Model Parameters Extract JK": UpscaleModelParametersExtract_JK,
     "Detailer Parameters JK": DetailerParameters_JK,
-    "Pipe End JK": PipeEnd_JK,
     "Metadata Pipe JK": MetadataPipe_JK,
     "Metadata Pipe Extract JK": MetadataPipeExtract_JK,
-    ### Image Nodes
     "Save Image with Metadata JK": ImageSaveWithMetadata_JK,
     "Save Image with Metadata Flow JK": ImageSaveWithMetadata_Flow_JK,
     "Load Image With Metadata JK": LoadImageWithMetadata_JK,
     "Load Image With Alpha JK": LoadImageWithAlpha_JK,
-    "Make Image Grid JK": MakeImageGrid_JK,
-    "Split Image Grid JK": SplitImageGrid_JK,
-    "HintImageEnchance JK": HintImageEnchance_JK,
-    "Image Resize Mode JK": ImageResizeMode_JK,
-    "Image Remove Alpha JK": ImageRemoveAlpha_JK,
-    "Color Grading JK": ColorGrading_JK,
+    ### Image Nodes
     "Rough Outline JK": RoughOutline_JK,
     "OpenDWPose_JK": OpenDWPose_JK,
+    "Make Image Grid JK": MakeImageGrid_JK,
+    "Split Image Grid JK": SplitImageGrid_JK,
+    "Image Remove Alpha JK": ImageRemoveAlpha_JK,
+    "Color Grading JK": ColorGrading_JK,
+    "HintImageEnchance JK": HintImageEnchance_JK,
     ### Mask Nodes
     "Is Mask Empty JK": IsMaskEmpty_JK,
-    ### Animation Nodes
+    ### Animation Nodes [Deprecated]
     "Animation Prompt JK": AnimPrompt_JK,
     "Animation Value JK": AnimValue_JK,
     ### Logic Switches Nodes
@@ -124,8 +111,6 @@ NODE_CLASS_MAPPINGS = {
     "CR ControlNet Stack Input Switch JK": CR_ControlNetStackInputSwitch_JK,
     "CR Text Input Switch JK": CR_TextInputSwitch_JK,
     "CR VAE Input Switch JK": CR_VAEInputSwitch_JK,
-    "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
-    "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
     "CR Noise Input Switch JK": CR_NoiseInputSwitch_JK,
     "CR Guider Input Switch JK": CR_GuiderInputSwitch_JK,
     "CR Sampler Input Switch JK": CR_SamplerInputSwitch_JK,
@@ -134,6 +119,9 @@ NODE_CLASS_MAPPINGS = {
     "CR Ply Input Switch JK": CR_PlyInputSwitch_JK,
     "CR Orbit Pose Input Switch JK": CR_OrbitPoseInputSwitch_JK,
     "CR TriMesh Input Switch JK": CR_TriMeshInputSwitch_JK,
+    ### Logic Switches Nodes [Deprecated]
+    "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
+    "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": BoolToInt_JK,
     "CM_IntToBool JK": IntToBool_JK,
@@ -147,6 +135,7 @@ NODE_CLASS_MAPPINGS = {
     "CM_FloatBinaryCondition JK": FloatBinaryCondition_JK,
     "CM_IntUnaryCondition JK": IntUnaryCondition_JK,
     "CM_IntBinaryCondition JK": IntBinaryCondition_JK,
+    ### ComfyMath Fix Nodes [Deprecated]
     "CM_NumberUnaryCondition JK": NumberUnaryCondition_JK,
     "CM_NumberBinaryCondition JK": NumberBinaryCondition_JK,
     "CM_Vec2UnaryCondition JK": Vec2UnaryCondition_JK,
@@ -167,22 +156,26 @@ NODE_CLASS_MAPPINGS = {
     ### ComfyMath Nodes
     "CM_FloatToInt JK": FloatToInt_JK,
     "CM_IntToFloat JK": IntToFloat_JK,
+    "CM_FloatUnaryOperation JK": FloatUnaryOperation_JK,
+    "CM_FloatBinaryOperation JK": FloatBinaryOperation_JK,
+    "CM_IntUnaryOperation JK": IntUnaryOperation_JK,
+    "CM_IntBinaryOperation JK": IntBinaryOperation_JK,
+    ### ComfyMath Nodes [Deprecated]
     "CM_IntToNumber JK": IntToNumber_JK,
     "CM_NumberToInt JK": NumberToInt_JK,
     "CM_FloatToNumber JK": FloatToNumber_JK,
     "CM_NumberToFloat JK": NumberToFloat_JK,
+    "CM_NumberUnaryOperation JK": NumberUnaryOperation_JK,
+    "CM_NumberBinaryOperation JK": NumberBinaryOperation_JK,
     "CM_ComposeVec2 JK": ComposeVec2_JK,
     "CM_ComposeVec3 JK": ComposeVec3_JK,
     "CM_ComposeVec4 JK": ComposeVec4_JK,
     "CM_BreakoutVec2 JK": BreakoutVec2_JK,
     "CM_BreakoutVec3 JK": BreakoutVec3_JK,
     "CM_BreakoutVec4 JK": BreakoutVec4_JK,
-    "CM_FloatUnaryOperation JK": FloatUnaryOperation_JK,
-    "CM_FloatBinaryOperation JK": FloatBinaryOperation_JK,
-    "CM_IntUnaryOperation JK": IntUnaryOperation_JK,
-    "CM_IntBinaryOperation JK": IntBinaryOperation_JK,
-    "CM_NumberUnaryOperation JK": NumberUnaryOperation_JK,
-    "CM_NumberBinaryOperation JK": NumberBinaryOperation_JK,
+    "CM_FillVec2 JK": FillVec2_JK,
+    "CM_FillVec3 JK": FillVec3_JK,
+    "CM_FillVec4 JK": FillVec4_JK,
     "CM_Vec2UnaryOperation JK": Vec2UnaryOperation_JK,
     "CM_Vec2BinaryOperation JK": Vec2BinaryOperation_JK,
     "CM_Vec3UnaryOperation JK": Vec3UnaryOperation_JK,
@@ -199,20 +192,25 @@ NODE_CLASS_MAPPINGS = {
     "OrbitLists to OrbitPoses JK": OrbitLists_to_OrbitPoses_JK,
     "OrbitPoses to OrbitLists JK": OrbitPoses_to_OrbitLists_JK,
     "Get OrbitPoses From List JK": Get_OrbitPoses_From_List_JK,
+    ### Experimental Nodes
+    "Random Beats JK": RandomBeats_JK,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     ### Misc Nodes
-    "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
-    "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
-    "CR SD3 Aspect Ratio JK": "SD3 Aspect Ratio JK🐉",
+    "Project Setting JK": "Project Setting JK🐉",
+    "Ksampler Parameters Default JK": "Ksampler Parameters Default JK🐉",
+    "Base Model Parameters SD3API JK": "Base Model Parameters SD3API JK🐉",
     "CR Aspect Ratio JK": "Aspect Ratio JK🐉",
     "Tiling Mode JK": "Tiling Mode JK🐉",
     "Empty Latent Color JK": "Empty Latent Color JK🐉",
-    "Random Beats JK": "Random Beats JK🐉",
     "SDXL Target Res JK": "SDXL Target Res JK🐉",
     "Get Size JK": "Get Size JK🐉",
-    "Image Crop by Mask Resolution JK": "Image Crop by Mask Resolution JK🐉",
+    "String To Combo JK": "String To Combo JK🐉",
+    "Remove Input JK": "Remove Input JK🐉",
+    "Image Resize Mode JK": "Image Resize Mode JK🐉",
+    "Sampler Loader JK": "Sampler Loader JK🐉",
+    "Image Crop By Mask Resolution Grp JK": "Image Crop by Mask Resolution Grp JK🐉",
     "Image Crop by Mask Params JK": "Image Crop by Mask Params JK🐉",
     "Upscale Method JK": "Upscale Method JK🐉",
     "Latent Crop Offset JK": "Latent Crop Offset JK🐉",
@@ -222,7 +220,13 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Guidance Default JK": "Guidance Default JK🐉",
     "Save String List To JSON JK": "Save String List To JSON JK🐉",
     "Load String List From JSON JK": "Load String List From JSON JK🐉",
-    ### Reroute Nodes
+    ### Misc Nodes [Deprecated]
+    "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
+    "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
+    "CR SD3 Aspect Ratio JK": "SD3 Aspect Ratio JK🐉",
+    "Pipe End JK": "Pipe End JK🐉",
+    "Image Crop by Mask Resolution JK": "Image Crop by Mask Resolution JK🐉",
+    ### Reroute Nodes [Deprecated]
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",
     "Reroute Vae JK": "Reroute Vae JK🐉",
@@ -230,68 +234,63 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Reroute Upscale JK": "Reroute Upscale JK🐉",
     "Reroute Resize JK": "Reroute Resize JK🐉",
     "Reroute String JK": "Reroute String JK🐉",
-    "String To Combo JK": "String To Combo JK🐉",
     ### ControlNet Nodes
     "CR ControlNet Loader JK": "ControlNet Loader JK🐉",
-    "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
     "CR Multi-ControlNet Param Stack JK": "Multi-ControlNet Param Stack JK🐉",
     "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
-    "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
     "CR Apply Multi-ControlNet Adv JK": "Apply Multi-ControlNet Adv JK🐉",
+    ### ControlNet Nodes [Deprecated]
+    "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
+    "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
     ### LoRA Nodes
-    "CR Load LoRA JK": "Load LoRA JK🐉",
     "CR LoRA Stack JK": "LoRA Stack JK🐉",
     "CR Apply LoRA Stack JK": "Apply LoRA Stack JK🐉",
-    ### Embedding Nodes
+    ### LoRA Nodes [Deprecated]
+    "CR Load LoRA JK": "Load LoRA JK🐉",
+    ### Embedding Nodes [Deprecated]
     "Embedding Picker JK": "Embedding Picker JK🐉",
     "Embedding Picker Multi JK": "Embedding Picker Multi JK🐉",
-    ### Loader Nodes
+    ### Loader Nodes [Deprecated]
     "Ckpt Loader JK": "Ckpt Loader JK🐉",
     "Vae Loader JK": "Vae Loader JK🐉",
-    "Sampler Loader JK": "Sampler Loader JK🐉",
     "Upscale Model Loader JK": "Upscale Model Loader JK🐉",
-    ### Pipe Nodes
+    ### Pipe Nodes [Deprecated]
     "NodesState JK": "Nodes State JK🐉",
     "Ksampler Parameters JK": "Ksampler Parameters JK🐉",
-    "Ksampler Parameters Default JK": "Ksampler Parameters Default JK🐉",
-    "Project Setting JK": "Project Setting JK🐉",
     "Base Model Parameters JK": "Base Model Parameters JK🐉",
     "Base Model Parameters Extract JK": "Base Model Parameters Extract JK🐉",
     "Base Image Parameters Extract JK": "Base Image Parameters Extract JK🐉",
     "Base Model Pipe JK": "Base Model Pipe JK🐉",
     "Base Model Pipe Extract JK": "Base Model Pipe Extract JK🐉",
-    "Base Model Parameters SD3API JK": "Base Model Parameters SD3API JK🐉",
-    "Refine Pipe JK": "Refine Pipe JK🐉",
-    "Refine Pipe Extract JK": "Refine Pipe Extract JK🐉",
     "Noise Injection Parameters JK": "Noise Injection Parameters JK🐉",
     "Noise Injection Pipe Extract JK": "Noise Injection Pipe Extract JK🐉",
     "Refine Model Parameters JK": "Refine Model Parameters JK🐉",
     "Refine 1 Parameters Extract JK": "Refine 1 Parameters Extract JK🐉",
     "Refine 2 Parameters Extract JK": "Refine 2 Parameters Extract JK🐉",
-    "Upscale Model Parameters JK":"Upscale Model Parameters JK🐉",
+    "Refine Pipe JK": "Refine Pipe JK🐉",
+    "Refine Pipe Extract JK": "Refine Pipe Extract JK🐉",
+    "Upscale Model Parameters JK": "Upscale Model Parameters JK🐉",
     "Image Upscale Parameters Extract JK": "Image Upscale Parameters Extract JK🐉",
     "Latent Upscale Parameters Extract JK": "Latent Upscale Parameters Extract JK🐉",
     "Upscale Model Parameters Extract JK": "Upscale Model Parameters Extract JK🐉",
     "Detailer Parameters JK": "Detailer Parameters JK🐉",
-    "Pipe End JK": "Pipe End JK🐉",
     "Metadata Pipe JK": "Metadata Pipe JK🐉",
     "Metadata Pipe Extract JK": "Metadata Pipe Extract JK🐉",
-    ### Image Nodes
     "Save Image with Metadata JK": "Save Image With Metadata JK🐉",
     "Save Image with Metadata Flow JK": "Save Image With Metadata Flow JK🐉",
     "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
     "Load Image With Alpha JK": "Load Image With Alpha JK🐉",
-    "Make Image Grid JK": "Make Image Grid JK🐉",
-    "Split Image Grid JK": "Split Image Grid JK🐉",
-    "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
-    "Image Resize Mode JK": "Image Resize Mode JK🐉",
-    "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
-    "Color Grading JK": "Color Grading JK🐉",
+    ### Image Nodes
     "Rough Outline JK": "Rough Outline JK🐉",
     "OpenDWPose_JK": "Open+DW Pose JK🐉",
+    "Make Image Grid JK": "Make Image Grid JK🐉",
+    "Split Image Grid JK": "Split Image Grid JK🐉",
+    "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
+    "Color Grading JK": "Color Grading JK🐉",
+    "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
     ### Mask Nodes
     "Is Mask Empty JK": "Is Mask Empty JK🐉",
-    ### Animation Nodes
+    ### Animation Nodes [Deprecated]
     "Animation Prompt JK": "Animation Prompt JK🐉",
     "Animation Value JK": "Animation Value JK🐉",
     ### Logic switches Nodes
@@ -308,8 +307,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR ControlNet Stack Input Switch JK": "ControlNet Stack Input Switch JK🐉",
     "CR Text Input Switch JK": "Text Input Switch JK🐉",
     "CR VAE Input Switch JK": "VAE Input Switch JK🐉",
-    "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
-    "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
     "CR Noise Input Switch JK": "Noise Input Switch JK🐉",
     "CR Guider Input Switch JK": "Guider Input Switch JK🐉",
     "CR Sampler Input Switch JK": "Sampler Input Switch JK🐉",
@@ -318,6 +315,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Ply Input Switch JK": "Ply Input Switch JK🐉",
     "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
     "CR TriMesh Input Switch JK": "TriMesh Input Switch JK🐉",
+    ### Logic Switches Nodes [Deprecated]
+    "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
+    "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
     ### ComfyMath Fix Nodes
     "CM_BoolToInt JK": "BoolToInt JK🐉",
     "CM_IntToBool JK": "IntToBool JK🐉",
@@ -331,6 +331,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CM_FloatBinaryCondition JK": "FloatBinaryCon JK🐉",
     "CM_IntUnaryCondition JK": "IntUnaryCon JK🐉",
     "CM_IntBinaryCondition JK": "IntBinaryCon JK🐉",
+    ### ComfyMath Fix Nodes [Deprecated]
     "CM_NumberUnaryCondition JK": "NumberUnaryCon JK🐉",
     "CM_NumberBinaryCondition JK": "NumberBinaryCon JK🐉",
     "CM_Vec2UnaryCondition JK": "Vec2UnaryCon JK🐉",
@@ -351,22 +352,26 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### ComfyMath Nodes
     "CM_FloatToInt JK": "FloatToInt JK🐉",
     "CM_IntToFloat JK": "IntToFloat JK🐉",
+    "CM_FloatUnaryOperation JK": "FloatUnaryOp JK🐉",
+    "CM_FloatBinaryOperation JK": "FloatBinaryOp JK🐉",
+    "CM_IntUnaryOperation JK": "IntUnaryOp JK🐉",
+    "CM_IntBinaryOperation JK": "IntBinaryOp JK🐉",
+    ### ComfyMath Nodes [Deprecated]
     "CM_IntToNumber JK": "IntToNumber JK🐉",
     "CM_NumberToInt JK": "NumberToInt JK🐉",
     "CM_FloatToNumber JK": "FloatToNumber JK🐉",
     "CM_NumberToFloat JK": "NumberToFloat JK🐉",
+    "CM_NumberUnaryOperation JK": "NumberUnaryOp JK🐉",
+    "CM_NumberBinaryOperation JK": "NumberBinaryOp JK🐉",
     "CM_ComposeVec2 JK": "ComposeVec2 JK🐉",
     "CM_ComposeVec3 JK": "ComposeVec3 JK🐉",
     "CM_ComposeVec4 JK": "ComposeVec4 JK🐉",
     "CM_BreakoutVec2 JK": "BreakoutVec2 JK🐉",
     "CM_BreakoutVec3 JK": "BreakoutVec3 JK🐉",
     "CM_BreakoutVec4 JK": "BreakoutVec4 JK🐉",
-    "CM_FloatUnaryOperation JK": "FloatUnaryOp JK🐉",
-    "CM_FloatBinaryOperation JK": "FloatBinaryOp JK🐉",
-    "CM_IntUnaryOperation JK": "IntUnaryOp JK🐉",
-    "CM_IntBinaryOperation JK": "IntBinaryOp JK🐉",
-    "CM_NumberUnaryOperation JK": "NumberUnaryOp JK🐉",
-    "CM_NumberBinaryOperation JK": "NumberBinaryOp JK🐉",
+    "CM_FillVec2 JK": "FillVec2 JK🐉",
+    "CM_FillVec3 JK": "FillVec3 JK🐉",
+    "CM_FillVec4 JK": "FillVec4 JK🐉",
     "CM_Vec2UnaryOperation JK": "Vec2UnaryOp JK🐉",
     "CM_Vec2BinaryOperation JK": "Vec2BinaryOp JK🐉",
     "CM_Vec3UnaryOperation JK": "Vec3UnaryOp JK🐉",
@@ -383,6 +388,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "OrbitLists to OrbitPoses JK": "OrbitLists to OrbitPoses JK🐉",
     "OrbitPoses to OrbitLists JK": "OrbitPoses to OrbitLists JK🐉",
     "Get OrbitPoses From List JK": "Get OrbitPoses From List JK🐉",
+    ### Experimental
+    "Random Beats JK": "Random Beats JK🐉",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
