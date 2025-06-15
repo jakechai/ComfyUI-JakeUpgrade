@@ -257,12 +257,89 @@ upscalemodels = {
 #---------------------------------------------------------------------------------------------------------------------#
 # Misc Nodes
 #---------------------------------------------------------------------------------------------------------------------#
-class CR_AspectRatioSD15_JK:
-    def __init__(self):
-        pass
-
+class ProjectSetting_JK:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "project_name": ("STRING", {"default": 'myproject', "multiline": False}),
+                "image_name": ("STRING", {"default": f'v%counter_%seed_%time', "multiline": False}),
+                "path_name": ("STRING", {"default": f'%date', "multiline": False}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+            },
+        }
+
+    RETURN_TYPES = ("STRING", "STRING", "INT")
+    RETURN_NAMES = ("Image_Name", "Path_Name", "Counter")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+
+    def get_value(self, project_name, image_name, path_name, seed):
+        
+        image_name = project_name + "_" + image_name
+        path_name = project_name + "/" + path_name
+        
+        random.seed(seed)
+        number = random.randint (0, 18446744073709551615)
+
+        return (image_name, path_name, seed)
+
+class KsamplerParametersDefault_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "steps": ("INT", {"default": 20, "min": 1, "max": 10000}),
+                "cfg": ("FLOAT", {"default": 8.0, "min": 0.0, "max": 100.0, "step": 0.05}),
+                "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "FLOAT", "FLOAT")
+    RETURN_NAMES = ("STEPS", "CFG", "DENOISE")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+
+    def get_value(self, steps, cfg, denoise):
+    
+        return (steps, cfg, denoise)
+
+class BaseModelParametersSD3API_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "positive": ("STRING", {"default": '', "multiline": True}),
+                "negative": ("STRING", {"default": '', "multiline": True}),
+                "use_input_prompt": ("BOOLEAN", {"default": False},),
+                "aspect_ratio": (["1:1", "5:4", "3:2", "16:9", "21:9", "4:5", "2:3", "9:16", "9:21"],),
+            },
+            "optional": {
+                "input_positive": ("STRING", {"default": ''}),
+                "input_negative": ("STRING", {"default": ''}),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "INT", "INT")
+    RETURN_NAMES = ("POSITIVE", "NEGATIVE", "ASPECT_RATIO", "WIDTH", "HEIGHT")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+
+    def get_value(self, positive, negative, use_input_prompt, aspect_ratio, input_positive=None, input_negative=None):
+        
+        if use_input_prompt == True and input_positive != None and input_negative != None:
+            if input_positive != "":
+                positive = input_positive
+            if input_negative != "":
+                negative = input_negative
+        
+        width, height = get_sd3_resolution(aspect_ratio)
+        
+        return (positive, negative, aspect_ratio, width, height)
+
+class CR_AspectRatioSD15_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
     
         return {
             "required": {
@@ -277,6 +354,7 @@ class CR_AspectRatioSD15_JK:
     RETURN_NAMES = ("width", "height")
     FUNCTION = "Aspect_Ratio"
     CATEGORY = icons.get("JK/Misc")
+    DEPRECATED = True
 
     def Aspect_Ratio(self, custom_width, custom_height, resolution, swap_dimensions):
 
@@ -291,11 +369,8 @@ class CR_AspectRatioSD15_JK:
             return(width, height,)  
 
 class CR_AspectRatioSDXL_JK:
-    def __init__(self):
-        pass
-
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "resolution": (["Custom", "SDXL 1024x1024", "SDXL 1024x960", "SDXL 1088x960", "SD3 1088x896", "SDXL 1152x896", "SDXL 1152x832", "SD3 1216x832", "SDXL 1280x768",
@@ -309,6 +384,7 @@ class CR_AspectRatioSDXL_JK:
     RETURN_NAMES = ("width", "height")
     FUNCTION = "Aspect_Ratio"
     CATEGORY = icons.get("JK/Misc")
+    DEPRECATED = True
 
     def Aspect_Ratio(self, custom_width, custom_height, resolution, swap_dimensions):
         if resolution == "Custom":
@@ -322,11 +398,8 @@ class CR_AspectRatioSDXL_JK:
             return(width, height,)
 
 class CR_AspectRatioSD3_JK:
-    def __init__(self):
-        pass
-
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
     
         return {
             "required": {
@@ -337,6 +410,7 @@ class CR_AspectRatioSD3_JK:
     RETURN_NAMES = ("AspectRatio", "width", "height")
     FUNCTION = "Aspect_Ratio"
     CATEGORY = icons.get("JK/Misc")
+    DEPRECATED = True
 
     def Aspect_Ratio(self, aspect_ratio):
 
@@ -345,11 +419,8 @@ class CR_AspectRatioSD3_JK:
         return(aspect_ratio, width, height,)  
 
 class CR_AspectRatio_JK:
-    def __init__(self):
-        pass
-
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "resolution": (["Custom", "SD15 512x512", "SD15 680x512", "SD15 768x512", "SD15 912x512", "SD15 952x512", "SD15 1024x512",
@@ -378,10 +449,6 @@ class CR_AspectRatio_JK:
             return(width, height,)
 
 class TilingMode_JK:
-  
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -399,10 +466,6 @@ class TilingMode_JK:
         return (tiling,)
 
 class EmptyLatentColor_JK:
-  
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -441,8 +504,8 @@ class SDXL_TargetRes_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "width": ("INT", {"forceInput": True}),
-                "height": ("INT", {"forceInput": True}),
+                "width": ("INT", {"default": 1024}),
+                "height": ("INT", {"default": 1024}),
                 "target_res_scale": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 16.0, "step": 0.01}),
             },
         }
@@ -492,8 +555,103 @@ class GetSize_JK:
         
         return (image_width, image_height)
 
-class ImageCropByMaskResolution_JK:
+# copied from https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Conversion-Nodes#cr-string-to-combo
+class StringToCombo_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "string": ("STRING", {"multiline": False, "default": ""}),
+            },
+        }
     
+    RETURN_TYPES = (any_type,)
+    RETURN_NAMES = ("any",)
+    FUNCTION = "convert"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def convert(self, string):
+    
+        text_list = list()
+        
+        if string != "":
+            values = string.split(',')
+            text_list = values[0]
+        
+        return (text_list,)
+
+class RemoveInput_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+            },
+            "optional": {
+            },
+        }
+    
+    RETURN_TYPES = (any_type, "BOOLEAN", "BOOLEAN")
+    RETURN_NAMES = ("any", "TRUE", "FALSE")
+    FUNCTION = "removeinput"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def removeinput(self,):
+        return (any, True, False)
+
+class PipeEnd_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {
+                    "any_in": (any_type,),
+                    }
+                }
+
+    FUNCTION = "doit"
+    RETURN_TYPES = ()
+    RETURN_NAMES = ()
+    CATEGORY = icons.get("JK/Misc")
+    DEPRECATED = True
+
+    def doit(self, any_in=None):
+        return ()
+
+class ImageResizeMode_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "resize_mode": (RESIZE_MODES, {"default": "Just Resize"})
+            }
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("MODE",)
+    FUNCTION = "execute"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def execute(self, resize_mode):
+        
+        return (resize_mode,)
+
+class SamplerLoader_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "sampler": (comfy.samplers.KSampler.SAMPLERS,),
+                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
+            }
+        }
+
+    RETURN_TYPES = ("STRING", comfy.samplers.KSampler.SAMPLERS, "STRING", comfy.samplers.KSampler.SCHEDULERS)
+    RETURN_NAMES = ("sampler_name", "Sampler", "schedular_name", "Schedular")
+    FUNCTION = "list"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def list(self, sampler, scheduler):
+        return (sampler, sampler, scheduler, scheduler)
+
+class ImageCropByMaskResolution_JK:
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -521,6 +679,7 @@ class ImageCropByMaskResolution_JK:
     RETURN_NAMES = ("crop_width", "crop_height", "offset_x", "offset_y", "target_width", "target_height", "image_upscale_method", "latent_upscale_method")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
+    DEPRECATED = True
     
     def get_value(self, mask, padding, custom_width, custom_height, use_image_res, use_target_mega_pixel, target_mega_pixel, 
                     use_target_res, target_res, multiple_of, image_upscale_method, latent_upscale_method, image=None, latent=None):
@@ -611,8 +770,118 @@ class ImageCropByMaskResolution_JK:
         
         return (cropped_mask_width, cropped_mask_height, min_x, min_y, target_width, target_height, image_upscale_method, latent_upscale_method)
 
-class ImageCropByMaskParams_JK:
+class ImageCropByMaskResolutionGrp_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "optional": {
+                "image": ("IMAGE", ),
+                "latent": ("LATENT", ),
+            },
+            "required": {
+                "mask": ("MASK",),
+                "padding": ("INT", {"default": 0, "min": 0, "max": 512, "step": 1}),
+                "use_image_res": ("BOOLEAN", {"default": False},),
+                "use_target_res": ("BOOLEAN", {"default": False},),
+                "target_res": ("INT", {"default": 1024, "min": 0, "max": 16384, "step": 8}),
+                "use_target_mega_pixel": ("BOOLEAN", {"default": False},),
+                "target_mega_pixel": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 16.0, "step": 0.01}),
+            },
+        }
     
+    RETURN_TYPES = ("INT", "INT", "INT", "INT", "INT", "INT")
+    RETURN_NAMES = ("crop_width", "crop_height", "offset_x", "offset_y", "target_width", "target_height")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    
+    def get_value(self, mask, padding, use_image_res, use_target_mega_pixel, target_mega_pixel, 
+                    use_target_res, target_res, image=None, latent=None):
+        
+        bbox = []
+        
+        if image != None:
+            image_width = image.shape[2]
+            image_height = image.shape[1]
+        elif latent != None:
+            image_width = latent['samples'].shape[-1] * 8
+            image_height = latent['samples'].shape[-2] * 8
+        else:
+            image_width = 1024
+            image_height = 1024
+        
+        min_x, min_y, max_x, max_y = get_bounding_box(mask)
+        minimum_crop_size = min(128, image_width)
+        # cropped_mask_width = max(multipleOfInt((max_x - min_x), 8), minimum_crop_size)
+        # cropped_mask_height = max(multipleOfInt((max_y - min_y), 8), minimum_crop_size)
+        cropped_mask_width = max((max_x - min_x), minimum_crop_size)
+        cropped_mask_height = max((max_y - min_y), minimum_crop_size)
+        
+        if (max_x - min_x) < minimum_crop_size:
+            offset = int((minimum_crop_size - (max_x - min_x)) / 2)
+            if min_x <= offset:
+                min_x = 0
+                max_x = min_x + cropped_mask_width
+            else:
+                max_x = image_width
+                min_x = max_x - cropped_mask_width
+        
+        if (max_y - min_y) < minimum_crop_size:
+            offset = int((minimum_crop_size - (max_y - min_y)) / 2)
+            if min_y <= offset:
+                min_y = 0
+                max_y = min_y + cropped_mask_height
+            else:
+                max_y = image_height
+                min_y = max_y - cropped_mask_height
+        
+        if padding >0:
+            min_x = min_x - min(min_x, padding)
+            max_x = max_x + min((image_width - max_x), padding)
+            min_y = min_y - min(min_y, padding)
+            max_y = max_y + min((image_height - max_y), padding)
+            
+            cropped_mask_width = max_x - min_x
+            cropped_mask_height = max_y - min_y
+        
+        bbox.append((min_x, min_y, cropped_mask_width, cropped_mask_height))
+        
+        if use_image_res:
+            
+            if cropped_mask_width >= cropped_mask_height:
+                base_res = multipleOfInt(image_width, 8)
+            else:
+                base_res = multipleOfInt(image_height, 8)
+        
+        elif use_target_res:
+            
+            base_res = multipleOfInt(target_res, 8)
+        
+        elif use_target_mega_pixel:
+             
+            scale_factor = math.sqrt(target_mega_pixel* 1000000 / (cropped_mask_width * cropped_mask_height))
+            
+            if cropped_mask_width >= cropped_mask_height:
+                base_res = multipleOfInt(cropped_mask_width * scale_factor, 8)
+            else:
+                base_res = multipleOfInt(cropped_mask_height * scale_factor, 8)
+        
+        else:
+        
+            if cropped_mask_width >= cropped_mask_height:
+                base_res = multipleOfInt(cropped_mask_width, 8)
+            else:
+                base_res = multipleOfInt(cropped_mask_height, 8)
+        
+        if cropped_mask_width >= cropped_mask_height:
+            target_width = multipleOfInt(base_res, 8)
+            target_height = multipleOfInt(target_width *(cropped_mask_height / cropped_mask_width), 8)
+        else:
+            target_height = multipleOfInt(base_res, 8)
+            target_width = multipleOfInt(target_height *(cropped_mask_width / cropped_mask_height), 8)
+        
+        return (cropped_mask_width, cropped_mask_height, min_x, min_y, target_width, target_height)
+
+class ImageCropByMaskParams_JK:
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -637,7 +906,6 @@ class ImageCropByMaskParams_JK:
         return (inpaint_crop_and_stitch, padding, use_image_res, use_target_res, target_res, use_target_mega_pixel, target_mega_pixel)
 
 class UpscaleMethod_JK:
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -661,7 +929,7 @@ class LatentCropOffset_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "image_offset": ("INT", {"forceInput": True}),
+                "image_offset": ("INT", {"default": 0}),
             },
         }
     
@@ -683,8 +951,6 @@ class ScaleToResolution_JK:
                 "latent": ("LATENT", ),
             },
             "required": {
-                "custom_width": ("INT", {"default": 512, "min": 8, "max": 4096, "step": 8}),
-                "custom_height": ("INT", {"default": 512, "min": 8, "max": 4096, "step": 8}),
                 "direction": ("BOOLEAN", {"default": False, "label_on": "height", "label_off": "width"}),
                 "target_resolution": ("INT", {"default": 512, "min": 8, "max": 16384, "step": 8}),
                 "use_target_mega_pixel": ("BOOLEAN", {"default": False},),
@@ -698,7 +964,7 @@ class ScaleToResolution_JK:
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
 
-    def get_value(self, custom_width, custom_height, direction, target_resolution, use_target_mega_pixel, target_mega_pixel, multiple_of, image=None, latent=None):
+    def get_value(self, direction, target_resolution, use_target_mega_pixel, target_mega_pixel, multiple_of, image=None, latent=None):
         
         if image != None:
             image_width = image.shape[2]
@@ -707,8 +973,8 @@ class ScaleToResolution_JK:
             image_width = latent['samples'].shape[-1] * 8
             image_height = latent['samples'].shape[-2] * 8
         else:
-            image_width = custom_width
-            image_height = custom_height
+            image_width = 1024
+            image_height = 1024
         
         multiple_of = 1 if multiple_of == 0 else multiple_of
         
@@ -779,9 +1045,6 @@ class SD3_Prompts_Switch_JK:
         return (_clip_l, _clip_g, _t5xxl)
 
 class GuidanceDefault_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -800,9 +1063,6 @@ class GuidanceDefault_JK:
         return (guidance,)
 
 class SaveStringListToJSON_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -816,7 +1076,7 @@ class SaveStringListToJSON_JK:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("string_output",) 
     FUNCTION = "save_strlist"
-    CATEGORY = "JK/Misc"
+    CATEGORY = icons.get("JK/Misc")
 
     def save_strlist(self, string_input, file_path, overwrite):
         
@@ -879,7 +1139,7 @@ class LoadStringListFromJSON_JK:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("string_output",)
     FUNCTION = "load_strlist"
-    CATEGORY = "JK/Misc"
+    CATEGORY = icons.get("JK/Misc")
 
     def load_strlist(self, file_path, force_reload=0):
         # 1. 检查文件路径是否为空
@@ -943,23 +1203,26 @@ class LoadStringListFromJSON_JK:
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes
 #---------------------------------------------------------------------------------------------------------------------#
+vae_list = folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"]
+
 class RerouteList_JK:
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "checkpoint": (folder_paths.get_filename_list("checkpoints"),{"forceInput": True}),
-                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"],{"forceInput": True}),
-                "sampler": (comfy.samplers.KSampler.SAMPLERS,{"forceInput": True}),
-                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,{"forceInput": True}),
-                "upscale_model": (folder_paths.get_filename_list("upscale_models"),{"forceInput": True}),
+                "checkpoint": (folder_paths.get_filename_list("checkpoints"),),
+                "vae": (vae_list,),
+                "sampler": (comfy.samplers.KSampler.SAMPLERS,),
+                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
+                "upscale_model": (folder_paths.get_filename_list("upscale_models"),),
             }
         }
 
-    RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"), folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"], comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, folder_paths.get_filename_list("upscale_models"))
+    RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"), vae_list, comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, folder_paths.get_filename_list("upscale_models"))
     RETURN_NAMES = ("CHECKPOINT", "VAE", "SAMPLER", "SCHEDULAR", "UPSCALE_MODEL")
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
+    DEPRECATED = True
 
     def route(self, checkpoint=None, vae=None, sampler=None, scheduler=None, upscale_model=None, image_resize=None):
         return (checkpoint, vae, sampler, scheduler, upscale_model, image_resize)
@@ -969,7 +1232,7 @@ class RerouteCkpt_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "checkpoint": (folder_paths.get_filename_list("checkpoints"),{"forceInput": True}),
+                "checkpoint": (folder_paths.get_filename_list("checkpoints"),),
             }
         }
 
@@ -977,6 +1240,7 @@ class RerouteCkpt_JK:
     RETURN_NAMES = ("CHECKPOINT",)
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
+    DEPRECATED = True
 
     def route(self, checkpoint=None):
         return (checkpoint,)
@@ -986,14 +1250,15 @@ class RerouteVae_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"],{"forceInput": True}),
+                "vae": (vae_list,),
             }
         }
 
-    RETURN_TYPES = (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"],)
+    RETURN_TYPES = (vae_list,)
     RETURN_NAMES = ("VAE",)
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
+    DEPRECATED = True
 
     def route(self, vae=None):
         return (vae,)
@@ -1003,8 +1268,8 @@ class RerouteSampler_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "sampler": (comfy.samplers.KSampler.SAMPLERS,{"forceInput": True}),
-                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,{"forceInput": True}),
+                "sampler": (comfy.samplers.KSampler.SAMPLERS,),
+                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
             },
         }
 
@@ -1012,6 +1277,7 @@ class RerouteSampler_JK:
     RETURN_NAMES = ("SAMPLER", "SCHEDULAR",)
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
+    DEPRECATED = True
 
     def route(self, sampler=None, scheduler=None):
         return (sampler, scheduler,)
@@ -1021,7 +1287,7 @@ class RerouteUpscale_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "upscale_model": (folder_paths.get_filename_list("upscale_models"),{"forceInput": True}),
+                "upscale_model": (folder_paths.get_filename_list("upscale_models"),),
             }
         }
 
@@ -1029,6 +1295,7 @@ class RerouteUpscale_JK:
     RETURN_NAMES = ("UPSCALE_MODEL",)
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
+    DEPRECATED = True
 
     def route(self, upscale_model=None):
         return (upscale_model,)
@@ -1038,7 +1305,7 @@ class RerouteResize_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "image_resize": (["Just Resize", "Crop and Resize", "Resize and Fill"], {"default": "Crop and Resize", "forceInput": True}),
+                "image_resize": (["Just Resize", "Crop and Resize", "Resize and Fill"], {"default": "Crop and Resize"}),
             }
         }
 
@@ -1046,6 +1313,7 @@ class RerouteResize_JK:
     RETURN_NAMES = ("IMAGE_RESIZE",)
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
+    DEPRECATED = True
 
     def route(self, image_resize=None):
         return (image_resize,)
@@ -1055,7 +1323,7 @@ class RerouteString_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "string": ("STRING",{"forceInput": True}),
+                "string": ("STRING",{"default": ''}),
             }
         }
 
@@ -1063,35 +1331,10 @@ class RerouteString_JK:
     RETURN_NAMES = ("STRING",)
     FUNCTION = "route"
     CATEGORY = icons.get("JK/Reroute")
+    DEPRECATED = True
 
     def route(self, string=None):
         return (string,)
-
-# copied from https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Conversion-Nodes#cr-string-to-combo
-class StringToCombo_JK:
-    
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "string": ("STRING", {"multiline": False, "default": "", "forceInput": True}),
-            },
-        }
-    
-    RETURN_TYPES = (any_type,)
-    RETURN_NAMES = ("any",)
-    FUNCTION = "convert"
-    CATEGORY = icons.get("JK/Reroute")
-    
-    def convert(self, string):
-    
-        text_list = list()
-        
-        if string != "":
-            values = string.split(',')
-            text_list = values[0]
-        
-        return (text_list,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # ControlNet Nodes
@@ -1116,7 +1359,7 @@ UNION_CONTROLNET_TYPES = {
 
 class CR_ControlNetLoader_JK:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "control_net_name": (["None"] + folder_paths.get_filename_list("controlnet"), ),
@@ -1152,7 +1395,6 @@ class CR_ControlNetLoader_JK:
 
 class CR_ControlNetStack_JK:
     
-    modes = ["simple", "advanced"]
     controlnets = ["None"] + folder_paths.get_filename_list("controlnet")
     
     @classmethod
@@ -1166,22 +1408,19 @@ class CR_ControlNetStack_JK:
                 "image_3": ("IMAGE",),
                 "image_4": ("IMAGE",),
                 "image_5": ("IMAGE",),
-                "image_MetaData_0": ("STRING", {"forceInput": True},),
-                "image_MetaData_1": ("STRING", {"forceInput": True},),
-                "image_MetaData_2": ("STRING", {"forceInput": True},),
-                "image_MetaData_3": ("STRING", {"forceInput": True},),
-                "image_MetaData_4": ("STRING", {"forceInput": True},),
-                "image_MetaData_5": ("STRING", {"forceInput": True},),
+                "image_MetaData_0": ("STRING", {"default": ''},),
+                "image_MetaData_1": ("STRING", {"default": ''},),
+                "image_MetaData_2": ("STRING", {"default": ''},),
+                "image_MetaData_3": ("STRING", {"default": ''},),
+                "image_MetaData_4": ("STRING", {"default": ''},),
+                "image_MetaData_5": ("STRING", {"default": ''},),
             },
             "required": {
                 "control_switch": ("BOOLEAN", {"default": False},),
-                "input_mode": (cls.modes,),
-                "controlnet_count": ("INT", {"default": 3, "min": 1, "max": 6, "step": 1}),
             },
         }
         
         for i in range(0, 6):
-            #inputs["required"][f"image_{i}"] = ("IMAGE",)
             inputs["required"][f"ControlNet_Unit_{i}"] = ("BOOLEAN", {"default": False},)
             inputs["required"][f"controlnet_{i}"] = (cls.controlnets,)
             inputs["required"][f"union_type_{i}"] = (["None"] + ["auto"] + list(UNION_CONTROLNET_TYPES.keys()),)
@@ -1197,8 +1436,9 @@ class CR_ControlNetStack_JK:
     RETURN_NAMES = ("CONTROLNET_STACK", "ControlNet_MetaData", "ContrlNet_Switch", "ContrlNet0_Switch", "ContrlNet1_Switch", "ContrlNet2_Switch", "ContrlNet3_Switch", "ContrlNet4_Switch", "ContrlNet5_Switch")
     FUNCTION = "controlnet_stacker"
     CATEGORY = icons.get("JK/ControlNet")
+    DEPRECATED = True
 
-    def controlnet_stacker(self, control_switch, input_mode, controlnet_count, save_hash, **kwargs):
+    def controlnet_stacker(self, control_switch, save_hash, **kwargs):
 
         # Initialise the list
         controlnet_list = []
@@ -1206,7 +1446,7 @@ class CR_ControlNetStack_JK:
         
         if control_switch == True:
             j = 0
-            for i in range (0, controlnet_count + 1):
+            for i in range (0, 6):
                 if kwargs.get(f"controlnet_{i}") != "None" and  kwargs.get(f"ControlNet_Unit_{i}") == True and kwargs.get(f"image_{i}") is not None:
                     
                     controlnet_path = folder_paths.get_full_path("controlnet", kwargs.get(f"controlnet_{i}"))
@@ -1227,8 +1467,8 @@ class CR_ControlNetStack_JK:
                     controlnet_list.extend([(controlnet_load, kwargs.get(f"image_{i}"), kwargs.get(f"controlnet_strength_{i}"), kwargs.get(f"start_percent_{i}") if input_mode == "simple" else 0.0, kwargs.get(f"end_percent_{i}") if input_mode == "simple" else 1.0)])
                     
                     controlnet_str = f"{kwargs.get(f'controlnet_strength_{i}'):.3f}"
-                    controlnet_sta = f"{kwargs.get(f'start_percent_{i}'):.3f}" if input_mode == "simple" else f"0.0"
-                    controlnet_end = f"{kwargs.get(f'end_percent_{i}'):.3f}" if input_mode == "simple" else f"1.0"
+                    controlnet_sta = f"{kwargs.get(f'start_percent_{i}'):.3f}"
+                    controlnet_end = f"{kwargs.get(f'end_percent_{i}'):.3f}"
                     metadatacommon = f"ControlNet {j}: \"Module: none, Model: {controlnet_name}{controlnet_hash}, Weight: {controlnet_str}, {kwargs.get(f'image_MetaData_{i}') if kwargs.get(f'image_MetaData_{i}') !=None else 'Resize Mode: Just Resize'}, Low Vram: True, Guidance Start: {controlnet_sta}, Guidance End: {controlnet_end}, Pixel Perfect: True, Control Mode: Balanced, Save Detected Map: True\", ",
                     
                     if j == 0:
@@ -1242,17 +1482,13 @@ class CR_ControlNetStack_JK:
         
         return (controlnet_list, metadataout, control_switch, 
                 control_switch and kwargs.get(f"ControlNet_Unit_0"), 
-                control_switch and kwargs.get(f"ControlNet_Unit_1") and controlnet_count >= 2, 
-                control_switch and kwargs.get(f"ControlNet_Unit_2") and controlnet_count >= 3, 
-                control_switch and kwargs.get(f"ControlNet_Unit_3") and controlnet_count >= 4, 
-                control_switch and kwargs.get(f"ControlNet_Unit_4") and controlnet_count >= 5, 
-                control_switch and kwargs.get(f"ControlNet_Unit_5") and controlnet_count == 6)
+                control_switch and kwargs.get(f"ControlNet_Unit_1"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_2"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_3"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_4"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_5"))
 
 class CR_ControlNetParamStack_JK:
-    
-    modes = ["simple", "advanced"]
-    controlnets = ["None"] + folder_paths.get_filename_list("controlnet")
-    
     @classmethod
     def INPUT_TYPES(cls):
         
@@ -1273,8 +1509,6 @@ class CR_ControlNetParamStack_JK:
             },
             "required": {
                 "control_switch": ("BOOLEAN", {"default": False},),
-                "input_mode": (cls.modes,),
-                "controlnet_count": ("INT", {"default": 3, "min": 1, "max": 6, "step": 1}),
             },
         }
         
@@ -1292,29 +1526,29 @@ class CR_ControlNetParamStack_JK:
     FUNCTION = "controlnet_stacker"
     CATEGORY = icons.get("JK/ControlNet")
 
-    def controlnet_stacker(self, control_switch, input_mode, controlnet_count, **kwargs):
+    def controlnet_stacker(self, control_switch, **kwargs):
 
         # Initialise the list
         controlnet_list = []
         
         if control_switch == True:
             j = 0
-            for i in range (0, controlnet_count + 1):
+            for i in range (0, 6):
                 if kwargs.get(f"controlnet_{i}") != None and kwargs.get(f"controlnet_{i}") != "" and kwargs.get(f"ControlNet_Unit_{i}") == True and kwargs.get(f"image_{i}") is not None:
                     
-                    controlnet_list.extend([(kwargs.get(f"controlnet_{i}"), kwargs.get(f"image_{i}"), kwargs.get(f"controlnet_strength_{i}"), kwargs.get(f"start_percent_{i}") if input_mode == "simple" else 0.0, kwargs.get(f"end_percent_{i}") if input_mode == "simple" else 1.0)])
+                    controlnet_list.extend([(kwargs.get(f"controlnet_{i}"), kwargs.get(f"image_{i}"), kwargs.get(f"controlnet_strength_{i}"), kwargs.get(f"start_percent_{i}"), kwargs.get(f"end_percent_{i}"))])
         
         return (controlnet_list, control_switch, 
                 control_switch and kwargs.get(f"ControlNet_Unit_0"), 
-                control_switch and kwargs.get(f"ControlNet_Unit_1") and controlnet_count >= 2, 
-                control_switch and kwargs.get(f"ControlNet_Unit_2") and controlnet_count >= 3, 
-                control_switch and kwargs.get(f"ControlNet_Unit_3") and controlnet_count >= 4, 
-                control_switch and kwargs.get(f"ControlNet_Unit_4") and controlnet_count >= 5, 
-                control_switch and kwargs.get(f"ControlNet_Unit_5") and controlnet_count == 6)
+                control_switch and kwargs.get(f"ControlNet_Unit_1"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_2"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_3"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_4"), 
+                control_switch and kwargs.get(f"ControlNet_Unit_5"))
 
 class CR_ApplyControlNet_JK:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "base_positive": ("CONDITIONING",),
@@ -1378,7 +1612,7 @@ class CR_ApplyControlNet_JK:
 
 class CR_ApplyControlNetStack_JK:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "base_positive": ("CONDITIONING",),
@@ -1393,6 +1627,7 @@ class CR_ApplyControlNetStack_JK:
     RETURN_NAMES = ("base_pos", "base_neg", )
     FUNCTION = "apply_controlnet_stack"
     CATEGORY = icons.get("JK/ControlNet")
+    DEPRECATED = True
 
     def apply_controlnet_stack(self, base_positive, base_negative, controlnet_stack=None):
 
@@ -1413,7 +1648,7 @@ class CR_ApplyControlNetStack_JK:
 
 class CR_ApplyControlNetStackAdv_JK:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "base_positive": ("CONDITIONING",),
@@ -1476,12 +1711,11 @@ class CR_ApplyControlNetStackAdv_JK:
 # LoRA Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 class CR_LoraLoader_JK:
-
     def __init__(self):
         self.loaded_lora = None
 
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         file_list = folder_paths.get_filename_list("loras")
         file_list.insert(0, "None")
         return {
@@ -1489,9 +1723,8 @@ class CR_LoraLoader_JK:
                 "model": ("MODEL",),
                 "clip": ("CLIP", ),
                 "switch": ("BOOLEAN", {"default": False}),
-                "input_mode": (['simple', 'advanced'], {"default": 'simple'}),
+                "input_mode": (['model_only', 'advanced'], {"default": 'model_only'}),
                 "lora_name": (file_list, ),
-                "lora_weight": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
                 "model_weight": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
                 "clip_weight": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01}),
             }
@@ -1499,14 +1732,15 @@ class CR_LoraLoader_JK:
     RETURN_TYPES = ("MODEL", "CLIP")
     FUNCTION = "load_lora"
     CATEGORY = icons.get("JK/LoRA")
+    DEPRECATED = True
 
     def load_lora(self, model, clip, switch, lora_name, model_weight, clip_weight):
         
-        if input_mode == "simple" and switch == False or  lora_name == "None":
+        if input_mode == "model_only" and (switch == False or lora_name == "None" or model_weight == 0):
             return (model, clip)
-        if input_mode == "advanced" and model_weight == 0 and clip_weight == 0:
+        if input_mode == "advanced" and (switch == False or lora_name == "None" or (model_weight == 0 and clip_weight == 0)):
             return (model, clip)
-
+        
         lora_path = folder_paths.get_full_path("loras", lora_name)
         lora = None
         if self.loaded_lora is not None:
@@ -1519,17 +1753,14 @@ class CR_LoraLoader_JK:
             lora = comfy.utils.load_torch_file(lora_path, safe_load=True)
             self.loaded_lora = (lora_path, lora)
         
-        if input_mode == "simple":
-            model_lora, clip_lora = comfy.sd.load_lora_for_models(model, clip, lora, lora_weight, 0.0)
+        if input_mode == "model_only":
+            model_lora, clip_lora = comfy.sd.load_lora_for_models(model, clip, lora, model_weight, 0.0)
         elif input_mode == "advanced":
             model_lora, clip_lora = comfy.sd.load_lora_for_models(model, clip, lora, model_weight, clip_weight)
         
         return (model_lora, clip_lora)
 
 class CR_LoRAStack_JK:
-    
-    modes = ["simple", "advanced"]
-    
     @classmethod
     def INPUT_TYPES(cls):
     
@@ -1537,20 +1768,18 @@ class CR_LoRAStack_JK:
         
         inputs = {
             "required": {
-                "input_mode": (cls.modes,),
-                "lora_count": ("INT", {"default": 3, "min": 1, "max": 6, "step": 1}),
+                "input_mode": (['model_only', 'advanced'], {"default": 'model_only'}),
             },
             "optional": {
                 "lora_stack": ("LORA_STACK",),
-                "lora_prompt": ("STRING", {"forceInput": True}),
-                "lora_metadata": ("STRING", {"forceInput": True}),
+                "lora_prompt": ("STRING", {"default": ''}),
+                "lora_metadata": ("STRING", {"default": ''}),
             },
         }
         
         for i in range (1, 7):
             inputs["required"][f"lora_{i}"] = ("BOOLEAN", {"default": False},)
             inputs["required"][f"lora_name_{i}"] = (loras,)
-            inputs["required"][f"lora_weight_{i}"] = ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01})
             inputs["required"][f"model_weight_{i}"] = ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01})
             inputs["required"][f"clip_weight_{i}"] = ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01})
         
@@ -1563,8 +1792,8 @@ class CR_LoRAStack_JK:
     FUNCTION = "lora_stacker"
     CATEGORY = icons.get("JK/LoRA")
 
-    def lora_stacker(self, input_mode, lora_count, save_hash, lora_stack=None, lora_prompt=None, lora_metadata=None, **kwargs):
-
+    def lora_stacker(self, input_mode, save_hash, lora_stack=None, lora_prompt=None, lora_metadata=None, **kwargs):
+        
         # Initialise the list
         lora_list = list()
         lora_enable_check = False
@@ -1576,10 +1805,10 @@ class CR_LoRAStack_JK:
         
         j = 0
         
-        for i in range (1, lora_count+1):
+        for i in range (1, 7):
             
-            if input_mode == "simple":
-                if kwargs.get(f"lora_{i}") == True and kwargs.get(f"lora_name_{i}") != "None" and kwargs.get(f"lora_weight_{i}") != 0:
+            if input_mode == "model_only":
+                if kwargs.get(f"lora_{i}") == True and kwargs.get(f"lora_name_{i}") != "None" and kwargs.get(f"model_weight_{i}") != 0:
                     lora_enable_check = True
                 else:
                     lora_enable_check = False
@@ -1591,19 +1820,15 @@ class CR_LoRAStack_JK:
             
             if lora_enable_check:
                 
-                if input_mode == "simple":
-                    lora_list.extend([(kwargs.get(f"lora_name_{i}"), kwargs.get(f"lora_weight_{i}"), 0.0)]),
+                if input_mode == "model_only":
+                    lora_list.extend([(kwargs.get(f"lora_name_{i}"), kwargs.get(f"model_weight_{i}"), 0.0)]),
                 elif input_mode == "advanced":
                     lora_list.extend([(kwargs.get(f"lora_name_{i}"), kwargs.get(f"model_weight_{i}"), kwargs.get(f"clip_weight_{i}"))]),
                 
                 lora_name = Path(kwargs.get(f"lora_name_{i}")).stem
                 loraprompt = f"lora:{lora_name}"
                 
-                if input_mode == "simple":
-                    loraweight = f"{kwargs.get(f'lora_weight_{i}'):.3f}"
-                elif input_mode == "advanced":
-                    loraweight = f"{kwargs.get(f'model_weight_{i}'):.3f}"
-                
+                loraweight = f"{kwargs.get(f'model_weight_{i}'):.3f}"
                 loraprompt = f"<{loraprompt}:{loraweight}>"
                 
                 if (lora_prompt == None or lora_prompt == "") and j == 0:
@@ -1630,7 +1855,6 @@ class CR_LoRAStack_JK:
 
 # Copied from "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/LoRA-Nodes#cr-apply-lora-stack"
 class CR_ApplyLoRAStack_JK:
-
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {"model": ("MODEL",),
@@ -1670,9 +1894,6 @@ class CR_ApplyLoRAStack_JK:
 # Embedding Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 class EmbeddingPicker_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(self):
         return {
@@ -1683,16 +1904,16 @@ class EmbeddingPicker_JK:
                 "save_hash": ("BOOLEAN", {"default": True},),
             },
             "optional": {
-                "text_in": ("STRING", {"forceInput": True}),
-                "metadata_in": ("STRING", {"forceInput": True}),
+                "text_in": ("STRING", {"default": ''}),
+                "metadata_in": ("STRING", {"default": ''}),
             }
         }
-
 
     RETURN_TYPES = ("STRING", "STRING")
     RETURN_NAMES = ("Text", "METADATA",)
     FUNCTION = "concat_embedding"
     CATEGORY = icons.get("JK/Embedding")
+    DEPRECATED = True
 
     def concat_embedding(self, embedding, emphasis, append, save_hash, text_in=None, metadata_in=None):
         if emphasis < 0.05:
@@ -1716,21 +1937,16 @@ class EmbeddingPicker_JK:
         return (textout, metaout, )
 
 class EmbeddingPicker_Multi_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(self):
         embeddingslist = ["None"] + folder_paths.get_filename_list("embeddings")
         
         inputs = {
             "required": {
-                "input_mode": (['simple', 'advanced'], {"default": 'simple'}),
-                "embedding_count": ("INT", {"default": 3, "min": 1, "max": 6, "step": 1}),
             },
             "optional": {
-                "text_in": ("STRING", {"forceInput": True}),
-                "metadata_in": ("STRING", {"forceInput": True}),
+                "text_in": ("STRING", {"default": ''}),
+                "metadata_in": ("STRING", {"default": ''}),
             }
         }
         
@@ -1748,12 +1964,13 @@ class EmbeddingPicker_Multi_JK:
     RETURN_NAMES = ("Text", "METADATA",)
     FUNCTION = "concat_embedding"
     CATEGORY = icons.get("JK/Embedding")
+    DEPRECATED = True
 
-    def concat_embedding(self, input_mode, embedding_count, save_hash, text_in=None, metadata_in=None, **kwargs):
+    def concat_embedding(self, save_hash, text_in=None, metadata_in=None, **kwargs):
         
         embedding_enable = False
         
-        for i in range(1, embedding_count + 1):
+        for i in range(1, 7):
             if kwargs.get(f"embedding_{i}") == True and kwargs.get(f"embedding_name_{i}") != "None" and kwargs.get(f"emphasis_{i}") >= 0.05:
                 embedding_enable = True
                 break
@@ -1776,14 +1993,11 @@ class EmbeddingPicker_Multi_JK:
         
         j = 0
         
-        for i in range(1, embedding_count + 1):
+        for i in range(1, 7):
             
             if kwargs.get(f"embedding_{i}") == True and kwargs.get(f"embedding_name_{i}") != "None" and kwargs.get(f"emphasis_{i}") >= 0.05:
                 
-                if input_mode == "simple":
-                    append_check = True
-                elif input_mode == "advanced":
-                    append_check = kwargs.get(f"append_{i}")
+                append_check = kwargs.get(f"append_{i}")
                 
                 emb = "embedding:" + Path(kwargs.get(f"embedding_name_{i}")).stem
                 emphasis = f"{kwargs.get(f'emphasis_{i}'):.3f}"
@@ -1811,11 +2025,8 @@ class EmbeddingPicker_Multi_JK:
 # Loader Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 class CkptLoader_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "checkpoint": (folder_paths.get_filename_list("checkpoints"),),
@@ -1826,57 +2037,32 @@ class CkptLoader_JK:
     RETURN_NAMES = ("ckpt_name", "Checkpoint")
     FUNCTION = "list"
     CATEGORY = icons.get("JK/Loader")
+    DEPRECATED = True
     
     def list(self, checkpoint):
         return (checkpoint, checkpoint)
 
 class VaeLoader_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
-                "vae": (folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"],),
+                "vae": (vae_list,),
             },
         }
 
-    RETURN_TYPES = ("STRING", folder_paths.get_filename_list("vae") + ["taesd"] + ["taesdxl"] + ["taesd3"] + ["taef1"])
+    RETURN_TYPES = ("STRING", vae_list)
     RETURN_NAMES = ("vae_name", "VAE")
     FUNCTION = "list"
     CATEGORY = icons.get("JK/Loader")
+    DEPRECATED = True
     
     def list(self, vae):
         return (vae, vae)
 
-class SamplerLoader_JK:
-    def __init__(self):
-        pass
-    
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "sampler": (comfy.samplers.KSampler.SAMPLERS,),
-                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
-            }
-        }
-
-    RETURN_TYPES = ("STRING", comfy.samplers.KSampler.SAMPLERS, "STRING", comfy.samplers.KSampler.SCHEDULERS)
-    RETURN_NAMES = ("sampler_name", "Sampler", "schedular_name", "Schedular")
-    FUNCTION = "list"
-    CATEGORY = icons.get("JK/Loader")
-    
-    def list(self, sampler, scheduler):
-        return (sampler, sampler, scheduler, scheduler)
-
 class UpscaleModelLoader_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "upscale_model": (folder_paths.get_filename_list("upscale_models"),),
@@ -1887,6 +2073,7 @@ class UpscaleModelLoader_JK:
     RETURN_NAMES = ("upscale_model_name", "Upscale_Model")
     FUNCTION = "list"
     CATEGORY = icons.get("JK/Loader")
+    DEPRECATED = True
     
     def list(self, upscale_model):
         return (upscale_model, upscale_model)
@@ -1909,6 +2096,7 @@ class NodesState_JK:
     RETURN_TYPES = ()
     RETURN_NAMES = ()
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def doit(self, node_id_list, mute_state, bypass_state):
         node_ids = re.split('[.,;:]', node_id_list)
@@ -1926,14 +2114,11 @@ class NodesState_JK:
         return ()
 
 class KsamplerParameters_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "seed": ("INT", {"forceInput": True}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
                 "stop_at_clip_layer": ("INT", {"default": -1, "min": -24, "max": -1}),
                 "positive": ("STRING", {"default": '', "multiline": True}),
                 "negative": ("STRING", {"default": '', "multiline": True}),
@@ -1958,6 +2143,7 @@ class KsamplerParameters_JK:
     RETURN_NAMES = ("STOPLAYER", "POSITIVE", "NEGATIVE", "VARIATION", "SEED", "STEPS", "CFG", "SAMPLER", "SCHEDULAR", "DENOISE", "WIDTH", "HEIGHT", "BATCHSIZE")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def get_value(self, positive, negative, variation, seed, steps, cfg, sampler_name, scheduler, denoise, resolution, stop_at_clip_layer, custom_width, custom_height, swap_dimensions, batch_size):
         
@@ -1971,71 +2157,14 @@ class KsamplerParameters_JK:
         else:
             return (stop_at_clip_layer, positive, negative, variation, seed, steps, cfg, sampler_name, scheduler, denoise, height, width, batch_size)
 
-class KsamplerParametersDefault_JK:
-    def __init__(self):
-        pass
-    
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "steps": ("INT", {"default": 20, "min": 1, "max": 10000}),
-                "cfg": ("FLOAT", {"default": 8.0, "min": 0.0, "max": 100.0, "step": 0.05}),
-                "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
-            },
-        }
-    
-    RETURN_TYPES = ("INT", "FLOAT", "FLOAT")
-    RETURN_NAMES = ("STEPS", "CFG", "DENOISE")
-    FUNCTION = "get_value"
-    CATEGORY = icons.get("JK/Pipe")
-
-    def get_value(self, steps, cfg, denoise):
-    
-        return (steps, cfg, denoise)
-
-class ProjectSetting_JK:
-    def __init__(self):
-        pass
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "project_name": ("STRING", {"default": 'myproject', "multiline": False}),
-                "image_name": ("STRING", {"default": f'v%counter_%seed_%time', "multiline": False}),
-                "path_name": ("STRING", {"default": f'%date', "multiline": False}),
-                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff }),
-            },
-        }
-
-    RETURN_TYPES = ("STRING", "STRING", "INT")
-    RETURN_NAMES = ("Image_Name", "Path_Name", "Counter")
-    FUNCTION = "get_value"
-    CATEGORY = icons.get("JK/Pipe")
-
-    def get_value(self, project_name, image_name, path_name, seed):
-        
-        image_name = project_name + "_" + image_name
-        path_name = project_name + "/" + path_name
-        
-        random.seed(seed)
-        number = random.randint (0, 18446744073709551615)
-
-        return (image_name, path_name, seed)
-
 class BaseModelParameters_JK:
-  
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "ckpt_name": ("STRING", {"forceInput": True}),
-                "vae_name": ("STRING", {"forceInput": True}),
-                "base_seed": ("INT", {"forceInput": True}),
+                "ckpt_name": ("STRING", {"default": ''}),
+                "vae_name": ("STRING", {"default": ''}),
+                "base_seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
                 #
                 "positive_clip_l": ("STRING", {"default": '', "multiline": True}),
                 "positive_clip_g_or_t5xxl": ("STRING", {"default": '', "multiline": True}),
@@ -2059,7 +2188,7 @@ class BaseModelParameters_JK:
                 "stop_at_clip_layer": ("INT", {"default": -1, "min": -24, "max": -1}),
                 #
                 "img2img": ("BOOLEAN", {"default": False},),
-                "image_resize": (["Just Resize", "Crop and Resize", "Resize and Fill"], {"default": "Crop and Resize", "forceInput": False}),
+                "image_resize": (["Just Resize", "Crop and Resize", "Resize and Fill"], {"default": "Crop and Resize"}),
                 "img2img_denoise": ("FLOAT", {"default": 0.7, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "batch_size": ("INT", {"default": 1, "min": 1, "max": 0xffffffffffffffff}),
                 #
@@ -2067,8 +2196,8 @@ class BaseModelParameters_JK:
             },
             "optional": {
                 "image": ("IMAGE",),
-                "input_positive": ("STRING", {"forceInput": True}),
-                "input_negative": ("STRING", {"forceInput": True}),
+                "input_positive": ("STRING", {"default": ''}),
+                "input_negative": ("STRING", {"default": ''}),
             },
         }
     
@@ -2076,6 +2205,7 @@ class BaseModelParameters_JK:
     RETURN_NAMES = ("Base_Model_MetaData", "Base_Model_Pipe", "Base_Image_Pipe")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def get_value(self, ckpt_name, vae_name, base_seed, positive_clip_l, positive_clip_g_or_t5xxl, negative_clip_l, negative_clip_g_or_t5xxl, append_input_prompt, variation, resolution, custom_width, custom_height, swap_dimensions, steps, sampler_name, scheduler, cfg_or_flux_neg_scale, tiling, specified_vae, stop_at_clip_layer, img2img, image_resize, img2img_denoise, batch_size, save_ckpt_hash, image=None, input_positive=None, input_negative=None):
         
@@ -2118,11 +2248,8 @@ class BaseModelParameters_JK:
             return (base_model_metadata, pipe_model, pipe_image)
 
 class BaseModelParametersExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "base_model_pipe": ("PIPE_LINE",)
@@ -2133,17 +2260,15 @@ class BaseModelParametersExtract_JK:
     RETURN_NAMES = ("Checkpoint", "Tiling", "Stop_Layer", "Positive_l", "Positive_g", "Negative_l", "Negative_g", "Variation", "Seed", "Steps", "Sampler", "Schedular", "Cfg", "Denoise", "Specified_VAE", "VAE")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, base_model_pipe=None):
         ckpt_name, stop_at_clip_layer, positive_l, positive_g, negative_l, negative_g, variation, seed, steps, sampler_name, scheduler, cfg, img2img_denoise, tiling, specified_vae, vae_name = base_model_pipe
         return (ckpt_name, tiling, stop_at_clip_layer, positive_l, positive_g, negative_l, negative_g, variation, seed, steps, sampler_name, scheduler, cfg, img2img_denoise, specified_vae, vae_name)
 
 class BaseImageParametersExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "base_image_pipe": ("PIPE_LINE",)
@@ -2154,29 +2279,27 @@ class BaseImageParametersExtract_JK:
     RETURN_NAMES = ("Image", "Width", "Height", "Batch_Size", "Image_Resize", "img2img")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, base_image_pipe=None):
         image, width, height, batch_size, image_resize, img2img = base_image_pipe
         return (image, width, height, batch_size, image_resize, img2img)
 
 class BaseModelPipe_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "positive_conditioning": ("CONDITIONING", {"forceInput": True}),
-                "negative_conditioning": ("CONDITIONING", {"forceInput": True}),
+                "positive_conditioning": ("CONDITIONING", ),
+                "negative_conditioning": ("CONDITIONING", ),
                 "base_latent": ("LATENT",),
                 "base_image": ("IMAGE",),
             },
             "optional": {
-                "positive_prompt": ("STRING", {"forceInput": True}),
-                "negative_prompt": ("STRING", {"forceInput": True}),
-                "variation_prompt": ("STRING", {"forceInput": True}),
-                "lora_prompt": ("STRING", {"forceInput": True}),
+                "positive_prompt": ("STRING", {"default": ''}),
+                "negative_prompt": ("STRING", {"default": ''}),
+                "variation_prompt": ("STRING", {"default": ''}),
+                "lora_prompt": ("STRING", {"default": ''}),
             },
         }
     
@@ -2184,6 +2307,7 @@ class BaseModelPipe_JK:
     RETURN_NAMES = ("Base_PIPE", "Base_Prompt")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def get_value(self, positive_conditioning=None, negative_conditioning=None, base_latent=None, base_image=None, positive_prompt=None, negative_prompt=None, variation_prompt=None, lora_prompt=None):
         
@@ -2198,11 +2322,8 @@ class BaseModelPipe_JK:
         return (base_pipe, base_prompt)
 
 class BaseModelPipeExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "base_pipe": ("PIPE_LINE",)
@@ -2213,6 +2334,7 @@ class BaseModelPipeExtract_JK:
     RETURN_NAMES = ("Base_Pipe", "Positive_Conditioning", "Negative_Conditioning", "Positive_Prompt", "Negative_Prompt", "Base_Latent", "Base_Image", "Base_Prompt")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, base_pipe=None):
         if base_pipe == None:
@@ -2227,46 +2349,7 @@ class BaseModelPipeExtract_JK:
             Positive_Conditioning, Negative_Conditioning, Positive_Prompt, Negative_Prompt, Base_Latent, Base_Image, Base_Prompt = base_pipe
         return (base_pipe, Positive_Conditioning, Negative_Conditioning, Positive_Prompt, Negative_Prompt, Base_Latent, Base_Image, Base_Prompt)
 
-class BaseModelParametersSD3API_JK:
-    def __init__(self):
-        pass
-    
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "positive": ("STRING", {"default": '', "multiline": True}),
-                "negative": ("STRING", {"default": '', "multiline": True}),
-                "use_input_prompt": ("BOOLEAN", {"default": False},),
-                "aspect_ratio": (["1:1", "5:4", "3:2", "16:9", "21:9", "4:5", "2:3", "9:16", "9:21"],),
-            },
-            "optional": {
-                "input_positive": ("STRING", {"forceInput": True}),
-                "input_negative": ("STRING", {"forceInput": True}),
-            },
-        }
-    
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "INT", "INT")
-    RETURN_NAMES = ("POSITIVE", "NEGATIVE", "ASPECT_RATIO", "WIDTH", "HEIGHT")
-    FUNCTION = "get_value"
-    CATEGORY = icons.get("JK/Pipe")
-
-    def get_value(self, positive, negative, use_input_prompt, aspect_ratio, input_positive=None, input_negative=None):
-        
-        if use_input_prompt == True and input_positive != None and input_negative != None:
-            if input_positive != "":
-                positive = input_positive
-            if input_negative != "":
-                negative = input_negative
-        
-        width, height = get_sd3_resolution(aspect_ratio)
-        
-        return (positive, negative, aspect_ratio, width, height)
-
 class NoiseInjectionParameters_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -2279,7 +2362,7 @@ class NoiseInjectionParameters_JK:
                 "img2img_injection_switch_at_Legacy": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01}),
             },
             "optional": {
-                "base_steps": ("INT", {"forceInput": True}),
+                "base_steps": ("INT", {"default": 20}),
             }
         }
     
@@ -2287,6 +2370,7 @@ class NoiseInjectionParameters_JK:
     RETURN_NAMES = ("Noise_Injection_MetaData", "Noise_Injection_Pipe")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def get_value(self, base_steps, seed, variation_strength, variation_batch, variation_batch_mode_Inspire, variation_method_Inspire, img2img_injection_switch_at_Legacy):
         
@@ -2300,11 +2384,8 @@ class NoiseInjectionParameters_JK:
         return (noiseinjection_metadata, noiseinjection_pipe)
 
 class NoiseInjectionPipeExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "noise_injection_pipe": ("PIPE_LINE",)
@@ -2315,6 +2396,7 @@ class NoiseInjectionPipeExtract_JK:
     RETURN_NAMES = ("variation_seed", "variation_strength", "variation_batch", "variation_batch_mode", "variation_method", "img2img_injection_1st_step_end", "img2img_injection_2nd_step_start")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, noise_injection_pipe=None):
         if noise_injection_pipe == None:
@@ -2330,18 +2412,15 @@ class NoiseInjectionPipeExtract_JK:
         return (seed, variation_strength, variation_batch, variation_batch_mode, variation_method, img2img_injection_1st_step_end, img2img_injection_2nd_step_start)
 
 class RefineModelParameters_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "base_ckpt_name": ("STRING", {"forceInput": True}),
-                "base_steps": ("INT", {"forceInput": True}),
-                "refine_ckpt_name": ("STRING", {"forceInput": True}),
-                "refine_1_seed": ("INT", {"forceInput": True}),
-                "refine_2_seed": ("INT", {"forceInput": True}),
+                "base_ckpt_name": ("STRING", {"default": ''}),
+                "base_steps": ("INT", {"default": 20}),
+                "refine_ckpt_name": ("STRING", {"default": ''}),
+                "refine_1_seed": ("INT", {"default": 0}),
+                "refine_2_seed": ("INT", {"default": 0}),
                 #
                 "batch_index": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
                 "refine_length": ("INT", {"default": 1, "min": 1, "max": 0xffffffffffffffff}),
@@ -2375,6 +2454,7 @@ class RefineModelParameters_JK:
     RETURN_NAMES = ("Refine_MetaData", "refine_1_pipe", "refine_2_pipe", "Batch_Index", "Refine_Length")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def get_value(self, batch_index, refine_length,
                         Enable_refine_1, Enable_refine_1_seed, refine_1_seed, Enable_refine_1_prompt, refine_1_positive, refine_1_negative, refine_1_variation, refine_1_cfg, refine_1_switch_at, Enable_IPAdaptor_1, 
@@ -2407,11 +2487,8 @@ class RefineModelParameters_JK:
         return (refine_metadata, refine_1_pipe, refine_2_pipe, batch_index, refine_length)
 
 class Refine1ParametersExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {"refine_1_pipe": ("PIPE_LINE",)},
             }
@@ -2420,17 +2497,15 @@ class Refine1ParametersExtract_JK:
     RETURN_NAMES = ("Enable_refine_1", "refine_1_cfg", "base_step_end", "refine_step_start", "Enable_Refine_Ckpt", "Refine_Ckpt_Name", "Enable_refine_1_Prompt", "refine_1_positive", "refine_1_negative", "refine_1_variation", "refine_1_seed", "Enable_refine_1_seed", "Enable_IPAdaptor_1")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, refine_1_pipe):
         Enable_refine_1, Enable_refine_1_seed, refine_1_seed, Enable_refine_ckpt, refine_ckpt_name, Enable_refine_1_prompt, refine_1_positive, refine_1_negative, refine_1_variation, refine_1_cfg, base_step_end, refine_step_start, Enable_IPAdaptor_1 = refine_1_pipe
         return (Enable_refine_1, refine_1_cfg, base_step_end, refine_step_start, Enable_refine_ckpt, refine_ckpt_name, Enable_refine_1_prompt, refine_1_positive, refine_1_negative, refine_1_variation, refine_1_seed, Enable_refine_1_seed, Enable_IPAdaptor_1)
 
 class Refine2ParametersExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {"refine_2_pipe": ("PIPE_LINE",)},
             }
@@ -2439,29 +2514,27 @@ class Refine2ParametersExtract_JK:
     RETURN_NAMES = ("Enable_refine_2", "refine_2_cfg", "refine_2_denoise", "Enable_refine_2_prompt", "refine_2_positive", "refine_2_negative", "refine_2_variation", "refine_2_seed", "Enable_refine_2_seed", "Enable_IPAdaptor_2")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, refine_2_pipe):
         Enable_refine_2, Enable_refine_2_prompt, refine_2_positive, refine_2_negative, refine_2_variation, Enable_refine_2_seed, refine_2_seed, refine_2_cfg, refine_2_denoise, Enable_IPAdaptor_2 = refine_2_pipe
         return (Enable_refine_2, refine_2_cfg, refine_2_denoise, Enable_refine_2_prompt, refine_2_positive, refine_2_negative, refine_2_variation, refine_2_seed, Enable_refine_2_seed, Enable_IPAdaptor_2)
 
 class RefinePipe_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-            "positive_conditioning": ("CONDITIONING", {"forceInput": True}),
-            "negative_conditioning": ("CONDITIONING", {"forceInput": True}),
+            "positive_conditioning": ("CONDITIONING",),
+            "negative_conditioning": ("CONDITIONING",),
             "image_latent": ("LATENT",),
             "base_latent": ("LATENT",),
             "base_image": ("IMAGE",),
             },
             "optional": {
-                "positive_prompt": ("STRING", {"forceInput": True}),
-                "negative_prompt": ("STRING", {"forceInput": True}),
-                "variation_prompt": ("STRING", {"forceInput": True}),
+                "positive_prompt": ("STRING", {"default": ''}),
+                "negative_prompt": ("STRING", {"default": ''}),
+                "variation_prompt": ("STRING", {"default": ''}),
             },
         }
     
@@ -2469,6 +2542,7 @@ class RefinePipe_JK:
     RETURN_NAMES = ("Refine_PIPE",)
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def get_value(self, positive_conditioning=None, negative_conditioning=None, image_latent=None, base_latent=None, base_image=None, positive_prompt=None, negative_prompt=None, variation_prompt=None):
         
@@ -2481,11 +2555,8 @@ class RefinePipe_JK:
         return (refine_pipe,)
 
 class RefinePipeExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "refine_pipe": ("PIPE_LINE",)
@@ -2496,6 +2567,7 @@ class RefinePipeExtract_JK:
     RETURN_NAMES = ("Refine_Pipe", "Positive_Conditioning", "Negative_Conditioning", "Image_Latent", "Base_Latent", "Base_Image", "Positive_Prompt", "Negative_Prompt", "Variation_Prompt",)
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, refine_pipe=None):
         if refine_pipe == None:
@@ -2512,16 +2584,13 @@ class RefinePipeExtract_JK:
         return (refine_pipe, Positive_Conditioning, Negative_Conditioning, Image_Latent, Base_Latent, Base_Image, Positive_Prompt, Negative_Prompt, Variation_Prompt,)
 
 class UpscaleModelParameters_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "base_ckpt_name": ("STRING", {"forceInput": True}),
-                "upscale_ckpt_name": ("STRING", {"forceInput": True}),
-                "upscale_seed": ("INT", {"forceInput": True}),
+                "base_ckpt_name": ("STRING", {"default": ''}),
+                "upscale_ckpt_name": ("STRING", {"default": ''}),
+                "upscale_seed": ("INT", {"default": 0}),
                 #
                 "batch_index": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
                 "upscale_length": ("INT", {"default": 1, "min": 1, "max": 0xffffffffffffffff}),
@@ -2553,6 +2622,7 @@ class UpscaleModelParameters_JK:
     RETURN_NAMES = ("Upscale_MetaData", "Image_Upscale_Pipe", "Latent_Upscale_Pipe", "Upscale_Model_Pipe", "Batch_Index", "Upscale_Length")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def get_value(self, batch_index, upscale_length, Enable_Image_Upscale, Image_upscale_model_name, Image_upscale_method, Image_scale_by, Enable_Latent_Upscale, Latent_upscale_method, Latent_scale_by, 
                   Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, Enable_upscale_ckpt, upscale_ckpt_name, upscale_denoise, Enable_upscale_seed, upscale_seed, save_ckpt_hash, 
@@ -2605,11 +2675,8 @@ class UpscaleModelParameters_JK:
         return (upscale_metadata, pipe_imageupscale, pipe_latentupscale, pipe_upscalemodel, batch_index, upscale_length)
         
 class ImageUpscaleParametersExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {"image_upscale_pipe": ("PIPE_LINE",)},
             }
@@ -2618,17 +2685,15 @@ class ImageUpscaleParametersExtract_JK:
     RETURN_NAMES = ("Enable_Image_Upscale", "Image_upscale_model_name", "Image_upscale_method", "Image_rescale_by")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, image_upscale_pipe):
         Enable_Image_Upscale, Image_upscale_model_name, Image_upscale_method, image_rescale_by = image_upscale_pipe
         return (Enable_Image_Upscale, Image_upscale_model_name, Image_upscale_method, image_rescale_by)
 
 class LatentUpscaleParametersExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {"latent_upscale_pipe": ("PIPE_LINE",)},
             }
@@ -2637,17 +2702,15 @@ class LatentUpscaleParametersExtract_JK:
     RETURN_NAMES = ("Enable_Latent_Upscale", "Latent_upscale_method", "Latent_scale_by")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, latent_upscale_pipe):
         Enable_Latent_Upscale, Latent_upscale_method, Latent_scale_by = latent_upscale_pipe
         return (Enable_Latent_Upscale, Latent_upscale_method, Latent_scale_by)
 
 class UpscaleModelParametersExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {"upscale_model_pipe": ("PIPE_LINE",)},
             }
@@ -2656,15 +2719,13 @@ class UpscaleModelParametersExtract_JK:
     RETURN_NAMES = ("Enable_upscale_ckpt", "upscale_ckpt_name", "Enable_upscale_prompt", "upscale_positive", "upscale_negative", "upscale_steps", "upscale_sampler_name", "upscale_scheduler", "upscale_cfg", "upscale_denoise", "Enable_upscale_seed")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, upscale_model_pipe):
         Enable_upscale_ckpt, upscale_ckpt_name, Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, upscale_denoise, Enable_upscale_seed = upscale_model_pipe
         return (Enable_upscale_ckpt, upscale_ckpt_name, Enable_upscale_prompt, upscale_positive, upscale_negative, upscale_steps, upscale_sampler_name, upscale_scheduler, upscale_cfg, upscale_denoise, Enable_upscale_seed)
 
 class DetailerParameters_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -2679,45 +2740,29 @@ class DetailerParameters_JK:
     RETURN_NAMES = ("Batch_Index", "Detailer_Length", "Refiner_On_Ratio")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def get_value(self, batch_index, detailer_length, refiner_on_ratio):
         
         return (batch_index, detailer_length, refiner_on_ratio)
-
-class PipeEnd_JK:
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {"required": {
-                    "any_in": (any_type,),
-                    }
-                }
-
-    FUNCTION = "doit"
-
-    RETURN_TYPES = ()
-    RETURN_NAMES = ()
-    CATEGORY = icons.get("JK/Pipe")
-
-    def doit(self, any_in=None):
-        return ()
 
 class MetadataPipe_JK:
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "base_model_prompt": ("STRING", {"forceInput": True}),
-                "base_model_metadata": ("STRING", {"forceInput": True}),
-                "lora_metadata": ("STRING", {"forceInput": True}),
-                "positive_embedding_metadata": ("STRING", {"forceInput": True}),
-                "negative_embedding_metadata": ("STRING", {"forceInput": True}),
-                "controlnet_metadata": ("STRING", {"forceInput": True}),
-                "refine_metadata": ("STRING", {"forceInput": True}),
-                "upscale_metadata": ("STRING", {"forceInput": True}),
-                "noise_injection_metadata": ("STRING", {"forceInput": True}),
-                "image_name": ("STRING", {"forceInput": True}),
-                "path_name": ("STRING", {"forceInput": True}),
-                "counter": ("INT", {"forceInput": True}),
+                "base_model_prompt": ("STRING", {"default": ''}),
+                "base_model_metadata": ("STRING", {"default": ''}),
+                "lora_metadata": ("STRING", {"default": ''}),
+                "positive_embedding_metadata": ("STRING", {"default": ''}),
+                "negative_embedding_metadata": ("STRING", {"default": ''}),
+                "controlnet_metadata": ("STRING", {"default": ''}),
+                "refine_metadata": ("STRING", {"default": ''}),
+                "upscale_metadata": ("STRING", {"default": ''}),
+                "noise_injection_metadata": ("STRING", {"default": ''}),
+                "image_name": ("STRING", {"default": ''}),
+                "path_name": ("STRING", {"default": ''}),
+                "counter": ("INT", {"default": ''}),
             }
         }
 
@@ -2725,6 +2770,7 @@ class MetadataPipe_JK:
     RETURN_NAMES = ("META_PIPE",)
     FUNCTION = "doit"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def doit(self, base_model_prompt=None, base_model_metadata=None, lora_metadata=None, positive_embedding_metadata=None, negative_embedding_metadata=None, 
                    controlnet_metadata=None, refine_metadata=None, upscale_metadata=None, noise_injection_metadata=None,
@@ -2737,11 +2783,8 @@ class MetadataPipe_JK:
         return (meta_pipe,)
 
 class MetadataPipeExtract_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "meta_pipe": ("META_PIPE",)
@@ -2754,6 +2797,7 @@ class MetadataPipeExtract_JK:
                     "IMAGE_NAME", "PATH_NAME", "COUNTER")
     FUNCTION = "flush"
     CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
     
     def flush(self, meta_pipe):
 
@@ -2763,9 +2807,6 @@ class MetadataPipeExtract_JK:
                     controlnet_metadata, refine_metadata, upscale_metadata, noise_injection_metadata,
                     image_name, path_name, counter)
 
-#---------------------------------------------------------------------------------------------------------------------#
-# Image Nodes
-#---------------------------------------------------------------------------------------------------------------------#
 class ImageSaveWithMetadata_JK:
     def __init__(self):
         self.output_dir = folder_paths.output_directory
@@ -2777,13 +2818,13 @@ class ImageSaveWithMetadata_JK:
                 "images": ("IMAGE", ),
             },
             "optional": {
-                "lora_prompt": ("STRING", {"forceInput": True}),
-                "positive_embedding_prompt": ("STRING", {"forceInput": True}),
-                "negative_embedding_prompt": ("STRING", {"forceInput": True}),
-                "lora_metadata": ("STRING", {"forceInput": True}),
-                "positive_embedding_metadata": ("STRING", {"forceInput": True}),
-                "negative_embedding_metadata": ("STRING", {"forceInput": True}),
-                "controlnet_metadata": ("STRING", {"forceInput": True}),
+                "lora_prompt": ("STRING", {"default": ''}),
+                "positive_embedding_prompt": ("STRING", {"default": ''}),
+                "negative_embedding_prompt": ("STRING", {"default": ''}),
+                "lora_metadata": ("STRING", {"default": ''}),
+                "positive_embedding_metadata": ("STRING", {"default": ''}),
+                "negative_embedding_metadata": ("STRING", {"default": ''}),
+                "controlnet_metadata": ("STRING", {"default": ''}),
                 #
                 "positive": ("STRING", {"default": '', "multiline": True}),
                 "negative": ("STRING", {"default": '', "multiline": True}),
@@ -2871,7 +2912,8 @@ class ImageSaveWithMetadata_JK:
     RETURN_NAMES = ("METADATA",)
     FUNCTION = "save_files"
     OUTPUT_NODE = True
-    CATEGORY = icons.get("JK/Image")
+    CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def save_files(self, images, positive, negative, variation, seed_value, width, height, steps, sampler_name, scheduler, cfg, ckpt_name, specified_vae, vae_name, stop_at_clip_layer, img2img, img2img_denoise, 
                    Enable_Noise_Injection, Noise_Injection_seed, noisy_latent_strength, img2img_injection_switch_at, 
@@ -3025,15 +3067,15 @@ class ImageSaveWithMetadata_Flow_JK:
                 "images": ("IMAGE", ),
             },
             "optional": {
-                "base_model_prompt": ("STRING", {"forceInput": True}),
-                "base_model_metadata": ("STRING", {"forceInput": True}),
-                "lora_metadata": ("STRING", {"forceInput": True}),
-                "positive_embedding_metadata": ("STRING", {"forceInput": True}),
-                "negative_embedding_metadata": ("STRING", {"forceInput": True}),
-                "controlnet_metadata": ("STRING", {"forceInput": True}),
-                "refine_metadata": ("STRING", {"forceInput": True}),
-                "upscale_metadata": ("STRING", {"forceInput": True}),
-                "noise_injection_metadata": ("STRING", {"forceInput": True}),
+                "base_model_prompt": ("STRING", {"default": ''}),
+                "base_model_metadata": ("STRING", {"default": ''}),
+                "lora_metadata": ("STRING", {"default": ''}),
+                "positive_embedding_metadata": ("STRING", {"default": ''}),
+                "negative_embedding_metadata": ("STRING", {"default": ''}),
+                "controlnet_metadata": ("STRING", {"default": ''}),
+                "refine_metadata": ("STRING", {"default": ''}),
+                "upscale_metadata": ("STRING", {"default": ''}),
+                "noise_injection_metadata": ("STRING", {"default": ''}),
                 "other_prompt": ("STRING", {"default": '', "multiline": True}),
                 #
                 "image_name": ("STRING", {"default": f'_v%counter_%seed_%time', "multiline": False}),
@@ -3053,7 +3095,8 @@ class ImageSaveWithMetadata_Flow_JK:
     RETURN_NAMES = ("METADATA",)
     FUNCTION = "save_files"
     OUTPUT_NODE = True
-    CATEGORY = icons.get("JK/Image")
+    CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def save_files(self, images, other_prompt, image_name, path_name, counter, extension, lossless_webp, quality_jpeg_or_webp, 
                    base_model_prompt=None, base_model_metadata=None, lora_metadata=None, positive_embedding_metadata=None, negative_embedding_metadata=None, 
@@ -3143,7 +3186,7 @@ class LoadImageWithMetadata_JK:
     files = []
 
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
 
         input_dir = folder_paths.get_input_directory()
         LoadImageWithMetadata_JK.files = sorted(
@@ -3163,7 +3206,8 @@ class LoadImageWithMetadata_JK:
     RETURN_TYPES = ("IMAGE", "MASK", "STRING",)
     RETURN_NAMES = ("IMAGE", "MASK", "Prompt")
     FUNCTION = "load_image"
-    CATEGORY = icons.get("JK/Image")
+    CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def load_image(self, image, load_metadata):
         if image in LoadImageWithMetadata_JK.files:
@@ -3212,7 +3256,7 @@ class LoadImageWithAlpha_JK:
     files = []
 
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
 
         input_dir = folder_paths.get_input_directory()
         LoadImageWithMetadata_JK.files = sorted(
@@ -3231,7 +3275,8 @@ class LoadImageWithAlpha_JK:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("IMAGE",)
     FUNCTION = "load_image"
-    CATEGORY = icons.get("JK/Image")
+    CATEGORY = icons.get("JK/Pipe")
+    DEPRECATED = True
 
     def load_image(self, image):
         if image in LoadImageWithMetadata_JK.files:
@@ -3259,6 +3304,9 @@ class LoadImageWithAlpha_JK:
             return "Invalid image file: {}".format(image)
         return True
 
+#---------------------------------------------------------------------------------------------------------------------#
+# Image Nodes
+#---------------------------------------------------------------------------------------------------------------------#
 class RoughOutline_JK:
     @classmethod
     def INPUT_TYPES(cls):
@@ -3389,9 +3437,6 @@ class RoughOutline_JK:
 
 # Original code: https://github.com/AInseven/ComfyUI-fastblend
 class OpenDWPose_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -3693,10 +3738,6 @@ def image_channel_merge(channels:tuple, mode = 'RGB' ) -> Image:
     return ret_image
 
 class ImageRemoveAlpha_JK:
-    
-    def __init__(self):
-        pass
-    
     @classmethod
     def INPUT_TYPES(self):
 
@@ -3723,9 +3764,6 @@ class ImageRemoveAlpha_JK:
         return (torch.cat(ret_images, dim=0), )
 
 class ColorGrading_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(self):
 
@@ -3834,7 +3872,6 @@ def remove_pattern(x, kernel):
     x[objects] = 0
     return x, objects[0].shape[0] > 0
 
-
 def thin_one_time(x, kernels):
     y = x
     is_done = True
@@ -3843,7 +3880,6 @@ def thin_one_time(x, kernels):
         if has_update:
             is_done = False
     return y, is_done
-
 
 def lvmin_thin(x, prunings=True):
     y = x
@@ -3854,7 +3890,6 @@ def lvmin_thin(x, prunings=True):
     if prunings:
         y, _ = thin_one_time(y, lvmin_prunings)
     return y
-
 
 def nake_nms(x):
     f1 = numpy.array([[0, 0, 0], [1, 1, 1], [0, 0, 0]], dtype=numpy.uint8)
@@ -3889,7 +3924,7 @@ def get_unique_axis0(data):
 
 class HintImageEnchance_JK:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "hint_image": ("IMAGE", ),
@@ -4025,30 +4060,12 @@ class HintImageEnchance_JK:
 
         return y
 
-class ImageResizeMode_JK:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "resize_mode": (RESIZE_MODES, {"default": "Just Resize"})
-            }
-        }
-    
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("MODE",)
-    FUNCTION = "execute"
-
-    CATEGORY = "🐉 JK/🛩️ Image"
-    def execute(self, resize_mode):
-        
-        return (resize_mode,)
-
 #---------------------------------------------------------------------------------------------------------------------#
 # Mask Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 class IsMaskEmpty_JK:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "mask": ("MASK",),
@@ -4097,6 +4114,7 @@ class AnimPrompt_JK:
     RETURN_NAMES = ("PROMPT_PRE", "PROMPT_APP", "ANIMATE_PROMPT",)
     FUNCTION = "animate_prompt"
     CATEGORY = icons.get("JK/Animation")
+    DEPRECATED = True
 
     def animate_prompt(self, input_mode, prompt_pos_pre, prompt_neg_pre, prompt_pos_app, prompt_neg_app, keyframe_count, **kwargs):
         
@@ -4158,7 +4176,8 @@ class AnimValue_JK:
     RETURN_NAMES = ("ANIMATE_VALUE",)
     FUNCTION = "animate_value"
     CATEGORY = icons.get("JK/Animation")
-
+    DEPRECATED = True
+    
     def animate_value(self, keyframe_count, **kwargs):
         
         pre_prompt = ""
@@ -4181,9 +4200,6 @@ class AnimValue_JK:
 # Logic Switches Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 class CR_Boolean_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4201,9 +4217,6 @@ class CR_Boolean_JK:
         return (boolean_value, 1 if boolean_value==True else 0, 1 if boolean_value==True else 0)
 
 class CR_IntInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4227,9 +4240,6 @@ class CR_IntInputSwitch_JK:
             return (int_false, boolean_value,)
 
 class CR_FloatInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4253,9 +4263,6 @@ class CR_FloatInputSwitch_JK:
             return (float_false, boolean_value,)
 
 class CR_ImageInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4279,9 +4286,6 @@ class CR_ImageInputSwitch_JK:
             return (image_false, boolean_value,)
 
 class CR_MaskInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4305,9 +4309,6 @@ class CR_MaskInputSwitch_JK:
             return (mask_false, boolean_value,)
 
 class CR_LatentInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4331,9 +4332,6 @@ class CR_LatentInputSwitch_JK:
             return (latent_false, boolean_value,)
 
 class CR_ConditioningInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4357,9 +4355,6 @@ class CR_ConditioningInputSwitch_JK:
             return (conditioning_false, boolean_value,)
 
 class CR_ClipInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4383,9 +4378,6 @@ class CR_ClipInputSwitch_JK:
             return (clip_false, boolean_value,)
 
 class CR_ModelInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4409,9 +4401,6 @@ class CR_ModelInputSwitch_JK:
             return (model_false, boolean_value,)
 
 class CR_ControlNetInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4435,9 +4424,6 @@ class CR_ControlNetInputSwitch_JK:
             return (control_net_false, boolean_value,)
 
 class CR_ControlNetStackInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4461,9 +4447,6 @@ class CR_ControlNetStackInputSwitch_JK:
             return (control_net_stack_false, boolean_value,)
 
 class CR_TextInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -4487,18 +4470,15 @@ class CR_TextInputSwitch_JK:
             return (text_false, boolean_value,)
 
 class CR_VAEInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "VAE_false": ("VAE", {"forceInput": True}),
+                "VAE_false": ("VAE",),
             },
             "optional": {
-                "VAE_true": ("VAE", {"forceInput": True}),
+                "VAE_true": ("VAE",),
             },
         }
 
@@ -4513,25 +4493,23 @@ class CR_VAEInputSwitch_JK:
             return (VAE_false, boolean_value)
 
 class CR_PipeInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "pipe_false": ("PIPE_LINE", {"forceInput": True}),
+                "pipe_false": ("PIPE_LINE",),
                 
             },
             "optional": {
-                "pipe_true": ("PIPE_LINE", {"forceInput": True}),
+                "pipe_true": ("PIPE_LINE",),
             },
         }
     
     RETURN_TYPES = ("PIPE_LINE", "BOOLEAN",)   
     FUNCTION = "pipe_switch"
     CATEGORY = icons.get("JK/Logic")
+    DEPRECATED = True
 
     def pipe_switch(self, boolean_value, pipe_false, pipe_true=None):
         if pipe_true != None and boolean_value == True:
@@ -4540,24 +4518,22 @@ class CR_PipeInputSwitch_JK:
             return (pipe_false, boolean_value)
 
 class CR_ImpactPipeInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "pipe_false": ("BASIC_PIPE", {"forceInput": True}),
+                "pipe_false": ("BASIC_PIPE",),
             },
             "optional": {
-                "pipe_true": ("BASIC_PIPE", {"forceInput": True}),
+                "pipe_true": ("BASIC_PIPE",),
             },
         }
     
     RETURN_TYPES = ("BASIC_PIPE", "BOOLEAN",)   
     FUNCTION = "pipe_switch"
     CATEGORY = icons.get("JK/Logic")
+    DEPRECATED = True
 
     def pipe_switch(self, boolean_value, pipe_false, pipe_true=None):
         if pipe_true != None and boolean_value == True:
@@ -4566,18 +4542,15 @@ class CR_ImpactPipeInputSwitch_JK:
             return (pipe_false, boolean_value)
 
 class CR_NoiseInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "noise_false": ("NOISE", {"forceInput": True}),
+                "noise_false": ("NOISE",),
             },
             "optional": {
-                "noise_true": ("NOISE", {"forceInput": True}),
+                "noise_true": ("NOISE",),
             },
         }
     
@@ -4592,18 +4565,15 @@ class CR_NoiseInputSwitch_JK:
             return (noise_false, boolean_value)
 
 class CR_GuiderInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "guider_false": ("GUIDER", {"forceInput": True}),
+                "guider_false": ("GUIDER",),
             },
             "optional": {
-                "guider_true": ("GUIDER", {"forceInput": True}),
+                "guider_true": ("GUIDER",),
             },
         }
     
@@ -4618,18 +4588,15 @@ class CR_GuiderInputSwitch_JK:
             return (guider_false, boolean_value)
 
 class CR_SamplerInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "sampler_false": ("SAMPLER", {"forceInput": True}),
+                "sampler_false": ("SAMPLER",),
             },
             "optional": {
-                "sampler_true": ("SAMPLER", {"forceInput": True}),
+                "sampler_true": ("SAMPLER",),
             },
         }
     
@@ -4644,18 +4611,15 @@ class CR_SamplerInputSwitch_JK:
             return (sampler_false, boolean_value)
 
 class CR_SigmasInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "sigmas_false": ("SIGMAS", {"forceInput": True}),
+                "sigmas_false": ("SIGMAS",),
             },
             "optional": {
-                "sigmas_true": ("SIGMAS", {"forceInput": True}),
+                "sigmas_true": ("SIGMAS",),
             },
         }
     
@@ -4670,18 +4634,15 @@ class CR_SigmasInputSwitch_JK:
             return (sigmas_false, boolean_value)
 
 class CR_MeshInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "mesh_false": ("MESH", {"forceInput": True}),
+                "mesh_false": ("MESH",),
             },
             "optional": {
-                "mesh_true": ("MESH", {"forceInput": True}),
+                "mesh_true": ("MESH",),
             },
         }
     
@@ -4696,18 +4657,15 @@ class CR_MeshInputSwitch_JK:
             return (mesh_false, boolean_value)
 
 class CR_PlyInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "ply_false": ("GS_PLY", {"forceInput": True}),
+                "ply_false": ("GS_PLY",),
             },
             "optional": {
-                "ply_true": ("GS_PLY", {"forceInput": True}),
+                "ply_true": ("GS_PLY",),
             },
         }
     
@@ -4722,18 +4680,15 @@ class CR_PlyInputSwitch_JK:
             return (ply_false, boolean_value)
 
 class CR_OrbitPoseInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "orbit_camposes_false": ("ORBIT_CAMPOSES", {"forceInput": True}),
+                "orbit_camposes_false": ("ORBIT_CAMPOSES",),
             },
             "optional": {
-                "orbit_camposes_true": ("ORBIT_CAMPOSES", {"forceInput": True}),
+                "orbit_camposes_true": ("ORBIT_CAMPOSES",),
             },
         }
     
@@ -4748,18 +4703,15 @@ class CR_OrbitPoseInputSwitch_JK:
             return (orbit_camposes_false, boolean_value)
 
 class CR_TriMeshInputSwitch_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "trimesh_false": ("TRIMESH", {"forceInput": True}),
+                "trimesh_false": ("TRIMESH",),
             },
             "optional": {
-                "trimesh_true": ("TRIMESH", {"forceInput": True}),
+                "trimesh_true": ("TRIMESH",),
             },
         }
     
@@ -5055,8 +5007,8 @@ class BoolBinaryAnd_JK:
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
         return {
             "required": {
-                "a": ("BOOLEAN", {"forceInput": True}),
-                "b": ("BOOLEAN", {"forceInput": True}),
+                "a": ("BOOLEAN", {"default": False}),
+                "b": ("BOOLEAN", {"default": False}),
             }
         }
 
@@ -5072,8 +5024,8 @@ class BoolBinaryOR_JK:
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
         return {
             "required": {
-                "a": ("BOOLEAN", {"forceInput": True}),
-                "b": ("BOOLEAN", {"forceInput": True}),
+                "a": ("BOOLEAN", {"default": False}),
+                "b": ("BOOLEAN", {"default": False}),
             }
         }
 
@@ -5103,15 +5055,12 @@ class StringBinaryCondition_JK:
         return (STRING_BINARY_CONDITIONS[op](a, b),)
 
 class PromptCombine_JK:
-    def __init__(self):
-        pass
-    
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
-                "prompt_1": ("STRING", {"forceInput": True}),
-                "prompt_2": ("STRING", {"forceInput": True}),
+                "prompt_1": ("STRING", {"default": '', "multiline": True}),
+                "prompt_2": ("STRING", {"default": '', "multiline": True}),
             },
         }
     
@@ -5215,6 +5164,7 @@ class NumberUnaryCondition_JK:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Number")
+    DEPRECATED = True
 
     def op(self, op: str, a: number) -> tuple[bool]:
         return (FLOAT_UNARY_CONDITIONS[op](float(a)),)
@@ -5233,6 +5183,7 @@ class NumberBinaryCondition_JK:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Number")
+    DEPRECATED = True
 
     def op(self, op: str, a: number, b: number) -> tuple[bool]:
         return (FLOAT_BINARY_CONDITIONS[op](float(a), float(b)),)
@@ -5250,6 +5201,7 @@ class Vec2UnaryCondition_JK:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec2) -> tuple[bool]:
         return (VEC_UNARY_CONDITIONS[op](numpy.array(a)),)
@@ -5268,6 +5220,7 @@ class Vec2BinaryCondition_JK:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec2, b: Vec2) -> tuple[bool]:
         return (VEC_BINARY_CONDITIONS[op](numpy.array(a), numpy.array(b)),)
@@ -5285,6 +5238,7 @@ class Vec2ToFloatUnaryOperation_JK:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec2) -> tuple[float]:
         return (VEC_TO_FLOAT_UNARY_OPERATION[op](numpy.array(a)),)
@@ -5303,6 +5257,7 @@ class Vec2ToFloatBinaryOperation_JK:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec2, b: Vec2) -> tuple[float]:
         return (VEC_TO_FLOAT_BINARY_OPERATION[op](numpy.array(a), numpy.array(b)),)
@@ -5321,6 +5276,7 @@ class Vec2FloatOperation_JK:
     RETURN_TYPES = ("VEC2",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec2, b: float) -> tuple[Vec2]:
         return (_vec2_from_numpy(VEC_FLOAT_OPERATION[op](numpy.array(a), b)),)
@@ -5338,6 +5294,7 @@ class Vec3UnaryCondition_JK:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec3) -> tuple[bool]:
         return (VEC_UNARY_CONDITIONS[op](numpy.array(a)),)
@@ -5356,6 +5313,7 @@ class Vec3BinaryCondition_JK:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec3, b: Vec3) -> tuple[bool]:
         return (VEC_BINARY_CONDITIONS[op](numpy.array(a), numpy.array(b)),)
@@ -5373,6 +5331,7 @@ class Vec3ToFloatUnaryOperation_JK:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec3) -> tuple[float]:
         return (VEC_TO_FLOAT_UNARY_OPERATION[op](numpy.array(a)),)
@@ -5391,6 +5350,7 @@ class Vec3ToFloatBinaryOperation_JK:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec3, b: Vec3) -> tuple[float]:
         return (VEC_TO_FLOAT_BINARY_OPERATION[op](numpy.array(a), numpy.array(b)),)
@@ -5409,6 +5369,7 @@ class Vec3FloatOperation_JK:
     RETURN_TYPES = ("VEC3",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec3, b: float) -> tuple[Vec3]:
         return (_vec3_from_numpy(VEC_FLOAT_OPERATION[op](numpy.array(a), b)),)
@@ -5426,6 +5387,7 @@ class Vec4UnaryCondition_JK:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec4) -> tuple[bool]:
         return (VEC_UNARY_CONDITIONS[op](numpy.array(a)),)
@@ -5444,6 +5406,7 @@ class Vec4BinaryCondition_JK:
     RETURN_TYPES = ("BOOLEAN",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec4, b: Vec4) -> tuple[bool]:
         return (VEC_BINARY_CONDITIONS[op](numpy.array(a), numpy.array(b)),)
@@ -5461,6 +5424,7 @@ class Vec4ToFloatUnaryOperation_JK:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec4) -> tuple[float]:
         return (VEC_TO_FLOAT_UNARY_OPERATION[op](numpy.array(a)),)
@@ -5479,6 +5443,7 @@ class Vec4ToFloatBinaryOperation_JK:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec4, b: Vec4) -> tuple[float]:
         return (VEC_TO_FLOAT_BINARY_OPERATION[op](numpy.array(a), numpy.array(b)),)
@@ -5497,6 +5462,7 @@ class Vec4FloatOperation_JK:
     RETURN_TYPES = ("VEC4",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec4, b: float) -> tuple[Vec4]:
         return (_vec4_from_numpy(VEC_FLOAT_OPERATION[op](numpy.array(a), b)),)
@@ -5538,6 +5504,7 @@ class IntToNumber_JK:
     RETURN_TYPES = ("NUMBER",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: int) -> tuple[number]:
         return (a,)
@@ -5551,6 +5518,7 @@ class NumberToInt_JK:
     RETURN_TYPES = ("INT",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: number) -> tuple[int]:
         return (int(a),)
@@ -5564,6 +5532,7 @@ class FloatToNumber_JK:
     RETURN_TYPES = ("NUMBER",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: float) -> tuple[number]:
         return (a,)
@@ -5577,6 +5546,7 @@ class NumberToFloat_JK:
     RETURN_TYPES = ("FLOAT",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: number) -> tuple[float]:
         return (float(a),)
@@ -5595,6 +5565,7 @@ class ComposeVec2_JK:
     RETURN_TYPES = ("VEC2",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, x: float, y: float) -> tuple[Vec2]:
         return ((x, y),)
@@ -5612,6 +5583,7 @@ class FillVec2_JK:
     RETURN_TYPES = ("VEC2",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: float) -> tuple[Vec2]:
         return ((a, a),)
@@ -5625,6 +5597,7 @@ class BreakoutVec2_JK:
     RETURN_TYPES = ("FLOAT", "FLOAT")
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: Vec2) -> tuple[float, float]:
         return (a[0], a[1])
@@ -5644,6 +5617,7 @@ class ComposeVec3_JK:
     RETURN_TYPES = ("VEC3",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, x: float, y: float, z: float) -> tuple[Vec3]:
         return ((x, y, z),)
@@ -5661,6 +5635,7 @@ class FillVec3_JK:
     RETURN_TYPES = ("VEC3",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: float) -> tuple[Vec3]:
         return ((a, a, a),)
@@ -5674,6 +5649,7 @@ class BreakoutVec3_JK:
     RETURN_TYPES = ("FLOAT", "FLOAT", "FLOAT")
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: Vec3) -> tuple[float, float, float]:
         return (a[0], a[1], a[2])
@@ -5694,6 +5670,7 @@ class ComposeVec4_JK:
     RETURN_TYPES = ("VEC4",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, x: float, y: float, z: float, w: float) -> tuple[Vec4]:
         return ((x, y, z, w),)
@@ -5711,6 +5688,7 @@ class FillVec4_JK:
     RETURN_TYPES = ("VEC4",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: float) -> tuple[Vec4]:
         return ((a, a, a, a),)
@@ -5724,6 +5702,7 @@ class BreakoutVec4_JK:
     RETURN_TYPES = ("FLOAT", "FLOAT", "FLOAT", "FLOAT")
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Conversion")
+    DEPRECATED = True
 
     def op(self, a: Vec4) -> tuple[float, float, float, float]:
         return (a[0], a[1], a[2], a[3])
@@ -5808,6 +5787,7 @@ class NumberUnaryOperation_JK:
     RETURN_TYPES = ("NUMBER",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Number")
+    DEPRECATED = True
 
     def op(self, op: str, a: number) -> tuple[float]:
         return (FLOAT_UNARY_OPERATIONS[op](float(a)),)
@@ -5826,6 +5806,7 @@ class NumberBinaryOperation_JK:
     RETURN_TYPES = ("NUMBER",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Number")
+    DEPRECATED = True
 
     def op(self, op: str, a: number, b: number) -> tuple[float]:
         return (FLOAT_BINARY_OPERATIONS[op](float(a), float(b)),)
@@ -5843,6 +5824,7 @@ class Vec2UnaryOperation_JK:
     RETURN_TYPES = ("VEC2",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec2) -> tuple[Vec2]:
         return (_vec2_from_numpy(VEC_UNARY_OPERATIONS[op](numpy.array(a))),)
@@ -5861,6 +5843,7 @@ class Vec2BinaryOperation_JK:
     RETURN_TYPES = ("VEC2",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec2, b: Vec2) -> tuple[Vec2]:
         return (
@@ -5880,6 +5863,7 @@ class Vec3UnaryOperation_JK:
     RETURN_TYPES = ("VEC3",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec3) -> tuple[Vec3]:
         return (_vec3_from_numpy(VEC_UNARY_OPERATIONS[op](numpy.array(a))),)
@@ -5898,6 +5882,7 @@ class Vec3BinaryOperation_JK:
     RETURN_TYPES = ("VEC3",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec3, b: Vec3) -> tuple[Vec3]:
         return (
@@ -5917,6 +5902,7 @@ class Vec4UnaryOperation_JK:
     RETURN_TYPES = ("VEC4",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec4) -> tuple[Vec4]:
         return (_vec4_from_numpy(VEC_UNARY_OPERATIONS[op](numpy.array(a))),)
@@ -5935,6 +5921,7 @@ class Vec4BinaryOperation_JK:
     RETURN_TYPES = ("VEC4",)
     FUNCTION = "op"
     CATEGORY = icons.get("JK/Math/Vector")
+    DEPRECATED = True
 
     def op(self, op: str, a: Vec4, b: Vec4) -> tuple[Vec4]:
         return (
@@ -6041,9 +6028,6 @@ OrbitPosesList = {
 }
 
 class OrbitPoses_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -6097,9 +6081,6 @@ class OrbitPoses_JK:
         return (orbit_lists, orbit_camposes,)
 
 class OrbitLists_to_OrbitPoses_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -6124,9 +6105,6 @@ class OrbitLists_to_OrbitPoses_JK:
         return (orbit_camposes,)
 
 class OrbitPoses_to_OrbitLists_JK:
-    def __init__(self):
-        pass
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -6163,19 +6141,18 @@ class OrbitPoses_to_OrbitLists_JK:
         return (orbit_lists,)
 
 class Get_OrbitPoses_From_List_JK:
-    
-    RETURN_TYPES = ("ORBIT_CAMPOSES",)
-    FUNCTION = "get_indexed_camposes"
-    CATEGORY = icons.get("JK/3D")
-
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "original_orbit_camera_poses": ("ORBIT_CAMPOSES",),    # [orbit radius, elevation, azimuth, orbit center X,  orbit center Y,  orbit center Z]
                 "indexes": ("STRING", {"default": "0, 1, 2", "multiline": True}),
             },
         }
+    
+    RETURN_TYPES = ("ORBIT_CAMPOSES",)
+    FUNCTION = "get_indexed_camposes"
+    CATEGORY = icons.get("JK/3D")
     
     def get_indexed_camposes(self, original_orbit_camera_poses, indexes):
         
@@ -6194,11 +6171,8 @@ class Get_OrbitPoses_From_List_JK:
 # Test Nodes
 #---------------------------------------------------------------------------------------------------------------------#
 class RandomBeats_JK:
-    def __init__(self):
-        pass
-
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
     
         return {
             "required": {
@@ -6216,7 +6190,8 @@ class RandomBeats_JK:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("BEATSTEXT", )
     FUNCTION = "gen_beats"
-    CATEGORY = icons.get("JK/Misc")
+    CATEGORY = icons.get("JK/Experiment")
+    EXPERIMENTAL = True
 
     def gen_beats(self, count, X_start, X_end, Y_start, Y_end, Z_start, Z_end, max_items_per_count, max_items_odds):
     
@@ -6242,376 +6217,3 @@ class RandomBeats_JK:
         
         print(beatstext)
         return(beatstext,)
-
-#---------------------------------------------------------------------------------------------------------------------#
-# MAPPINGS
-#---------------------------------------------------------------------------------------------------------------------#
-# For reference only, actual mappings are in __init__.py
-'''
-NODE_CLASS_MAPPINGS = { 
-    ### Misc Nodes
-    "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
-    "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
-    "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
-    "CR Aspect Ratio JK": CR_AspectRatio_JK,
-    "Tiling Mode JK": TilingMode_JK,
-    "Empty Latent Color JK": EmptyLatentColor_JK,
-    "Random Beats JK": RandomBeats_JK,
-    "SDXL Target Res JK": SDXL_TargetRes_JK,
-    "Get Size JK": GetSize_JK,
-    "Image Crop by Mask Resolution JK": ImageCropByMaskResolution_JK,
-    "Image Crop by Mask Params JK": ImageCropByMaskParams_JK,
-    "Upscale Method JK": UpscaleMethod_JK,
-    "Latent Crop Offset JK": LatentCropOffset_JK,
-    "Scale To Resolution JK": ScaleToResolution_JK,
-    "Inject Noise Params JK": Inject_Noise_Params_JK,
-    "SD3 Prompts Switch JK": SD3_Prompts_Switch_JK,
-    "Guidance Default JK": GuidanceDefault_JK,
-    "Save String List To JSON JK": SaveStringListToJSON_JK,
-    "Load String List From JSON JK": LoadStringListFromJSON_JK,
-    ### Reroute Nodes
-    "Reroute List JK": RerouteList_JK,
-    "Reroute Ckpt JK": RerouteCkpt_JK,
-    "Reroute Vae JK": RerouteVae_JK,
-    "Reroute Sampler JK": RerouteSampler_JK,
-    "Reroute Upscale JK": RerouteUpscale_JK,
-    "Reroute Resize JK": RerouteResize_JK,
-    "Reroute String JK": RerouteString_JK,
-    "String To Combo JK": StringToCombo_JK,
-    ### ControlNet Nodes
-    "CR ControlNet Loader JK": CR_ControlNetLoader_JK,
-    "CR Multi-ControlNet Stack JK": CR_ControlNetStack_JK,
-    "CR Multi-ControlNet Param Stack JK": CR_ControlNetParamStack_JK,
-    "CR Apply ControlNet JK": CR_ApplyControlNet_JK,
-    "CR Apply Multi-ControlNet JK": CR_ApplyControlNetStack_JK,
-    "CR Apply Multi-ControlNet Adv JK": CR_ApplyControlNetStackAdv_JK,
-    ### LoRA Nodes
-    "CR Load LoRA JK": CR_LoraLoader_JK,
-    "CR LoRA Stack JK": CR_LoRAStack_JK,
-    "CR Apply LoRA Stack JK": CR_ApplyLoRAStack_JK,
-    ### Embedding Nodes
-    "Embedding Picker JK": EmbeddingPicker_JK,
-    "Embedding Picker Multi JK": EmbeddingPicker_Multi_JK,
-    ### Loader Nodes
-    "Ckpt Loader JK": CkptLoader_JK,
-    "Vae Loader JK": VaeLoader_JK,
-    "Sampler Loader JK": SamplerLoader_JK,
-    "Upscale Model Loader JK": UpscaleModelLoader_JK,
-    ### Pipe Nodes
-    "NodesState JK": NodesState_JK,
-    "Ksampler Parameters JK": KsamplerParameters_JK,
-    "Ksampler Parameters Default JK": KsamplerParametersDefault_JK,
-    "Project Setting JK": ProjectSetting_JK,
-    "Base Model Parameters JK": BaseModelParameters_JK,
-    "Base Model Parameters Extract JK": BaseModelParametersExtract_JK,
-    "Base Image Parameters Extract JK": BaseImageParametersExtract_JK,
-    "Base Model Pipe JK": BaseModelPipe_JK,
-    "Base Model Pipe Extract JK": BaseModelPipeExtract_JK,
-    "Base Model Parameters SD3API JK": BaseModelParametersSD3API_JK,
-    "Refine Pipe JK": RefinePipe_JK,
-    "Refine Pipe Extract JK": RefinePipeExtract_JK,
-    "Noise Injection Parameters JK": NoiseInjectionParameters_JK,
-    "Noise Injection Pipe Extract JK": NoiseInjectionPipeExtract_JK,
-    "Refine Model Parameters JK": RefineModelParameters_JK,
-    "Refine 1 Parameters Extract JK": Refine1ParametersExtract_JK,
-    "Refine 2 Parameters Extract JK": Refine2ParametersExtract_JK,
-    "Upscale Model Parameters JK": UpscaleModelParameters_JK,
-    "Image Upscale Parameters Extract JK": ImageUpscaleParametersExtract_JK,
-    "Latent Upscale Parameters Extract JK": LatentUpscaleParametersExtract_JK,
-    "Upscale Model Parameters Extract JK": UpscaleModelParametersExtract_JK,
-    "Detailer Parameters JK": DetailerParameters_JK,
-    "Pipe End JK": PipeEnd_JK,
-    "Metadata Pipe JK": MetadataPipe_JK,
-    "Metadata Pipe Extract JK": MetadataPipeExtract_JK,
-    ### Image Nodes
-    "Save Image with Metadata JK": ImageSaveWithMetadata_JK,
-    "Save Image with Metadata Flow JK": ImageSaveWithMetadata_Flow_JK,
-    "Load Image With Metadata JK": LoadImageWithMetadata_JK,
-    "Load Image With Alpha JK": LoadImageWithAlpha_JK,
-    "Make Image Grid JK": MakeImageGrid_JK,
-    "Split Image Grid JK": SplitImageGrid_JK,
-    "HintImageEnchance JK": HintImageEnchance_JK,
-    "Image Resize Mode JK": ImageResizeMode_JK,
-    "Image Remove Alpha JK": ImageRemoveAlpha_JK,
-    "Color Grading JK": ColorGrading_JK,
-    "Rough Outline JK": RoughOutline_JK,
-    "OpenDWPose_JK": OpenDWPose_JK,
-    ### Mask Nodes
-    "Is Mask Empty JK": IsMaskEmpty_JK,
-    ### Animation Nodes
-    "Animation Prompt JK": AnimPrompt_JK,
-    "Animation Value JK": AnimValue_JK,
-    ### Logic Switches Nodes
-    "CR Boolean JK": CR_Boolean_JK,
-    "CR Int Input Switch JK": CR_IntInputSwitch_JK,
-    "CR Float Input Switch JK": CR_FloatInputSwitch_JK,
-    "CR Image Input Switch JK": CR_ImageInputSwitch_JK,
-    "CR Mask Input Switch JK": CR_MaskInputSwitch_JK,
-    "CR Latent Input Switch JK": CR_LatentInputSwitch_JK,
-    "CR Conditioning Input Switch JK": CR_ConditioningInputSwitch_JK,
-    "CR Clip Input Switch JK": CR_ClipInputSwitch_JK,
-    "CR Model Input Switch JK": CR_ModelInputSwitch_JK,
-    "CR ControlNet Input Switch JK": CR_ControlNetInputSwitch_JK,
-    "CR ControlNet Stack Input Switch JK": CR_ControlNetStackInputSwitch_JK,
-    "CR Text Input Switch JK": CR_TextInputSwitch_JK,
-    "CR VAE Input Switch JK": CR_VAEInputSwitch_JK,
-    "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
-    "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
-    "CR Noise Input Switch JK": CR_NoiseInputSwitch_JK,
-    "CR Guider Input Switch JK": CR_GuiderInputSwitch_JK,
-    "CR Sampler Input Switch JK": CR_SamplerInputSwitch_JK,
-    "CR Sigmas Input Switch JK": CR_SigmasInputSwitch_JK,
-    "CR Mesh Input Switch JK": CR_MeshInputSwitch_JK,
-    "CR Ply Input Switch JK": CR_PlyInputSwitch_JK,
-    "CR Obit Pose Input Switch JK": CR_ObitPoseInputSwitch_JK,
-    "CR TriMesh Input Switch JK": CR_TriMeshInputSwitch_JK,
-    ### ComfyMath Fix Nodes
-    "CM_BoolToInt JK": BoolToInt_JK,
-    "CM_IntToBool JK": IntToBool_JK,
-    "CM_BoolUnaryOperation JK": BoolUnaryOperation_JK,
-    "CM_BoolBinaryOperation JK": BoolBinaryOperation_JK,
-    "Bool Binary And JK": BoolBinaryAnd_JK,
-    "Bool Binary OR JK": BoolBinaryOR_JK,
-    "CM_StringBinaryCondition_JK": StringBinaryCondition_JK,
-    "CM_PromptCombine_JK": PromptCombine_JK,
-    "CM_FloatUnaryCondition JK": FloatUnaryCondition_JK,
-    "CM_FloatBinaryCondition JK": FloatBinaryCondition_JK,
-    "CM_IntUnaryCondition JK": IntUnaryCondition_JK,
-    "CM_IntBinaryCondition JK": IntBinaryCondition_JK,
-    "CM_NumberUnaryCondition JK": NumberUnaryCondition_JK,
-    "CM_NumberBinaryCondition JK": NumberBinaryCondition_JK,
-    "CM_Vec2UnaryCondition JK": Vec2UnaryCondition_JK,
-    "CM_Vec2BinaryCondition JK": Vec2BinaryCondition_JK,
-    "CM_Vec2ToFloatUnaryOperation JK": Vec2ToFloatUnaryOperation_JK,
-    "CM_Vec2ToFloatBinaryOperation JK": Vec2ToFloatBinaryOperation_JK,
-    "CM_Vec2FloatOperation_JK": Vec2FloatOperation_JK,
-    "CM_Vec3UnaryCondition JK": Vec3UnaryCondition_JK,
-    "CM_Vec3BinaryCondition JK": Vec3BinaryCondition_JK,
-    "CM_Vec3ToFloatUnaryOperation JK": Vec3ToFloatUnaryOperation_JK,
-    "CM_Vec3ToFloatBinaryOperation JK": Vec3ToFloatBinaryOperation_JK,
-    "CM_Vec3FloatOperation_JK": Vec3FloatOperation_JK,
-    "CM_Vec4UnaryCondition JK": Vec4UnaryCondition_JK,
-    "CM_Vec4BinaryCondition JK": Vec4BinaryCondition_JK,
-    "CM_Vec4ToFloatUnaryOperation JK": Vec4ToFloatUnaryOperation_JK,
-    "CM_Vec4ToFloatBinaryOperation JK": Vec4ToFloatBinaryOperation_JK,
-    "CM_Vec4FloatOperation_JK": Vec4FloatOperation_JK,
-    ### ComfyMath Nodes
-    "CM_FloatToInt JK": FloatToInt_JK,
-    "CM_IntToFloat JK": IntToFloat_JK,
-    "CM_IntToNumber JK": IntToNumber_JK,
-    "CM_NumberToInt JK": NumberToInt_JK,
-    "CM_FloatToNumber JK": FloatToNumber_JK,
-    "CM_NumberToFloat JK": NumberToFloat_JK,
-    "CM_ComposeVec2 JK": ComposeVec2_JK,
-    "CM_ComposeVec3 JK": ComposeVec3_JK,
-    "CM_ComposeVec4 JK": ComposeVec4_JK,
-    "CM_BreakoutVec2 JK": BreakoutVec2_JK,
-    "CM_BreakoutVec3 JK": BreakoutVec3_JK,
-    "CM_BreakoutVec4 JK": BreakoutVec4_JK,
-    "CM_FloatUnaryOperation JK": FloatUnaryOperation_JK,
-    "CM_FloatBinaryOperation JK": FloatBinaryOperation_JK,
-    "CM_IntUnaryOperation JK": IntUnaryOperation_JK,
-    "CM_IntBinaryOperation JK": IntBinaryOperation_JK,
-    "CM_NumberUnaryOperation JK": NumberUnaryOperation_JK,
-    "CM_NumberBinaryOperation JK": NumberBinaryOperation_JK,
-    "CM_Vec2UnaryOperation JK": Vec2UnaryOperation_JK,
-    "CM_Vec2BinaryOperation JK": Vec2BinaryOperation_JK,
-    "CM_Vec3UnaryOperation JK": Vec3UnaryOperation_JK,
-    "CM_Vec3BinaryOperation JK": Vec3BinaryOperation_JK,
-    "CM_Vec4UnaryOperation JK": Vec4UnaryOperation_JK,
-    "CM_Vec4BinaryOperation JK": Vec4BinaryOperation_JK,
-    ### Simple Evaluate Nodes
-    "Evaluate Ints JK": EvaluateInts_JK,
-    "Evaluate Floats JK": EvaluateFloats_JK,
-    "Evaluate Strings JK": EvaluateStrs_JK,
-    "Evaluate Examples JK": EvalExamples_JK,
-    ### 3D Nodes
-    "Orbit Poses JK": OrbitPoses_JK,
-    "OrbitLists to OrbitPoses JK": OrbitLists_to_OrbitPoses_JK,
-    "OrbitPoses to OrbitLists JK": OrbitPoses_to_OrbitLists_JK,
-    "Get OrbitPoses From List JK": Get_OrbitPoses_From_List_JK,
-}
-NODE_DISPLAY_NAME_MAPPINGS = {
-    ### Misc Nodes
-    "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
-    "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
-    "CR SD3 Aspect Ratio JK": "SD3 Aspect Ratio JK🐉",
-    "CR Aspect Ratio JK": "Aspect Ratio JK🐉",
-    "Tiling Mode JK": "Tiling Mode JK🐉",
-    "Empty Latent Color JK": "Empty Latent Color JK🐉",
-    "Random Beats JK": "Random Beats JK🐉",
-    "SDXL Target Res JK": "SDXL Target Res JK🐉",
-    "Get Size JK": "Get Size JK🐉",
-    "Image Crop by Mask Resolution JK": "Image Crop by Mask Resolution JK🐉",
-    "Image Crop by Mask Params JK": "Image Crop by Mask Params JK🐉",
-    "Upscale Method JK": "Upscale Method JK🐉",
-    "Latent Crop Offset JK": "Latent Crop Offset JK🐉",
-    "Scale To Resolution JK": "Scale To Resolution JK🐉",
-    "Inject Noise Params JK": "Inject Noise Params JK🐉",
-    "SD3 Prompts Switch JK": "SD3 Prompts Switch JK🐉",
-    "Guidance Default JK": "Guidance Default JK🐉",
-    "Save String List To JSON JK": "Save String List To JSON JK🐉",
-    "Load String List From JSON JK": "Load String List From JSON JK🐉",
-    ### Reroute Nodes
-    "Reroute List JK": "Reroute List JK🐉",
-    "Reroute Ckpt JK": "Reroute Ckpt JK🐉",
-    "Reroute Vae JK": "Reroute Vae JK🐉",
-    "Reroute Sampler JK": "Reroute Sampler JK🐉",
-    "Reroute Upscale JK": "Reroute Upscale JK🐉",
-    "Reroute Resize JK": "Reroute Resize JK🐉",
-    "Reroute String JK": "Reroute String JK🐉",
-    "String To Combo JK": "String To Combo JK🐉",
-    ### ControlNet Nodes
-    "CR ControlNet Loader JK": "ControlNet Loader JK🐉",
-    "CR Multi-ControlNet Stack JK": "Multi-ControlNet Stack JK🐉",
-    "CR Multi-ControlNet Param Stack JK": "Multi-ControlNet Param Stack JK🐉",
-    "CR Apply ControlNet JK": "Apply ControlNet JK🐉",
-    "CR Apply Multi-ControlNet JK": "Apply Multi-ControlNet JK🐉",
-    "CR Apply Multi-ControlNet Adv JK": "Apply Multi-ControlNet Adv JK🐉",
-    ### LoRA Nodes
-    "CR Load LoRA JK": "Load LoRA JK🐉",
-    "CR LoRA Stack JK": "LoRA Stack JK🐉",
-    "CR Apply LoRA Stack JK": "Apply LoRA Stack JK🐉",
-    ### Embedding Nodes
-    "Embedding Picker JK": "Embedding Picker JK🐉",
-    "Embedding Picker Multi JK": "Embedding Picker Multi JK🐉",
-    ### Loader Nodes
-    "Ckpt Loader JK": "Ckpt Loader JK🐉",
-    "Vae Loader JK": "Vae Loader JK🐉",
-    "Sampler Loader JK": "Sampler Loader JK🐉",
-    "Upscale Model Loader JK": "Upscale Model Loader JK🐉",
-    ### Pipe Nodes
-    "NodesState JK": "Nodes State JK🐉",
-    "Ksampler Parameters JK": "Ksampler Parameters JK🐉",
-    "Ksampler Parameters Default JK": "Ksampler Parameters Default JK🐉",
-    "Project Setting JK": "Project Setting JK🐉",
-    "Base Model Parameters JK": "Base Model Parameters JK🐉",
-    "Base Model Parameters Extract JK": "Base Model Parameters Extract JK🐉",
-    "Base Image Parameters Extract JK": "Base Image Parameters Extract JK🐉",
-    "Base Model Pipe JK": "Base Model Pipe JK🐉",
-    "Base Model Pipe Extract JK": "Base Model Pipe Extract JK🐉",
-    "Base Model Parameters SD3API JK": "Base Model Parameters SD3API JK🐉",
-    "Refine Pipe JK": "Refine Pipe JK🐉",
-    "Refine Pipe Extract JK": "Refine Pipe Extract JK🐉",
-    "Noise Injection Parameters JK": "Noise Injection Parameters JK🐉",
-    "Noise Injection Pipe Extract JK": "Noise Injection Pipe Extract JK🐉",
-    "Refine Model Parameters JK": "Refine Model Parameters JK🐉",
-    "Refine 1 Parameters Extract JK": "Refine 1 Parameters Extract JK🐉",
-    "Refine 2 Parameters Extract JK": "Refine 2 Parameters Extract JK🐉",
-    "Upscale Model Parameters JK":"Upscale Model Parameters JK🐉",
-    "Image Upscale Parameters Extract JK": "Image Upscale Parameters Extract JK🐉",
-    "Latent Upscale Parameters Extract JK": "Latent Upscale Parameters Extract JK🐉",
-    "Upscale Model Parameters Extract JK": "Upscale Model Parameters Extract JK🐉",
-    "Detailer Parameters JK": "Detailer Parameters JK🐉",
-    "Pipe End JK": "Pipe End JK🐉",
-    "Metadata Pipe JK": "Metadata Pipe JK🐉",
-    "Metadata Pipe Extract JK": "Metadata Pipe Extract JK🐉",
-    ### Image Nodes
-    "Save Image with Metadata JK": "Save Image With Metadata JK🐉",
-    "Save Image with Metadata Flow JK": "Save Image With Metadata Flow JK🐉",
-    "Load Image With Metadata JK": "Load Image With Metadata JK🐉",
-    "Load Image With Alpha JK": "Load Image With Alpha JK🐉",
-    "Make Image Grid JK": "Make Image Grid JK🐉",
-    "Split Image Grid JK": "Split Image Grid JK🐉",
-    "HintImageEnchance JK": "Enchance And Resize Hint Images JK🐉",
-    "Image Resize Mode JK": "Image Resize Mode JK🐉",
-    "Image Remove Alpha JK": "Image Remove Alpha JK🐉",
-    "Color Grading JK": "Color Grading JK🐉",
-    "Rough Outline JK": "Rough Outline JK🐉",
-    "OpenDWPose_JK": "Open+DW Pose JK🐉",
-    ### Mask Nodes
-    "Is Mask Empty JK": "Is Mask Empty JK🐉",
-    ### Animation Nodes
-    "Animation Prompt JK": "Animation Prompt JK🐉",
-    "Animation Value JK": "Animation Value JK🐉",
-    ### Logic Switches Nodes
-    "CR Boolean JK": "Boolean JK🐉",
-    "CR Image Input Switch JK": "Image Input Switch JK🐉",
-    "CR Mask Input Switch JK": "Mask Input Switch JK🐉",
-    "CR Int Input Switch JK": "Int Input Switch JK🐉",
-    "CR Float Input Switch JK": "Float Input Switch JK🐉",
-    "CR Latent Input Switch JK": "Latent Input Switch JK🐉",
-    "CR Conditioning Input Switch JK": "Conditioning Input Switch JK🐉",
-    "CR Clip Input Switch JK": "Clip Input Switch JK🐉",
-    "CR Model Input Switch JK": "Model Input Switch JK🐉",
-    "CR ControlNet Input Switch JK": "ControlNet Input Switch JK🐉",
-    "CR ControlNet Stack Input Switch JK": "ControlNet Stack Input Switch JK🐉",
-    "CR Text Input Switch JK": "Text Input Switch JK🐉",
-    "CR VAE Input Switch JK": "VAE Input Switch JK🐉",
-    "CR Pipe Input Switch JK": "Pipe Input Switch JK🐉",
-    "CR Impact Pipe Input Switch JK": "Impact Pipe Input Switch JK🐉",
-    "CR Noise Input Switch JK": "Noise Input Switch JK🐉",
-    "CR Guider Input Switch JK": "Guider Input Switch JK🐉",
-    "CR Sampler Input Switch JK": "Sampler Input Switch JK🐉",
-    "CR Sigmas Input Switch JK": "Sigmas Input Switch JK🐉",
-    "CR Mesh Input Switch JK": "Mesh Input Switch JK🐉",
-    "CR Ply Input Switch JK": "Ply Input Switch JK🐉",
-    "CR Orbit Pose Input Switch JK": "Orbit Pose Input Switch JK🐉",
-    "CR TriMesh Input Switch JK": "TriMesh Input Switch JK🐉",
-    ### ComfyMath Fix Nodes
-    "CM_BoolToInt JK": "BoolToInt JK🐉",
-    "CM_IntToBool JK": "IntToBool JK🐉",
-    "CM_BoolUnaryOperation JK": "BoolUnaryOp JK🐉",
-    "CM_BoolBinaryOperation JK": "BoolBinaryOp JK🐉",
-    "Bool Binary And JK": "Bool And JK🐉",
-    "Bool Binary OR JK": "Bool OR JK🐉",
-    "CM_StringBinaryCondition_JK": "StringBinaryCon JK🐉",
-    "CM_PromptCombine_JK": "Prompt Combine JK🐉",
-    "CM_FloatUnaryCondition JK": "FloatUnaryCon JK🐉",
-    "CM_FloatBinaryCondition JK": "FloatBinaryCon JK🐉",
-    "CM_IntUnaryCondition JK": "IntUnaryCon JK🐉",
-    "CM_IntBinaryCondition JK": "IntBinaryCon JK🐉",
-    "CM_NumberUnaryCondition JK": "NumberUnaryCon JK🐉",
-    "CM_NumberBinaryCondition JK": "NumberBinaryCon JK🐉",
-    "CM_Vec2UnaryCondition JK": "Vec2UnaryCon JK🐉",
-    "CM_Vec2BinaryCondition JK": "Vec2BinaryCon JK🐉",
-    "CM_Vec2ToFloatUnaryOperation JK": "Vec2ToFloatUnaryOp JK🐉",
-    "CM_Vec2ToFloatBinaryOperation JK": "Vec2ToFloatBinaryOp JK🐉",
-    "CM_Vec2FloatOperation_JK": "Vec2FloatOp JK🐉",
-    "CM_Vec3UnaryCondition JK": "Vec3UnaryCon JK🐉",
-    "CM_Vec3BinaryCondition JK": "Vec3BinaryCon JK🐉",
-    "CM_Vec3ToFloatUnaryOperation JK": "Vec3ToFloatUnaryOp JK🐉",
-    "CM_Vec3ToFloatBinaryOperation JK": "Vec3ToFloatBinaryOp JK🐉",
-    "CM_Vec3FloatOperation_JK": "Vec3FloatOp JK🐉",
-    "CM_Vec4UnaryCondition JK": "Vec4UnaryCon JK🐉",
-    "CM_Vec4BinaryCondition JK": "Vec4BinaryCon JK🐉",
-    "CM_Vec4ToFloatUnaryOperation JK": "Vec4ToFloatUnaryOp JK🐉",
-    "CM_Vec4ToFloatBinaryOperation JK": "Vec4ToFloatBinaryOp JK🐉",
-    "CM_Vec4FloatOperation_JK": "Vec4FloatOp JK🐉",
-    ### ComfyMath Nodes
-    "CM_FloatToInt JK": "FloatToInt JK🐉",
-    "CM_IntToFloat JK": "IntToFloat JK🐉",
-    "CM_IntToNumber JK": "IntToNumber JK🐉",
-    "CM_NumberToInt JK": "NumberToInt JK🐉",
-    "CM_FloatToNumber JK": "FloatToNumber JK🐉",
-    "CM_NumberToFloat JK": "NumberToFloat JK🐉",
-    "CM_ComposeVec2 JK": "ComposeVec2 JK🐉",
-    "CM_ComposeVec3 JK": "ComposeVec3 JK🐉",
-    "CM_ComposeVec4 JK": "ComposeVec4 JK🐉",
-    "CM_BreakoutVec2 JK": "BreakoutVec2 JK🐉",
-    "CM_BreakoutVec3 JK": "BreakoutVec3 JK🐉",
-    "CM_BreakoutVec4 JK": "BreakoutVec4 JK🐉",
-    "CM_FloatUnaryOperation JK": "FloatUnaryOp JK🐉",
-    "CM_FloatBinaryOperation JK": "FloatBinaryOp JK🐉",
-    "CM_IntUnaryOperation JK": "IntUnaryOp JK🐉",
-    "CM_IntBinaryOperation JK": "IntBinaryOp JK🐉",
-    "CM_NumberUnaryOperation JK": "NumberUnaryOp JK🐉",
-    "CM_NumberBinaryOperation JK": "NumberBinaryOp JK🐉",
-    "CM_Vec2UnaryOperation JK": "Vec2UnaryOp JK🐉",
-    "CM_Vec2BinaryOperation JK": "Vec2BinaryOp JK🐉",
-    "CM_Vec3UnaryOperation JK": "Vec3UnaryOp JK🐉",
-    "CM_Vec3BinaryOperation JK": "Vec3BinaryOp JK🐉",
-    "CM_Vec4UnaryOperation JK": "Vec4UnaryOp JK🐉",
-    "CM_Vec4BinaryOperation JK": "Vec4BinaryOp JK🐉",
-    ### Simple Evaluate Nodes
-    "Evaluate Ints JK": "Evaluate Ints JK🐉",
-    "Evaluate Floats JK": "Evaluate Floats JK🐉",
-    "Evaluate Strings JK": "Evaluate Strings JK🐉",
-    "Evaluate Examples JK": "Evaluate Examples JK🐉",
-    ### 3D Nodes
-    "Orbit Poses JK": "Orbit Poses JK🐉",
-    "OrbitLists to OrbitPoses JK": "OrbitLists to OrbitPoses JK🐉",
-    "OrbitPoses to OrbitLists JK": "OrbitPoses to OrbitLists JK🐉",
-    "Get OrbitPoses From List JK": "Get OrbitPoses From List JK🐉",
-}    
-'''

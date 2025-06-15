@@ -1,0 +1,38 @@
+{
+  "1": {
+    "inputs": {
+      "image": "example.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "2": {
+    "inputs": {
+      "grid_side": true,
+      "grid_side_num": 2,
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "Split Image Grid JK",
+    "_meta": {
+      "title": "Split Image Grid JK🐉"
+    }
+  },
+  "3": {
+    "inputs": {
+      "images": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "SaveImageWebsocket",
+    "_meta": {
+      "title": "SaveImageWebsocket"
+    }
+  }
+}

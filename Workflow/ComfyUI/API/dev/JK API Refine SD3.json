@@ -21,8 +21,7 @@
   },
   "3": {
     "inputs": {
-      "image": "example.png",
-      "upload": "image"
+      "image": "example.png"
     },
     "class_type": "LoadImage",
     "_meta": {
@@ -91,39 +90,34 @@
   },
   "13": {
     "inputs": {
-      "input_mode": "simple",
-      "lora_count": 4,
+      "input_mode": "model_only",
       "lora_1": true,
       "lora_name_1": "None",
-      "lora_weight_1": 1,
       "model_weight_1": 1,
       "clip_weight_1": 1,
       "lora_2": true,
       "lora_name_2": "None",
-      "lora_weight_2": 1,
       "model_weight_2": 1,
       "clip_weight_2": 1,
       "lora_3": true,
       "lora_name_3": "None",
-      "lora_weight_3": 1,
       "model_weight_3": 1,
       "clip_weight_3": 1,
       "lora_4": true,
       "lora_name_4": "None",
-      "lora_weight_4": 1,
       "model_weight_4": 1,
       "clip_weight_4": 1,
       "lora_5": false,
       "lora_name_5": "None",
-      "lora_weight_5": 1,
       "model_weight_5": 1,
       "clip_weight_5": 1,
       "lora_6": false,
       "lora_name_6": "None",
-      "lora_weight_6": 1,
       "model_weight_6": 1,
       "clip_weight_6": 1,
-      "save_hash": false
+      "save_hash": false,
+      "lora_prompt": "",
+      "lora_metadata": ""
     },
     "class_type": "CR LoRA Stack JK",
     "_meta": {
@@ -250,8 +244,6 @@
   "23": {
     "inputs": {
       "control_switch": true,
-      "input_mode": "simple",
-      "controlnet_count": 4,
       "ControlNet_Unit_0": true,
       "controlnet_strength_0": 1,
       "start_percent_0": 0,
@@ -553,7 +545,7 @@
         0
       ],
       "conditioning_true": [
-        "4:32",
+        "4:33",
         0
       ]
     },
@@ -583,15 +575,15 @@
         0
       ],
       "positive": [
-        "4:35",
+        "4:36",
         0
       ],
       "negative": [
-        "4:35",
+        "4:36",
         1
       ],
       "empty_conditioning": [
-        "4:33",
+        "4:34",
         0
       ]
     },
@@ -602,9 +594,15 @@
   },
   "4:14": {
     "inputs": {
-      "steps": 20,
-      "cfg": 4.5,
-      "denoise": 1
+      "steps": [
+        "4:31",
+        0
+      ],
+      "cfg": 4.500000000000001,
+      "denoise": [
+        "4:31",
+        0
+      ]
     },
     "class_type": "Ksampler Parameters Default JK",
     "_meta": {
@@ -725,7 +723,7 @@
     "inputs": {
       "boolean_value": false,
       "image_false": [
-        "4:39",
+        "4:40",
         0
       ],
       "image_true": [
@@ -747,7 +745,7 @@
         0
       ],
       "image_target": [
-        "4:39",
+        "4:40",
         0
       ]
     },
@@ -786,6 +784,13 @@
     }
   },
   "4:31": {
+    "inputs": {},
+    "class_type": "Remove Input JK",
+    "_meta": {
+      "title": "Remove Input JK🐉"
+    }
+  },
+  "4:32": {
     "inputs": {
       "guidance": [
         "4:12",
@@ -801,7 +806,7 @@
       "title": "FluxGuidance"
     }
   },
-  "4:32": {
+  "4:33": {
     "inputs": {
       "guidance": [
         "4:12",
@@ -817,10 +822,10 @@
       "title": "FluxGuidance"
     }
   },
-  "4:33": {
+  "4:34": {
     "inputs": {
       "conditioning": [
-        "4:32",
+        "4:33",
         0
       ]
     },
@@ -829,7 +834,7 @@
       "title": "ConditioningZeroOut"
     }
   },
-  "4:34": {
+  "4:35": {
     "inputs": {
       "boolean_value": [
         "4:11",
@@ -840,7 +845,7 @@
         0
       ],
       "conditioning_true": [
-        "4:31",
+        "4:32",
         0
       ]
     },
@@ -849,11 +854,14 @@
       "title": "Conditioning Input Switch JK🐉"
     }
   },
-  "4:35": {
+  "4:36": {
     "inputs": {
-      "effective_mask": false,
+      "effective_mask": [
+        "4:31",
+        2
+      ],
       "base_positive": [
-        "4:34",
+        "4:35",
         0
       ],
       "base_negative": [
@@ -874,7 +882,7 @@
       "title": "Apply Multi-ControlNet Adv JK🐉"
     }
   },
-  "4:36": {
+  "4:37": {
     "inputs": {
       "cfg": [
         "4:14",
@@ -885,11 +893,11 @@
         0
       ],
       "positive": [
-        "4:35",
+        "4:36",
         0
       ],
       "negative": [
-        "4:35",
+        "4:36",
         1
       ]
     },
@@ -898,14 +906,14 @@
       "title": "CFGGuider"
     }
   },
-  "4:37": {
+  "4:38": {
     "inputs": {
       "boolean_value": [
         "4:11",
         1
       ],
       "guider_false": [
-        "4:36",
+        "4:37",
         0
       ],
       "guider_true": [
@@ -918,14 +926,14 @@
       "title": "Guider Input Switch JK🐉"
     }
   },
-  "4:38": {
+  "4:39": {
     "inputs": {
       "noise": [
         "4:17",
         0
       ],
       "guider": [
-        "4:37",
+        "4:38",
         0
       ],
       "sampler": [
@@ -946,10 +954,10 @@
       "title": "SamplerCustomAdvanced"
     }
   },
-  "4:39": {
+  "4:40": {
     "inputs": {
       "samples": [
-        "4:38",
+        "4:39",
         1
       ],
       "vae": [

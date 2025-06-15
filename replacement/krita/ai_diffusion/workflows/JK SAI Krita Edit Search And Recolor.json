@@ -3,9 +3,7 @@
     "inputs": {
       "name": "01 positive",
       "type": "text",
-      "default": "",
-      "min": 0,
-      "max": 0
+      "default": ""
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -16,9 +14,7 @@
     "inputs": {
       "name": "02 negative",
       "type": "text",
-      "default": "",
-      "min": 0,
-      "max": 0
+      "default": ""
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -29,9 +25,7 @@
     "inputs": {
       "name": "03 search prompt",
       "type": "text",
-      "default": "",
-      "min": 0,
-      "max": 0
+      "default": ""
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -40,8 +34,8 @@
   },
   "3": {
     "inputs": {
-      "name": "05 grow mask",
-      "type": "number (integer)",
+      "name": "06 grow mask",
+      "type": "number",
       "default": 3,
       "min": 0,
       "max": 20
@@ -64,9 +58,7 @@
     "inputs": {
       "name": "07 Krita Image Layer",
       "type": "toggle",
-      "default": false,
-      "min": 0,
-      "max": 0
+      "default": false
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -81,6 +73,28 @@
     }
   },
   "7": {
+    "inputs": {
+      "name": "05 style preset",
+      "type": "choice",
+      "default": "photographic"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "preset"
+    }
+  },
+  "8": {
+    "inputs": {
+      "name": "04 style",
+      "type": "toggle",
+      "default": false
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "style"
+    }
+  },
+  "9": {
     "inputs": {
       "boolean_value": [
         "5",
@@ -100,7 +114,7 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "8": {
+  "10": {
     "inputs": {
       "select_prompt": [
         "2",
@@ -122,10 +136,18 @@
         "6",
         3
       ],
-      "api_key_override": "",
-      "output_format": "png",
-      "image": [
+      "style": [
+        "8",
+        0
+      ],
+      "style_preset": [
         "7",
+        0
+      ],
+      "output_format": "png",
+      "api_key_override": "",
+      "image": [
+        "9",
         0
       ]
     },
@@ -134,10 +156,10 @@
       "title": "Stability Search And Recolor"
     }
   },
-  "9": {
+  "11": {
     "inputs": {
       "images": [
-        "8",
+        "10",
         0
       ]
     },

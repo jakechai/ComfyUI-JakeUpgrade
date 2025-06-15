@@ -109,16 +109,16 @@
 # # Pad bottom
 # ["6:48"]["inputs"]["value"] = 
 # # mask dilation
-# ["6:50"]["inputs"]["dilation"] = 
+# ["6:49"]["inputs"]["dilation"] = 
 # # mask blur
-# ["6:51"]["inputs"]["amount"] = 
+# ["6:50"]["inputs"]["amount"] = 
 # # mask binary
-# ["6:52"]["inputs"]["boolean_value"] = 
+# ["6:51"]["inputs"]["boolean_value"] = 
 # ["7"]["inputs"]["inpaint_crop_and_stitch"] = 
 # # latent crop
-# ["6:54"]["inputs"]["boolean_value"] = 
+# ["6:53"]["inputs"]["boolean_value"] = 
 # # ignore latent crop offset
-# ["6:55"]["inputs"]["boolean_value"] = 
+# ["6:54"]["inputs"]["boolean_value"] = 
 # ["7"]["inputs"]["padding"] = 
 # ["7"]["inputs"]["use_image_res"] = 
 # ["7"]["inputs"]["use_target_res"] = 
@@ -126,17 +126,17 @@
 # ["7"]["inputs"]["use_target_mega_pixel"] = 
 # ["7"]["inputs"]["target_mega_pixel"] = 
 # # color grading
-# ["6:57"]["inputs"]["boolean_value"] = 
-# ["6:58"]["inputs"]["brightness"] = 
-# ["6:58"]["inputs"]["contrast"] = 
-# ["6:58"]["inputs"]["saturation"] = 
-# ["6:58"]["inputs"]["R"] = 
-# ["6:58"]["inputs"]["G"] = 
-# ["6:58"]["inputs"]["B"] = 
-# ["6:59"]["inputs"]["image_upscale_method"] = 
-# ["6:59"]["inputs"]["latent_upscale_method"] = 
+# ["6:56"]["inputs"]["boolean_value"] = 
+# ["6:57"]["inputs"]["brightness"] = 
+# ["6:57"]["inputs"]["contrast"] = 
+# ["6:57"]["inputs"]["saturation"] = 
+# ["6:57"]["inputs"]["R"] = 
+# ["6:57"]["inputs"]["G"] = 
+# ["6:57"]["inputs"]["B"] = 
+# ["6:58"]["inputs"]["image_upscale_method"] = 
+# ["6:58"]["inputs"]["latent_upscale_method"] = 
 # # batch size
-# ["6:62"]["inputs"]["amount"] = 
+# ["6:61"]["inputs"]["amount"] = 
 # # stop at clip layer
 # ["6:9"]["inputs"]["boolean_value"] = 
 # ["6:10"]["inputs"]["stop_at_clip_layer"] = 
@@ -148,22 +148,22 @@
 # ["17"]["inputs"]["multiplier"] = 
 # # lora 1-4
 # ["18"]["inputs"]["lora_name_1"] = 
-# ["18"]["inputs"]["lora_weight_1"] = 
+# ["18"]["inputs"]["model_weight_1"] = 
 # ["18"]["inputs"]["lora_name_2"] = 
-# ["18"]["inputs"]["lora_weight_2"] = 
+# ["18"]["inputs"]["model_weight_2"] = 
 # ["18"]["inputs"]["lora_name_3"] = 
-# ["18"]["inputs"]["lora_weight_3"] = 
+# ["18"]["inputs"]["model_weight_3"] = 
 # ["18"]["inputs"]["lora_name_4"] = 
-# ["18"]["inputs"]["lora_weight_4"] = 
+# ["18"]["inputs"]["model_weight_4"] = 
 # # lora 5-8
 # ["19"]["inputs"]["lora_name_1"] = 
-# ["19"]["inputs"]["lora_weight_1"] = 
+# ["19"]["inputs"]["model_weight_1"] = 
 # ["19"]["inputs"]["lora_name_2"] = 
-# ["19"]["inputs"]["lora_weight_2"] = 
+# ["19"]["inputs"]["model_weight_2"] = 
 # ["19"]["inputs"]["lora_name_3"] = 
-# ["19"]["inputs"]["lora_weight_3"] = 
+# ["19"]["inputs"]["model_weight_3"] = 
 # ["19"]["inputs"]["lora_name_4"] = 
-# ["19"]["inputs"]["lora_weight_4"] = 
+# ["19"]["inputs"]["model_weight_4"] = 
 # # cn res
 # ["26"]["inputs"]["value"] = 
 # # cn effective mask

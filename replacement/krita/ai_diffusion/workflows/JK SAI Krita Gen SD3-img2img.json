@@ -10,9 +10,7 @@
     "inputs": {
       "name": "01 positive",
       "type": "text",
-      "default": "",
-      "min": 0,
-      "max": 0
+      "default": ""
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -23,9 +21,7 @@
     "inputs": {
       "name": "02 negative",
       "type": "text",
-      "default": "",
-      "min": 0,
-      "max": 0
+      "default": ""
     },
     "class_type": "ETN_Parameter",
     "_meta": {
@@ -33,19 +29,6 @@
     }
   },
   "3": {
-    "inputs": {
-      "name": "04 model",
-      "type": "choice",
-      "default": "sd3.5-large",
-      "min": 0,
-      "max": 0
-    },
-    "class_type": "ETN_Parameter",
-    "_meta": {
-      "title": "model"
-    }
-  },
-  "4": {
     "inputs": {
       "name": "06 cfg scale",
       "type": "number",
@@ -58,7 +41,7 @@
       "title": "cfg scale"
     }
   },
-  "5": {
+  "4": {
     "inputs": {
       "name": "05 strength",
       "type": "number",
@@ -71,7 +54,7 @@
       "title": "strength"
     }
   },
-  "6": {
+  "5": {
     "inputs": {
       "name": "08 Image Layer"
     },
@@ -80,42 +63,73 @@
       "title": "Krita Image Layer"
     }
   },
-  "7": {
+  "6": {
     "inputs": {
       "name": "07 Krita Image Layer",
       "type": "toggle",
-      "default": false,
-      "min": 0,
-      "max": 0
+      "default": false
     },
     "class_type": "ETN_Parameter",
     "_meta": {
       "title": "image layer"
     }
   },
-  "8": {
+  "7": {
     "inputs": {},
     "class_type": "ETN_KritaSelection",
     "_meta": {
       "title": "Krita Selection"
     }
   },
-  "9": {
+  "8": {
     "inputs": {
       "mask": [
-        "8",
+        "7",
         0
       ]
     },
     "class_type": "Is Mask Empty JK",
     "_meta": {
       "title": "Is Mask Empty JK\ud83d\udc09"
+    }
+  },
+  "9": {
+    "inputs": {
+      "name": "10 style preset",
+      "type": "choice",
+      "default": "photographic"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "preset"
     }
   },
   "10": {
     "inputs": {
+      "name": "09 style",
+      "type": "toggle",
+      "default": false
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "style"
+    }
+  },
+  "11": {
+    "inputs": {
+      "name": "03 model",
+      "type": "choice",
+      "default": "sd3.5-large"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "model"
+    }
+  },
+  "12": {
+    "inputs": {
       "mask": [
-        "8",
+        "7",
         0
       ]
     },
@@ -124,10 +138,19 @@
       "title": "Is Mask Empty JK\ud83d\udc09"
     }
   },
-  "11": {
+  "13": {
+    "inputs": {
+      "string": ""
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "Grp End Dummy"
+    }
+  },
+  "14": {
     "inputs": {
       "boolean_value": [
-        "7",
+        "6",
         0
       ],
       "image_false": [
@@ -135,7 +158,7 @@
         0
       ],
       "image_true": [
-        "6",
+        "5",
         0
       ]
     },
@@ -144,11 +167,11 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "12": {
+  "15": {
     "inputs": {
       "op": "Not",
       "a": [
-        "9",
+        "8",
         0
       ]
     },
@@ -157,10 +180,10 @@
       "title": "BoolUnaryOp JK\ud83d\udc09"
     }
   },
-  "13": {
+  "16": {
     "inputs": {
       "image": [
-        "11",
+        "14",
         0
       ]
     },
@@ -169,15 +192,15 @@
       "title": "Get Size JK\ud83d\udc09"
     }
   },
-  "14": {
+  "17": {
     "inputs": {
       "value": 1,
       "width": [
-        "13",
+        "16",
         0
       ],
       "height": [
-        "13",
+        "16",
         1
       ]
     },
@@ -186,18 +209,18 @@
       "title": "SolidMask"
     }
   },
-  "15": {
+  "18": {
     "inputs": {
       "boolean_value": [
-        "10",
+        "12",
         0
       ],
       "mask_false": [
-        "8",
+        "7",
         0
       ],
       "mask_true": [
-        "14",
+        "17",
         0
       ]
     },
@@ -206,81 +229,48 @@
       "title": "Mask Input Switch JK\ud83d\udc09"
     }
   },
-  "16": {
+  "19": {
     "inputs": {
-      "custom_width": 1024,
-      "custom_height": 1024,
       "padding": 0,
       "use_image_res": false,
       "use_target_res": false,
       "target_res": 1024,
       "use_target_mega_pixel": false,
       "target_mega_pixel": 1,
-      "multiple_of": 8,
-      "image_upscale_method": "lanczos",
-      "latent_upscale_method": "bilinear",
       "mask": [
-        "15",
+        "18",
         0
       ],
       "image": [
-        "11",
+        "14",
         0
       ]
     },
-    "class_type": "Image Crop by Mask Resolution JK",
+    "class_type": "Image Crop By Mask Resolution Grp JK",
     "_meta": {
-      "title": "Image Crop by Mask Resolution JK\ud83d\udc09"
+      "title": "Image Crop by Mask Resolution Grp JK\ud83d\udc09"
     }
   },
-  "17": {
+  "20": {
     "inputs": {
-      "width": [
-        "16",
-        0
-      ],
-      "height": [
-        "16",
-        1
-      ],
       "x": [
-        "16",
+        "19",
         2
       ],
       "y": [
-        "16",
-        3
-      ],
-      "image": [
-        "11",
-        0
-      ]
-    },
-    "class_type": "ImageCrop",
-    "_meta": {
-      "title": "Image Crop"
-    }
-  },
-  "18": {
-    "inputs": {
-      "x": [
-        "16",
-        2
-      ],
-      "y": [
-        "16",
+        "19",
         3
       ],
       "width": [
-        "16",
+        "19",
         0
       ],
       "height": [
-        "16",
+        "19",
         1
       ],
       "mask": [
-        "15",
+        "18",
         0
       ]
     },
@@ -289,18 +279,46 @@
       "title": "CropMask"
     }
   },
-  "19": {
+  "21": {
+    "inputs": {
+      "width": [
+        "19",
+        0
+      ],
+      "height": [
+        "19",
+        1
+      ],
+      "x": [
+        "19",
+        2
+      ],
+      "y": [
+        "19",
+        3
+      ],
+      "image": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "ImageCrop",
+    "_meta": {
+      "title": "Image Crop"
+    }
+  },
+  "22": {
     "inputs": {
       "boolean_value": [
-        "10",
+        "12",
         0
       ],
       "image_false": [
-        "17",
+        "21",
         0
       ],
       "image_true": [
-        "11",
+        "14",
         0
       ]
     },
@@ -309,18 +327,18 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "20": {
+  "23": {
     "inputs": {
       "boolean_value": [
-        "10",
+        "12",
         0
       ],
       "mask_false": [
-        "18",
+        "20",
         0
       ],
       "mask_true": [
-        "15",
+        "18",
         0
       ]
     },
@@ -329,18 +347,18 @@
       "title": "Mask Input Switch JK\ud83d\udc09"
     }
   },
-  "21": {
+  "24": {
     "inputs": {
       "boolean_value": [
-        "12",
+        "15",
         0
       ],
       "image_false": [
-        "11",
+        "14",
         0
       ],
       "image_true": [
-        "19",
+        "22",
         0
       ]
     },
@@ -349,10 +367,10 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "22": {
+  "25": {
     "inputs": {
       "model": [
-        "3",
+        "11",
         0
       ],
       "prompt": [
@@ -364,7 +382,7 @@
         0
       ],
       "cfg_scale": [
-        "4",
+        "3",
         0
       ],
       "seed": [
@@ -372,14 +390,22 @@
         3
       ],
       "strength": [
-        "5",
+        "4",
         0
       ],
-      "aspect_ratio": "16:9",
+      "aspect_ratio": "1:1(1024, 1024)",
+      "style": [
+        "10",
+        0
+      ],
+      "style_preset": [
+        "9",
+        0
+      ],
       "output_format": "png",
       "api_key_override": "",
       "image": [
-        "21",
+        "24",
         0
       ]
     },
@@ -388,10 +414,10 @@
       "title": "Stability SD3"
     }
   },
-  "23": {
+  "26": {
     "inputs": {
       "images": [
-        "22",
+        "25",
         0
       ]
     },
