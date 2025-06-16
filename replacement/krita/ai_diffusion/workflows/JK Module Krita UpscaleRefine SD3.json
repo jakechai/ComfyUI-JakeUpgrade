@@ -41,16 +41,6 @@
   },
   "4": {
     "inputs": {
-      "op": "Not",
-      "a": false
-    },
-    "class_type": "CM_BoolUnaryOperation JK",
-    "_meta": {
-      "title": "BoolUnaryOp JK\ud83d\udc09"
-    }
-  },
-  "5": {
-    "inputs": {
       "width": 1024,
       "height": 1024,
       "batch_size": 1,
@@ -61,17 +51,17 @@
       "title": "EmptyImage"
     }
   },
-  "6": {
+  "5": {
     "inputs": {},
     "class_type": "ETN_KritaSelection",
     "_meta": {
       "title": "Krita Selection"
     }
   },
-  "7": {
+  "6": {
     "inputs": {
       "mask": [
-        "6",
+        "5",
         0
       ]
     },
@@ -80,7 +70,7 @@
       "title": "Is Mask Empty JK\ud83d\udc09"
     }
   },
-  "8": {
+  "7": {
     "inputs": {
       "text": "Upscale your canvas to target res.\nThen make select region for upscale.",
       "font": "ShareTechMono-Regular.ttf",
@@ -96,7 +86,7 @@
       "offset_y": 0,
       "direction": "ltr",
       "img_composite": [
-        "5",
+        "4",
         0
       ]
     },
@@ -105,20 +95,18 @@
       "title": "\ud83d\udd27 Draw Text"
     }
   },
-  "9": {
+  "8": {
     "inputs": {
       "name": "06 upscale method",
-      "type": "auto",
-      "default": 512,
-      "min": 0,
-      "max": 16384
+      "type": "choice",
+      "default": "lanczos"
     },
     "class_type": "ETN_Parameter",
     "_meta": {
       "title": "method"
     }
   },
-  "10": {
+  "9": {
     "inputs": {
       "name": "08 img2img layer"
     },
@@ -127,7 +115,7 @@
       "title": "Krita Image Layer"
     }
   },
-  "11": {
+  "10": {
     "inputs": {
       "name": "07 Krita img2img Layer",
       "type": "toggle",
@@ -138,7 +126,7 @@
       "title": "img layer"
     }
   },
-  "12": {
+  "11": {
     "inputs": {
       "name": "A01 Checkpoint-sd3",
       "type": "choice",
@@ -149,7 +137,7 @@
       "title": "checkpoint"
     }
   },
-  "13": {
+  "12": {
     "inputs": {
       "name": "A03 Clip name1-sd3",
       "type": "choice",
@@ -160,7 +148,7 @@
       "title": "clip 1"
     }
   },
-  "14": {
+  "13": {
     "inputs": {
       "name": "A04 Clip name2-sd3",
       "type": "choice",
@@ -171,7 +159,7 @@
       "title": "clip 2"
     }
   },
-  "15": {
+  "14": {
     "inputs": {
       "name": "A05 Clip name3-sd3",
       "type": "choice",
@@ -182,7 +170,7 @@
       "title": "clip 3"
     }
   },
-  "16": {
+  "15": {
     "inputs": {
       "name": "LA01 controlnet Tile-sd3",
       "type": "choice",
@@ -193,18 +181,18 @@
       "title": "controlnet 0"
     }
   },
-  "17": {
+  "16": {
     "inputs": {
       "clip_name1": [
-        "13",
+        "12",
         0
       ],
       "clip_name2": [
-        "14",
+        "13",
         0
       ],
       "clip_name3": [
-        "15",
+        "14",
         0
       ]
     },
@@ -213,10 +201,10 @@
       "title": "TripleCLIPLoader"
     }
   },
-  "18": {
+  "17": {
     "inputs": {
       "ckpt_name": [
-        "12",
+        "11",
         0
       ]
     },
@@ -225,12 +213,12 @@
       "title": "Load Checkpoint"
     }
   },
-  "19": {
+  "18": {
     "inputs": {
       "name": "LA09 controlnet strength Tile",
       "type": "number",
       "default": 1,
-      "min": 0,
+      "min": -10,
       "max": 2
     },
     "class_type": "ETN_Parameter",
@@ -238,7 +226,7 @@
       "title": "cn strength 0"
     }
   },
-  "20": {
+  "19": {
     "inputs": {
       "name": "LA10 start percent Tile",
       "type": "number",
@@ -251,7 +239,7 @@
       "title": "cn start 0"
     }
   },
-  "21": {
+  "20": {
     "inputs": {
       "name": "LA11 end percent Tile",
       "type": "number",
@@ -264,7 +252,7 @@
       "title": "cn end 0"
     }
   },
-  "22": {
+  "21": {
     "inputs": {
       "name": "LB01 controlnet 1",
       "type": "choice",
@@ -275,12 +263,12 @@
       "title": "controlnet 1"
     }
   },
-  "23": {
+  "22": {
     "inputs": {
       "name": "LB09 controlnet strength 1",
       "type": "number",
       "default": 1,
-      "min": 0,
+      "min": -10,
       "max": 2
     },
     "class_type": "ETN_Parameter",
@@ -288,7 +276,7 @@
       "title": "cn strength 1"
     }
   },
-  "24": {
+  "23": {
     "inputs": {
       "name": "LB10 start percent 1",
       "type": "number",
@@ -301,7 +289,7 @@
       "title": "cn start 1"
     }
   },
-  "25": {
+  "24": {
     "inputs": {
       "name": "LB11 end percent 1",
       "type": "number",
@@ -314,7 +302,7 @@
       "title": "cn end 1"
     }
   },
-  "26": {
+  "25": {
     "inputs": {
       "name": "LC01 controlnet 2",
       "type": "choice",
@@ -325,12 +313,12 @@
       "title": "controlnet 2"
     }
   },
-  "27": {
+  "26": {
     "inputs": {
       "name": "LC09 controlnet strength 2",
       "type": "number",
       "default": 1,
-      "min": 0,
+      "min": -10,
       "max": 2
     },
     "class_type": "ETN_Parameter",
@@ -338,7 +326,7 @@
       "title": "cn strength 2"
     }
   },
-  "28": {
+  "27": {
     "inputs": {
       "name": "LC10 start percent 2",
       "type": "number",
@@ -351,7 +339,7 @@
       "title": "cn start 2"
     }
   },
-  "29": {
+  "28": {
     "inputs": {
       "name": "LC11 end percent 2",
       "type": "number",
@@ -364,7 +352,7 @@
       "title": "cn end 2"
     }
   },
-  "30": {
+  "29": {
     "inputs": {
       "name": "03 F:width | T:height",
       "type": "toggle",
@@ -375,7 +363,7 @@
       "title": "dir"
     }
   },
-  "31": {
+  "30": {
     "inputs": {
       "name": "02 target resolution",
       "type": "number",
@@ -388,7 +376,7 @@
       "title": "tar res"
     }
   },
-  "32": {
+  "31": {
     "inputs": {
       "name": "04 use target mega pixel",
       "type": "toggle",
@@ -399,7 +387,7 @@
       "title": "use tar pixel"
     }
   },
-  "33": {
+  "32": {
     "inputs": {
       "name": "05 target mega pixel",
       "type": "number",
@@ -412,7 +400,7 @@
       "title": "tar get pixel"
     }
   },
-  "34": {
+  "33": {
     "inputs": {
       "name": "B01 positive",
       "type": "text",
@@ -423,7 +411,7 @@
       "title": "pos l"
     }
   },
-  "35": {
+  "34": {
     "inputs": {
       "name": "B07 negative",
       "type": "text",
@@ -434,7 +422,7 @@
       "title": "neg l"
     }
   },
-  "36": {
+  "35": {
     "inputs": {
       "boolean_value": true
     },
@@ -443,7 +431,7 @@
       "title": "sd3"
     }
   },
-  "37": {
+  "36": {
     "inputs": {
       "name": "B18 SD3 Negative end percent",
       "type": "number",
@@ -456,7 +444,7 @@
       "title": "neg end"
     }
   },
-  "38": {
+  "37": {
     "inputs": {
       "name": "C01 cfg-sd3",
       "type": "number",
@@ -469,7 +457,7 @@
       "title": "cfg"
     }
   },
-  "39": {
+  "38": {
     "inputs": {
       "name": "C02 sampler",
       "type": "choice",
@@ -480,7 +468,7 @@
       "title": "sampler"
     }
   },
-  "40": {
+  "39": {
     "inputs": {
       "name": "C03 scheduler-sd3",
       "type": "choice",
@@ -491,7 +479,7 @@
       "title": "scheduler"
     }
   },
-  "41": {
+  "40": {
     "inputs": {
       "name": "C04 steps",
       "type": "number",
@@ -504,7 +492,7 @@
       "title": "steps"
     }
   },
-  "42": {
+  "41": {
     "inputs": {
       "name": "C05 denoise",
       "type": "number",
@@ -517,7 +505,7 @@
       "title": "denoise"
     }
   },
-  "43": {
+  "42": {
     "inputs": {
       "name": "C06 Inject Noise",
       "type": "toggle",
@@ -528,7 +516,7 @@
       "title": "latent noise"
     }
   },
-  "44": {
+  "43": {
     "inputs": {
       "name": "C07 Inject Noise seed",
       "type": "number",
@@ -541,12 +529,12 @@
       "title": "latent noise seed"
     }
   },
-  "45": {
+  "44": {
     "inputs": {
       "name": "C09 Inject Noise strength",
       "type": "number",
       "default": 0.3,
-      "min": 0,
+      "min": -20,
       "max": 5
     },
     "class_type": "ETN_Parameter",
@@ -554,7 +542,7 @@
       "title": "latent noise str"
     }
   },
-  "46": {
+  "45": {
     "inputs": {
       "name": "D01 Detail Daemon",
       "type": "toggle",
@@ -565,7 +553,7 @@
       "title": "detail"
     }
   },
-  "47": {
+  "46": {
     "inputs": {
       "name": "D02 Detail amount",
       "type": "number",
@@ -578,7 +566,7 @@
       "title": "detail amount"
     }
   },
-  "48": {
+  "47": {
     "inputs": {
       "name": "D03 Detail start percent",
       "type": "number",
@@ -591,7 +579,7 @@
       "title": "detail start p"
     }
   },
-  "49": {
+  "48": {
     "inputs": {
       "name": "D04 Detail end percent",
       "type": "number",
@@ -604,7 +592,7 @@
       "title": "detail end p"
     }
   },
-  "50": {
+  "49": {
     "inputs": {
       "name": "E01 color match",
       "type": "toggle",
@@ -615,7 +603,7 @@
       "title": "color match"
     }
   },
-  "51": {
+  "50": {
     "inputs": {
       "name": "E02 color match method",
       "type": "choice",
@@ -626,7 +614,7 @@
       "title": "color match method"
     }
   },
-  "52": {
+  "51": {
     "inputs": {
       "name": "E03 color match strength",
       "type": "number",
@@ -639,10 +627,10 @@
       "title": "color match str"
     }
   },
-  "53": {
+  "52": {
     "inputs": {
       "mask": [
-        "6",
+        "5",
         0
       ]
     },
@@ -651,7 +639,7 @@
       "title": "Is Mask Empty JK\ud83d\udc09"
     }
   },
-  "54": {
+  "53": {
     "inputs": {
       "string": ""
     },
@@ -660,11 +648,11 @@
       "title": "Grp End Dummy"
     }
   },
-  "55": {
+  "54": {
     "inputs": {
       "stop_at_clip_layer": -1,
       "clip": [
-        "17",
+        "16",
         0
       ]
     },
@@ -673,7 +661,7 @@
       "title": "CLIP Set Last Layer"
     }
   },
-  "56": {
+  "55": {
     "inputs": {
       "guidance": 3.5
     },
@@ -682,10 +670,10 @@
       "title": "Guidance Default JK\ud83d\udc09"
     }
   },
-  "57": {
+  "56": {
     "inputs": {
       "sampler_name": [
-        "39",
+        "38",
         0
       ]
     },
@@ -694,22 +682,22 @@
       "title": "KSamplerSelect"
     }
   },
-  "58": {
+  "57": {
     "inputs": {
       "scheduler": [
-        "40",
+        "39",
         0
       ],
       "steps": [
-        "41",
+        "40",
         0
       ],
       "denoise": [
-        "42",
+        "41",
         0
       ],
       "model": [
-        "18",
+        "17",
         0
       ]
     },
@@ -718,7 +706,7 @@
       "title": "BasicScheduler"
     }
   },
-  "59": {
+  "58": {
     "inputs": {
       "noise_seed": [
         "1",
@@ -736,19 +724,19 @@
       "title": "RandomNoise (inspire)"
     }
   },
-  "60": {
+  "59": {
     "inputs": {
       "detail_amount": [
-        "47",
+        "46",
         0
       ],
       "start": 0.2,
       "end": [
-        "48",
+        "47",
         0
       ],
       "bias": [
-        "49",
+        "48",
         0
       ],
       "exponent": 1,
@@ -758,7 +746,7 @@
       "smooth": true,
       "cfg_scale_override": 0,
       "sampler": [
-        "57",
+        "56",
         0
       ]
     },
@@ -767,14 +755,14 @@
       "title": "Detail Daemon Sampler"
     }
   },
-  "61": {
+  "60": {
     "inputs": {},
     "class_type": "Remove Input JK",
     "_meta": {
       "title": "Remove Input JK\ud83d\udc09"
     }
   },
-  "62": {
+  "61": {
     "inputs": {
       "model_name": [
         "0",
@@ -786,10 +774,23 @@
       "title": "Load Upscale Model"
     }
   },
+  "62": {
+    "inputs": {
+      "control_net_name": [
+        "25",
+        0
+      ],
+      "union_type": "None"
+    },
+    "class_type": "CR ControlNet Loader JK",
+    "_meta": {
+      "title": "ControlNet Loader JK\ud83d\udc09"
+    }
+  },
   "63": {
     "inputs": {
       "control_net_name": [
-        "26",
+        "21",
         0
       ],
       "union_type": "None"
@@ -802,7 +803,7 @@
   "64": {
     "inputs": {
       "control_net_name": [
-        "22",
+        "15",
         0
       ],
       "union_type": "None"
@@ -814,21 +815,21 @@
   },
   "65": {
     "inputs": {
-      "control_net_name": [
-        "16",
+      "op": "Not",
+      "a": [
+        "6",
         0
-      ],
-      "union_type": "None"
+      ]
     },
-    "class_type": "CR ControlNet Loader JK",
+    "class_type": "CM_BoolUnaryOperation JK",
     "_meta": {
-      "title": "ControlNet Loader JK\ud83d\udc09"
+      "title": "BoolUnaryOp JK\ud83d\udc09"
     }
   },
   "66": {
     "inputs": {
       "boolean_value": [
-        "11",
+        "10",
         0
       ],
       "image_false": [
@@ -836,7 +837,7 @@
         0
       ],
       "image_true": [
-        "10",
+        "9",
         0
       ]
     },
@@ -877,11 +878,11 @@
   "69": {
     "inputs": {
       "boolean_value": [
-        "53",
+        "52",
         0
       ],
       "mask_false": [
-        "6",
+        "5",
         0
       ],
       "mask_true": [
@@ -976,11 +977,11 @@
     "inputs": {
       "boolean_value": false,
       "clip_false": [
-        "17",
+        "16",
         0
       ],
       "clip_true": [
-        "55",
+        "54",
         0
       ]
     },
@@ -992,7 +993,7 @@
   "74": {
     "inputs": {
       "text": [
-        "34",
+        "33",
         0
       ],
       "clip": [
@@ -1008,7 +1009,7 @@
   "75": {
     "inputs": {
       "text": [
-        "35",
+        "34",
         0
       ],
       "clip": [
@@ -1024,7 +1025,7 @@
   "76": {
     "inputs": {
       "end": [
-        "37",
+        "36",
         0
       ],
       "conditioning": [
@@ -1040,15 +1041,15 @@
   "77": {
     "inputs": {
       "steps": [
-        "61",
+        "60",
         0
       ],
       "cfg": [
-        "38",
+        "37",
         0
       ],
       "denoise": [
-        "61",
+        "60",
         0
       ]
     },
@@ -1060,15 +1061,15 @@
   "78": {
     "inputs": {
       "boolean_value": [
-        "46",
+        "45",
         0
       ],
       "sampler_false": [
-        "57",
+        "56",
         0
       ],
       "sampler_true": [
-        "60",
+        "59",
         0
       ]
     },
@@ -1080,7 +1081,7 @@
   "79": {
     "inputs": {
       "guidance": [
-        "56",
+        "55",
         0
       ],
       "conditioning": [
@@ -1096,7 +1097,7 @@
   "80": {
     "inputs": {
       "guidance": [
-        "56",
+        "55",
         0
       ],
       "conditioning": [
@@ -1146,7 +1147,7 @@
       ],
       "crop": "disabled",
       "image": [
-        "8",
+        "7",
         0
       ]
     },
@@ -1158,7 +1159,7 @@
   "84": {
     "inputs": {
       "boolean_value": [
-        "53",
+        "52",
         0
       ],
       "image_false": [
@@ -1178,7 +1179,7 @@
   "85": {
     "inputs": {
       "boolean_value": [
-        "53",
+        "52",
         0
       ],
       "mask_false": [
@@ -1198,7 +1199,7 @@
   "86": {
     "inputs": {
       "boolean_value": [
-        "36",
+        "35",
         0
       ],
       "conditioning_false": [
@@ -1255,7 +1256,7 @@
   "89": {
     "inputs": {
       "upscale_model": [
-        "62",
+        "61",
         0
       ],
       "image": [
@@ -1271,19 +1272,19 @@
   "90": {
     "inputs": {
       "direction": [
-        "30",
+        "29",
         0
       ],
       "target_resolution": [
-        "31",
+        "30",
         0
       ],
       "use_target_mega_pixel": [
-        "32",
+        "31",
         0
       ],
       "target_mega_pixel": [
-        "33",
+        "32",
         0
       ],
       "multiple_of": 8,
@@ -1299,7 +1300,10 @@
   },
   "91": {
     "inputs": {
-      "upscale_method": "lanczos",
+      "upscale_method": [
+        "8",
+        0
+      ],
       "width": [
         "90",
         0
@@ -1421,41 +1425,41 @@
       "control_switch": true,
       "ControlNet_Unit_0": true,
       "controlnet_strength_0": [
-        "19",
+        "18",
         0
       ],
       "start_percent_0": [
-        "20",
+        "19",
         0
       ],
       "end_percent_0": [
-        "21",
+        "20",
         0
       ],
       "ControlNet_Unit_1": true,
       "controlnet_strength_1": [
-        "23",
+        "22",
         0
       ],
       "start_percent_1": [
-        "24",
+        "23",
         0
       ],
       "end_percent_1": [
-        "25",
+        "24",
         0
       ],
       "ControlNet_Unit_2": true,
       "controlnet_strength_2": [
-        "27",
+        "26",
         0
       ],
       "start_percent_2": [
-        "28",
+        "27",
         0
       ],
       "end_percent_2": [
-        "29",
+        "28",
         0
       ],
       "ControlNet_Unit_3": false,
@@ -1471,7 +1475,7 @@
       "start_percent_5": 0,
       "end_percent_5": 1,
       "controlnet_0": [
-        "65",
+        "64",
         0
       ],
       "image_0": [
@@ -1479,7 +1483,7 @@
         0
       ],
       "controlnet_1": [
-        "64",
+        "63",
         0
       ],
       "image_1": [
@@ -1487,7 +1491,7 @@
         0
       ],
       "controlnet_2": [
-        "63",
+        "62",
         0
       ],
       "image_2": [
@@ -1507,7 +1511,7 @@
         0
       ],
       "vae": [
-        "18",
+        "17",
         2
       ]
     },
@@ -1519,7 +1523,7 @@
   "100": {
     "inputs": {
       "effective_mask": [
-        "61",
+        "60",
         2
       ],
       "base_positive": [
@@ -1531,7 +1535,7 @@
         0
       ],
       "vae": [
-        "18",
+        "17",
         2
       ],
       "controlnet_stack": [
@@ -1551,7 +1555,7 @@
         1
       ],
       "model": [
-        "18",
+        "17",
         0
       ],
       "positive": [
@@ -1576,7 +1580,7 @@
       ],
       "neg_scale": 1,
       "model": [
-        "18",
+        "17",
         0
       ],
       "positive": [
@@ -1600,11 +1604,11 @@
   "103": {
     "inputs": {
       "noise_seed": [
-        "44",
+        "43",
         0
       ],
       "noise_strength": [
-        "45",
+        "44",
         0
       ],
       "normalize": "false",
@@ -1641,7 +1645,7 @@
   "105": {
     "inputs": {
       "boolean_value": [
-        "43",
+        "42",
         0
       ],
       "latent_false": [
@@ -1674,7 +1678,7 @@
   "107": {
     "inputs": {
       "noise": [
-        "59",
+        "58",
         0
       ],
       "guider": [
@@ -1686,7 +1690,7 @@
         0
       ],
       "sigmas": [
-        "58",
+        "57",
         0
       ],
       "latent_image": [
@@ -1706,7 +1710,7 @@
         1
       ],
       "vae": [
-        "18",
+        "17",
         2
       ]
     },
@@ -1718,11 +1722,11 @@
   "109": {
     "inputs": {
       "method": [
-        "51",
+        "50",
         0
       ],
       "strength": [
-        "52",
+        "51",
         0
       ],
       "image_ref": [
@@ -1742,7 +1746,7 @@
   "110": {
     "inputs": {
       "boolean_value": [
-        "50",
+        "49",
         0
       ],
       "image_false": [
@@ -1778,7 +1782,7 @@
   "112": {
     "inputs": {
       "boolean_value": [
-        "4",
+        "65",
         0
       ],
       "image_false": [
