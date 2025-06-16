@@ -164,17 +164,15 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 				2. Add Mesh MV sample generation module workflow using IG2MV, MV Adapter and Stable X Delight.
 				3. Add Multi-GPU version of Wan Video Generation workflows.
 				4. Add the Wan Vace 14B fp16 model to the model list instruction.
+	- 2025-06-02 - v1.9.16	1. Add Dilated ControlNet for Wan Video t2v workflows.
+				2. Add Canny & HED Control Video generation methods for Dilated ControlNet.
+				3. Add Save|Load StringListToJSON nodes to save|load ATI Trajectory presets.
+				4. Add ATI Trajectory generation method to Video-Auto Motion module.
+				5. Add Wan Video ATI Trajectory ff2vid workflow.
+				6. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
+				7. Add Multi-GPU version of Flux Image Generation workflow.
 
 </details>
-
-- 2025-06-02 - v1.9.16
-1. Add Dilated ControlNet for Wan Video t2v workflows.
-2. Add Canny & HED Control Video generation methods for Dilated ControlNet.
-3. Add Save|Load StringListToJSON nodes to save|load ATI Trajectory presets.
-4. Add ATI Trajectory generation method to Video-Auto Motion module.
-5. Add Wan Video ATI Trajectory ff2vid workflow.
-6. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
-7. Add Multi-GPU version of Flux Image Generation workflow.
 
 - 2025-06-15 - v1.9.17
 1. Find a workaround to recreate all of my original Group Nodes for `comfyui-frontend-package>=1.16.0`. [All Grp Nodes-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
@@ -183,6 +181,9 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 4. Cleanup and rearrange the codes, and press Deprecated and Experimental to distinguish.
 5. Remove java script.
 6. Re-write Lora | ControlNet | Embedding nodes without java script control.
+
+- 2025-06-16 - v1.9.18
+1. Fix Krita Upscale and Refine workflows.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
