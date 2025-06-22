@@ -185,6 +185,9 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - 2025-06-16 - v1.9.18
 1. Fix Krita Upscale and Refine workflows.
 
+- 2025-06-16 - v1.9.19
+1. Update Wan Video workflows using v1.6.0 Group Nodes.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
