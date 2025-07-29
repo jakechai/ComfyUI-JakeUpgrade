@@ -495,6 +495,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 ### img2mesh workflow
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
 - [ComfyUI Hunyuan3D Wrapper](https://github.com/kijai/ComfyUI-Hunyuan3DWrapper)
+- [ComfyUI Hunyuan3D 2.1 Wrapper](https://github.com/visualbruno/ComfyUI-Hunyuan3d-2-1)
 - [Comfy mtb](https://github.com/melMass/comfy_mtb)
 - [ComfyUI-HQ-Image-Save](https://github.com/spacepxl/ComfyUI-HQ-Image-Save)
 - (18 mv tex)[ComfyUI MVAdapter](https://github.com/huanngzh/ComfyUI-MVAdapter)
