@@ -192,6 +192,7 @@ NODE_CLASS_MAPPINGS = {
     "OrbitLists to OrbitPoses JK": OrbitLists_to_OrbitPoses_JK,
     "OrbitPoses to OrbitLists JK": OrbitPoses_to_OrbitLists_JK,
     "Get OrbitPoses From List JK": Get_OrbitPoses_From_List_JK,
+    "Hy3D Cam Config 20to21 JK": Hy3DCamConfig20to21_JK,
     ### Experimental Nodes
     "Random Beats JK": RandomBeats_JK,
 }
@@ -388,6 +389,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "OrbitLists to OrbitPoses JK": "OrbitLists to OrbitPoses JK🐉",
     "OrbitPoses to OrbitLists JK": "OrbitPoses to OrbitLists JK🐉",
     "Get OrbitPoses From List JK": "Get OrbitPoses From List JK🐉",
+    "Hy3D Cam Config 20to21 JK": "Hy3D Cam Config 20to21 JK🐉",
     ### Experimental
     "Random Beats JK": "Random Beats JK🐉",
 }

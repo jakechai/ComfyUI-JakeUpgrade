@@ -6167,6 +6167,27 @@ class Get_OrbitPoses_From_List_JK:
 
         return (orbit_camera_poses,)
 
+class Hy3DCamConfig20to21_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "camera_config": ("HY3DCAMERA",),
+            },
+        }
+    
+    RETURN_TYPES = ("HY3D21CAMERA",)
+    FUNCTION = "get_camconfig"
+    CATEGORY = icons.get("JK/3D")
+    
+    def get_camconfig(self, camera_config):
+        
+        key_to_remove = 'camera_distance'
+        if key_to_remove in camera_config:
+            del camera_config[key_to_remove]
+
+        return (camera_config,)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # Test Nodes
 #---------------------------------------------------------------------------------------------------------------------#
