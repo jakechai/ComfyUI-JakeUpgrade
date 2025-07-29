@@ -171,22 +171,20 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 				5. Add Wan Video ATI Trajectory ff2vid workflow.
 				6. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
 				7. Add Multi-GPU version of Flux Image Generation workflow.
+	- 2025-06-15 - v1.9.17	1. Find a workaround to recreate all of my original Group Nodes for `comfyui-frontend-package>=1.16.0`. [All Grp Nodes-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
+				2. Seperate all workflows into two versions: `comfyui-frontend-package<=1.15.13` & `comfyui-frontend-package>=1.16.0`. Workflows for `comfyui-frontend-package<=1.15.13` are moved to the subfolder with a suffix name `~frontend-1.15.13`, such as `ComfyUI_~frontend-1.15.13` and `Krita_~frontend-1.15.13_v1.19.16`.
+				3. API workflows are separated into two versions: one for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the other for `ComfyUI-JakeUpgrade v1.9.17 or later`. API Workflows for `ComfyUI-JakeUpgrade v1.9.16 or earlier` are moved to the subfolder with a suffix name `~v1.9.16`, such as `ComfyUI_~frontend-1.15.13\API_~v1.9.16` and `Krita_~frontend-1.15.13_v1.19.16`.
+				4. Cleanup and rearrange the codes, and press Deprecated and Experimental to distinguish.
+				5. Remove java script.
+				6. Re-write Lora | ControlNet | Embedding nodes without java script control.
+	- 2025-06-16 - v1.9.18	1. Fix Krita Upscale and Refine workflows.
+	- 2025-06-16 - v1.9.19	1. Update Wan Video workflows using v1.6.0 Group Nodes.
 
 </details>
 
-- 2025-06-15 - v1.9.17
-1. Find a workaround to recreate all of my original Group Nodes for `comfyui-frontend-package>=1.16.0`. [All Grp Nodes-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
-2. Seperate all workflows into two versions: `comfyui-frontend-package<=1.15.13` & `comfyui-frontend-package>=1.16.0`. Workflows for `comfyui-frontend-package<=1.15.13` are moved to the subfolder with a suffix name `~frontend-1.15.13`, such as `ComfyUI_~frontend-1.15.13` and `Krita_~frontend-1.15.13_v1.19.16`.
-3. API workflows are separated into two versions: one for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the other for `ComfyUI-JakeUpgrade v1.9.17 or later`. API Workflows for `ComfyUI-JakeUpgrade v1.9.16 or earlier` are moved to the subfolder with a suffix name `~v1.9.16`, such as `ComfyUI_~frontend-1.15.13\API_~v1.9.16` and `Krita_~frontend-1.15.13_v1.19.16`.
-4. Cleanup and rearrange the codes, and press Deprecated and Experimental to distinguish.
-5. Remove java script.
-6. Re-write Lora | ControlNet | Embedding nodes without java script control.
-
-- 2025-06-16 - v1.9.18
-1. Fix Krita Upscale and Refine workflows.
-
-- 2025-06-16 - v1.9.19
-1. Update Wan Video workflows using v1.6.0 Group Nodes.
+- 2025-07-30 - v1.9.20
+1. Integrate Hunyuan3D 2.1 Mesh Reconsruction + De-lighted MVs Generation + PBR Texture Baking features to img2mesh workflow.
+2. Add "Hy3D Cam Config 20to21 JK🐉" node.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -230,6 +228,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - Wan Video update 1(multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
+- img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
 - 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) | [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
 - txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) | [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
@@ -496,6 +495,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 ### img2mesh workflow
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
 - [ComfyUI Hunyuan3D Wrapper](https://github.com/kijai/ComfyUI-Hunyuan3DWrapper)
+- [ComfyUI Hunyuan3D 2.1 Wrapper](https://github.com/visualbruno/ComfyUI-Hunyuan3d-2-1)
 - [Comfy mtb](https://github.com/melMass/comfy_mtb)
 - [ComfyUI-HQ-Image-Save](https://github.com/spacepxl/ComfyUI-HQ-Image-Save)
 - (18 mv tex)[ComfyUI MVAdapter](https://github.com/huanngzh/ComfyUI-MVAdapter)
@@ -655,6 +655,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		OrbitLists to OrbitPoses JK🐉
 		OrbitPoses to OrbitLists JK🐉
 		Get OrbitPoses From List JK🐉
+		Hy3D Cam Config 20to21 JK🐉
     Experimental
 		Random Beats JK🐉
 </details>
