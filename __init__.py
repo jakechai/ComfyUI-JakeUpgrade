@@ -4,6 +4,7 @@ NODE_CLASS_MAPPINGS = {
     ### Misc Nodes
     "Project Setting JK": ProjectSetting_JK,
     "Ksampler Parameters Default JK": KsamplerParametersDefault_JK,
+    "Ksampler Adv Parameters Default JK": KsamplerAdvParametersDefault_JK,
     "Base Model Parameters SD3API JK": BaseModelParametersSD3API_JK,
     "CR Aspect Ratio JK": CR_AspectRatio_JK,
     "Tiling Mode JK": TilingMode_JK,
@@ -24,6 +25,7 @@ NODE_CLASS_MAPPINGS = {
     "Guidance Default JK": GuidanceDefault_JK,
     "Save String List To JSON JK": SaveStringListToJSON_JK,
     "Load String List From JSON JK": LoadStringListFromJSON_JK,
+    "Create Loop Schedule List": CreateLoopScheduleList,
     ### Misc Nodes [Deprecated]
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
     "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
@@ -49,6 +51,8 @@ NODE_CLASS_MAPPINGS = {
     ### LoRA Nodes
     "CR LoRA Stack JK": CR_LoRAStack_JK,
     "CR Apply LoRA Stack JK": CR_ApplyLoRAStack_JK,
+    "CR LoRA Stack Model Only JK": CR_LoRAStack_ModelOnly_JK,
+    "CR Apply LoRA Stack Model Only JK": CR_ApplyLoRAStack_ModelOnly_JK,
     ### LoRA Nodes [Deprecated]
     "CR Load LoRA JK": CR_LoraLoader_JK,
     ### Embedding Nodes [Deprecated]
@@ -201,6 +205,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### Misc Nodes
     "Project Setting JK": "Project Setting JK🐉",
     "Ksampler Parameters Default JK": "Ksampler Parameters Default JK🐉",
+    "Ksampler Adv Parameters Default JK": "Ksampler Adv Parameters Default JK🐉",
     "Base Model Parameters SD3API JK": "Base Model Parameters SD3API JK🐉",
     "CR Aspect Ratio JK": "Aspect Ratio JK🐉",
     "Tiling Mode JK": "Tiling Mode JK🐉",
@@ -221,6 +226,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Guidance Default JK": "Guidance Default JK🐉",
     "Save String List To JSON JK": "Save String List To JSON JK🐉",
     "Load String List From JSON JK": "Load String List From JSON JK🐉",
+    "Create Loop Schedule List": "Create Loop Schedule List JK🐉",
     ### Misc Nodes [Deprecated]
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
@@ -246,6 +252,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### LoRA Nodes
     "CR LoRA Stack JK": "LoRA Stack JK🐉",
     "CR Apply LoRA Stack JK": "Apply LoRA Stack JK🐉",
+    "CR LoRA Stack Model Only JK": "LoRA Stack Model Only JK🐉",
+    "CR Apply LoRA Stack Model Only JK": "Apply LoRA Stack Model Only JK🐉",
     ### LoRA Nodes [Deprecated]
     "CR Load LoRA JK": "Load LoRA JK🐉",
     ### Embedding Nodes [Deprecated]

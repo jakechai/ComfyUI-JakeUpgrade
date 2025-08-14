@@ -5,9 +5,9 @@ Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
 > [!NOTE]
-> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17. Recently, they released the [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), but I found Group Node still has its advantages. I've separated two versions of my group nodes: one is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended), and the other is for `comfyui-frontend-package>=1.16.0`. [All Grp Nodes-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
+> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17.0 and depprecats group node totally in v1.24.0. If you update your ComfyUI to v0.3.49, Comfyui frontend v 1.24.4 will be installed, which will cause group node running error. At the meantime, they released the official version of [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), the replacement of Group Node. I've separated two versions of my group nodes as backup and memory: one is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended), and the other is for `1.23.4>=comfyui-frontend-package>=1.16.0` (recommended). [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json). If you want to use the workflows using Group Nodes especially the API workflow, downgrade your frontend to v1.23.4: `"...\python.exe" -m pip install comfyui-frontend-package==1.23.4` and choose ComfyUI v0.3.48(optional).
 > - ComfyUI frontend breaks the Impact-Pack Switch(Any) node. It is still functional, but can not be created. This issue has been fixed in the latest Impact-Pack version `>=v8.12`, but it only supports `comfyui-frontend-package>=1.16.9`. When using Group Nodes with `comfyui-frontend-package<=1.15.13`, it's recommended to switch Impact-Pack to `v8.8.1` in the ComfyUI Manager. 
-> - API workflows are also separated into two versions: one for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the other for `ComfyUI-JakeUpgrade v1.9.17 or later`. When editing the former, it is recommended to switch to `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` and `comfyui-frontend-package<=1.15.13`.
+> - API workflows are separated into three versions: the first is for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the second is for `ComfyUI-JakeUpgrade v1.9.17~v1.9.20`, the third is for `ComfyUI-JakeUpgrade v2.0.0 or later`. When editing the first one, it is recommended to switch to `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` and `comfyui-frontend-package<=1.15.13`.
 
 Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
 Please check the [video](https://youtu.be/eyjy10T201M).  
@@ -183,8 +183,31 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 </details>
 
 - 2025-07-30 - v1.9.20
-1. Integrate Hunyuan3D 2.1 Mesh Reconsruction + De-lighted MVs Generation + PBR Texture Baking features to img2mesh workflow.
+1. Integrate Hunyuan3D 2.1 Mesh Reconstruction + De-lighted MVs Generation + PBR Texture Baking features to img2mesh workflow.
 2. Add "Hy3D Cam Config 20to21 JK🐉" node.
+
+- 2025-08-10 - v2.0.0
+1. Create Subgraphs based on my Group Nodes and recreate all workflows using Subgraph.
+2. Move all latest workflows using Group Node to subfolder named `ComfyUI_~frontend-1.23.4` or `Krita_~frontend-1.23.4_v1.19.20`.
+3. Add LoRA Stack Model Only JK🐉, Apply LoRA Stack Model Only JK🐉.
+4. Add Set LoRA | NAG | Set Radial Attention | FreeInit features to all WAN video gen workflows.
+5. Add native VACE ff2v | VACE flf2v | VACE v2v | ATI ff2v | Fun control camera ff2v | Skyreel A2 ref2v | Phantom ref2v workflows.
+6. Add native and wrapper Wan MAGREF workflows.
+7. Update ref2v (subject2v) Wan workflows.
+8. Add MultiTalk ff2v and v2v Wan Wrapper workflows.
+9. Add Multitalk | Fantasy Talking v2v lip sync Wan Wrapper workflows.
+10. Add Uni3C Camera Control to ff2v Wan Wrapper workflows.
+11. Add MiniMax Remover v2v Wan Wrapper workflow.
+12. Add Stand-In ref2v Wan wrapper workflows.
+13. Add VACE | Phantom | Stand-In ref+v2v Face Swap workflows.
+14. Add Create Loop Schedule List JK🐉 node.
+15. Update SkyreelV2 DF long video Wan Wrapper workflow, using for loop.
+16. Use the Torch Compile Model Wan Video v2 node for Native Wan Video workflows.
+17. Set minimum resolution of Crop by Mask to 64.
+18. Refine Common Group Node issue fixed.
+19. Add Ksampler Adv Parameters Default JK🐉 node and 🐉 JK:::KSampler (High+Low) Group Node for Wan2.2.
+20. Fix Switch(Any) node output datatype error in all workflows.
+21. Update Refine Common Group Node for all workflows (ComfyUI frontend 1.23.4 or earlier).
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -226,6 +249,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 ## Video Introduction
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1(multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
+- Wan Video update 2(Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): WIP
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
 - img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
@@ -242,15 +266,89 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
 - Seamless Texture: [Youtube](https://youtu.be/ExPUbiRkJo0) | [Bilibili](https://www.bilibili.com/video/BV1UZ42187Gq/)
 
+## WAN Video Eco
+
+| Features | Function | Usage |
+|----------|----------|-------|
+| ComfyOrg [2.2](https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged)  [2.1](https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/tree/main) | | |
+| Kijai [WAN](https://huggingface.co/Kijai/WanVideo_comfy/tree/main)  [WAN fp8 scaled](https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled) | | |
+| *Common Feature* | | |
+| [Triton (Torch Compile)](https://github.com/woct0rdho/triton-windows) | speed up | ~ |
+| [Radial Attention](https://github.com/mit-han-lab/radial-attention) | speed up | ~ |
+| [Sage Attention](https://github.com/thu-ml/SageAttention) | speed up | ~ |
+| [Flash Attention](https://github.com/Dao-AILab/flash-attention) | speed up | ~ |
+| [SDP Attention](https://uxlfoundation.github.io/oneDNN/dev_guide_graph_sdpa.html) | speed up | ~ |
+| [EasyCache](https://github.com/H-EmbodVis/EasyCache) | speed up | ~ |
+| [MagCache](https://github.com/Zehong-Ma/MagCache) | speed up | ~ |
+| [TeaCache](https://github.com/ali-vilab/TeaCache) | speed up | ~ |
+| [Enhanced A Video](https://oahzxl.github.io/Enhance_A_Video/) | enhancement | ~ |
+| [SLG](https://www.reddit.com/r/StableDiffusion/comments/1jac3wm/dramatically_enhance_the_quality_of_wan_21_using/) | enhancement | ~ |
+| [CFG Zero Star](https://github.com/WeichenFan/CFG-Zero-star) | enhancement | ~ |
+| [FreSca](https://github.com/WikiChao/FreSca) | enhancement | ~ |
+| [FreeInit](https://tianxingwu.github.io/pages/FreeInit/) | enhancement | ~ |
+| [NAG](https://chendaryen.github.io/NAG.github.io/) | enhancement | ~ |
+| [TCFG](https://huggingface.co/papers/2503.18137) | enhancement | ~ |
+| [RAAG](https://arxiv.org/abs/2508.03442) | enhancement | ~ |
+| [Loop](https://github.com/YisuiTT/Mobius/) | loop video | ~ |
+| [RIFLEx](https://github.com/thu-ml/RIFLEx) | long video | ~ |
+| [Context Window](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) | long & loop video | ~ |
+| [Flow Edit](https://github.com/fallenshock/FlowEdit) | in content edit | v2v |
+| *Main Model* | | |
+| WAN Video [2.2](https://github.com/Wan-Video/Wan2.2) [2.1](https://github.com/Wan-Video/Wan2.1) | main model | t2v ff2v flf2v v2v |
+| WAN Video GGUF [2.2](https://huggingface.co/collections/QuantStack/wan22-ggufs-6887ec891bdea453a35b95f3) [2.1](https://huggingface.co/city96) | main model | t2v ff2v flf2v v2v |
+| VACE [2.2 Test](https://huggingface.co/lym00/Wan2.2_T2V_A14B_VACE-test) [2.2 Fake](https://huggingface.co/CCP6/FakeVace2.2) | main model | t2v ff2v flf2v ref2v v2v ref+v2v |
+| VACE GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_14B_VACE-GGUF) [2.1](https://github.com/ali-vilab/VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v |
+| VACE LightX2V [2.1](https://huggingface.co/lym00/Wan2.1_T2V_14B_LightX2V_StepCfgDistill_VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v |
+| VACE LightX2V GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_T2V_14B_LightX2V_StepCfgDistill_VACE-GGUF) | main model | t2v ff2v flf2v ref2v v2v ref+v2v |
+| VACE FusionX [2.1](https://huggingface.co/QuantStack/Wan2.1_T2V_14B_FusionX_VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v |
+| VACE FusionX GGUF [2.1](https://huggingface.co/collections/QuantStack/wan21-fusionx-ggufs-68498e41b3597737512c0636) | main model | t2v ff2v flf2v ref2v v2v ref+v2v |
+| VACE Phantom [2.1](https://huggingface.co/Inner-Reflections/Wan2.1_VACE_Phantom) | main model | t2v ff2v flf2v ref2v v2v ref+v2v |
+| VACE SF (GGUF) [2.1](https://huggingface.co/lym00) | main model | t2v ff2v flf2v ref2v v2v ref+v2v |
+| *Low-Step model* | | |
+| lightX2V [2.2](https://huggingface.co/lightx2v/Wan2.2-Lightning) [2.1](https://huggingface.co/lightx2v) | main model & lora | t2v ff2v v2v lcm simple steps 4 cfg 1.0 |
+| FusionX [2.1](https://huggingface.co/vrgamedevgirl84/Wan14BT2VFusioniX) | main model & lora | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0|
+| FusionX GGUF [2.1](https://huggingface.co/collections/QuantStack/wan21-fusionx-ggufs-68498e41b3597737512c0636) | main model | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0|
+| CausVid [2.1](https://github.com/tianweiy/CausVid) | main model & lora | t2v ff2v v2v uni_pc(flowmatch_causvid) simple steps 8 cfg 1.0 |
+| AccVid [2.1](https://github.com/aejion/AccVideo) | main model & lora | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0 |
+| Fast Wan [2.1](https://huggingface.co/FastVideo) | main model & lora | t2v v2v uni_pc simple steps 8 cfg 1.0 |
+| Pusa* [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | lora | t2v ff2v flf2v v2v uni_pc(flowmatch_pusa) simple steps 5 cfg 5.0 |
+| *Functional Model* | | |
+| FUN Control [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | t2v ff2v |
+| FUN Inpaint [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | ff2v flf2v |
+| FUN Camera [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model | ff2v |
+| Phantom [2.1](https://github.com/Phantom-video/Phantom) | main model & lora | ref2v ref+v2v |
+| Stand-In [2.1](https://www.stand-in.tech/) | lora | ref2v ref+v2v |
+| MAGREF [2.1](https://github.com/MAGREF-Video/MAGREF) | main model | ref2v |
+| Skyreel A2 [2.1](https://github.com/SkyworkAI/SkyReels-A2) | main model | ref2v |
+| Skyreel V2 [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main & lora | t2v ff2v v2v |
+| Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v |
+| MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v |
+| Echo Shot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v |
+| ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v |
+| AniSora [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v |
+| ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v |
+| MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | main model | v2v |
+| Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v |
+| Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v |
+| *control* | | |
+| Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v |
+| Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v |
+| Tile lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/tile) | control lora | v2v |
+| Dilated ControlNet [2.2](https://huggingface.co/collections/TheDenk/wan22-controlnets-688b754ca3ee3bc7b34253bf) [2.1](https://github.com/TheDenk/wan2.1-dilated-controlnet) | controlnet | t2v v2v |
+| Uni3C* [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | t2v ff2v v2v |
+| RealisDance* [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | t2v ff2v v2v |
+
 ## JakeUpgrade Workflow
 
 ### ComfyUI
 
 > [!NOTE]
-> - You need ComfyUI v0.3.8up to use SD3 | Flux Image Gen workflows.
+> - You need `comfyui-frontend-package>=1.24.0` to use the latest Image Gen workflows using Subgraph.
 > - ComfyUI API workflows are workflows created to allow other software to call ComfyUI, which include non-dev editable workflows and dev-for-call workflows, as well as python files with supporting parameters.
 > - Installing a separate version of ComfyUI to work with 3D Pack is recommended.   
-> - You need `comfyui-frontend-package<=1.15.13` and `Impact Pact<=v8.8.1` to run [legacy ComfyUI Main & Module workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13).
+> - You need `comfyui-frontend-package<=1.23.4` to run [ComfyUI Main & Module workflows using Group Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4).
+> - You need `comfyui-frontend-package<=1.15.13` and `Impact Pact<=v8.8.1` to run [legacy ComfyUI Main & Module workflows using Group Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13).
+> - You need `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy ComfyUI API dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/API_~v1.9.20).
 > - You need `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy ComfyUI API dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/API_~v1.9.16).
 
 #### Main
@@ -270,15 +368,20 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_workflow_Video-Wan_txt2vid_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_txt2vid_mGPU.json)
 - [JK_workflow_Video-Wan_img2vid_ref](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_img2vid_ref.json)
 - [JK_workflow_Video-Wan_img2vid_ref_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_img2vid_ref_mGPU.json)
+- [JK_workflow_Video-Wan_img2vid_ff](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_img2vid_ff.json)
+- [JK_workflow_Video-Wan_img2vid_ff_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_img2vid_ff_mGPU.json)
 - [JK_workflow_Video-Wan_img2vid_flf](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_img2vid_flf.json)
 - [JK_workflow_Video-Wan_img2vid_flf_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_img2vid_flf_mGPU.json)
 - [JK_workflow_Video-Wan_vid2vid](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_vid2vid.json)
 - [JK_workflow_Video-Wan_vid2vid_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan_vid2vid_mGPU.json)
 - [JK_workflow_Video-Wan__VACE](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__VACE.json)
 - [JK_workflow_Video-Wan__VACE_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__VACE_mGPU.json)
-- [JK_workflow_Video-Wan__SkyreelDF](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__SkyreelDF.json)
-- [JK_workflow_Video-Wan__SkyreelDF_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__SkyreelDF_mGPU.json)
+- [JK_workflow_Video-Wan__long_VACE](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_VACE.json)
+- [JK_workflow_Video-Wan__long_VACE_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_VACE_mGPU.json)
+- [JK_workflow_Video-Wan__long_SkyreelDF](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_SkyreelDF.json)
+- [JK_workflow_Video-Wan__long_SkyreelDF_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_SkyreelDF_mGPU.json)
 - [JK_workflow_Video-FramePack](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack.json)
+- [JK_workflow_Video-FramePack_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack_mGPU.json)
 
 #### Module
 - [JK_module_00_AutoPrompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_00_AutoPrompt.json)
@@ -353,9 +456,12 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 > - [Krita AI Plugin - ComyUI Custom Workflows](https://youtu.be/TeALR63-LzE?si=O4b6DijZKrmR7teP)
 > - Krita workflows are used for [Krita](https://krita.org/en/) + [Krita AI Diffusion](https://github.com/Acly/krita-ai-diffusion) + [Krita AI Tools](https://github.com/Acly/krita-ai-tools)
 > - Sync version of Krita workflows can be opened by ComyUI and synchronized with Krita AI Diffusion.
+> - You need `comfyui-frontend-package>=1.24.0` to use the latest Krita Sync workflows using Subgraph.
 > - Dev version of Krita workflows can only loaded by Krita AI Diffusion and should be moved to `...\AppData\Roaming\krita\ai_diffusion\workflows`.
 > - You need `comfyui-frontend-package<=1.15.13` and `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy Krita sync workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita_~frontend-1.15.13_v1.19.16).
+> - You need `comfyui-frontend-package<=1.23.4` and `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy Krita sync workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita_~frontend-1.23.4_v1.19.20).
 > - You need `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy Krita dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows_~v1.9.16).
+> - You need `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy Krita dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows_~v1.9.20).
 
 #### Main (sync)
 - [JK_workflow-Krita Common](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main/JK_workflow-Krita%20Common.json)
@@ -487,6 +593,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - (detailer)[Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - (Seamless Texture)[Comfy mtb](https://github.com/melMass/comfy_mtb)
+- (GGUF)[GGUF](https://github.com/city96/ComfyUI-GGUF)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 - (legacy)[NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - (legacy)[ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
@@ -510,6 +617,8 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - [Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
+- [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
+- (GGUF)[GGUF](https://github.com/city96/ComfyUI-GGUF)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 
 ### Krita workflow
@@ -567,6 +676,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	Misc Nodes
 		Project Setting JK🐉
 		Ksampler Parameters Default JK🐉
+		Ksampler Adv Parameters Default JK🐉
 		Base Model Parameters SD3API JK🐉
 		Aspect Ratio JK🐉
 		Tiling Mode JK🐉
@@ -587,6 +697,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		Guidance Default JK🐉
 		Save String List To JSON JK🐉
 		Load String List From JSON JK🐉
+		Create Loop Schedule List JK🐉
 	ControlNet Nodes
 		ControlNet Loader JK🐉
 		Multi-ControlNet Param Stack JK🐉
@@ -595,6 +706,8 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	LoRA Nodes
 		LoRA Stack JK🐉
 		Apply LoRA Stack JK🐉
+		LoRA Stack Model Only JK🐉
+		Apply LoRA Stack Model Only JK🐉
 	Image Nodes
 		Rough Outline JK🐉
 		Open+DW Pose JK🐉
@@ -721,7 +834,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 </details>
 
 <details>
-<summary><b>Group Nodes `comfyui-frontend-package>=1.16.0`</b></summary>
+<summary><b>Group Nodes `comfyui-frontend-package>=1.16.0` or Subgraphs `comfyui-frontend-package>=1.24.0`</b></summary>
 
 	Tools
 		JK🐉:::Image RemBG
@@ -733,11 +846,13 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		JK🐉:::Latent Crop by Mask and Resize
 		JK🐉:::Latent Resize
 		JK🐉:::Latent Stitch by Mask
-	Workflow
+	Sampler
 		JK🐉::Concept
 		JK🐉::Flux KSampler
 		JK🐉::Flux KSampler Adv
 		JK🐉::Variation Ksampler
+		JK🐉:::KSampler (High+Low)
+	Workflow
 		JK🐉:::Image Gen Common
 		JK🐉:::Image Gen Common Adv
 		JK🐉:::Image Gen Flux

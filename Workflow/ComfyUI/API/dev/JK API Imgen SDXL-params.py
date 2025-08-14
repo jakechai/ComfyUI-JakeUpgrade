@@ -3,106 +3,106 @@
 # ["4"]["inputs"]["custom_width"] = 
 # ["4"]["inputs"]["custom_height"] = 
 # # positive l
-# ["6:14"]["inputs"]["string"] = 
-# # positive g
-# ["6:15"]["inputs"]["string"] = 
-# # negative l
 # ["6:16"]["inputs"]["string"] = 
-# # negative g
+# # positive g
 # ["6:17"]["inputs"]["string"] = 
+# # negative l
+# ["6:18"]["inputs"]["string"] = 
+# # negative g
+# ["6:19"]["inputs"]["string"] = 
 # # sdxl target res
-# ["6:18"]["inputs"]["target_res_scale"] = 
+# ["6:20"]["inputs"]["target_res_scale"] = 
 # # switch clip l g
-# ["6:19"]["inputs"]["boolean_value"] = 
+# ["6:21"]["inputs"]["boolean_value"] = 
 # # negative clip g
-# ["6:20"]["inputs"]["boolean_value"] = 
-# ["6:21"]["inputs"]["cfg"] = 
-# ["6:22"]["inputs"]["sampler_name"] = 
-# ["6:23"]["inputs"]["scheduler"] = 
-# ["6:23"]["inputs"]["steps"] = 
-# ["6:23"]["inputs"]["denoise"] = 
+# ["6:22"]["inputs"]["boolean_value"] = 
+# ["6:23"]["inputs"]["cfg"] = 
+# ["6:24"]["inputs"]["sampler_name"] = 
+# ["6:25"]["inputs"]["scheduler"] = 
+# ["6:25"]["inputs"]["steps"] = 
+# ["6:25"]["inputs"]["denoise"] = 
 # # seed
 # ["5"]["inputs"]["value"] = 
-# ["6:24"]["inputs"]["noise_mode"] = 
-# ["6:24"]["inputs"]["batch_seed_mode"] = 
-# ["6:24"]["inputs"]["variation_seed"] = 
-# ["6:24"]["inputs"]["variation_strength"] = 
-# ["6:24"]["inputs"]["variation_method"] = 
-# ["6:24"]["inputs"]["internal_seed"] = 
+# ["6:26"]["inputs"]["noise_mode"] = 
+# ["6:26"]["inputs"]["batch_seed_mode"] = 
+# ["6:26"]["inputs"]["variation_seed"] = 
+# ["6:26"]["inputs"]["variation_strength"] = 
+# ["6:26"]["inputs"]["variation_method"] = 
+# ["6:26"]["inputs"]["internal_seed"] = 
 # # inject noise
-# ["6:25"]["inputs"]["boolean_value"] = 
+# ["6:27"]["inputs"]["boolean_value"] = 
 # # inject noise mask
-# ["6:26"]["inputs"]["boolean_value"] = 
-# ["6:27"]["inputs"]["noise_seed"] = 
-# ["6:27"]["inputs"]["noise_strength"] = 
-# ["6:27"]["inputs"]["normalize"] = 
-# # detail daemon
 # ["6:28"]["inputs"]["boolean_value"] = 
-# ["6:29"]["inputs"]["detail_amount"] = 
-# ["6:29"]["inputs"]["start"] = 
-# ["6:29"]["inputs"]["end"] = 
-# ["6:29"]["inputs"]["bias"] = 
-# ["6:29"]["inputs"]["exponent"] = 
-# ["6:29"]["inputs"]["start_offset"] = 
-# ["6:29"]["inputs"]["end_offset"] = 
-# ["6:29"]["inputs"]["fade"] = 
-# ["6:29"]["inputs"]["smooth"] = 
-# # img2img
+# ["6:29"]["inputs"]["noise_seed"] = 
+# ["6:29"]["inputs"]["noise_strength"] = 
+# ["6:29"]["inputs"]["normalize"] = 
+# # detail daemon
 # ["6:30"]["inputs"]["boolean_value"] = 
-# ["3"]["inputs"]["image"] = 
-# ["6:31"]["inputs"]["resize_mode"] = 
-# # repaint latent
+# ["6:31"]["inputs"]["detail_amount"] = 
+# ["6:31"]["inputs"]["start"] = 
+# ["6:31"]["inputs"]["end"] = 
+# ["6:31"]["inputs"]["bias"] = 
+# ["6:31"]["inputs"]["exponent"] = 
+# ["6:31"]["inputs"]["start_offset"] = 
+# ["6:31"]["inputs"]["end_offset"] = 
+# ["6:31"]["inputs"]["fade"] = 
+# ["6:31"]["inputs"]["smooth"] = 
+# # img2img
 # ["6:32"]["inputs"]["boolean_value"] = 
+# ["3"]["inputs"]["image"] = 
+# ["6:33"]["inputs"]["resize_mode"] = 
+# # repaint latent
+# ["6:34"]["inputs"]["boolean_value"] = 
 # # inpaint ckpt
-# ["6:33"]["inputs"]["boolean_value"] = 
-# ["6:34"]["inputs"]["noise_mask"] = 
-# # blend with original image
 # ["6:35"]["inputs"]["boolean_value"] = 
-# # blend using origin mask
+# ["6:36"]["inputs"]["noise_mask"] = 
+# # blend with original image
 # ["6:37"]["inputs"]["boolean_value"] = 
+# # blend using origin mask
+# ["6:39"]["inputs"]["boolean_value"] = 
 # # blend mask dilation
-# ["6:38"]["inputs"]["dilation"] = 
+# ["6:40"]["inputs"]["dilation"] = 
 # # blend mask blur
-# ["6:39"]["inputs"]["amount"] = 
+# ["6:41"]["inputs"]["amount"] = 
 # # latent fill
-# ["6:40"]["inputs"]["boolean_value"] = 
+# ["6:42"]["inputs"]["boolean_value"] = 
 # # image fill
-# ["6:41"]["inputs"]["boolean_value"] = 
+# ["6:43"]["inputs"]["boolean_value"] = 
 # ["208"]["inputs"]["image"] = 
 # # image fill resize
-# ["6:42"]["inputs"]["resize_mode"] = 
+# ["6:44"]["inputs"]["resize_mode"] = 
 # # image fill tile
-# ["6:43"]["inputs"]["boolean_value"] = 
-# ["6:44"]["inputs"]["width"] = 
-# ["6:44"]["inputs"]["height"] = 
-# # input mask
 # ["6:45"]["inputs"]["boolean_value"] = 
-# ["6:46"]["inputs"]["resize_mode"] = 
+# ["6:46"]["inputs"]["width"] = 
+# ["6:46"]["inputs"]["height"] = 
+# # input mask
+# ["6:47"]["inputs"]["boolean_value"] = 
+# ["6:48"]["inputs"]["resize_mode"] = 
 # # Mask Detail Removal Threshold
-# ["6:47"]["inputs"]["value"] = 
+# ["6:49"]["inputs"]["value"] = 
 # # mask detail removal invert removal
-# ["6:48"]["inputs"]["boolean_value"] = 
+# ["6:50"]["inputs"]["boolean_value"] = 
 # # input mask invert
-# ["6:49"]["inputs"]["boolean_value"] = 
+# ["6:51"]["inputs"]["boolean_value"] = 
 # # Pad left
-# ["6:50"]["inputs"]["value"] = 
-# # Pad top
-# ["6:51"]["inputs"]["value"] = 
-# # Pad right
 # ["6:52"]["inputs"]["value"] = 
-# # Pad bottom
+# # Pad top
 # ["6:53"]["inputs"]["value"] = 
+# # Pad right
+# ["6:54"]["inputs"]["value"] = 
+# # Pad bottom
+# ["6:55"]["inputs"]["value"] = 
 # # mask dilation
-# ["6:54"]["inputs"]["dilation"] = 
+# ["6:56"]["inputs"]["dilation"] = 
 # # mask blur
-# ["6:55"]["inputs"]["amount"] = 
+# ["6:57"]["inputs"]["amount"] = 
 # # mask binary
-# ["6:56"]["inputs"]["boolean_value"] = 
+# ["6:58"]["inputs"]["boolean_value"] = 
 # ["7"]["inputs"]["inpaint_crop_and_stitch"] = 
 # # latent crop
-# ["6:58"]["inputs"]["boolean_value"] = 
+# ["6:60"]["inputs"]["boolean_value"] = 
 # # ignore latent crop offset
-# ["6:59"]["inputs"]["boolean_value"] = 
+# ["6:61"]["inputs"]["boolean_value"] = 
 # ["7"]["inputs"]["padding"] = 
 # ["7"]["inputs"]["use_image_res"] = 
 # ["7"]["inputs"]["use_target_res"] = 
@@ -110,23 +110,23 @@
 # ["7"]["inputs"]["use_target_mega_pixel"] = 
 # ["7"]["inputs"]["target_mega_pixel"] = 
 # # color grading
-# ["6:61"]["inputs"]["boolean_value"] = 
-# ["6:62"]["inputs"]["brightness"] = 
-# ["6:62"]["inputs"]["contrast"] = 
-# ["6:62"]["inputs"]["saturation"] = 
-# ["6:62"]["inputs"]["R"] = 
-# ["6:62"]["inputs"]["G"] = 
-# ["6:62"]["inputs"]["B"] = 
-# ["6:63"]["inputs"]["image_upscale_method"] = 
-# ["6:63"]["inputs"]["latent_upscale_method"] = 
+# ["6:63"]["inputs"]["boolean_value"] = 
+# ["6:64"]["inputs"]["brightness"] = 
+# ["6:64"]["inputs"]["contrast"] = 
+# ["6:64"]["inputs"]["saturation"] = 
+# ["6:64"]["inputs"]["R"] = 
+# ["6:64"]["inputs"]["G"] = 
+# ["6:64"]["inputs"]["B"] = 
+# ["6:65"]["inputs"]["image_upscale_method"] = 
+# ["6:65"]["inputs"]["latent_upscale_method"] = 
 # # batch size
-# ["6:66"]["inputs"]["amount"] = 
+# ["6:68"]["inputs"]["amount"] = 
 # # stop at clip layer
-# ["6:9"]["inputs"]["boolean_value"] = 
-# ["6:10"]["inputs"]["stop_at_clip_layer"] = 
-# # tiling
 # ["6:11"]["inputs"]["boolean_value"] = 
-# ["6:12"]["inputs"]["tiling"] = 
+# ["6:12"]["inputs"]["stop_at_clip_layer"] = 
+# # tiling
+# ["6:13"]["inputs"]["boolean_value"] = 
+# ["6:14"]["inputs"]["tiling"] = 
 # # kohya
 # ["8"]["inputs"]["boolean_value"] = 
 # ["9"]["inputs"]["downscale_factor"] = 

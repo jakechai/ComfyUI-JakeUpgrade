@@ -34,12 +34,7 @@
     }
   },
   "4": {
-    "inputs": {
-      "mask": [
-        "3",
-        0
-      ]
-    },
+    "inputs": {},
     "class_type": "Is Mask Empty JK",
     "_meta": {
       "title": "Is Mask Empty JK\ud83d\udc09"
@@ -72,26 +67,18 @@
   },
   "7": {
     "inputs": {
-      "mask": [
+      "boolean_value": false,
+      "mask_false": [
         "3",
         0
       ]
     },
-    "class_type": "Is Mask Empty JK",
+    "class_type": "CR Mask Input Switch JK",
     "_meta": {
-      "title": "Is Mask Empty JK\ud83d\udc09"
+      "title": "Mask Input Switch JK\ud83d\udc09"
     }
   },
   "8": {
-    "inputs": {
-      "string": ""
-    },
-    "class_type": "String To Combo JK",
-    "_meta": {
-      "title": "Grp End Dummy"
-    }
-  },
-  "9": {
     "inputs": {
       "boolean_value": [
         "1",
@@ -111,7 +98,7 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "10": {
+  "9": {
     "inputs": {
       "text": "Upscale your canvas to at least 4x.\nThen make select region for upscale.",
       "font": "ShareTechMono-Regular.ttf",
@@ -136,10 +123,10 @@
       "title": "\ud83d\udd27 Draw Text"
     }
   },
-  "11": {
+  "10": {
     "inputs": {
       "image": [
-        "9",
+        "8",
         0
       ]
     },
@@ -148,20 +135,20 @@
       "title": "\ud83d\udd27 Get Image Size"
     }
   },
-  "12": {
+  "11": {
     "inputs": {
       "upscale_method": "lanczos",
       "width": [
-        "11",
+        "10",
         0
       ],
       "height": [
-        "11",
+        "10",
         1
       ],
       "crop": "disabled",
       "image": [
-        "10",
+        "9",
         0
       ]
     },
@@ -170,10 +157,35 @@
       "title": "Upscale Image"
     }
   },
+  "12": {
+    "inputs": {
+      "mask": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "Is Mask Empty JK",
+    "_meta": {
+      "title": "Is Mask Empty JK\ud83d\udc09"
+    }
+  },
   "13": {
     "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "14": {
+    "inputs": {
       "image": [
-        "9",
+        "13",
         0
       ]
     },
@@ -182,15 +194,15 @@
       "title": "Get Size JK\ud83d\udc09"
     }
   },
-  "14": {
+  "15": {
     "inputs": {
       "value": 1,
       "width": [
-        "13",
+        "14",
         0
       ],
       "height": [
-        "13",
+        "14",
         1
       ]
     },
@@ -199,18 +211,18 @@
       "title": "SolidMask"
     }
   },
-  "15": {
+  "16": {
     "inputs": {
       "boolean_value": [
-        "7",
+        "12",
         0
       ],
       "mask_false": [
-        "3",
+        "7",
         0
       ],
       "mask_true": [
-        "14",
+        "15",
         0
       ]
     },
@@ -219,7 +231,7 @@
       "title": "Mask Input Switch JK\ud83d\udc09"
     }
   },
-  "16": {
+  "17": {
     "inputs": {
       "padding": 0,
       "use_image_res": false,
@@ -228,11 +240,11 @@
       "use_target_mega_pixel": false,
       "target_mega_pixel": 1,
       "mask": [
-        "15",
+        "16",
         0
       ],
       "image": [
-        "9",
+        "13",
         0
       ]
     },
@@ -241,26 +253,26 @@
       "title": "Image Crop by Mask Resolution Grp JK\ud83d\udc09"
     }
   },
-  "17": {
+  "18": {
     "inputs": {
       "x": [
-        "16",
+        "17",
         2
       ],
       "y": [
-        "16",
+        "17",
         3
       ],
       "width": [
-        "16",
+        "17",
         0
       ],
       "height": [
-        "16",
+        "17",
         1
       ],
       "mask": [
-        "15",
+        "16",
         0
       ]
     },
@@ -269,26 +281,26 @@
       "title": "CropMask"
     }
   },
-  "18": {
+  "19": {
     "inputs": {
       "width": [
-        "16",
+        "17",
         0
       ],
       "height": [
-        "16",
+        "17",
         1
       ],
       "x": [
-        "16",
+        "17",
         2
       ],
       "y": [
-        "16",
+        "17",
         3
       ],
       "image": [
-        "9",
+        "13",
         0
       ]
     },
@@ -297,18 +309,18 @@
       "title": "Image Crop"
     }
   },
-  "19": {
+  "20": {
     "inputs": {
       "boolean_value": [
-        "7",
+        "12",
         0
       ],
       "image_false": [
-        "18",
+        "19",
         0
       ],
       "image_true": [
-        "9",
+        "13",
         0
       ]
     },
@@ -317,18 +329,18 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "20": {
+  "21": {
     "inputs": {
       "boolean_value": [
-        "7",
+        "12",
         0
       ],
       "mask_false": [
-        "17",
+        "18",
         0
       ],
       "mask_true": [
-        "15",
+        "16",
         0
       ]
     },
@@ -337,12 +349,12 @@
       "title": "Mask Input Switch JK\ud83d\udc09"
     }
   },
-  "21": {
+  "22": {
     "inputs": {
       "output_format": "png",
       "api_key_override": "",
       "image": [
-        "19",
+        "20",
         0
       ]
     },
@@ -351,18 +363,18 @@
       "title": "Stability Fast Upscale"
     }
   },
-  "22": {
+  "23": {
     "inputs": {
       "boolean_value": [
         "5",
         0
       ],
       "image_false": [
-        "12",
+        "11",
         0
       ],
       "image_true": [
-        "21",
+        "22",
         0
       ]
     },
@@ -371,10 +383,10 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "23": {
+  "24": {
     "inputs": {
       "images": [
-        "22",
+        "23",
         0
       ]
     },

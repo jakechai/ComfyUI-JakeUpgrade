@@ -304,6 +304,24 @@ class KsamplerParametersDefault_JK:
     
         return (steps, cfg, denoise)
 
+class KsamplerAdvParametersDefault_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "switch_at_step": ("INT", {"default": 10, "min": 1, "max": 10000}),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "INT", "INT", "STRING", "STRING")
+    RETURN_NAMES = ("start_at_step", "switch_at_step", "end_at_step", "enable", "disable")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+
+    def get_value(self, switch_at_step):
+    
+        return (0, switch_at_step, 10000, "enable", "disable")
+
 class BaseModelParametersSD3API_JK:
     @classmethod
     def INPUT_TYPES(cls):
@@ -699,7 +717,7 @@ class ImageCropByMaskResolution_JK:
             image_height = custom_height
         
         min_x, min_y, max_x, max_y = get_bounding_box(mask)
-        minimum_crop_size = min(128, image_width)
+        minimum_crop_size = min(64, image_width)
         # cropped_mask_width = max(multipleOfInt((max_x - min_x), multiple_of), minimum_crop_size)
         # cropped_mask_height = max(multipleOfInt((max_y - min_y), multiple_of), minimum_crop_size)
         cropped_mask_width = max((max_x - min_x), minimum_crop_size)
@@ -1199,6 +1217,30 @@ class LoadStringListFromJSON_JK:
             return (self._cached_data,)
         else:
             return ("",)
+
+class CreateLoopScheduleList:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {
+            "loop_count": ("INT", {"default": 5, "min": 2, "max": 1000, "step": 1, "tooltip": "Number of loops to schedule for"} ),
+            }
+        }
+    
+    RETURN_TYPES = ("ITEM_LIST", )
+    RETURN_NAMES = ("int_list",)
+    FUNCTION = "process"
+    CATEGORY = icons.get("JK/Misc")
+    DESCRIPTION = ""
+
+    def process(self, loop_count):
+        
+        step_list = [1] * loop_count
+        
+        for i in range(0, loop_count):
+            
+            step_list[i] = i + 1
+            
+        return (step_list,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes
@@ -1886,9 +1928,89 @@ class CR_ApplyLoRAStack_JK:
             lora_path = folder_paths.get_full_path("loras", lora_name)
             lora = comfy.utils.load_torch_file(lora_path, safe_load=True)
             
-            model_lora, clip_lora = comfy.sd.load_lora_for_models(model_lora, clip_lora, lora, strength_model, strength_clip)  
+            model_lora, clip_lora = comfy.sd.load_lora_for_models(model_lora, clip_lora, lora, strength_model, strength_clip)
 
         return (model_lora, clip_lora,)
+
+class CR_LoRAStack_ModelOnly_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+    
+        loras = ["None"] + folder_paths.get_filename_list("loras")
+        
+        inputs = {
+            "required": {
+            },
+            "optional": {
+                "lora_stack": ("LORA_STACK",),
+            },
+        }
+        
+        for i in range (1, 7):
+            inputs["required"][f"lora_{i}"] = ("BOOLEAN", {"default": False},)
+            inputs["required"][f"lora_name_{i}"] = (loras,)
+            inputs["required"][f"model_weight_{i}"] = ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01})
+        
+        return inputs
+
+    RETURN_TYPES = ("LORA_STACK",)
+    RETURN_NAMES = ("LORA_STACK",)
+    FUNCTION = "lora_stacker"
+    CATEGORY = icons.get("JK/LoRA")
+
+    def lora_stacker(self, lora_stack=None, **kwargs):
+        
+        # Initialise the list
+        lora_list = list()
+        lora_enable_check = False
+        
+        if lora_stack is not None:
+            lora_list.extend([l for l in lora_stack if l[0] != "None"])
+        
+        for i in range (1, 7):
+            
+            if kwargs.get(f"lora_{i}") == True and kwargs.get(f"lora_name_{i}") != "None" and kwargs.get(f"model_weight_{i}") != 0:
+                lora_enable_check = True
+            else:
+                lora_enable_check = False
+            
+            if lora_enable_check:
+                
+                lora_list.extend([(kwargs.get(f"lora_name_{i}"), kwargs.get(f"model_weight_{i}"), 0.0)]),
+                
+        return (lora_list,)
+
+class CR_ApplyLoRAStack_ModelOnly_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {"model": ("MODEL",),
+                            "lora_stack": ("LORA_STACK", ),
+                            }
+        }
+
+    RETURN_TYPES = ("MODEL",)
+    RETURN_NAMES = ("MODEL",)
+    FUNCTION = "apply_lora_stack"
+    CATEGORY = icons.get("JK/LoRA")
+
+    def apply_lora_stack(self, model, lora_stack=None,):
+        
+        lora_params = list()
+ 
+        if lora_stack:
+            lora_params.extend(lora_stack)
+        else:
+            return (model,)
+
+        model_lora = model
+        
+        for tup in lora_params:
+            lora_name, strength_model, strength_clip = tup
+            lora_path = folder_paths.get_full_path("loras", lora_name)
+            lora = comfy.utils.load_torch_file(lora_path, safe_load=True)
+            model_lora = comfy.sd.load_lora_for_models(model_lora, None, lora, strength_model, 0)[0]
+        
+        return (model_lora,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Embedding Nodes
