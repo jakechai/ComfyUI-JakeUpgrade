@@ -186,7 +186,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 1. Integrate Hunyuan3D 2.1 Mesh Reconstruction + De-lighted MVs Generation + PBR Texture Baking features to img2mesh workflow.
 2. Add "Hy3D Cam Config 20to21 JK🐉" node.
 
-- 2025-08-10 - v2.0.0
+- 2025-08-14 - v2.0.0
 1. Create Subgraphs based on my Group Nodes and recreate all workflows using Subgraph.
 2. Move all latest workflows using Group Node to subfolder named `ComfyUI_~frontend-1.23.4` or `Krita_~frontend-1.23.4_v1.19.20`.
 3. Add LoRA Stack Model Only JK🐉, Apply LoRA Stack Model Only JK🐉.
@@ -235,7 +235,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 > [!NOTE]
 > - Group Nodes can be copied and pasted between workflows in the latest ComfyUI. See details in my Video Introduction of Group Nodes.
-> - For all JK Group Nodes, load [All Grp Nodes-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json) (for `comfyui-frontend-package<=1.15.13`).
+> - For all JK Group Nodes, load [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json) (for `comfyui-frontend-package<=1.15.13`).
 > - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded them.
 
 ## Update
@@ -343,7 +343,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 ### ComfyUI
 
 > [!NOTE]
-> - You need `comfyui-frontend-package>=1.24.0` to use the latest Image Gen workflows using Subgraph.
+> - You need `comfyui-frontend-package>=1.24.0` to use the latest workflows using Subgraph.
 > - ComfyUI API workflows are workflows created to allow other software to call ComfyUI, which include non-dev editable workflows and dev-for-call workflows, as well as python files with supporting parameters.
 > - Installing a separate version of ComfyUI to work with 3D Pack is recommended.   
 > - You need `comfyui-frontend-package<=1.23.4` to run [ComfyUI Main & Module workflows using Group Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4).
