@@ -36,7 +36,7 @@
   "5": {
     "inputs": {
       "images": [
-        "3:3",
+        "3:5",
         0
       ]
     },
@@ -45,14 +45,20 @@
       "title": "SaveImageWebsocket"
     }
   },
-  "3:1": {
-    "inputs": {},
-    "class_type": "Remove Input JK",
+  "3:6": {
+    "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
     "_meta": {
-      "title": "Remove Input JK🐉"
+      "title": "Image Input Switch JK🐉"
     }
   },
-  "3:2": {
+  "3:4": {
     "inputs": {
       "direction": false,
       "target_resolution": 512,
@@ -60,7 +66,7 @@
       "target_mega_pixel": 1,
       "multiple_of": 8,
       "image": [
-        "4",
+        "3:6",
         0
       ]
     },
@@ -69,23 +75,20 @@
       "title": "Scale To Resolution JK🐉"
     }
   },
-  "3:3": {
+  "3:5": {
     "inputs": {
-      "upscale_method": "nearest-exact",
+      "upscale_method": "lanczos",
       "width": [
-        "3:2",
+        "3:4",
         0
       ],
       "height": [
-        "3:2",
+        "3:4",
         1
       ],
-      "crop": [
-        "3:1",
-        0
-      ],
+      "crop": "disabled",
       "image": [
-        "4",
+        "3:6",
         0
       ]
     },

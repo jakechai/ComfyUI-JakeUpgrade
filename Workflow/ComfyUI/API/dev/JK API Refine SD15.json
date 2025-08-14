@@ -372,7 +372,7 @@
   "24": {
     "inputs": {
       "images": [
-        "4:22",
+        "4:24",
         0
       ]
     },
@@ -514,15 +514,270 @@
       "title": "Model Input Switch JK🐉"
     }
   },
-  "4:5": {
+  "4:32": {
+    "inputs": {
+      "pixels": [
+        "4:46",
+        0
+      ],
+      "vae": [
+        "4:45",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "4:33": {
+    "inputs": {},
+    "class_type": "Remove Input JK",
+    "_meta": {
+      "title": "Remove Input JK🐉"
+    }
+  },
+  "4:35": {
+    "inputs": {
+      "guidance": [
+        "4:14",
+        0
+      ],
+      "conditioning": [
+        "4:10",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FluxGuidance"
+    }
+  },
+  "4:36": {
+    "inputs": {
+      "conditioning": [
+        "4:35",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "4:37": {
+    "inputs": {
+      "boolean_value": [
+        "4:13",
+        1
+      ],
+      "conditioning_false": [
+        "4:9",
+        0
+      ],
+      "conditioning_true": [
+        "4:34",
+        0
+      ]
+    },
+    "class_type": "CR Conditioning Input Switch JK",
+    "_meta": {
+      "title": "Conditioning Input Switch JK🐉"
+    }
+  },
+  "4:39": {
+    "inputs": {
+      "cfg": [
+        "4:16",
+        1
+      ],
+      "model": [
+        "4:43",
+        0
+      ],
+      "positive": [
+        "4:38",
+        0
+      ],
+      "negative": [
+        "4:38",
+        1
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "4:40": {
+    "inputs": {
+      "boolean_value": [
+        "4:13",
+        1
+      ],
+      "guider_false": [
+        "4:39",
+        0
+      ],
+      "guider_true": [
+        "4:15",
+        0
+      ]
+    },
+    "class_type": "CR Guider Input Switch JK",
+    "_meta": {
+      "title": "Guider Input Switch JK🐉"
+    }
+  },
+  "4:41": {
+    "inputs": {
+      "noise": [
+        "4:19",
+        0
+      ],
+      "guider": [
+        "4:40",
+        0
+      ],
+      "sampler": [
+        "4:22",
+        0
+      ],
+      "sigmas": [
+        "4:18",
+        0
+      ],
+      "latent_image": [
+        "4:26",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "4:42": {
+    "inputs": {
+      "samples": [
+        "4:41",
+        1
+      ],
+      "vae": [
+        "4:45",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "4:34": {
+    "inputs": {
+      "guidance": [
+        "4:14",
+        0
+      ],
+      "conditioning": [
+        "4:9",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FluxGuidance"
+    }
+  },
+  "4:43": {
+    "inputs": {
+      "boolean_value": false,
+      "model_false": [
+        "41",
+        0
+      ]
+    },
+    "class_type": "CR Model Input Switch JK",
+    "_meta": {
+      "title": "Model Input Switch JK🐉"
+    }
+  },
+  "4:44": {
     "inputs": {
       "boolean_value": false,
       "clip_false": [
         "26",
         1
+      ]
+    },
+    "class_type": "CR Clip Input Switch JK",
+    "_meta": {
+      "title": "Clip Input Switch JK🐉"
+    }
+  },
+  "4:45": {
+    "inputs": {
+      "boolean_value": false,
+      "VAE_false": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "CR VAE Input Switch JK",
+    "_meta": {
+      "title": "VAE Input Switch JK🐉"
+    }
+  },
+  "4:46": {
+    "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉"
+    }
+  },
+  "4:38": {
+    "inputs": {
+      "effective_mask": [
+        "4:33",
+        2
+      ],
+      "base_positive": [
+        "4:37",
+        0
+      ],
+      "base_negative": [
+        "4:13",
+        0
+      ],
+      "vae": [
+        "4:45",
+        0
+      ],
+      "controlnet_stack": [
+        "23",
+        0
+      ]
+    },
+    "class_type": "CR Apply Multi-ControlNet Adv JK",
+    "_meta": {
+      "title": "Apply Multi-ControlNet Adv JK🐉"
+    }
+  },
+  "4:7": {
+    "inputs": {
+      "boolean_value": false,
+      "clip_false": [
+        "4:44",
+        0
       ],
       "clip_true": [
-        "4:6",
+        "4:8",
         0
       ]
     },
@@ -531,12 +786,12 @@
       "title": "Clip Input Switch JK🐉-stop layer"
     }
   },
-  "4:6": {
+  "4:8": {
     "inputs": {
       "stop_at_clip_layer": -1,
       "clip": [
-        "26",
-        1
+        "4:44",
+        0
       ]
     },
     "class_type": "CLIPSetLastLayer",
@@ -544,11 +799,11 @@
       "title": "CLIP Set Last Layer"
     }
   },
-  "4:7": {
+  "4:9": {
     "inputs": {
       "text": "",
       "clip": [
-        "4:5",
+        "4:7",
         0
       ]
     },
@@ -557,11 +812,11 @@
       "title": "CLIP Text Encode positive"
     }
   },
-  "4:8": {
+  "4:10": {
     "inputs": {
       "text": "",
       "clip": [
-        "4:5",
+        "4:7",
         0
       ]
     },
@@ -570,15 +825,15 @@
       "title": "CLIP Text Encode negative"
     }
   },
-  "4:9": {
+  "4:11": {
     "inputs": {
       "boolean_value": false,
       "conditioning_false": [
-        "4:8",
+        "4:10",
         0
       ],
       "conditioning_true": [
-        "4:10",
+        "4:12",
         0
       ]
     },
@@ -587,11 +842,11 @@
       "title": "Conditioning Input Switch JK🐉-sd3"
     }
   },
-  "4:10": {
+  "4:12": {
     "inputs": {
       "end": 0.1,
       "conditioning": [
-        "4:7",
+        "4:9",
         0
       ]
     },
@@ -600,15 +855,15 @@
       "title": "🔧 SD3 Negative Conditioning"
     }
   },
-  "4:11": {
+  "4:13": {
     "inputs": {
       "boolean_value": false,
       "conditioning_false": [
-        "4:9",
+        "4:11",
         0
       ],
       "conditioning_true": [
-        "4:33",
+        "4:35",
         0
       ]
     },
@@ -617,7 +872,7 @@
       "title": "Conditioning Input Switch JK🐉-flux"
     }
   },
-  "4:12": {
+  "4:14": {
     "inputs": {
       "guidance": 3.5
     },
@@ -626,27 +881,27 @@
       "title": "Guidance Default JK🐉"
     }
   },
-  "4:13": {
+  "4:15": {
     "inputs": {
       "cfg": [
-        "4:14",
+        "4:16",
         1
       ],
       "neg_scale": 1,
       "model": [
-        "41",
+        "4:43",
         0
       ],
       "positive": [
-        "4:36",
+        "4:38",
         0
       ],
       "negative": [
-        "4:36",
+        "4:38",
         1
       ],
       "empty_conditioning": [
-        "4:34",
+        "4:36",
         0
       ]
     },
@@ -655,15 +910,15 @@
       "title": "PerpNegGuider"
     }
   },
-  "4:14": {
+  "4:16": {
     "inputs": {
       "steps": [
-        "4:31",
+        "4:33",
         0
       ],
-      "cfg": 8.000000000000002,
+      "cfg": 8,
       "denoise": [
-        "4:31",
+        "4:33",
         0
       ]
     },
@@ -672,7 +927,7 @@
       "title": "Ksampler Parameters Default JK🐉"
     }
   },
-  "4:15": {
+  "4:17": {
     "inputs": {
       "sampler_name": "dpmpp_2m"
     },
@@ -681,13 +936,13 @@
       "title": "KSamplerSelect"
     }
   },
-  "4:16": {
+  "4:18": {
     "inputs": {
       "scheduler": "karras",
       "steps": 20,
-      "denoise": 1,
+      "denoise": 0.35,
       "model": [
-        "41",
+        "4:43",
         0
       ]
     },
@@ -696,7 +951,7 @@
       "title": "BasicScheduler"
     }
   },
-  "4:17": {
+  "4:19": {
     "inputs": {
       "noise_seed": 0,
       "noise_mode": "CPU",
@@ -711,15 +966,15 @@
       "title": "RandomNoise (inspire)"
     }
   },
-  "4:18": {
+  "4:20": {
     "inputs": {
       "boolean_value": false,
       "latent_false": [
-        "4:30",
+        "4:32",
         0
       ],
       "latent_true": [
-        "4:19",
+        "4:21",
         0
       ]
     },
@@ -728,13 +983,13 @@
       "title": "Latent Input Switch JK🐉-latent noise"
     }
   },
-  "4:19": {
+  "4:21": {
     "inputs": {
       "noise_seed": 0,
       "noise_strength": 1,
       "normalize": "false",
       "latent": [
-        "4:30",
+        "4:32",
         0
       ]
     },
@@ -743,15 +998,15 @@
       "title": "Inject Latent Noise"
     }
   },
-  "4:20": {
+  "4:22": {
     "inputs": {
       "boolean_value": false,
       "sampler_false": [
-        "4:15",
+        "4:17",
         0
       ],
       "sampler_true": [
-        "4:21",
+        "4:23",
         0
       ]
     },
@@ -760,7 +1015,7 @@
       "title": "Sampler Input Switch JK🐉-detail daemon"
     }
   },
-  "4:21": {
+  "4:23": {
     "inputs": {
       "detail_amount": 0.1,
       "start": 0.2,
@@ -773,7 +1028,7 @@
       "smooth": true,
       "cfg_scale_override": 0,
       "sampler": [
-        "4:15",
+        "4:17",
         0
       ]
     },
@@ -782,33 +1037,17 @@
       "title": "Detail Daemon Sampler"
     }
   },
-  "4:22": {
-    "inputs": {
-      "boolean_value": false,
-      "image_false": [
-        "4:40",
-        0
-      ],
-      "image_true": [
-        "4:23",
-        0
-      ]
-    },
-    "class_type": "CR Image Input Switch JK",
-    "_meta": {
-      "title": "Image Input Switch JK🐉-color match"
-    }
-  },
-  "4:23": {
+  "4:25": {
     "inputs": {
       "method": "mkl",
       "strength": 1,
+      "multithread": true,
       "image_ref": [
-        "3",
+        "4:46",
         0
       ],
       "image_target": [
-        "4:40",
+        "4:42",
         0
       ]
     },
@@ -817,11 +1056,11 @@
       "title": "Color Match"
     }
   },
-  "4:24": {
+  "4:26": {
     "inputs": {
       "amount": 1,
       "samples": [
-        "4:18",
+        "4:20",
         0
       ]
     },
@@ -830,207 +1069,21 @@
       "title": "Repeat Latent Batch"
     }
   },
-  "4:30": {
+  "4:24": {
     "inputs": {
-      "pixels": [
-        "3",
+      "boolean_value": false,
+      "image_false": [
+        "4:42",
         0
       ],
-      "vae": [
-        "2",
+      "image_true": [
+        "4:25",
         0
       ]
     },
-    "class_type": "VAEEncode",
+    "class_type": "CR Image Input Switch JK",
     "_meta": {
-      "title": "VAE Encode"
-    }
-  },
-  "4:31": {
-    "inputs": {},
-    "class_type": "Remove Input JK",
-    "_meta": {
-      "title": "Remove Input JK🐉"
-    }
-  },
-  "4:32": {
-    "inputs": {
-      "guidance": [
-        "4:12",
-        0
-      ],
-      "conditioning": [
-        "4:7",
-        0
-      ]
-    },
-    "class_type": "FluxGuidance",
-    "_meta": {
-      "title": "FluxGuidance"
-    }
-  },
-  "4:33": {
-    "inputs": {
-      "guidance": [
-        "4:12",
-        0
-      ],
-      "conditioning": [
-        "4:8",
-        0
-      ]
-    },
-    "class_type": "FluxGuidance",
-    "_meta": {
-      "title": "FluxGuidance"
-    }
-  },
-  "4:34": {
-    "inputs": {
-      "conditioning": [
-        "4:33",
-        0
-      ]
-    },
-    "class_type": "ConditioningZeroOut",
-    "_meta": {
-      "title": "ConditioningZeroOut"
-    }
-  },
-  "4:35": {
-    "inputs": {
-      "boolean_value": [
-        "4:11",
-        1
-      ],
-      "conditioning_false": [
-        "4:7",
-        0
-      ],
-      "conditioning_true": [
-        "4:32",
-        0
-      ]
-    },
-    "class_type": "CR Conditioning Input Switch JK",
-    "_meta": {
-      "title": "Conditioning Input Switch JK🐉"
-    }
-  },
-  "4:36": {
-    "inputs": {
-      "effective_mask": [
-        "4:31",
-        2
-      ],
-      "base_positive": [
-        "4:35",
-        0
-      ],
-      "base_negative": [
-        "4:11",
-        0
-      ],
-      "vae": [
-        "2",
-        0
-      ],
-      "controlnet_stack": [
-        "23",
-        0
-      ]
-    },
-    "class_type": "CR Apply Multi-ControlNet Adv JK",
-    "_meta": {
-      "title": "Apply Multi-ControlNet Adv JK🐉"
-    }
-  },
-  "4:37": {
-    "inputs": {
-      "cfg": [
-        "4:14",
-        1
-      ],
-      "model": [
-        "41",
-        0
-      ],
-      "positive": [
-        "4:36",
-        0
-      ],
-      "negative": [
-        "4:36",
-        1
-      ]
-    },
-    "class_type": "CFGGuider",
-    "_meta": {
-      "title": "CFGGuider"
-    }
-  },
-  "4:38": {
-    "inputs": {
-      "boolean_value": [
-        "4:11",
-        1
-      ],
-      "guider_false": [
-        "4:37",
-        0
-      ],
-      "guider_true": [
-        "4:13",
-        0
-      ]
-    },
-    "class_type": "CR Guider Input Switch JK",
-    "_meta": {
-      "title": "Guider Input Switch JK🐉"
-    }
-  },
-  "4:39": {
-    "inputs": {
-      "noise": [
-        "4:17",
-        0
-      ],
-      "guider": [
-        "4:38",
-        0
-      ],
-      "sampler": [
-        "4:20",
-        0
-      ],
-      "sigmas": [
-        "4:16",
-        0
-      ],
-      "latent_image": [
-        "4:24",
-        0
-      ]
-    },
-    "class_type": "SamplerCustomAdvanced",
-    "_meta": {
-      "title": "SamplerCustomAdvanced"
-    }
-  },
-  "4:40": {
-    "inputs": {
-      "samples": [
-        "4:39",
-        1
-      ],
-      "vae": [
-        "2",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "VAE Decode"
+      "title": "Image Input Switch JK🐉-color match"
     }
   }
 }
