@@ -179,12 +179,10 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 				6. Re-write Lora | ControlNet | Embedding nodes without java script control.
 	- 2025-06-16 - v1.9.18	1. Fix Krita Upscale and Refine workflows.
 	- 2025-06-16 - v1.9.19	1. Update Wan Video workflows using v1.6.0 Group Nodes.
+	- 2025-07-30 - v1.9.20	1. Integrate Hunyuan3D 2.1 Mesh Reconstruction + De-lighted MVs Generation + PBR Texture Baking features to img2mesh workflow.
+				2. Add "Hy3D Cam Config 20to21 JK🐉" node.
 
 </details>
-
-- 2025-07-30 - v1.9.20
-1. Integrate Hunyuan3D 2.1 Mesh Reconstruction + De-lighted MVs Generation + PBR Texture Baking features to img2mesh workflow.
-2. Add "Hy3D Cam Config 20to21 JK🐉" node.
 
 - 2025-08-14 - v2.0.0
 1. Create Subgraphs based on my Group Nodes and recreate all workflows using Subgraph.
@@ -201,13 +199,14 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 12. Add Stand-In ref2v Wan wrapper workflows.
 13. Add VACE | Phantom | Stand-In ref+v2v Face Swap workflows.
 14. Add Create Loop Schedule List JK🐉 node.
-15. Update SkyreelV2 DF long video Wan Wrapper workflow, using for loop.
-16. Use the Torch Compile Model Wan Video v2 node for Native Wan Video workflows.
-17. Set minimum resolution of Crop by Mask to 64.
-18. Refine Common Group Node issue fixed.
-19. Add Ksampler Adv Parameters Default JK🐉 node and 🐉 JK:::KSampler (High+Low) Group Node for Wan2.2.
-20. Fix Switch(Any) node output datatype error in all workflows.
-21. Update Refine Common Group Node for all workflows (ComfyUI frontend 1.23.4 or earlier).
+15. Update SkyreelV2 DF long video Wan Wrapper workflow.
+16. Add VACE long video Wan workflow.
+17. Use the Torch Compile Model Wan Video v2 node for Native Wan Video workflows.
+18. Set minimum resolution of Crop by Mask to 64.
+19. Refine Common Group Node issue fixed.
+20. Add Ksampler Adv Parameters Default JK🐉 node and 🐉 JK:::KSampler (High+Low) Group Node for Wan2.2.
+21. Fix Switch(Any) node output datatype error in all workflows.
+22. Update Refine Common Group Node for all workflows (ComfyUI frontend 1.23.4 or earlier).
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -330,6 +329,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 | MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | main model | v2v |
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v |
+| Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v |
 | *control* | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v |
 | Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v |
@@ -382,6 +382,9 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_workflow_Video-Wan__long_SkyreelDF_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_SkyreelDF_mGPU.json)
 - [JK_workflow_Video-FramePack](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack.json)
 - [JK_workflow_Video-FramePack_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack_mGPU.json)
+  
+- Wan Video Generation Workflows breakdown
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/VidGen.png)
 
 #### Module
 - [JK_module_00_AutoPrompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_00_AutoPrompt.json)
