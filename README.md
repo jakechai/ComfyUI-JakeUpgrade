@@ -15,6 +15,26 @@ Please check the [video](https://youtu.be/eyjy10T201M).
  <img src="https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/ComfyUIAPIUI.png" alt="UI for ComfyUI API" />
 </a>
 
+## Video Introduction
+- Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
+- Wan Video update 1(multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
+- Wan Video update 2(Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): WIP
+- img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
+- img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
+- img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
+- 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) | [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
+- txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
+- txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) | [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
+- txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) | [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
+- Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) | [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
+- Prompts Switch: [Youtube](https://youtu.be/M8lVr1lP82U) | [Bilibili](https://www.bilibili.com/video/BV1ZRNwerEev/)
+- prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) | [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
+- inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) | [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
+- img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
+- 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
+- 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
+- Seamless Texture: [Youtube](https://youtu.be/ExPUbiRkJo0) | [Bilibili](https://www.bilibili.com/video/BV1UZ42187Gq/)
+
 ## Changelog
 <details>
 <summary><b>Previous Version</b></summary>
@@ -25,162 +45,162 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	- 2024-07-21 - v1.0.8	Orbit Poses Constant nodes added. 3 Image to Mesh Workflows updated.  
 	- 2024-07-22 - v1.0.9	3DGS workflow added.  
 	- 2024-07-24 - v1.1.0	img2mesh workflow updated. Craftsman Mesh added. 
-				Three OrbitPoses nodes been added to 3D-Pack.  
+							Three OrbitPoses nodes been added to 3D-Pack.  
 	- 2024-07-31 - v1.1.1	Prompt Combine node added.  
 	- 2024-08-03 - v1.1.2	Resize to Focus added to image2mesh workflow.  
 	- 2024-08-21 - v1.1.3	Random Beats node added (not for AIGC).  
 	- 2024-09-01 - v1.2.0	SD3 workflow added. Noise Injection (Inspire) added. 
-				Refine, Upscale, and Detailer process major updated. 
-				SD15 Hand Fix supports SDXL and SD3 workflow. 
-				SDXL IPAdapter supports SD3 workflow. 
-				NoiseInjection Component and workflow added.  
+							Refine, Upscale, and Detailer process major updated. 
+							SD15 Hand Fix supports SDXL and SD3 workflow. 
+							SDXL IPAdapter supports SD3 workflow. 
+							NoiseInjection Component and workflow added.  
 	- 2024-09-04 - v1.2.1	In/Out Paint ControlNet Component added. 
-				Inpaint Module Workflow updated. 
-				SD15|SDXL|SD3 Workflow updated. 
-				Image Remove Alpha JK node added.  
+							Inpaint Module Workflow updated. 
+							SD15|SDXL|SD3 Workflow updated. 
+							Image Remove Alpha JK node added.  
 	- 2024-09-05 - v1.2.2	Black Pixel switch added for Inpaint ControlNet Component following ControlNet Preprocessor AUX Custom Node's update.  
 	- 2024-09-06 - v1.2.3	Refinement Noise Injection added. 
-				txt2prompt and img2prompt workflow added. 
-				img2prompt component added.  
+							txt2prompt and img2prompt workflow added. 
+							img2prompt component added.  
 	- 2024-09-07 - v1.2.4	img2mesh workflow doesn't need _JK.pack, so that doesn't need to install segment anything, VLM nodes, and IF AI tools.  
 	- 2024-09-09 - v1.2.5	Clip l, clip g, t5xxl texture encode logic upgrade. 
-				Clip l & g switch added. 
-				Negative g switch added. 
-				SDXL Clip Text Encode Target Resolution Scale added.  
+							Clip l & g switch added. 
+							Negative g switch added. 
+							SDXL Clip Text Encode Target Resolution Scale added.  
 	- 2024-09-10 - v1.2.6	detailer: add detail lora.  
 	- 2024-09-11 - v1.2.7	Magic Photo Prompter added.  
 	- 2024-09-13 - v1.2.8	Use Comfy UI default set union controlnet type to load xinsir sdxl controlnet union.  
-				Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows. 
-				Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.  
+							Remove Inspire Pack and WAS Nodes Suite in img2mesh workflows. 
+							Group Node Image RemBG added, using InSPYReNet TransparentBG from Essentials to remove background and Image Composite Masked to add grayscale background.  
 	- 2024-09-15 - v1.2.9	Inpaint Simple updated. Outpaint Simple added. 
-				txt2img | img2img | inpaint workflow updated. 
-				In/Out Paint to Refinement process added. 
-				Upscale to Refinment process added.  
+							txt2img | img2img | inpaint workflow updated. 
+							In/Out Paint to Refinement process added. 
+							Upscale to Refinment process added.  
 	- 2024-09-21 - v1.3.0	Inpaint/Outpaint Latent | Checkpoint | ControlNet group nodes updated. 
-				Inpaint and txt2img/img2img workflows updated. 
-				SD3/Flux Inpaint ControlNet added.  
+							Inpaint and txt2img/img2img workflows updated. 
+							SD3/Flux Inpaint ControlNet added.  
 	- 2024-09-24 - v1.3.1	Hand Fix Detailer upgrades, supports SD15 | SDXL | Flux. 
-				SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly. 
-				Replace SD3 ControlNet Apply with new ControlNet Apply Node.  
+							SD3 Hand Fix need to choose SDXL models for the InstantX Depth ControlNet does not work properly. 
+							Replace SD3 ControlNet Apply with new ControlNet Apply Node.  
 	- 2024-09-25 - v1.3.2	AIO Preprocessor added for txt2img | img2img workflow.  
-				Detailer, Upscale workflows updated. Refine workflow added.  
+							Detailer, Upscale workflows updated. Refine workflow added.  
 	- 2024-09-26 - v1.3.3	Latent Noise Mask switch added for Inpaint/Outpaint ControlNet. 
-				Specified Dual Clip switch added for sdxl workflow.  
+							Specified Dual Clip switch added for sdxl workflow.  
 	- 2024-09-28 - v1.3.4	Hand Fix supports SD3 and Flux. Hand Fix module workflow added.
 	- 2024-09-29 - v1.3.5	Inpaint Group Nodes upgrade, add more Image | Mask | Latent control.
 	- 2024-10-01 - v1.3.6	Inpaint Group Nodes upgrade, change color grading method.
 	- 2024-10-03 - v1.3.7	Remove Outpaint Pad Feathering.
 	- 2024-10-06 - v1.4.0	Replace Base Ipadapter simple with IPAdapter Style and Composition Transfer in SD15 and SDXL workflow.
-				SD3 Aspect Ratio node and SD3 Base Model Parameter node added. 
-				SD3 Api workflow added to make up the shorcomings of SD3 local deployment using Stability SD3 control and inpaint nodes.
+							SD3 Aspect Ratio node and SD3 Base Model Parameter node added. 
+							SD3 Api workflow added to make up the shorcomings of SD3 local deployment using Stability SD3 control and inpaint nodes.
 	- 2024-10-10 - v1.5.0	Flux KSampler and Flux Ksampler Adv group nodes added.
-				Flux txt2img and img2img workflow added. Flux KSampler workflow added.
-				Inpaint/Outpaint ControlNet and Checkpoint method order changed.
-				Enchance and Resize Input Image added for img2img workflow.
-				Noise | Guider | Sampler | Sigmas switch added.
+							Flux txt2img and img2img workflow added. Flux KSampler workflow added.
+							Inpaint/Outpaint ControlNet and Checkpoint method order changed.
+							Enchance and Resize Input Image added for img2img workflow.
+							Noise | Guider | Sampler | Sigmas switch added.
 	- 2024-10-10 - v1.5.1	Fal LLM and VLM API added for prompt generation workflow and SAI API workfkow.
 	- 2024-10-11 - v1.5.2	Flux KSampler Adv updated, use SplitSigmas instead of SplitSigmasDenoise.
 	- 2024-10-19 - v1.6.0	Image Generation group node and module workflow added.
-				Switch Model and CLIP JK🐉 node removed.
-				Rename Apply ControlNet Stack SD3 to Applly ControlNet VAE.
-				Tiling Mode and Empty Latent Color nodes added.
+							Switch Model and CLIP JK🐉 node removed.
+							Rename Apply ControlNet Stack SD3 to Applly ControlNet VAE.
+							Tiling Mode and Empty Latent Color nodes added.
 	- 2024-11-08 - v1.7.0	Normal | Input version of Image Gen and Image Gen Adv group nodes added.
-				Krita workflow added using Input version of Image Gen group nodes.
-				Remove Comfyroll Custom Nodes from the must-have-node list.
-				ControlNet Apply and ControlNet Stack nodes upgraded, supports Union, Alimama Inpaint.
-				ControlNet Stack Input Switch node added.
-				Add Blend with Original Mask option to Inpaint, Image Gen Adv and Image Gen Input group nodes.
-				IsMaskEmpty Node and Image Crop by Mask Group Node added.
+							Krita workflow added using Input version of Image Gen group nodes.
+							Remove Comfyroll Custom Nodes from the must-have-node list.
+							ControlNet Apply and ControlNet Stack nodes upgraded, supports Union, Alimama Inpaint.
+							ControlNet Stack Input Switch node added.
+							Add Blend with Original Mask option to Inpaint, Image Gen Adv and Image Gen Input group nodes.
+							IsMaskEmpty Node and Image Crop by Mask Group Node added.
 	- 2024-12-24 - v1.8.0	1. Add SAI API Replace Background and Relight. Add missing parameters of SAI API nodes.
-				2. Add Detail Daemon Custom Nodes to most of image|mesh generation workflows and group nodes.
-				3. Add SDXL Target Res JK🐉 node to fix SDXL Text Encode Target Resolution not working.
-				4. Add Image | Latent Crop by Mask, Resize, Crop by Mask and Resize, Stitch nodes. Add Crop and Stitch operation for Image Gen and Inpaint Group Nodes.
-				5. Update img2mesh MV upscale method to achieve better results: SD15 img2img + SDXL Refine + Ultimate Upscale.
-				6. Add Bool_Or and Bool_And nodes for workflows need to be group. Replace Bool Binary Operation node (Or as default) with Bool_Or.
-				7. Add Color Grading Node.
-				8. Seperate Multi-ControlNet Stack node to ControlNet Loader and Multi-ControlNet Param Stack.
-				9. Add "None" selection as default to IPAdapter Unified Loader for better workflow control, especially in API mode.
-				10. Add Image Refine Group Node.
-				11. Krita image generation workflows updated.
-				12. Add Krita Refine, Upscale and Refine, Hand fix, CN preprocessor, remove bg and SAI API module series.
-				13. Remove JK🐉::Pad Image for Outpainting. Remove JK🐉::CLIPSegMask group node, replace it with Essentials CLIPSeg node.
-				14. Remove [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui) and [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle) Custom Node from must-have-list for their complexity.
-				15. Remove useless Group Nodes: JK🐉::Image to Prompt (LLava Local), JK🐉::Image to Prompt Advanced (LLava Local), JK🐉::SegAnythingMask, JK🐉::txt2img.
-				16. SD3 | Flux image generation workflow | group nodes support Stop At Clip Layer (needs ComfyUI v0.3.8up).
+							2. Add Detail Daemon Custom Nodes to most of image|mesh generation workflows and group nodes.
+							3. Add SDXL Target Res JK🐉 node to fix SDXL Text Encode Target Resolution not working.
+							4. Add Image | Latent Crop by Mask, Resize, Crop by Mask and Resize, Stitch nodes. Add Crop and Stitch operation for Image Gen and Inpaint Group Nodes.
+							5. Update img2mesh MV upscale method to achieve better results: SD15 img2img + SDXL Refine + Ultimate Upscale.
+							6. Add Bool_Or and Bool_And nodes for workflows need to be group. Replace Bool Binary Operation node (Or as default) with Bool_Or.
+							7. Add Color Grading Node.
+							8. Seperate Multi-ControlNet Stack node to ControlNet Loader and Multi-ControlNet Param Stack.
+							9. Add "None" selection as default to IPAdapter Unified Loader for better workflow control, especially in API mode.
+							10. Add Image Refine Group Node.
+							11. Krita image generation workflows updated.
+							12. Add Krita Refine, Upscale and Refine, Hand fix, CN preprocessor, remove bg and SAI API module series.
+							13. Remove JK🐉::Pad Image for Outpainting. Remove JK🐉::CLIPSegMask group node, replace it with Essentials CLIPSeg node.
+							14. Remove [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui) and [Layer Style](https://github.com/chflame163/ComfyUI_LayerStyle) Custom Node from must-have-list for their complexity.
+							15. Remove useless Group Nodes: JK🐉::Image to Prompt (LLava Local), JK🐉::Image to Prompt Advanced (LLava Local), JK🐉::SegAnythingMask, JK🐉::txt2img.
+							16. SD3 | Flux image generation workflow | group nodes support Stop At Clip Layer (needs ComfyUI v0.3.8up).
 	- 2024-12-27 - v1.8.5	1. Add new Detailer Module.
-				2. Add new image generation workflow.
-				3. Fix Krita HandFix workflow bug.
+							2. Add new image generation workflow.
+							3. Fix Krita HandFix workflow bug.
 	- 2025-01-03 - v1.8.6	1. ControlNet image supports alpha. Add A1111-ControlNet-like effective mask for ControlNet (Stack) Apply nodes.
-				2. Load Image With Alpha, Make Image Grid, and Split Image Grid nodes added.
-				3. IF AI nodes recreated.
-				4. ComfyUI API workflow added.
-				5. Get Mesh 3D data workflow added.
+							2. Load Image With Alpha, Make Image Grid, and Split Image Grid nodes added.
+							3. IF AI nodes recreated.
+							4. ComfyUI API workflow added.
+							5. Get Mesh 3D data workflow added.
 	- 2025-01-10 - v1.8.8	1. Add ControlNet Effective Mask switch for all Image Generation Group Nodes.
-				2. Fix image resolution bug of Image Generation adv group nodes.
-				3. First Comfy Org Registry version.
+							2. Fix image resolution bug of Image Generation adv group nodes.
+							3. First Comfy Org Registry version.
 	- 2025-02-04 - v1.9.0	1. Add Inject Latent Noise to advanced imgen group nodes.
-				2. Fix the Input Mask logic of advanced imgen group nodes.
-				3. Add "SD3 Prompts switch" for SD3 imgen group nodes.
-				4. Switch clip l and g bug fix.
-				5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
-				6. Image Generation | API | Kirta workflows updated.
+							2. Fix the Input Mask logic of advanced imgen group nodes.
+							3. Add "SD3 Prompts switch" for SD3 imgen group nodes.
+							4. Switch clip l and g bug fix.
+							5. Follow the update of Inspire-Pack Random Noise node for imgen group nodes.
+							6. Image Generation | API | Kirta workflows updated.
 	- 2025-02-08 - v1.9.1	1. Add Stop At Clip Layer to image refine group nodes.
-				2. Add Flux Guidance to common imgen | refine group nodes.
-				3. Add ComfyUI API workflows: controlnet preprocessor | upscale | refine.
+							2. Add Flux Guidance to common imgen | refine group nodes.
+							3. Add ComfyUI API workflows: controlnet preprocessor | upscale | refine.
 	- 2025-02-17 - v1.9.2	1. Update JK_module_Mesh-Get_3D_data module workflow.
-				2. Imgen SDXL API workflow bug fixed.
-				3. Add checkpoint version flux API workflows.
-				4. Add image grid API workflows.
+							2. Imgen SDXL API workflow bug fixed.
+							3. Add checkpoint version flux API workflows.
+							4. Add image grid API workflows.
 	- 2025-02-20 - v1.9.3	1. Update IPAdapter nodes along with the Main branch.
-				2. Add Discord server.
+							2. Add Discord server.
 	- 2025-02-24 - v1.9.4	1. Update Mesh-Get 3D data workflow along with the Load 3D node.
-				2. Update auto-prompt workflows along with the Flux Prompt Generater node.
+							2. Update auto-prompt workflows along with the Flux Prompt Generater node.
 	- 2025-02-27 - v1.9.5	1. Add new parameters to SAI API nodes.
-				2. All SAI API nodes have been approved by [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) and been removed from replacement folder..
-				3. Update IPAdapter nodes along with the Main branch.
+							2. All SAI API nodes have been approved by [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API) and been removed from replacement folder..
+							3. Update IPAdapter nodes along with the Main branch.
 	- 2025-03-13 - v1.9.6	1. Save MVs/CCMs/Depths/Images in both png and exr for img2mesh workflows. Add Load png|exr switch.
-				2. Add Get OrbitPoses From List JK🐉 node. Replace Get CamPoses From List node of 3D Pack.
-				3. Fix HandFix workflow issue.
-				4. Update Get Mesh 3D Data workflow using the new Load 3D Node.
+							2. Add Get OrbitPoses From List JK🐉 node. Replace Get CamPoses From List node of 3D Pack.
+							3. Fix HandFix workflow issue.
+							4. Update Get Mesh 3D Data workflow using the new Load 3D Node.
 	- 2025-03-22 - v1.9.7	1. CR TriMesh Input Switch JK🐉 added for Hunyuan 3D Wrapper workflow.
-				2. Add Hunyuan 3D Wrapper img2mesh workflow.
-				3. Updage MV upscale and refine process for img2mesh workflow.
+							2. Add Hunyuan 3D Wrapper img2mesh workflow.
+							3. Updage MV upscale and refine process for img2mesh workflow.
 	- 2025-04-05 - v1.9.8	1. Cleaning up the codes.
-				2. UI for ComfyUI API released.
-				3. Update Seamless Texture workflow.
+							2. UI for ComfyUI API released.
+							3. Update Seamless Texture workflow.
 	- 2025-05-09 - v1.9.9	1. Add Florence 2 to Auto Prompt Workflow.
-				2. Add Segment Anything 2 to Detailer Workflow.
-				3. Add Flux Fill to Flux imgen group node and workflow.
-				4. Add RoughOutline_JK node to generate motion outline.
-				5. Add OpenDWPose_JK node to combine openpose and dwpose.
-				6. Add Wan Video main workflow and module workflows.
+							2. Add Segment Anything 2 to Detailer Workflow.
+							3. Add Flux Fill to Flux imgen group node and workflow.
+							4. Add RoughOutline_JK node to generate motion outline.
+							5. Add OpenDWPose_JK node to combine openpose and dwpose.
+							6. Add Wan Video main workflow and module workflows.
 	- 2025-05-11 - v1.9.10	1. Update Wan Video repaint workflows.
 	- 2025-05-12 - v1.9.11	1. Add Wan Video VACE ff/flf2vid repaint workflows.
 	- 2025-05-12 - v1.9.12	1. Update Wan Video VACE workflow.
 	- 2025-05-18 - v1.9.13	1. Update Wan Video VACE workflow.
 	- 2025-05-20 - v1.9.14	1. Add Trim Video Latent Node ot Native Wan VACE workflow. Update Native t2v and r2v Wan VACE workflow.
-				2. Remove Save Image and Save Webm nodes for Auto Mask | Auto Motion | Control Video Module workflow. Video Combine can save as both.
+							2. Remove Save Image and Save Webm nodes for Auto Mask | Auto Motion | Control Video Module workflow. Video Combine can save as both.
 	- 2025-05-29 - v1.9.15	1. Use 10 camera for Hy3D MV Sampling by default.
-				2. Add Mesh MV sample generation module workflow using IG2MV, MV Adapter and Stable X Delight.
-				3. Add Multi-GPU version of Wan Video Generation workflows.
-				4. Add the Wan Vace 14B fp16 model to the model list instruction.
+							2. Add Mesh MV sample generation module workflow using IG2MV, MV Adapter and Stable X Delight.
+							3. Add Multi-GPU version of Wan Video Generation workflows.
+							4. Add the Wan Vace 14B fp16 model to the model list instruction.
 	- 2025-06-02 - v1.9.16	1. Add Dilated ControlNet for Wan Video t2v workflows.
-				2. Add Canny & HED Control Video generation methods for Dilated ControlNet.
-				3. Add Save|Load StringListToJSON nodes to save|load ATI Trajectory presets.
-				4. Add ATI Trajectory generation method to Video-Auto Motion module.
-				5. Add Wan Video ATI Trajectory ff2vid workflow.
-				6. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
-				7. Add Multi-GPU version of Flux Image Generation workflow.
+							2. Add Canny & HED Control Video generation methods for Dilated ControlNet.
+							3. Add Save|Load StringListToJSON nodes to save|load ATI Trajectory presets.
+							4. Add ATI Trajectory generation method to Video-Auto Motion module.
+							5. Add Wan Video ATI Trajectory ff2vid workflow.
+							6. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
+							7. Add Multi-GPU version of Flux Image Generation workflow.
 	- 2025-06-15 - v1.9.17	1. Find a workaround to recreate all of my original Group Nodes for `comfyui-frontend-package>=1.16.0`. [All Grp Nodes-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
-				2. Seperate all workflows into two versions: `comfyui-frontend-package<=1.15.13` & `comfyui-frontend-package>=1.16.0`. Workflows for `comfyui-frontend-package<=1.15.13` are moved to the subfolder with a suffix name `~frontend-1.15.13`, such as `ComfyUI_~frontend-1.15.13` and `Krita_~frontend-1.15.13_v1.19.16`.
-				3. API workflows are separated into two versions: one for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the other for `ComfyUI-JakeUpgrade v1.9.17 or later`. API Workflows for `ComfyUI-JakeUpgrade v1.9.16 or earlier` are moved to the subfolder with a suffix name `~v1.9.16`, such as `ComfyUI_~frontend-1.15.13\API_~v1.9.16` and `Krita_~frontend-1.15.13_v1.19.16`.
-				4. Cleanup and rearrange the codes, and press Deprecated and Experimental to distinguish.
-				5. Remove java script.
-				6. Re-write Lora | ControlNet | Embedding nodes without java script control.
+							2. Seperate all workflows into two versions: `comfyui-frontend-package<=1.15.13` & `comfyui-frontend-package>=1.16.0`. Workflows for `comfyui-frontend-package<=1.15.13` are moved to the subfolder with a suffix name `~frontend-1.15.13`, such as `ComfyUI_~frontend-1.15.13` and `Krita_~frontend-1.15.13_v1.19.16`.
+							3. API workflows are separated into two versions: one for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the other for `ComfyUI-JakeUpgrade v1.9.17 or later`. API Workflows for `ComfyUI-JakeUpgrade v1.9.16 or earlier` are moved to the subfolder with a suffix name `~v1.9.16`, such as `ComfyUI_~frontend-1.15.13\API_~v1.9.16` and `Krita_~frontend-1.15.13_v1.19.16`.
+							4. Cleanup and rearrange the codes, and press Deprecated and Experimental to distinguish.
+							5. Remove java script.
+							6. Re-write Lora | ControlNet | Embedding nodes without java script control.
 	- 2025-06-16 - v1.9.18	1. Fix Krita Upscale and Refine workflows.
 	- 2025-06-16 - v1.9.19	1. Update Wan Video workflows using v1.6.0 Group Nodes.
 	- 2025-07-30 - v1.9.20	1. Integrate Hunyuan3D 2.1 Mesh Reconstruction + De-lighted MVs Generation + PBR Texture Baking features to img2mesh workflow.
-				2. Add "Hy3D Cam Config 20to21 JK🐉" node.
+							2. Add "Hy3D Cam Config 20to21 JK🐉" node.
 
 </details>
 
@@ -207,6 +227,14 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 20. Add Ksampler Adv Parameters Default JK🐉 node and 🐉 JK:::KSampler (High+Low) Group Node for Wan2.2.
 21. Fix Switch(Any) node output datatype error in all workflows.
 22. Update Refine Common Group Node for all workflows (ComfyUI frontend 1.23.4 or earlier).
+
+- 2025-08-21 - v2.0.1
+1. Add conditioning combine and Vace to Video nodes for Wan Phatom workflows.
+2. Load String List From JSON JK🐉 node support both string list and JSON object.
+3. Add Wan Wrapper Multitalk + Vace workflow.
+4. Share Multitalk and Infinite talk workflows.
+5. Add Wan t2v Fantasy Talking | Multitalk | Infinite talk workflows.
+6. Add Wan wrapper ff2v Fantasy Portrait (+ Multitalk | Infinite talk) workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -245,26 +273,6 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 > [!NOTE]
 > - Files in the replacement folder need to be updated by hand if needed.
 
-## Video Introduction
-- Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
-- Wan Video update 1(multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
-- Wan Video update 2(Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): WIP
-- img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
-- img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
-- img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
-- 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) | [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
-- txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
-- txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) | [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
-- txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) | [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
-- Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) | [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
-- Prompts Switch: [Youtube](https://youtu.be/M8lVr1lP82U) | [Bilibili](https://www.bilibili.com/video/BV1ZRNwerEev/)
-- prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) | [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
-- inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) | [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
-- img2mesh workflow: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
-- 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
-- 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
-- Seamless Texture: [Youtube](https://youtu.be/ExPUbiRkJo0) | [Bilibili](https://www.bilibili.com/video/BV1UZ42187Gq/)
-
 ## WAN Video Eco
 
 | Features | Function | Usage |
@@ -288,6 +296,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 | [NAG](https://chendaryen.github.io/NAG.github.io/) | enhancement | ~ |
 | [TCFG](https://huggingface.co/papers/2503.18137) | enhancement | ~ |
 | [RAAG](https://arxiv.org/abs/2508.03442) | enhancement | ~ |
+| [Bidirectional Sampling](https://github.com/ff2416/WanFM) | enhancement | ~ |
 | [Loop](https://github.com/YisuiTT/Mobius/) | loop video | ~ |
 | [RIFLEx](https://github.com/thu-ml/RIFLEx) | long video | ~ |
 | [Context Window](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) | long & loop video | ~ |
@@ -329,14 +338,16 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 | MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | main model | v2v |
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v |
+| Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v |
 | Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v |
+| MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | module model | ff2v |
 | *control* | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v |
 | Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v |
 | Tile lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/tile) | control lora | v2v |
 | Dilated ControlNet [2.2](https://huggingface.co/collections/TheDenk/wan22-controlnets-688b754ca3ee3bc7b34253bf) [2.1](https://github.com/TheDenk/wan2.1-dilated-controlnet) | controlnet | t2v v2v |
-| Uni3C* [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | t2v ff2v v2v |
-| RealisDance* [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | t2v ff2v v2v |
+| Uni3C* [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | ff2v |
+| RealisDance* [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | ff2v |
 
 ## JakeUpgrade Workflow
 
