@@ -236,6 +236,10 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 5. Add Wan t2v Fantasy Talking | Multitalk | Infinite talk workflows.
 6. Add Wan wrapper ff2v Fantasy Portrait (+ Multitalk | Infinite talk) workflow.
 
+- 2025-08-21 - v2.0.2
+1. Add FUN Inp long video Wan workflow.
+2. Fix Vace long video Wan workflows.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -391,6 +395,8 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_workflow_Video-Wan__long_VACE_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_VACE_mGPU.json)
 - [JK_workflow_Video-Wan__long_SkyreelDF](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_SkyreelDF.json)
 - [JK_workflow_Video-Wan__long_SkyreelDF_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_SkyreelDF_mGPU.json)
+- [JK_workflow_Video-Wan__long_FUN](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_FUN.json)
+- [JK_workflow_Video-Wan__long_FUN_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_FUN_mGPU.json)
 - [JK_workflow_Video-FramePack](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack.json)
 - [JK_workflow_Video-FramePack_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack_mGPU.json)
   
@@ -788,6 +794,39 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 </details>
 
 <details>
+<summary><b>Group Nodes `comfyui-frontend-package>=1.16.0` or Subgraphs `comfyui-frontend-package>=1.24.0`</b></summary>
+
+	Tools
+		JK🐉:::Image RemBG
+		JK🐉:::Image Crop by Mask
+		JK🐉:::Image Crop by Mask and Resize
+		JK🐉:::Image Resize
+		JK🐉:::Image Stitch by Mask
+		JK🐉:::Latent Crop by Mask
+		JK🐉:::Latent Crop by Mask and Resize
+		JK🐉:::Latent Resize
+		JK🐉:::Latent Stitch by Mask
+	Sampler
+		JK🐉::Concept
+		JK🐉::Flux KSampler
+		JK🐉::Flux KSampler Adv
+		JK🐉::Variation Ksampler
+		JK🐉:::KSampler (High+Low)
+	Workflow
+		JK🐉:::Image Gen Common
+		JK🐉:::Image Gen Common Adv
+		JK🐉:::Image Gen Flux
+		JK🐉:::Image Gen Flux Adv
+		JK🐉:::Image Gen SD15
+		JK🐉:::Image Gen SD15 Adv
+		JK🐉:::Image Gen SD3
+		JK🐉:::Image Gen SD3 Adv
+		JK🐉:::Image Gen SDXL
+		JK🐉:::Image Gen SDXL Adv
+		JK🐉:::Image Refine Common
+</details>
+
+<details>
 <summary><b>Group Nodes `comfyui-frontend-package<=1.15.13`</b></summary>
 
 	Tools
@@ -845,39 +884,6 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		JK🐉::Outpaint Latent
 		JK🐉::Outpaint Checkpoint
 		JK🐉::Outpaint ControlNet
-</details>
-
-<details>
-<summary><b>Group Nodes `comfyui-frontend-package>=1.16.0` or Subgraphs `comfyui-frontend-package>=1.24.0`</b></summary>
-
-	Tools
-		JK🐉:::Image RemBG
-		JK🐉:::Image Crop by Mask
-		JK🐉:::Image Crop by Mask and Resize
-		JK🐉:::Image Resize
-		JK🐉:::Image Stitch by Mask
-		JK🐉:::Latent Crop by Mask
-		JK🐉:::Latent Crop by Mask and Resize
-		JK🐉:::Latent Resize
-		JK🐉:::Latent Stitch by Mask
-	Sampler
-		JK🐉::Concept
-		JK🐉::Flux KSampler
-		JK🐉::Flux KSampler Adv
-		JK🐉::Variation Ksampler
-		JK🐉:::KSampler (High+Low)
-	Workflow
-		JK🐉:::Image Gen Common
-		JK🐉:::Image Gen Common Adv
-		JK🐉:::Image Gen Flux
-		JK🐉:::Image Gen Flux Adv
-		JK🐉:::Image Gen SD15
-		JK🐉:::Image Gen SD15 Adv
-		JK🐉:::Image Gen SD3
-		JK🐉:::Image Gen SD3 Adv
-		JK🐉:::Image Gen SDXL
-		JK🐉:::Image Gen SDXL Adv
-		JK🐉:::Image Refine Common
 </details>
 
 ## Reference Custom Nodes
