@@ -1189,6 +1189,17 @@ class LoadStringListFromJSON_JK:
                 with open(file_path, 'r') as file:
                     str_lists = json.load(file) # json.load() 返回的是Python对象
                 
+                # 处理第一种格式：如果它是字符串列表，尝试将每个字符串解析为JSON
+                if isinstance(str_lists, list) and all(isinstance(item, str) for item in str_lists):
+                    try:
+                        parsed_list = []
+                        for s in str_lists:
+                            parsed_list.append(json.loads(s))
+                        str_lists = parsed_list
+                    except json.JSONDecodeError:
+                        # 如果解析失败，保持原样（可能是其他格式）
+                        pass
+                
                 # 更新缓存
                 self._cached_file_path = file_path
                 self._cached_file_hash = current_file_hash
@@ -1214,7 +1225,7 @@ class LoadStringListFromJSON_JK:
         
         # 5. 返回结果
         if self._cached_data is not None:
-            return (self._cached_data,)
+            return (json.dumps(self._cached_data),)
         else:
             return ("",)
 
