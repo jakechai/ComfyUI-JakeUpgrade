@@ -240,6 +240,12 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 1. Add FUN Inp long video Wan workflow.
 2. Fix Vace long video Wan workflows.
 
+- 2025-08-24 - v2.0.3
+1. Add ff VACE long video solution.
+2. Add v2v refinment using i2v main model.
+3. Add v2v lip sync using i2v main model.
+4. Add v2v face sway using Skyreel A2 | MAGREF.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
