@@ -18,7 +18,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 ## Video Introduction
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1(multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
-- Wan Video update 2(Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): WIP
+- Wan Video update 2(Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
 - img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
@@ -241,10 +241,14 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 2. Fix Vace long video Wan workflows.
 
 - 2025-08-24 - v2.0.3
-1. Add ff VACE long video solution.
+1. Add ff2v VACE long video solution using Context Options.
 2. Add v2v refinment using i2v main model.
 3. Add v2v lip sync using i2v main model.
-4. Add v2v face sway using Skyreel A2 | MAGREF.
+4. Add v2v face swap using Skyreel A2 | MAGREF.
+
+- 2025-09-02 - v2.0.4
+1. Update ff2v VACE long video solution using Context Options, named VACE keyframe2v.
+2. Update VACE workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
