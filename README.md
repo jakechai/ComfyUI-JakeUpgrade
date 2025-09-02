@@ -5,7 +5,7 @@ Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
 > [!NOTE]
-> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17.0 and depprecats group node totally in v1.24.0. If you update your ComfyUI to v0.3.49, Comfyui frontend v 1.24.4 will be installed, which will cause group node running error. At the meantime, they released the official version of [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), the replacement of Group Node. I've separated two versions of my group nodes as backup and memory: one is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended), and the other is for `1.23.4>=comfyui-frontend-package>=1.16.0` (recommended). [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json). If you want to use the workflows using Group Nodes especially the API workflow, downgrade your frontend to v1.23.4: `"...\python.exe" -m pip install comfyui-frontend-package==1.23.4` and choose ComfyUI v0.3.48(optional).
+> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17.0 and depprecats group node totally in v1.24.0. If you update your ComfyUI to v0.3.49, Comfyui frontend v 1.24.4 will be installed, which will cause group node running error. At the meantime, they released the official version of [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), the replacement of Group Node. I've separated two versions of my group nodes as backup and memory: one is for `1.23.4>=comfyui-frontend-package>=1.16.0`, and the other is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended). [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json). If you want to use the workflows using Group Nodes especially the API workflow, downgrade your frontend to v1.23.4: `"...\python.exe" -m pip install comfyui-frontend-package==1.23.4` and choose ComfyUI v0.3.48(optional).
 > - ComfyUI frontend breaks the Impact-Pack Switch(Any) node. It is still functional, but can not be created. This issue has been fixed in the latest Impact-Pack version `>=v8.12`, but it only supports `comfyui-frontend-package>=1.16.9`. When using Group Nodes with `comfyui-frontend-package<=1.15.13`, it's recommended to switch Impact-Pack to `v8.8.1` in the ComfyUI Manager. 
 > - API workflows are separated into three versions: the first is for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the second is for `ComfyUI-JakeUpgrade v1.9.17~v1.9.20`, the third is for `ComfyUI-JakeUpgrade v2.0.0 or later`. When editing the first one, it is recommended to switch to `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` and `comfyui-frontend-package<=1.15.13`.
 
@@ -201,32 +201,30 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	- 2025-06-16 - v1.9.19	1. Update Wan Video workflows using v1.6.0 Group Nodes.
 	- 2025-07-30 - v1.9.20	1. Integrate Hunyuan3D 2.1 Mesh Reconstruction + De-lighted MVs Generation + PBR Texture Baking features to img2mesh workflow.
 							2. Add "Hy3D Cam Config 20to21 JK🐉" node.
+	- 2025-08-14 - v2.0.0	1. Create Subgraphs based on my Group Nodes and recreate all workflows using Subgraph.
+							2. Move all latest workflows using Group Node to subfolder named `ComfyUI_~frontend-1.23.4` or `Krita_~frontend-1.23.4_v1.19.20`.
+							3. Add LoRA Stack Model Only JK🐉, Apply LoRA Stack Model Only JK🐉.
+							4. Add Set LoRA | NAG | Set Radial Attention | FreeInit features to all WAN video gen workflows.
+							5. Add native VACE ff2v | VACE flf2v | VACE v2v | ATI ff2v | Fun control camera ff2v | Skyreel A2 ref2v | Phantom ref2v workflows.
+							6. Add native and wrapper Wan MAGREF workflows.
+							7. Update ref2v (subject2v) Wan workflows.
+							8. Add MultiTalk ff2v and v2v Wan Wrapper workflows.
+							9. Add Multitalk | Fantasy Talking v2v lip sync Wan Wrapper workflows.
+							10. Add Uni3C Camera Control to ff2v Wan Wrapper workflows.
+							11. Add MiniMax Remover v2v Wan Wrapper workflow.
+							12. Add Stand-In ref2v Wan wrapper workflows.
+							13. Add VACE | Phantom | Stand-In ref+v2v Face Swap workflows.
+							14. Add Create Loop Schedule List JK🐉 node.
+							15. Update SkyreelV2 DF long video Wan Wrapper workflow.
+							16. Add VACE long video Wan workflow.
+							17. Use the Torch Compile Model Wan Video v2 node for Native Wan Video workflows.
+							18. Set minimum resolution of Crop by Mask to 64.
+							19. Refine Common Group Node issue fixed.
+							20. Add Ksampler Adv Parameters Default JK🐉 node and 🐉 JK:::KSampler (High+Low) Group Node for Wan2.2.
+							21. Fix Switch(Any) node output datatype error in all workflows.
+							22. Update Refine Common Group Node for all workflows (ComfyUI frontend 1.23.4 or earlier).
 
 </details>
-
-- 2025-08-14 - v2.0.0
-1. Create Subgraphs based on my Group Nodes and recreate all workflows using Subgraph.
-2. Move all latest workflows using Group Node to subfolder named `ComfyUI_~frontend-1.23.4` or `Krita_~frontend-1.23.4_v1.19.20`.
-3. Add LoRA Stack Model Only JK🐉, Apply LoRA Stack Model Only JK🐉.
-4. Add Set LoRA | NAG | Set Radial Attention | FreeInit features to all WAN video gen workflows.
-5. Add native VACE ff2v | VACE flf2v | VACE v2v | ATI ff2v | Fun control camera ff2v | Skyreel A2 ref2v | Phantom ref2v workflows.
-6. Add native and wrapper Wan MAGREF workflows.
-7. Update ref2v (subject2v) Wan workflows.
-8. Add MultiTalk ff2v and v2v Wan Wrapper workflows.
-9. Add Multitalk | Fantasy Talking v2v lip sync Wan Wrapper workflows.
-10. Add Uni3C Camera Control to ff2v Wan Wrapper workflows.
-11. Add MiniMax Remover v2v Wan Wrapper workflow.
-12. Add Stand-In ref2v Wan wrapper workflows.
-13. Add VACE | Phantom | Stand-In ref+v2v Face Swap workflows.
-14. Add Create Loop Schedule List JK🐉 node.
-15. Update SkyreelV2 DF long video Wan Wrapper workflow.
-16. Add VACE long video Wan workflow.
-17. Use the Torch Compile Model Wan Video v2 node for Native Wan Video workflows.
-18. Set minimum resolution of Crop by Mask to 64.
-19. Refine Common Group Node issue fixed.
-20. Add Ksampler Adv Parameters Default JK🐉 node and 🐉 JK:::KSampler (High+Low) Group Node for Wan2.2.
-21. Fix Switch(Any) node output datatype error in all workflows.
-22. Update Refine Common Group Node for all workflows (ComfyUI frontend 1.23.4 or earlier).
 
 - 2025-08-21 - v2.0.1
 1. Add conditioning combine and Vace to Video nodes for Wan Phatom workflows.
@@ -249,6 +247,10 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - 2025-09-02 - v2.0.4
 1. Update ff2v VACE long video solution using Context Options, named VACE keyframe2v.
 2. Update VACE workflow.
+
+- 2025-09-03 - v2.0.5
+1. Fix error issue in all latest workflows using Subgraph: KJ Get node | rgthree Seed node will cause an error if it is in bypass state and is linked to a Subgraph.
+2. Add Wan t2v MTVCrafter workflow. Add Wan ff2v MTVCrafter (+Uni3C) workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
