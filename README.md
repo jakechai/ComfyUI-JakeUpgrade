@@ -17,24 +17,24 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 ## Video Introduction
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
-- Wan Video update 1(multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
-- Wan Video update 2(Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
-- Wan Video update 3(MTV Crafter | VACE keyframe2long-vid): WIP
+- Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
+- Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
+- Wan Video update 3 (MTV Crafter | VACE keyframe2long-vid | ff2long-vid): WIP
 - img2mesh workflows: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - img2mesh 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - img2mesh 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
 - img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
-- 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) | [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
-- txt2img&img2img workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
-- txt2img&img2img SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) | [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
-- txt2img&img2img API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) | [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
-- Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) | [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
-- Prompts Switch: [Youtube](https://youtu.be/M8lVr1lP82U) | [Bilibili](https://www.bilibili.com/video/BV1ZRNwerEev/)
-- prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) | [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
-- inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) | [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
-- Seamless Texture: [Youtube](https://youtu.be/ExPUbiRkJo0) | [Bilibili](https://www.bilibili.com/video/BV1UZ42187Gq/)
+- imgen workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
+- imgen SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) | [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
+- imgen API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) | [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
+- imgen 1.8.x Update(Group Nodes | Detail Daemon | Crop and Stitch | Stop At Clip Layer  | ControlNet Efficiency Mask | ControlNet Loader | "None" selection for IPAdapter Loader| Imgen workflows | API workflows | Krita workflows | Get Mesh 3D data): [Youtube](https://youtu.be/pwHsGnn0zsg) | [Bilibili](https://www.bilibili.com/video/BV1J3cuenEE2/)
+- imgen Group Nodes - Image Generation and Krita workflow: [Youtube](https://youtu.be/tOy0ve2cgaQ) | [Bilibili](https://www.bilibili.com/video/BV1GXUVYRE2k/)
+- imgen Prompts Switch: [Youtube](https://youtu.be/M8lVr1lP82U) | [Bilibili](https://www.bilibili.com/video/BV1ZRNwerEev/)
+- imgen prompt generation workflow: [Youtube](https://youtu.be/h_2PimL3iXY) | [Bilibili](https://www.bilibili.com/video/BV1FZp4ebEjK/)
+- imgen inpaint workflow: [Youtube](https://www.youtube.com/watch?v=A9nABNizMdY) | [Bilibili](https://www.bilibili.com/video/BV1wd4ge8EQf/)
+- imgen Seamless Texture: [Youtube](https://youtu.be/ExPUbiRkJo0) | [Bilibili](https://www.bilibili.com/video/BV1UZ42187Gq/)
 
 ## Changelog
 <details>
@@ -224,30 +224,22 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 							20. Add Ksampler Adv Parameters Default JK🐉 node and 🐉 JK:::KSampler (High+Low) Group Node for Wan2.2.
 							21. Fix Switch(Any) node output datatype error in all workflows.
 							22. Update Refine Common Group Node for all workflows (ComfyUI frontend 1.23.4 or earlier).
+	- 2025-08-21 - v2.0.1	1. Add conditioning combine and Vace to Video nodes for Wan Phatom workflows.
+							2. Load String List From JSON JK🐉 node support both string list and JSON object.
+							3. Add Wan Wrapper Multitalk + Vace workflow.
+							4. Share Multitalk and Infinite talk workflows.
+							5. Add Wan t2v Fantasy Talking | Multitalk | Infinite talk workflows.
+							6. Add Wan wrapper ff2v Fantasy Portrait (+ Multitalk | Infinite talk) workflow.
+	- 2025-08-21 - v2.0.2	1. Add FUN Inp long video Wan workflow.
+							2. Fix Vace long video Wan workflows.
+	- 2025-08-24 - v2.0.3	1. Add ff2v VACE long video solution using Context Options.
+							2. Add v2v refinment using i2v main model.
+							3. Add v2v lip sync using i2v main model.
+							4. Add v2v face swap using Skyreel A2 | MAGREF.
+	- 2025-09-02 - v2.0.4	1. Update ff2v VACE long video solution using Context Options, named VACE keyframe2v.
+							2. Update VACE workflow.
 
 </details>
-
-- 2025-08-21 - v2.0.1
-1. Add conditioning combine and Vace to Video nodes for Wan Phatom workflows.
-2. Load String List From JSON JK🐉 node support both string list and JSON object.
-3. Add Wan Wrapper Multitalk + Vace workflow.
-4. Share Multitalk and Infinite talk workflows.
-5. Add Wan t2v Fantasy Talking | Multitalk | Infinite talk workflows.
-6. Add Wan wrapper ff2v Fantasy Portrait (+ Multitalk | Infinite talk) workflow.
-
-- 2025-08-21 - v2.0.2
-1. Add FUN Inp long video Wan workflow.
-2. Fix Vace long video Wan workflows.
-
-- 2025-08-24 - v2.0.3
-1. Add ff2v VACE long video solution using Context Options.
-2. Add v2v refinment using i2v main model.
-3. Add v2v lip sync using i2v main model.
-4. Add v2v face swap using Skyreel A2 | MAGREF.
-
-- 2025-09-02 - v2.0.4
-1. Update ff2v VACE long video solution using Context Options, named VACE keyframe2v.
-2. Update VACE workflow.
 
 - 2025-09-03 - v2.0.5
 1. Fix error issue in all the latest workflows using Subgraph: KJ Get node | rgthree Seed node will cause an error if it is in bypass state and is linked to a Subgraph.
@@ -257,6 +249,10 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 1. Fix Wan Model Loader vace model slot renaming issue in all the latest workflows using Subgraph.
 2. Add Wan t2v MTVCrafter + multitalk | infinite talk workflow. Add Wan ff2v MTVCrafter (+ fantasy portrait) + multitalk | infinite talk workflow.
 3. Add Wan VACE keyframe2v long video gen workflow.
+
+- 2025-09-05 - v2.0.7
+1. Add Wan ff2v long video gen workflow.
+2. Added a "Color Match" node to all long video generation workflows as a temporary method to maintain color consistency.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -418,6 +414,8 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_workflow_Video-Wan__long_SkyreelDF_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_SkyreelDF_mGPU.json)
 - [JK_workflow_Video-Wan__long_FUN](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_FUN.json)
 - [JK_workflow_Video-Wan__long_FUN_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_FUN_mGPU.json)
+- [JK_workflow_Video-Wan__long_ff](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_ff.json)
+- [JK_workflow_Video-Wan__long_ff_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_ff_mGPU.json)
 - [JK_workflow_Video-FramePack](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack.json)
 - [JK_workflow_Video-FramePack_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack_mGPU.json)
   
