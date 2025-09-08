@@ -19,7 +19,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
-- Wan Video update 3 (MTV Crafter | VACE keyframe2long-vid | ff2long-vid): WIP
+- Wan Video update 3 (i2v no-low-step-lora issue | VACE keyframe2long-vid | ff2long-vid | MTV Crafter): WIP
 - img2mesh workflows: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - img2mesh 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - img2mesh 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
@@ -252,7 +252,10 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 - 2025-09-05 - v2.0.7
 1. Add Wan ff2v long video gen workflow.
-2. Added a "Color Match" node to all long video generation workflows as a temporary method to maintain color consistency.
+2. Add a "Color Match" node to all long video generation workflows (except VACE keyframe2long-vid) as a temporary method to maintain color consistency.
+
+- 2025-09-08 - v2.0.8
+1. Add v1.1.8 long video generation workflows for Wan Video Wrapper v1.1.8 to achieve better color consistency.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -380,6 +383,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 > - You need `comfyui-frontend-package<=1.15.13` and `Impact Pact<=v8.8.1` to run [legacy ComfyUI Main & Module workflows using Group Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13).
 > - You need `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy ComfyUI API dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/API_~v1.9.20).
 > - You need `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy ComfyUI API dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/API_~v1.9.16).
+> - You need Wan Video Wrapper v1.1.8 to run Wan__Long_v1.1.8 workflows.
 
 #### Main
 - [JK_workflow_imgen_SD15](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_imgen_SD15.json)
@@ -416,6 +420,16 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_workflow_Video-Wan__long_FUN_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_FUN_mGPU.json)
 - [JK_workflow_Video-Wan__long_ff](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_ff.json)
 - [JK_workflow_Video-Wan__long_ff_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_ff_mGPU.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_VACE](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_VACE.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_VACE_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_VACE_mGPU.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_VACE_kf](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_VACE_kf.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_VACE_kf_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_VACE_v1.1.8_kf_mGPU.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_SkyreelDF](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_SkyreelDF.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_SkyreelDF_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_SkyreelDF_mGPU.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_FUN](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_FUN.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_FUN_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_FUN_mGPU.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_ff](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_ff.json)
+- [JK_workflow_Video-Wan__long_v1.1.8_ff_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-Wan__long_v1.1.8_ff_mGPU.json)
 - [JK_workflow_Video-FramePack](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack.json)
 - [JK_workflow_Video-FramePack_mGPU](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main/JK_workflow_Video-FramePack_mGPU.json)
   
