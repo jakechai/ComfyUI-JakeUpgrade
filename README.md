@@ -238,17 +238,13 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 							4. Add v2v face swap using Skyreel A2 | MAGREF.
 	- 2025-09-02 - v2.0.4	1. Update ff2v VACE long video solution using Context Options, named VACE keyframe2v.
 							2. Update VACE workflow.
+	- 2025-09-03 - v2.0.5	1. Fix error issue in all the latest workflows using Subgraph: KJ Get node | rgthree Seed node will cause an error if it is in bypass state and is linked to a Subgraph.
+							2. Add Wan t2v MTVCrafter workflow. Add Wan ff2v MTVCrafter (+Uni3C) workflow.
+	- 2025-09-04 - v2.0.6	1. Fix Wan Model Loader vace model slot renaming issue in all the latest workflows using Subgraph.
+							2. Add Wan t2v MTVCrafter + multitalk | infinite talk workflow. Add Wan ff2v MTVCrafter (+ fantasy portrait) + multitalk | infinite talk workflow.
+							3. Add Wan VACE keyframe2v long video gen workflow.
 
 </details>
-
-- 2025-09-03 - v2.0.5
-1. Fix error issue in all the latest workflows using Subgraph: KJ Get node | rgthree Seed node will cause an error if it is in bypass state and is linked to a Subgraph.
-2. Add Wan t2v MTVCrafter workflow. Add Wan ff2v MTVCrafter (+Uni3C) workflow.
-
-- 2025-09-04 - v2.0.6
-1. Fix Wan Model Loader vace model slot renaming issue in all the latest workflows using Subgraph.
-2. Add Wan t2v MTVCrafter + multitalk | infinite talk workflow. Add Wan ff2v MTVCrafter (+ fantasy portrait) + multitalk | infinite talk workflow.
-3. Add Wan VACE keyframe2v long video gen workflow.
 
 - 2025-09-05 - v2.0.7
 1. Add Wan ff2v long video gen workflow.
@@ -256,6 +252,9 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 - 2025-09-08 - v2.0.8
 1. Add v1.1.8 long video generation workflows for Wan Video Wrapper v1.1.8 to achieve better color consistency.
+
+- 2025-09-09 - v2.0.9
+1. Add flf2v method to ff | FUN | VACE long video generation workflows.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
