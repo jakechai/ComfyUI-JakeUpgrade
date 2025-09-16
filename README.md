@@ -243,25 +243,24 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	- 2025-09-04 - v2.0.6	1. Fix Wan Model Loader vace model slot renaming issue in all the latest workflows using Subgraph.
 							2. Add Wan t2v MTVCrafter + multitalk | infinite talk workflow. Add Wan ff2v MTVCrafter (+ fantasy portrait) + multitalk | infinite talk workflow.
 							3. Add Wan VACE keyframe2v long video gen workflow.
+	- 2025-09-05 - v2.0.7	1. Add Wan ff2v long video gen workflow.
+							2. Add a "Color Match" node to all long video generation workflows (except VACE keyframe2long-vid) as a temporary method to maintain color consistency.
+	- 2025-09-08 - v2.0.8	1. Add v1.1.8 long video generation workflows for Wan Video Wrapper v1.1.8 to achieve better color consistency.
+	- 2025-09-09 - v2.0.9	1. Add flf2v method to ff | FUN | VACE long video generation workflows.
 
 </details>
-
-- 2025-09-05 - v2.0.7
-1. Add Wan ff2v long video gen workflow.
-2. Add a "Color Match" node to all long video generation workflows (except VACE keyframe2long-vid) as a temporary method to maintain color consistency.
-
-- 2025-09-08 - v2.0.8
-1. Add v1.1.8 long video generation workflows for Wan Video Wrapper v1.1.8 to achieve better color consistency.
-
-- 2025-09-09 - v2.0.9
-1. Add flf2v method to ff | FUN | VACE long video generation workflows.
 
 - 2025-09-11 - v2.0.10
 1. Update Auto Motion Module workflow. Both VACE and ATI support multiple trajectories in one Spline Editor.
 
 - 2025-09-12 - v2.0.11
 1. Update WanVideo ImageToVideo Encode Node.
-2. Update Wan Eco Infomation.
+2. Update Wan Eco Information.
+
+- 2025-09-16 - v2.0.12
+1. Add QWen imgen subgraphs and workflows.
+2. Reduce and retain commonly used auto-prompt custom nodes.
+3. Remove Prompt Stylers preset files.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -284,12 +283,11 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 ## Copy files in the replacement folder(optional)
 
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` or  `__JK_1_15_13.pack`(for `comfyui-frontend-package<=1.15.13`) to `...\ComfyUI\user\default\ComfyUI-Manager\components` for saving all JK Group Nodes within each workflow file.
-- [Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers) : Copy and replace files to `custom_nodes\ComfyUi_PromptStylers` for new styles.
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus) : (Workaround before IPAdapter approves my pull request) Copy and replace files to `custom_nodes\ComfyUI_IPAdapter_plus` for better API workflow control by adding "None" selection.
 
 > [!NOTE]
-> - Group Nodes can be copied and pasted between workflows in the latest ComfyUI. See details in my Video Introduction of Group Nodes.
-> - For all JK Group Nodes, load [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json) (for `comfyui-frontend-package<=1.15.13`).
+> - Subraphs | Group Nodes can be copied and pasted between workflows in the ComfyUI. See details in my Video Introduction of Subraphs | Group Nodes.
+> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json) (for `comfyui-frontend-package<=1.15.13`).
 > - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded them.
 
 ## Update
@@ -623,47 +621,51 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 ## Required Custom Nodes
 
-### Common & ComfyUI API
+### Common
+- [Manager](https://github.com/Comfy-Org/ComfyUI-Manager)
+- [Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
+- [Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
+- [rgthree](https://github.com/rgthree/rgthree-comfy)
+- [ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
+- [Detail Daemon](https://github.com/Jonseed/ComfyUI-Detail-Daemon)
+- [JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
 
-- (Common & API)[ControlNet AUX](https://github.com/Fannovel16/comfyui_controlnet_aux)
-- (Common & API)[Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
-- (Common & API)[Inspire Pack](https://github.com/ltdrdata/ComfyUI-Inspire-Pack)
-- (Common & API)[IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
-- (Common & API)[KJ Nodes](https://github.com/kijai/ComfyUI-KJNodes)
-- (Common & API)[Essentials](https://github.com/cubiq/ComfyUI_essentials)
-- (Common & API)[ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
-- (Common & API)[Detail Daemon](https://github.com/Jonseed/ComfyUI-Detail-Daemon)
-- (Common & API)[Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
-- (Common & API)[JakeUpgrade](https://github.com/jakechai/ComfyUI-JakeUpgrade)
-- (Common)[rgthree](https://github.com/rgthree/rgthree-comfy)
-- (Common)[pythongosssss](https://github.com/pythongosssss/ComfyUI-Custom-Scripts)
-- (Common)[Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
-- (Common)[ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
+### ComfyUI API
+- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
+- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
+- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 
 ### imgen workflow
-- (auto prompt)[Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
-- (auto prompt)[One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
-- (auto prompt)[Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers)
-- (auto prompt)[Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
-- (auto prompt)[Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
-- (auto prompt)[Merlin Magic Photo Prompter](https://github.com/Xclbr7/ComfyUI-Merlin)
-- (auto prompt)[WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
-- (auto prompt)[VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
-- (auto prompt)[IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
+- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
+- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
+- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
+- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
+- [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
+- (auto prompt)[One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
+- (auto prompt)[Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
+- (auto prompt)[Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
 - (refine)[Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - (detailer)[Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
 - (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - (detailer)[Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - (Seamless Texture)[Comfy mtb](https://github.com/melMass/comfy_mtb)
-- (GGUF)[GGUF](https://github.com/city96/ComfyUI-GGUF)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 - (legacy)[NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
 - (legacy)[ComfyUI Noise](https://github.com/BlenderNeko/ComfyUI_Noise)
 - (legacy)[StyleAligned](https://github.com/brianfitzgerald/style_aligned_comfy)
+- (legacy)[WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
+- (legacy)[Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
+- (legacy)[Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers)
+- (legacy)[Merlin Magic Photo Prompter](https://github.com/Xclbr7/ComfyUI-Merlin)
+- (legacy)[VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
+- (legacy)[IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
 
 ### img2mesh workflow
+- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
+- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
+- [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [ComfyUI 3D Pack](https://github.com/MrForExample/ComfyUI-3D-Pack)
 - [ComfyUI Hunyuan3D Wrapper](https://github.com/kijai/ComfyUI-Hunyuan3DWrapper)
 - [ComfyUI Hunyuan3D 2.1 Wrapper](https://github.com/visualbruno/ComfyUI-Hunyuan3d-2-1)
@@ -678,14 +680,17 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [AnimateDiff](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
 - [Video Helper Suite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite)
 - [Frame Interpolation](https://github.com/Fannovel16/ComfyUI-Frame-Interpolation)
-- [Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - [Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
 - [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
-- (GGUF)[GGUF](https://github.com/city96/ComfyUI-GGUF)
+- [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
+- [Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 
 ### Krita workflow
+- [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
+- [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
+- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [Inpaint Nodes](https://github.com/Acly/comfyui-inpaint-nodes)
 - [Tooling Nodes](https://github.com/Acly/comfyui-tooling-nodes)
 
@@ -838,7 +843,43 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 </details>
 
 <details>
-<summary><b>Group Nodes `comfyui-frontend-package>=1.16.0` or Subgraphs `comfyui-frontend-package>=1.24.0`</b></summary>
+<summary><b>Subgraphs `comfyui-frontend-package>=1.24.0`</b></summary>
+
+	Tools
+		JK🐉:::Image RemBG
+		JK🐉:::Image Crop by Mask
+		JK🐉:::Image Crop by Mask and Resize
+		JK🐉:::Image Resize
+		JK🐉:::Image Stitch by Mask
+		JK🐉:::Latent Crop by Mask
+		JK🐉:::Latent Crop by Mask and Resize
+		JK🐉:::Latent Resize
+		JK🐉:::Latent Stitch by Mask
+	Sampler
+		JK🐉::Concept
+		JK🐉::Flux KSampler
+		JK🐉::Flux KSampler Adv
+		JK🐉::Variation Ksampler
+		JK🐉:::KSampler (High+Low)
+	Workflow
+		JK🐉:::Image Gen Common
+		JK🐉:::Image Gen Common Adv
+		JK🐉:::Image Gen Flux
+		JK🐉:::Image Gen Flux Adv
+		JK🐉:::Image Gen SD15
+		JK🐉:::Image Gen SD15 Adv
+		JK🐉:::Image Gen SD3
+		JK🐉:::Image Gen SD3 Adv
+		JK🐉:::Image Gen SDXL
+		JK🐉:::Image Gen SDXL Adv
+		JK🐉:::Image Refine Common
+		JK🐉:::Image Gen QWen
+		JK🐉:::Image Gen QWen Adv
+		JK🐉:::Image Gen QWen Edit
+</details>
+
+<details>
+<summary><b>Group Nodes `comfyui-frontend-package>=1.16.0`</b></summary>
 
 	Tools
 		JK🐉:::Image RemBG
