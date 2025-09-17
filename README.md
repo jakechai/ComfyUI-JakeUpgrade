@@ -262,6 +262,11 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 2. Reduce and retain commonly used auto-prompt custom nodes.
 3. Remove Prompt Stylers preset files.
 
+- 2025-09-17 - v2.0.13
+1. Add Flux Kontext | USO | USO Style | Redux | Redux Style subgraphs.
+2. Update QWen | Flux imgen workflows.
+3. Add image edit module workflow.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -451,6 +456,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [JK_module_00_AutoPrompt](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_00_AutoPrompt.json)
 - [JK_module_01_Image Generation](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_01_ImgGen.json)
 - [JK_module_01_Image Generation Adv](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_01_ImgGen_Adv.json)
+- [JK_module_02_Image Edit](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_02_ImgEdit.json)
 - [JK_module_04_Refine](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_04_Refine.json)
 - [JK_module_05_Upscale 1st](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_1st.json)
 - [JK_module_05_Upscale 2nd](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module/JK_module_05_Upscale_2nd.json)
@@ -878,6 +884,11 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		JK🐉:::Image Gen QWen
 		JK🐉:::Image Gen QWen Adv
 		JK🐉:::Image Gen QWen Edit
+		JK🐉:::Flux Kontext
+		JK🐉:::Flux Redux
+		JK🐉:::Flux Redux Style
+		JK🐉:::Flux USO
+		JK🐉:::Flux USO Style
 </details>
 
 <details>
