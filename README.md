@@ -4,11 +4,6 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).  
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
-> [!NOTE]
-> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17.0 and depprecats group node totally in v1.24.0. If you update your ComfyUI to v0.3.49, Comfyui frontend v 1.24.4 will be installed, which will cause group node running error. At the meantime, they released the official version of [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), the replacement of Group Node. I've separated two versions of my group nodes as backup and memory: one is for `1.23.4>=comfyui-frontend-package>=1.16.0`, and the other is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended). [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json). If you want to use the workflows using Group Nodes especially the API workflow, downgrade your frontend to v1.23.4: `"...\python.exe" -m pip install comfyui-frontend-package==1.23.4` and choose ComfyUI v0.3.48(optional).
-> - ComfyUI frontend breaks the Impact-Pack Switch(Any) node. It is still functional, but can not be created. This issue has been fixed in the latest Impact-Pack version `>=v8.12`, but it only supports `comfyui-frontend-package>=1.16.9`. When using Group Nodes with `comfyui-frontend-package<=1.15.13`, it's recommended to switch Impact-Pack to `v8.8.1` in the ComfyUI Manager. 
-> - API workflows are separated into three versions: the first is for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the second is for `ComfyUI-JakeUpgrade v1.9.17~v1.9.20`, the third is for `ComfyUI-JakeUpgrade v2.0.0 or later`. When editing the first one, it is recommended to switch to `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` and `comfyui-frontend-package<=1.15.13`.
-
 Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
 Please check the [video](https://youtu.be/eyjy10T201M).  
 <a href="https://youtu.be/eyjy10T201M" target="_blank">
@@ -247,15 +242,11 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 							2. Add a "Color Match" node to all long video generation workflows (except VACE keyframe2long-vid) as a temporary method to maintain color consistency.
 	- 2025-09-08 - v2.0.8	1. Add v1.1.8 long video generation workflows for Wan Video Wrapper v1.1.8 to achieve better color consistency.
 	- 2025-09-09 - v2.0.9	1. Add flf2v method to ff | FUN | VACE long video generation workflows.
+	- 2025-09-11 - v2.0.10	1. Update Auto Motion Module workflow. Both VACE and ATI support multiple trajectories in one Spline Editor.
+	- 2025-09-12 - v2.0.11	1. Update WanVideo ImageToVideo Encode Node.
+							2. Update Wan Eco Information.
 
 </details>
-
-- 2025-09-11 - v2.0.10
-1. Update Auto Motion Module workflow. Both VACE and ATI support multiple trajectories in one Spline Editor.
-
-- 2025-09-12 - v2.0.11
-1. Update WanVideo ImageToVideo Encode Node.
-2. Update Wan Eco Information.
 
 - 2025-09-16 - v2.0.12
 1. Add QWen imgen subgraphs and workflows.
@@ -266,6 +257,9 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 1. Add Flux Kontext | USO | USO Style | Redux | Redux Style subgraphs.
 2. Update QWen | Flux imgen workflows.
 3. Add image edit module workflow.
+
+- 2025-09-17 - v2.0.14
+1. Add Hunyuan Prompt Enhancer to imgen workflows.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -292,7 +286,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 
 > [!NOTE]
 > - Subraphs | Group Nodes can be copied and pasted between workflows in the ComfyUI. See details in my Video Introduction of Subraphs | Group Nodes.
-> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json) (for `comfyui-frontend-package<=1.15.13`).
+> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
 > - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded them.
 
 ## Update
@@ -390,6 +384,9 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 ### ComfyUI
 
 > [!NOTE]
+> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17.0 and depprecats group node totally in v1.24.0. If you update your ComfyUI to v0.3.49, Comfyui frontend v 1.24.4 will be installed, which will cause group node running error. At the meantime, they released the official version of [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), the replacement of Group Node. I've separated two versions of my group nodes as backup and memory: one is for `1.23.4>=comfyui-frontend-package>=1.16.0`, and the other is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended). [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json). If you want to use the workflows using Group Nodes especially the API workflow, downgrade your frontend to v1.23.4: `"...\python.exe" -m pip install comfyui-frontend-package==1.23.4` and choose ComfyUI v0.3.48(optional).
+> - ComfyUI frontend breaks the Impact-Pack Switch(Any) node. It is still functional, but can not be created. This issue has been fixed in the latest Impact-Pack version `>=v8.12`, but it only supports `comfyui-frontend-package>=1.16.9`. When using Group Nodes with `comfyui-frontend-package<=1.15.13`, it's recommended to switch Impact-Pack to `v8.8.1` in the ComfyUI Manager. 
+> - API workflows are separated into three versions: the first is for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the second is for `ComfyUI-JakeUpgrade v1.9.17~v1.9.20`, the third is for `ComfyUI-JakeUpgrade v2.0.0 or later`. When editing the first one, it is recommended to switch to `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` and `comfyui-frontend-package<=1.15.13`.
 > - You need `comfyui-frontend-package>=1.24.0` to use the latest workflows using Subgraph.
 > - ComfyUI API workflows are workflows created to allow other software to call ComfyUI, which include non-dev editable workflows and dev-for-call workflows, as well as python files with supporting parameters.
 > - Installing a separate version of ComfyUI to work with 3D Pack is recommended.   
@@ -650,6 +647,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
+- (auto prompt)[Hunyuan Prompt Enhancer]https://github.com/leeooo001/comfyui-Hunyuan-PromptEnhancer
 - (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
 - (auto prompt)[One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
 - (auto prompt)[Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
