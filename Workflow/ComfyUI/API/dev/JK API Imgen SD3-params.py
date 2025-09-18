@@ -4,6 +4,8 @@
 # ["2"]["inputs"]["clip_name3"] = 
 # ["4"]["inputs"]["custom_width"] = 
 # ["4"]["inputs"]["custom_height"] = 
+# cn effective mask
+# ["6:13"]["inputs"]["boolean_value"] = 
 # # positive l
 # ["6:14"]["inputs"]["clip_l"] = 
 # # positive g

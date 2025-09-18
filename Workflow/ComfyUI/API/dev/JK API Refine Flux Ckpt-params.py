@@ -1,5 +1,4 @@
 # ["1"]["inputs"]["ckpt_name"] = 
-# ["2"]["inputs"]["vae_name"] = 
 # ["3"]["inputs"]["image"] = 
 # # positive
 # ["4:9"]["inputs"]["string"] = 

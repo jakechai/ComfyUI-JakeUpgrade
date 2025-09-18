@@ -1,0 +1,371 @@
+{
+  "1": {
+    "inputs": {
+      "unet_name": "Flux\\bf\\flux1-dev.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "2": {
+    "inputs": {
+      "clip_name1": "t5xxl\\clip_l.safetensors",
+      "clip_name2": "t5xxl\\t5xxl_fp8_e4m3fn_scaled.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "3": {
+    "inputs": {
+      "vae_name": "flux\\ae.sft"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "4": {
+    "inputs": {
+      "clip_name": "Flux\\sigclip_vision_patch14_384.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "5": {
+    "inputs": {
+      "style_model_name": "flux1-redux-dev.safetensors"
+    },
+    "class_type": "StyleModelLoader",
+    "_meta": {
+      "title": "Load Style Model"
+    }
+  },
+  "9": {
+    "inputs": {
+      "image": "face12.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Style Image 1"
+    }
+  },
+  "10": {
+    "inputs": {
+      "image": "tree_green.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Style Image 2"
+    }
+  },
+  "11": {
+    "inputs": {
+      "images": [
+        "6:8",
+        0
+      ]
+    },
+    "class_type": "SaveImageWebsocket",
+    "_meta": {
+      "title": "SaveImageWebsocket"
+    }
+  },
+  "12": {
+    "inputs": {
+      "lora_1": true,
+      "lora_name_1": "None",
+      "model_weight_1": 1,
+      "lora_2": true,
+      "lora_name_2": "None",
+      "model_weight_2": 1,
+      "lora_3": true,
+      "lora_name_3": "None",
+      "model_weight_3": 1,
+      "lora_4": true,
+      "lora_name_4": "None",
+      "model_weight_4": 1,
+      "lora_5": false,
+      "lora_name_5": "None",
+      "model_weight_5": 1,
+      "lora_6": false,
+      "lora_name_6": "None",
+      "model_weight_6": 1
+    },
+    "class_type": "CR LoRA Stack Model Only JK",
+    "_meta": {
+      "title": "LoRA Stack Model Only JK🐉"
+    }
+  },
+  "13": {
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_stack": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "CR Apply LoRA Stack Model Only JK",
+    "_meta": {
+      "title": "Apply LoRA Stack Model Only JK🐉"
+    }
+  },
+  "6:16": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "6:17": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1,
+      "model": [
+        "6:30",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "6:27": {
+    "inputs": {
+      "width": [
+        "6:51",
+        0
+      ],
+      "height": [
+        "6:51",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "EmptySD3LatentImage"
+    }
+  },
+  "6:13": {
+    "inputs": {
+      "noise": [
+        "6:25",
+        0
+      ],
+      "guider": [
+        "6:22",
+        0
+      ],
+      "sampler": [
+        "6:16",
+        0
+      ],
+      "sigmas": [
+        "6:17",
+        0
+      ],
+      "latent_image": [
+        "6:27",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "6:51": {
+    "inputs": {
+      "resolution": "Custom",
+      "custom_width": 1024,
+      "custom_height": 1024,
+      "swap_dimensions": false
+    },
+    "class_type": "CR Aspect Ratio JK",
+    "_meta": {
+      "title": "Aspect Ratio JK🐉"
+    }
+  },
+  "6:25": {
+    "inputs": {
+      "noise_seed": 0
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "6:22": {
+    "inputs": {
+      "model": [
+        "6:30",
+        0
+      ],
+      "conditioning": [
+        "8:53",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "6:30": {
+    "inputs": {
+      "max_shift": 1.15,
+      "base_shift": 0.5,
+      "width": [
+        "6:51",
+        0
+      ],
+      "height": [
+        "6:51",
+        1
+      ],
+      "model": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "ModelSamplingFlux"
+    }
+  },
+  "6:6": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "positive"
+    }
+  },
+  "6:8": {
+    "inputs": {
+      "samples": [
+        "6:13",
+        1
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "6:26": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "6:6",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FluxGuidance"
+    }
+  },
+  "7:52": {
+    "inputs": {
+      "crop": "none",
+      "clip_vision": [
+        "4",
+        0
+      ],
+      "image": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode",
+    "_meta": {
+      "title": "CLIP Vision Encode"
+    }
+  },
+  "7:53": {
+    "inputs": {
+      "strength": 1,
+      "strength_type": "multiply",
+      "conditioning": [
+        "6:26",
+        0
+      ],
+      "style_model": [
+        "5",
+        0
+      ],
+      "clip_vision_output": [
+        "7:52",
+        0
+      ]
+    },
+    "class_type": "StyleModelApply",
+    "_meta": {
+      "title": "Apply Style Model"
+    }
+  },
+  "8:52": {
+    "inputs": {
+      "crop": "none",
+      "clip_vision": [
+        "4",
+        0
+      ],
+      "image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode",
+    "_meta": {
+      "title": "CLIP Vision Encode"
+    }
+  },
+  "8:53": {
+    "inputs": {
+      "strength": 1,
+      "strength_type": "multiply",
+      "conditioning": [
+        "7:53",
+        0
+      ],
+      "style_model": [
+        "5",
+        0
+      ],
+      "clip_vision_output": [
+        "8:52",
+        0
+      ]
+    },
+    "class_type": "StyleModelApply",
+    "_meta": {
+      "title": "Apply Style Model"
+    }
+  }
+}
