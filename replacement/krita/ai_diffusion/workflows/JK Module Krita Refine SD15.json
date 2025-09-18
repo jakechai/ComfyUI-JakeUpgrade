@@ -94,10 +94,6 @@
         "7",
         0
       ],
-      "image_false": [
-        "0",
-        0
-      ],
       "image_true": [
         "3",
         0
@@ -198,7 +194,7 @@
   "17": {
     "inputs": {
       "name": "LC11 end percent 2",
-      "type": "auto",
+      "type": "number",
       "default": 1,
       "min": 0,
       "max": 1
@@ -724,11 +720,7 @@
   },
   "57": {
     "inputs": {
-      "boolean_value": false,
-      "image_false": [
-        "9",
-        0
-      ]
+      "boolean_value": false
     },
     "class_type": "CR Image Input Switch JK",
     "_meta": {
@@ -1251,10 +1243,6 @@
         "63",
         0
       ],
-      "image_false": [
-        "9",
-        0
-      ],
       "image_true": [
         "83",
         0
@@ -1388,6 +1376,22 @@
   },
   "98": {
     "inputs": {
+      "upscale_method": "bicubic",
+      "width": 512,
+      "height": 512,
+      "crop": "disabled",
+      "image": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "99": {
+    "inputs": {
       "image": [
         "94",
         0
@@ -1398,7 +1402,7 @@
       "title": "\ud83d\udd27 Get Image Size"
     }
   },
-  "99": {
+  "100": {
     "inputs": {
       "boolean_value": false,
       "image_false": [
@@ -1411,7 +1415,7 @@
       "title": "Image Input Switch JK\ud83d\udc09"
     }
   },
-  "100": {
+  "101": {
     "inputs": {
       "channel": "red",
       "image": [
@@ -1424,37 +1428,15 @@
       "title": "Convert Image to Mask"
     }
   },
-  "101": {
-    "inputs": {
-      "upscale_method": "bicubic",
-      "width": [
-        "98",
-        0
-      ],
-      "height": [
-        "98",
-        1
-      ],
-      "crop": "disabled",
-      "image": [
-        "97",
-        0
-      ]
-    },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image"
-    }
-  },
   "102": {
     "inputs": {
       "upscale_method": "bicubic",
       "width": [
-        "98",
+        "99",
         0
       ],
       "height": [
-        "98",
+        "99",
         1
       ],
       "crop": "disabled",
@@ -1472,18 +1454,14 @@
     "inputs": {
       "upscale_method": "bicubic",
       "width": [
-        "98",
+        "99",
         0
       ],
       "height": [
-        "98",
+        "99",
         1
       ],
-      "crop": "disabled",
-      "image": [
-        "96",
-        0
-      ]
+      "crop": "disabled"
     },
     "class_type": "ImageScale",
     "_meta": {
@@ -1528,7 +1506,10 @@
         "16",
         0
       ],
-      "end_percent_2": 1,
+      "end_percent_2": [
+        "17",
+        0
+      ],
       "ControlNet_Unit_3": false,
       "controlnet_strength_3": 1,
       "start_percent_3": 0,
@@ -1546,7 +1527,7 @@
         0
       ],
       "image_0": [
-        "101",
+        "98",
         0
       ],
       "controlnet_1": [
@@ -1574,7 +1555,7 @@
   "105": {
     "inputs": {
       "pixels": [
-        "99",
+        "100",
         0
       ],
       "vae": [
@@ -1798,7 +1779,7 @@
       ],
       "multithread": true,
       "image_ref": [
-        "99",
+        "100",
         0
       ],
       "image_target": [
@@ -1864,16 +1845,12 @@
         0
       ],
       "resize_source": false,
-      "destination": [
-        "9",
-        0
-      ],
       "source": [
         "117",
         0
       ],
       "mask": [
-        "100",
+        "101",
         0
       ]
     },
