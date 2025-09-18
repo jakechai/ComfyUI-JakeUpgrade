@@ -1,0 +1,1301 @@
+{
+  "0": {
+    "inputs": {},
+    "class_type": "ETN_KritaCanvas",
+    "_meta": {
+      "title": "Krita Canvas"
+    }
+  },
+  "1": {
+    "inputs": {
+      "name": "E05 Redux Style 1 layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Redux Style 1 layer"
+    }
+  },
+  "2": {
+    "inputs": {
+      "name": "E04 Redux Style 1 layer",
+      "type": "toggle",
+      "default": false
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "enable Redux Style 1 layer"
+    }
+  },
+  "3": {
+    "inputs": {
+      "name": "A03 Clip name1-flux",
+      "type": "choice",
+      "default": "t5xxl\\clip_l.safetensors"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "clip 1"
+    }
+  },
+  "4": {
+    "inputs": {
+      "name": "A04 Clip name2-flux",
+      "type": "choice",
+      "default": "t5xxl\\t5xxl_fp8_e4m3fn.safetensors"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "clip 2"
+    }
+  },
+  "5": {
+    "inputs": {
+      "name": "J01 lora name 1",
+      "type": "choice",
+      "default": "None"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "lora 1"
+    }
+  },
+  "6": {
+    "inputs": {
+      "name": "J03 lora name 2",
+      "type": "choice",
+      "default": "None"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "lora 2"
+    }
+  },
+  "7": {
+    "inputs": {
+      "name": "J07 lora name 4",
+      "type": "choice",
+      "default": "None"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "lora 4"
+    }
+  },
+  "8": {
+    "inputs": {
+      "name": "B01 positive (optional)",
+      "type": "text",
+      "default": ""
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "pos l"
+    }
+  },
+  "9": {
+    "inputs": {
+      "name": "B19 guidance",
+      "type": "number",
+      "default": 3.5,
+      "min": 0,
+      "max": 100
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "guidance"
+    }
+  },
+  "10": {
+    "inputs": {
+      "name": "C02 sampler",
+      "type": "choice",
+      "default": "dpmpp_2m"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "sampler"
+    }
+  },
+  "11": {
+    "inputs": {
+      "name": "C03 scheduler-flux",
+      "type": "choice",
+      "default": "simple"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "scheduler"
+    }
+  },
+  "12": {
+    "inputs": {
+      "name": "C04 steps",
+      "type": "number",
+      "default": 20,
+      "min": 1,
+      "max": 100
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "steps"
+    }
+  },
+  "13": {
+    "inputs": {
+      "name": "C05 denoise",
+      "type": "number",
+      "default": 1,
+      "min": 0,
+      "max": 1
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "denoise"
+    }
+  },
+  "14": {
+    "inputs": {
+      "name": "A01 Diffuse Model-flux",
+      "type": "choice",
+      "default": "Flux\\bf\\flux1-dev.sft"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "checkpoint"
+    }
+  },
+  "15": {
+    "inputs": {
+      "name": "A02 weight dtype-flux",
+      "type": "choice",
+      "default": "fp8_e4m3fn"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "weight dtype"
+    }
+  },
+  "16": {
+    "inputs": {
+      "name": "A07 Vae-flux",
+      "type": "choice",
+      "default": "flux\\ae.sft"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "vae"
+    }
+  },
+  "17": {
+    "inputs": {
+      "name": "J02 lora weight 1",
+      "type": "number",
+      "default": 1,
+      "min": -10,
+      "max": 2
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "lora 1 w"
+    }
+  },
+  "18": {
+    "inputs": {
+      "name": "J04 lora weight 2",
+      "type": "number",
+      "default": 1,
+      "min": -10,
+      "max": 2
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "lora 2 w"
+    }
+  },
+  "19": {
+    "inputs": {
+      "name": "J06 lora weight 3",
+      "type": "number",
+      "default": 1,
+      "min": -10,
+      "max": 2
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "lora 3 w"
+    }
+  },
+  "20": {
+    "inputs": {
+      "name": "J08 lora weight 4",
+      "type": "number",
+      "default": 1,
+      "min": -10,
+      "max": 2
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "lora 4 w"
+    }
+  },
+  "21": {
+    "inputs": {
+      "name": "J05 lora name 3",
+      "type": "choice",
+      "default": "None"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "lora 3"
+    }
+  },
+  "22": {
+    "inputs": {
+      "input_mode": "model_only",
+      "lora_1": true,
+      "lora_name_1": [
+        "5",
+        0
+      ],
+      "model_weight_1": [
+        "17",
+        0
+      ],
+      "clip_weight_1": 1,
+      "lora_2": true,
+      "lora_name_2": [
+        "6",
+        0
+      ],
+      "model_weight_2": [
+        "18",
+        0
+      ],
+      "clip_weight_2": 1,
+      "lora_3": true,
+      "lora_name_3": [
+        "21",
+        0
+      ],
+      "model_weight_3": [
+        "19",
+        0
+      ],
+      "clip_weight_3": 1,
+      "lora_4": true,
+      "lora_name_4": [
+        "7",
+        0
+      ],
+      "model_weight_4": [
+        "20",
+        0
+      ],
+      "clip_weight_4": 1,
+      "lora_5": false,
+      "lora_name_5": "None",
+      "model_weight_5": 1,
+      "clip_weight_5": 1,
+      "lora_6": false,
+      "lora_name_6": "None",
+      "model_weight_6": 1,
+      "clip_weight_6": 1,
+      "save_hash": false,
+      "lora_prompt": "",
+      "lora_metadata": ""
+    },
+    "class_type": "CR LoRA Stack JK",
+    "_meta": {
+      "title": "LoRA Stack JK\ud83d\udc09"
+    }
+  },
+  "23": {
+    "inputs": {
+      "name": "E09 Enable Redux Style 2 layer",
+      "type": "toggle",
+      "default": false
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "enable subject 2 layer"
+    }
+  },
+  "24": {
+    "inputs": {
+      "name": "E10 Redux Style 2 layer"
+    },
+    "class_type": "ETN_KritaImageLayer",
+    "_meta": {
+      "title": "Redux Style 2 layer"
+    }
+  },
+  "25": {
+    "inputs": {
+      "name": "B20 max_shift",
+      "type": "number",
+      "default": 1.15,
+      "min": 0,
+      "max": 100
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "max_shift"
+    }
+  },
+  "26": {
+    "inputs": {
+      "name": "B21 base_shift",
+      "type": "number",
+      "default": 0.5,
+      "min": 0,
+      "max": 100
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "base_shift"
+    }
+  },
+  "27": {
+    "inputs": {
+      "name": "A05 Clip Vision",
+      "type": "choice",
+      "default": "Flux\\sigclip_vision_patch14_384.safetensors"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "clip vision"
+    }
+  },
+  "28": {
+    "inputs": {
+      "name": "A06 Style model",
+      "type": "choice",
+      "default": "flux1-redux-dev.safetensors"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "style model"
+    }
+  },
+  "29": {
+    "inputs": {
+      "name": "E06 Redux Style 1 clip crop",
+      "type": "choice",
+      "default": "none"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "style 1 clip crop"
+    }
+  },
+  "30": {
+    "inputs": {
+      "name": "E07 Redux Style 1 strength",
+      "type": "number",
+      "default": 1,
+      "min": 0,
+      "max": 10
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "Style 1 strength"
+    }
+  },
+  "31": {
+    "inputs": {
+      "name": "E08 Redux Style 1 strength type",
+      "type": "choice",
+      "default": "multiply"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "Style 1 strength type"
+    }
+  },
+  "32": {
+    "inputs": {
+      "name": "E11 Redux Style 2 clip crop",
+      "type": "choice",
+      "default": "none"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "style 2 clip crop"
+    }
+  },
+  "33": {
+    "inputs": {
+      "name": "E12 Redux Style 2 strength",
+      "type": "number",
+      "default": 1,
+      "min": 0,
+      "max": 10
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "Style 2 strength"
+    }
+  },
+  "34": {
+    "inputs": {
+      "name": "E13 Redux Style 2 strength type",
+      "type": "choice",
+      "default": "multiply"
+    },
+    "class_type": "ETN_Parameter",
+    "_meta": {
+      "title": "Style 2 strength type"
+    }
+  },
+  "35": {
+    "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "24",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "36": {
+    "inputs": {
+      "boolean_value": false,
+      "mask_false": [
+        "24",
+        1
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "37": {
+    "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "38": {
+    "inputs": {
+      "boolean_value": false,
+      "mask_false": [
+        "1",
+        1
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "39": {
+    "inputs": {
+      "sampler_name": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "40": {
+    "inputs": {
+      "resolution": "Custom",
+      "custom_width": [
+        "0",
+        1
+      ],
+      "custom_height": [
+        "0",
+        2
+      ],
+      "swap_dimensions": false
+    },
+    "class_type": "CR Aspect Ratio JK",
+    "_meta": {
+      "title": "Aspect Ratio JK\ud83d\udc09"
+    }
+  },
+  "41": {
+    "inputs": {
+      "noise_seed": [
+        "0",
+        3
+      ]
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "42": {
+    "inputs": {
+      "vae_name": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "43": {
+    "inputs": {
+      "unet_name": [
+        "14",
+        0
+      ],
+      "weight_dtype": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "44": {
+    "inputs": {
+      "clip_name1": [
+        "3",
+        0
+      ],
+      "clip_name2": [
+        "4",
+        0
+      ],
+      "type": "flux",
+      "device": "default"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "45": {
+    "inputs": {
+      "clip_name": [
+        "27",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "46": {
+    "inputs": {
+      "style_model_name": [
+        "28",
+        0
+      ]
+    },
+    "class_type": "StyleModelLoader",
+    "_meta": {
+      "title": "Load Style Model"
+    }
+  },
+  "47": {
+    "inputs": {
+      "image": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "Get Size JK",
+    "_meta": {
+      "title": "Get Size JK\ud83d\udc09"
+    }
+  },
+  "48": {
+    "inputs": {
+      "mask": [
+        "36",
+        0
+      ]
+    },
+    "class_type": "Is Mask Empty JK",
+    "_meta": {
+      "title": "Is Mask Empty JK\ud83d\udc09"
+    }
+  },
+  "49": {
+    "inputs": {
+      "value": 1,
+      "width": [
+        "47",
+        0
+      ],
+      "height": [
+        "47",
+        1
+      ]
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "50": {
+    "inputs": {
+      "boolean_value": [
+        "48",
+        0
+      ],
+      "mask_false": [
+        "36",
+        0
+      ],
+      "mask_true": [
+        "49",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "51": {
+    "inputs": {
+      "padding": 0,
+      "use_image_res": false,
+      "use_target_res": false,
+      "target_res": 1024,
+      "use_target_mega_pixel": false,
+      "target_mega_pixel": 1,
+      "mask": [
+        "50",
+        0
+      ],
+      "image": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "Image Crop By Mask Resolution Grp JK",
+    "_meta": {
+      "title": "Image Crop by Mask Resolution Grp JK\ud83d\udc09"
+    }
+  },
+  "52": {
+    "inputs": {
+      "x": [
+        "51",
+        2
+      ],
+      "y": [
+        "51",
+        3
+      ],
+      "width": [
+        "51",
+        0
+      ],
+      "height": [
+        "51",
+        1
+      ],
+      "mask": [
+        "50",
+        0
+      ]
+    },
+    "class_type": "CropMask",
+    "_meta": {
+      "title": "CropMask"
+    }
+  },
+  "53": {
+    "inputs": {
+      "width": [
+        "51",
+        0
+      ],
+      "height": [
+        "51",
+        1
+      ],
+      "x": [
+        "51",
+        2
+      ],
+      "y": [
+        "51",
+        3
+      ],
+      "image": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "ImageCrop",
+    "_meta": {
+      "title": "Image Crop"
+    }
+  },
+  "54": {
+    "inputs": {
+      "boolean_value": [
+        "48",
+        0
+      ],
+      "image_false": [
+        "53",
+        0
+      ],
+      "image_true": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "55": {
+    "inputs": {
+      "boolean_value": [
+        "48",
+        0
+      ],
+      "mask_false": [
+        "52",
+        0
+      ],
+      "mask_true": [
+        "50",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "56": {
+    "inputs": {
+      "image": [
+        "37",
+        0
+      ]
+    },
+    "class_type": "Get Size JK",
+    "_meta": {
+      "title": "Get Size JK\ud83d\udc09"
+    }
+  },
+  "57": {
+    "inputs": {
+      "mask": [
+        "38",
+        0
+      ]
+    },
+    "class_type": "Is Mask Empty JK",
+    "_meta": {
+      "title": "Is Mask Empty JK\ud83d\udc09"
+    }
+  },
+  "58": {
+    "inputs": {
+      "value": 1,
+      "width": [
+        "56",
+        0
+      ],
+      "height": [
+        "56",
+        1
+      ]
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "SolidMask"
+    }
+  },
+  "59": {
+    "inputs": {
+      "boolean_value": [
+        "57",
+        0
+      ],
+      "mask_false": [
+        "38",
+        0
+      ],
+      "mask_true": [
+        "58",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "60": {
+    "inputs": {
+      "padding": 0,
+      "use_image_res": false,
+      "use_target_res": false,
+      "target_res": 1024,
+      "use_target_mega_pixel": false,
+      "target_mega_pixel": 1,
+      "mask": [
+        "59",
+        0
+      ],
+      "image": [
+        "37",
+        0
+      ]
+    },
+    "class_type": "Image Crop By Mask Resolution Grp JK",
+    "_meta": {
+      "title": "Image Crop by Mask Resolution Grp JK\ud83d\udc09"
+    }
+  },
+  "61": {
+    "inputs": {
+      "x": [
+        "60",
+        2
+      ],
+      "y": [
+        "60",
+        3
+      ],
+      "width": [
+        "60",
+        0
+      ],
+      "height": [
+        "60",
+        1
+      ],
+      "mask": [
+        "59",
+        0
+      ]
+    },
+    "class_type": "CropMask",
+    "_meta": {
+      "title": "CropMask"
+    }
+  },
+  "62": {
+    "inputs": {
+      "width": [
+        "60",
+        0
+      ],
+      "height": [
+        "60",
+        1
+      ],
+      "x": [
+        "60",
+        2
+      ],
+      "y": [
+        "60",
+        3
+      ],
+      "image": [
+        "37",
+        0
+      ]
+    },
+    "class_type": "ImageCrop",
+    "_meta": {
+      "title": "Image Crop"
+    }
+  },
+  "63": {
+    "inputs": {
+      "boolean_value": [
+        "57",
+        0
+      ],
+      "image_false": [
+        "62",
+        0
+      ],
+      "image_true": [
+        "37",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "64": {
+    "inputs": {
+      "boolean_value": [
+        "57",
+        0
+      ],
+      "mask_false": [
+        "61",
+        0
+      ],
+      "mask_true": [
+        "59",
+        0
+      ]
+    },
+    "class_type": "CR Mask Input Switch JK",
+    "_meta": {
+      "title": "Mask Input Switch JK\ud83d\udc09"
+    }
+  },
+  "65": {
+    "inputs": {
+      "width": [
+        "40",
+        0
+      ],
+      "height": [
+        "40",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "EmptySD3LatentImage"
+    }
+  },
+  "66": {
+    "inputs": {
+      "crop": [
+        "32",
+        0
+      ],
+      "clip_vision": [
+        "45",
+        0
+      ],
+      "image": [
+        "54",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode",
+    "_meta": {
+      "title": "CLIP Vision Encode"
+    }
+  },
+  "67": {
+    "inputs": {
+      "model": [
+        "43",
+        0
+      ],
+      "clip": [
+        "44",
+        0
+      ],
+      "lora_stack": [
+        "22",
+        0
+      ]
+    },
+    "class_type": "CR Apply LoRA Stack JK",
+    "_meta": {
+      "title": "Apply LoRA Stack JK\ud83d\udc09"
+    }
+  },
+  "68": {
+    "inputs": {
+      "boolean_value": [
+        "2",
+        0
+      ],
+      "image_false": [
+        "0",
+        0
+      ],
+      "image_true": [
+        "63",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK\ud83d\udc09"
+    }
+  },
+  "69": {
+    "inputs": {
+      "max_shift": [
+        "25",
+        0
+      ],
+      "base_shift": [
+        "26",
+        0
+      ],
+      "width": [
+        "40",
+        0
+      ],
+      "height": [
+        "40",
+        1
+      ],
+      "model": [
+        "67",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "ModelSamplingFlux"
+    }
+  },
+  "70": {
+    "inputs": {
+      "text": [
+        "8",
+        0
+      ],
+      "clip": [
+        "67",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "positive"
+    }
+  },
+  "71": {
+    "inputs": {
+      "guidance": [
+        "9",
+        0
+      ],
+      "conditioning": [
+        "70",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FluxGuidance"
+    }
+  },
+  "72": {
+    "inputs": {
+      "crop": [
+        "29",
+        0
+      ],
+      "clip_vision": [
+        "45",
+        0
+      ],
+      "image": [
+        "68",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode",
+    "_meta": {
+      "title": "CLIP Vision Encode"
+    }
+  },
+  "73": {
+    "inputs": {
+      "strength": [
+        "30",
+        0
+      ],
+      "strength_type": [
+        "31",
+        0
+      ],
+      "conditioning": [
+        "71",
+        0
+      ],
+      "style_model": [
+        "46",
+        0
+      ],
+      "clip_vision_output": [
+        "72",
+        0
+      ]
+    },
+    "class_type": "StyleModelApply",
+    "_meta": {
+      "title": "Apply Style Model"
+    }
+  },
+  "74": {
+    "inputs": {
+      "strength": [
+        "33",
+        0
+      ],
+      "strength_type": [
+        "34",
+        0
+      ],
+      "conditioning": [
+        "73",
+        0
+      ],
+      "style_model": [
+        "46",
+        0
+      ],
+      "clip_vision_output": [
+        "66",
+        0
+      ]
+    },
+    "class_type": "StyleModelApply",
+    "_meta": {
+      "title": "Apply Style Model"
+    }
+  },
+  "75": {
+    "inputs": {
+      "boolean_value": [
+        "23",
+        0
+      ],
+      "conditioning_false": [
+        "73",
+        0
+      ],
+      "conditioning_true": [
+        "74",
+        0
+      ]
+    },
+    "class_type": "CR Conditioning Input Switch JK",
+    "_meta": {
+      "title": "Conditioning Input Switch JK\ud83d\udc09"
+    }
+  },
+  "76": {
+    "inputs": {
+      "scheduler": [
+        "11",
+        0
+      ],
+      "steps": [
+        "12",
+        0
+      ],
+      "denoise": [
+        "13",
+        0
+      ],
+      "model": [
+        "69",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "77": {
+    "inputs": {
+      "model": [
+        "69",
+        0
+      ],
+      "conditioning": [
+        "75",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "78": {
+    "inputs": {
+      "noise": [
+        "41",
+        0
+      ],
+      "guider": [
+        "77",
+        0
+      ],
+      "sampler": [
+        "39",
+        0
+      ],
+      "sigmas": [
+        "76",
+        0
+      ],
+      "latent_image": [
+        "65",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "79": {
+    "inputs": {
+      "samples": [
+        "78",
+        1
+      ],
+      "vae": [
+        "42",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "80": {
+    "inputs": {
+      "images": [
+        "79",
+        0
+      ]
+    },
+    "class_type": "ETN_KritaOutput",
+    "_meta": {
+      "title": "Krita Output"
+    }
+  }
+}
