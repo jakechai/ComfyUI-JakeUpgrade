@@ -1,0 +1,327 @@
+{
+  "1": {
+    "inputs": {
+      "unet_name": "Flux\\bf\\flux1-kontext-dev.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "2": {
+    "inputs": {
+      "clip_name1": "t5xxl\\clip_l.safetensors",
+      "clip_name2": "t5xxl\\t5xxl_fp8_e4m3fn_scaled.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "3": {
+    "inputs": {
+      "vae_name": "flux\\ae.sft"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "5": {
+    "inputs": {
+      "image": "dragon.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image 1"
+    }
+  },
+  "8": {
+    "inputs": {
+      "images": [
+        "4:8",
+        0
+      ]
+    },
+    "class_type": "SaveImageWebsocket",
+    "_meta": {
+      "title": "SaveImageWebsocket"
+    }
+  },
+  "9": {
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_stack": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "CR Apply LoRA Stack Model Only JK",
+    "_meta": {
+      "title": "Apply LoRA Stack Model Only JK🐉"
+    }
+  },
+  "10": {
+    "inputs": {
+      "lora_1": true,
+      "lora_name_1": "None",
+      "model_weight_1": 1,
+      "lora_2": true,
+      "lora_name_2": "None",
+      "model_weight_2": 1,
+      "lora_3": true,
+      "lora_name_3": "None",
+      "model_weight_3": 1,
+      "lora_4": true,
+      "lora_name_4": "None",
+      "model_weight_4": 1,
+      "lora_5": false,
+      "lora_name_5": "None",
+      "model_weight_5": 1,
+      "lora_6": false,
+      "lora_name_6": "None",
+      "model_weight_6": 1
+    },
+    "class_type": "CR LoRA Stack Model Only JK",
+    "_meta": {
+      "title": "LoRA Stack Model Only JK🐉"
+    }
+  },
+  "4:190": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1,
+      "model": [
+        "4:196",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "4:191": {
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "4:196",
+        0
+      ],
+      "positive": [
+        "4:193",
+        0
+      ],
+      "negative": [
+        "4:135",
+        0
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "4:192": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "4:194": {
+    "inputs": {
+      "noise_seed": 0
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "4:195": {
+    "inputs": {
+      "width": [
+        "4:201",
+        0
+      ],
+      "height": [
+        "4:201",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "EmptySD3LatentImage"
+    }
+  },
+  "4:201": {
+    "inputs": {
+      "resolution": "Custom",
+      "custom_width": 1024,
+      "custom_height": 1024,
+      "swap_dimensions": false
+    },
+    "class_type": "CR Aspect Ratio JK",
+    "_meta": {
+      "title": "Aspect Ratio JK🐉"
+    }
+  },
+  "4:197": {
+    "inputs": {
+      "noise": [
+        "4:194",
+        0
+      ],
+      "guider": [
+        "4:191",
+        0
+      ],
+      "sampler": [
+        "4:192",
+        0
+      ],
+      "sigmas": [
+        "4:190",
+        0
+      ],
+      "latent_image": [
+        "4:195",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "4:193": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "4:177",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FluxGuidance"
+    }
+  },
+  "4:177": {
+    "inputs": {
+      "conditioning": [
+        "4:6",
+        0
+      ],
+      "latent": [
+        "4:124",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  },
+  "4:135": {
+    "inputs": {
+      "conditioning": [
+        "4:6",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "4:6": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "positive"
+    }
+  },
+  "4:124": {
+    "inputs": {
+      "pixels": [
+        "4:42",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "4:196": {
+    "inputs": {
+      "max_shift": 1.15,
+      "base_shift": 0.5,
+      "width": [
+        "4:201",
+        0
+      ],
+      "height": [
+        "4:201",
+        1
+      ],
+      "model": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "ModelSamplingFlux"
+    }
+  },
+  "4:8": {
+    "inputs": {
+      "samples": [
+        "4:197",
+        1
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "4:42": {
+    "inputs": {
+      "image": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "FluxKontextImageScale",
+    "_meta": {
+      "title": "FluxKontextImageScale"
+    }
+  }
+}
