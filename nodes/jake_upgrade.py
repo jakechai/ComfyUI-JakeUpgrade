@@ -4,6 +4,7 @@
 # Categories:
 #   Tools
 #   Misc Nodes
+#   Audio Nodes
 #   Reroute Nodes
 #   ControlNet Nodes
 #   LoRA Nodes
@@ -39,7 +40,7 @@ import piexif.helper
 import torchvision.transforms.functional as TF
 from nodes import MAX_RESOLUTION, ControlNetApply, ControlNetApplyAdvanced
 from pathlib import Path
-from typing import Any, Callable, Mapping, TypeAlias, List, Union
+from typing import Any, Callable, Mapping, TypeAlias, List, Union, Tuple, Dict
 from PIL import Image, ImageOps, ImageEnhance
 from PIL.PngImagePlugin import PngInfo
 from datetime import datetime
@@ -1252,6 +1253,633 @@ class CreateLoopScheduleList:
             step_list[i] = i + 1
             
         return (step_list,)
+
+class GetNthString_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "string_list": ("STRING",{
+                    "default": "1.0, 2.0, 3.0",
+                    "multiline": True,
+                }),
+                "index": ("INT", {
+                    "default": 0,
+                    "min": -1,
+                    "max": 100,
+                    "step": 1,
+                    "display": "number"
+                }),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING", "INT", "FLOAT", "BOOLEAN")
+    RETURN_NAMES = ("string", "int", "float", "boolean")
+    FUNCTION = "process"
+    CATEGORY = icons.get("JK/Misc")
+    DESCRIPTION = ""
+    OUTPUT_NODE = False
+
+    def process(self, string_list: str, index: int) -> Tuple[str, int, float, bool]:
+        
+        lines = string_list.split('\n')
+        items = []
+        
+        for line in lines:
+            if ',' in line:
+                items.extend([item.strip() for item in line.split(',') if item.strip()])
+            elif line.strip():
+                items.append(line.strip())
+        
+        if index < 0:
+            index = len(items) + index
+        
+        if index < 0 or index >= len(items):
+            raise ValueError(f"Index {index} out of range (0-{len(items)-1})")
+        
+        selected_str = items[index]
+        
+        try:
+            int_val = int(selected_str)
+        except ValueError:
+            int_val = 0
+        
+        try:
+            float_val = float(selected_str)
+        except ValueError:
+            float_val = 0.0
+        
+        lower_str = selected_str.lower()
+        if lower_str in ("true", "1", "yes", "y", "on"):
+            bool_val = True
+        elif lower_str in ("false", "0", "no", "n", "off"):
+            bool_val = False
+        else:
+            bool_val = bool(selected_str)
+        
+        return (selected_str, int_val, float_val, bool_val)
+
+class WanFrameCount_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "frame_count": ("INT",{
+                    "default": 81,
+                    "min": 1,
+                    "max": 16385,
+                    "step": 1,
+                    "display": "number"
+                }),
+            },
+        }
+    
+    RETURN_TYPES = ("INT",)
+    RETURN_NAMES = ("wan_frame_count",)
+    FUNCTION = "process"
+    CATEGORY = icons.get("JK/Misc")
+    DESCRIPTION = ""
+    OUTPUT_NODE = False
+
+    def process(self, frame_count: int):
+        
+        wan_frame_count = int(math.ceil(max(0, (frame_count - 1)) / 4) * 4 + 1)
+        
+        return (wan_frame_count,)
+
+#---------------------------------------------------------------------------------------------------------------------#
+# Audio Nodes
+#---------------------------------------------------------------------------------------------------------------------#
+
+class SceneCuts_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "fps": ("INT", {
+                    "default": 16,
+                    "min": 1,
+                    "max": 120,
+                    "step": 1,
+                    "display": "number"
+                }),
+                "segment_frame_count": ("INT", {
+                    "default": 81,
+                    "min": 1,
+                    "max": 1000,
+                    "step": 1,
+                    "display": "number"
+                }),
+                "warmup_frame_count": ("INT", {
+                    "default": 0,
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "display": "number",
+                    "tooltip": "Sometimes Wan Wapper needs several frames to warm up before normal output, especially for ref2v."
+                }),
+                "overlap_frame_count": ("INT", {
+                    "default": 10,
+                    "min": 4,
+                    "max": 100,
+                    "step": 1,
+                    "display": "number",
+                    "tooltip": "Overlap frames for Context Window or for-loop long-vid generation."
+                }),
+                "min_loop_frame_count": ("BOOLEAN", {
+                    "default": False,
+                    "label_on": "segment",
+                    "label_off": "duration"
+                }),
+                "long_vid_method": ("BOOLEAN", {
+                    "default": False,
+                    "label_on": "for-loop",
+                    "label_off": "context"
+                }),
+                "mode": ("BOOLEAN", {
+                    "default": True,
+                    "label_on": "duration",
+                    "label_off": "cut point"
+                }),
+                "select_cuts": ("STRING", {
+                    "default": "",
+                    "multiline": False,
+                    "tooltip": "Select specific cuts to output (e.g., '0' for first cut, '0-2' for cuts 0 to 2, '0,2,4' for specific cuts)"
+                }),
+                "segments": ("STRING", {
+                    "default": "3.0, 6.2\n9.875",
+                    "multiline": True,
+                    "tooltip": "Enter the duration or cut points in 'second.millisecond' format, separated by commas or '\n'(e.g., 3.0, 6.2, 9.875)"
+                }),
+            },
+            "optional": {
+                "audio": ("AUDIO",),
+            }
+        }
+    
+    RETURN_TYPES = ("INT", "SCENECUTS", "STRING", "STRING", "STRING", "STRING", "STRING", "FLOAT", "INT", "INT", "BOOLEAN")
+    RETURN_NAMES = ("scene_count", "scene_cuts", "select_cuts", "cut_frame_counts", "loop_frame_counts", "total_duration", "total_frame_count", "fps", "seg_frame_count", "overlap_frame_count", "long_vid_method")
+    FUNCTION = "process"
+    CATEGORY = icons.get("JK/Audio")
+    DESCRIPTION = "Create scene cuts based on multiple cut point times or durations and an optional audio duration."
+    OUTPUT_NODE = False
+    
+    def process(self, segments: str, mode: bool, fps: int, segment_frame_count: int, warmup_frame_count: int, long_vid_method: bool, overlap_frame_count: int, 
+                min_loop_frame_count: bool, select_cuts: str, audio: [Dict[str, Any]] = None) -> Tuple[Dict[str, Any], List[int]]:
+        
+        # get float values from segment str
+        values = []
+        lines = segments.split('\n')
+        
+        for line in lines:
+            if ',' in line:
+                values.extend([item.strip() for item in line.split(',') if item.strip()])
+            elif line.strip():
+                values.append(line.strip())
+        
+        float_values = []
+        for value in values:
+            try:
+                float_values.append(float(value))
+            except ValueError:
+                continue
+        
+        if not float_values:
+            raise ValueError("At least one cut point or duration must be provided.")
+        
+        # get audio duration
+        audio_duration = None
+        if audio is not None:
+            waveform = audio["waveform"]
+            sample_rate = audio["sample_rate"]
+            audio_duration = waveform.shape[-1] / sample_rate
+        
+        #duration mode
+        if mode:
+            scene_cuts = []
+            current_time = 0.0
+            
+            for i, duration in enumerate(float_values):
+                end_time = current_time + duration
+                
+                if audio_duration is not None:
+                    if current_time >= audio_duration:
+                        break
+                    
+                    if end_time > audio_duration:
+                        end_time = audio_duration
+                
+                start_time = current_time - warmup_frame_count / fps
+                scene_cuts.append([start_time, end_time])
+                current_time = end_time
+            
+                if audio_duration is not None and current_time >= audio_duration:
+                    break
+            
+            total_duration = audio_duration if audio_duration is not None else current_time
+        
+        # cut time mode
+        else:
+            if audio_duration is None:
+                total_duration = max(float_values) if float_values else 0
+            else:
+                total_duration = audio_duration
+            
+            valid_cut_points = [point for point in float_values if 0 < point < total_duration]
+            all_points = [0.0] + sorted(valid_cut_points) + [total_duration]
+            
+            scene_cuts = []
+            for i in range(len(all_points) - 1):
+                start_time = all_points[i] - warmup_frame_count / fps
+                scene_cuts.append([start_time, all_points[i + 1]])
+        
+        segment_frame_count = int(math.ceil(max(0, (segment_frame_count - 1)) / 4) * 4 + 1)
+        
+        selected_indices = self.parse_select_cuts(select_cuts, len(scene_cuts))
+        selected_scene_cuts = []
+        selected_cut_frame_counts = []
+        selected_loop_frame_counts = []
+        selected_total_frame_count = 0
+        
+        for idx in selected_indices:
+            if idx < len(scene_cuts):
+                
+                selected_scene_cuts.append(scene_cuts[idx])
+                start, end = scene_cuts[idx]
+                duration = end - start
+                
+                if not long_vid_method:
+                    loop_frame_count = int(math.ceil(max(0, (duration * fps - 1)) / 4) * 4 + 1)
+                else:
+                    loop_frame_count = int(segment_frame_count + math.floor((duration * fps - segment_frame_count) / (segment_frame_count - overlap_frame_count)) * (segment_frame_count - overlap_frame_count) + math.ceil(max(0, ((duration * fps - segment_frame_count) % (segment_frame_count - overlap_frame_count) - 1)) / 4) * 4 + 1)
+                
+                cut_frame_count = max(0, int(round(duration * fps)) - warmup_frame_count)
+                
+                if min_loop_frame_count and loop_frame_count < segment_frame_count:
+                    loop_frame_count = segment_frame_count
+                
+                selected_total_frame_count += loop_frame_count
+                selected_cut_frame_counts.append(str(cut_frame_count))
+                selected_loop_frame_counts.append(str(loop_frame_count))
+            
+        cut_frame_counts_str = ", ".join(selected_cut_frame_counts)
+        loop_frame_counts_str = ", ".join(selected_loop_frame_counts)
+        select_cuts_str = ", ".join(str(i) for i in selected_indices)
+        total_duration_str = f"{round(total_duration, 3)} (scene) | {round(selected_total_frame_count / fps, 3)} (gen)"
+        total_frame_count_str = f"{int(round(total_duration * fps))} (scene) | {selected_total_frame_count} (gen)"
+        
+        return (len(selected_scene_cuts), {"cuts": selected_scene_cuts, "count": len(selected_scene_cuts), "warmup": (warmup_frame_count / fps)}, select_cuts_str, 
+                cut_frame_counts_str, loop_frame_counts_str, total_duration_str, total_frame_count_str, float(fps), segment_frame_count, overlap_frame_count, long_vid_method)
+    
+    def parse_select_cuts(self, select_cuts: str, max_cuts: int) -> List[int]:
+        
+        if not select_cuts.strip():
+            return list(range(max_cuts))
+        
+        selected_indices = set()
+        parts = select_cuts.split(',')
+        
+        for part in parts:
+            part = part.strip()
+            if not part:
+                continue
+                
+            if '-' in part: # in range format (such as "1-3")
+                range_parts = part.split('-')
+                if len(range_parts) != 2:
+                    raise ValueError(f"Invalid range format: '{part}'. Expected format like '1-3'.")
+                
+                try:
+                    start = int(range_parts[0].strip())
+                    end = int(range_parts[1].strip())
+                except ValueError:
+                    raise ValueError(f"Invalid range values: '{part}'. Expected integers.")
+                
+                if start < 0 or end < 0:
+                    raise ValueError(f"Range values cannot be negative: '{part}'.")
+                
+                if start > end:
+                    raise ValueError(f"Range start cannot be greater than end: '{part}'.")
+                
+                start = min(start, max_cuts - 1)
+                end = min(end, max_cuts - 1)
+                
+                for i in range(start, end + 1):
+                    selected_indices.add(i)
+            
+            else:   # single index
+                
+                try:
+                    index = int(part)
+                except ValueError:
+                    raise ValueError(f"Invalid cut index: '{part}'. Expected integer.")
+                
+                if index < 0:
+                    raise ValueError(f"Cut index cannot be negative: '{index}'.")
+                
+                if index >= max_cuts:
+                    continue
+                
+                selected_indices.add(index)
+        
+        return sorted(list(selected_indices))
+
+class CutAudio_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO",),
+                "start_time": ("FLOAT", {
+                    "default": 0.0,
+                    "min": -10000.0,
+                    "max": 10000.0,
+                    "step": 0.001,
+                    "display": "number"
+                }),
+                "end_time": ("FLOAT", {
+                    "default": 5.0,
+                    "min": 0.1,
+                    "max": 10000.0,
+                    "step": 0.001,
+                    "display": "number"
+                }),
+                "add_start_mute": ("BOOLEAN", {
+                    "default": False,
+                    "label_on": "enabled",
+                    "label_off": "disabled",
+                    "tooltip": "Add mute when time < 0.0."
+                }),
+                "add_end_mute": ("BOOLEAN", {
+                    "default": False,
+                    "label_on": "enabled",
+                    "label_off": "disabled",
+                    "tooltip": "Add mute when time > audio duration."
+                }),
+            },
+        }
+    
+    RETURN_TYPES = ("AUDIO", "FLOAT")
+    RETURN_NAMES = ("audio", "duration")
+    FUNCTION = "process"
+    CATEGORY = icons.get("JK/Audio")
+    DESCRIPTION = "Cut an audio file based on start and end time."
+    OUTPUT_NODE = False
+
+    def process(self, audio: Dict[str, Any], start_time: float, end_time: float, add_start_mute: bool, add_end_mute: bool) -> Tuple[Dict[str, Any]]:
+        
+        if start_time >= end_time:
+            raise ValueError("The start time must be less than the end time.")
+        
+        waveform = audio["waveform"]
+        sample_rate = audio["sample_rate"]
+        
+        total_duration = waveform.shape[-1] / sample_rate
+        
+        start_sample = int(max(0.0, min(start_time, total_duration)) * sample_rate)
+        end_sample = int(max(start_time, min(end_time, total_duration)) * sample_rate)
+        
+        start_sample = min(start_sample, waveform.shape[-1])
+        end_sample = min(end_sample, waveform.shape[-1])
+        
+        cut_waveform = waveform[..., start_sample:end_sample]
+        
+        if add_start_mute and start_time < 0:
+            silence_duration = abs(start_time)
+            silence_samples = int(silence_duration * sample_rate)
+            
+            silence_shape = list(cut_waveform.shape)
+            silence_shape[-1] = silence_samples
+            silence = torch.zeros(silence_shape, dtype=cut_waveform.dtype, device=cut_waveform.device)
+            
+            cut_waveform = torch.cat([silence, cut_waveform], dim=-1)
+        
+        if add_end_mute and end_time > total_duration:
+            silence_duration = abs(end_time - total_duration)
+            silence_samples = int(silence_duration * sample_rate)
+            
+            silence_shape = list(cut_waveform.shape)
+            silence_shape[-1] = silence_samples
+            silence = torch.zeros(silence_shape, dtype=cut_waveform.dtype, device=cut_waveform.device)
+            
+            cut_waveform = torch.cat([cut_waveform, silence], dim=-1)
+        
+        result_audio = {
+            "waveform": cut_waveform,
+            "sample_rate": sample_rate
+        }
+        
+        return (result_audio, cut_waveform.shape[-1] / sample_rate)
+
+class CutAudioIndex_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO",),
+                "scene_cuts": ("SCENECUTS",),
+                "index": ("INT", {
+                    "default": 0,
+                    "min": -1,
+                    "max": 100,
+                    "step": 1,
+                    "display": "number"
+                }),
+            },
+        }
+    
+    RETURN_TYPES = ("AUDIO",)
+    RETURN_NAMES = ("audio",)
+    FUNCTION = "process"
+    CATEGORY = icons.get("JK/Audio")
+    DESCRIPTION = "Cut an audio file based on scene cuts metadata and cut index."
+    OUTPUT_NODE = False
+
+    def process(self, audio: Dict[str, Any], scene_cuts: Dict[str, Any], index: int) -> Tuple[Dict[str, Any]]:
+        
+        if index < 0:
+            index = scene_cuts["count"] + index
+        
+        if index < 0 or index >= scene_cuts["count"]:
+            raise ValueError(f"Index {index} out of range (0-{scene_cuts['count']-1})")
+        
+        start_time, end_time = scene_cuts["cuts"][index]
+        
+        waveform = audio["waveform"]
+        sample_rate = audio["sample_rate"]
+        
+        start_sample = int(max(0, start_time) * sample_rate)
+        end_sample = int(end_time * sample_rate)
+        
+        start_sample = min(start_sample, waveform.shape[-1])
+        end_sample = min(end_sample, waveform.shape[-1])
+        
+        cut_waveform = waveform[..., start_sample:end_sample]
+        
+        if start_time < 0:
+            silence_duration = abs(start_time)
+            silence_samples = int(silence_duration * sample_rate)
+            
+            silence_shape = list(cut_waveform.shape)
+            silence_shape[-1] = silence_samples
+            silence = torch.zeros(silence_shape, dtype=cut_waveform.dtype, device=cut_waveform.device)
+            
+            cut_waveform = torch.cat([silence, cut_waveform], dim=-1)
+        
+        result_audio = {
+            "waveform": cut_waveform,
+            "sample_rate": sample_rate
+        }
+        
+        return (result_audio,)
+
+class CutAudioCuts_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO",),
+                "scene_cuts": ("SCENECUTS",),
+            },
+        }
+    
+    RETURN_TYPES = ("AUDIO",)
+    RETURN_NAMES = ("audio",)
+    FUNCTION = "process"
+    CATEGORY = icons.get("JK/Audio")
+    DESCRIPTION = "Merge all cuts from scene_cuts into a single audio file in chronological order."
+    OUTPUT_NODE = False
+
+    def process(self, audio: Dict[str, Any], scene_cuts: Dict[str, Any]) -> Tuple[Dict[str, Any]]:
+        waveform = audio["waveform"]
+        sample_rate = audio["sample_rate"]
+        
+        cuts = scene_cuts["cuts"]
+        count = scene_cuts["count"]
+        warmup = scene_cuts["warmup"]
+        
+        if count == 0:
+            raise ValueError("No cuts available in scene_cuts")
+        
+        sorted_cuts = sorted(cuts, key=lambda x: x[0])
+        
+        audio_segments = []
+        
+        for start_time, end_time in sorted_cuts:
+            
+            start_time = max(0, start_time + warmup)
+            start_sample = int(start_time * sample_rate)
+            end_sample = int(end_time * sample_rate)
+            
+            
+            start_sample = min(start_sample, waveform.shape[-1])
+            end_sample = min(end_sample, waveform.shape[-1])
+            
+            cut_waveform = waveform[..., start_sample:end_sample]
+            audio_segments.append(cut_waveform)
+        
+        if audio_segments:
+            merged_waveform = torch.cat(audio_segments, dim=-1)
+        else:
+            # If there is no valid audio segment, create an empty audio.
+            merged_waveform = torch.zeros_like(waveform[..., :0])
+        
+        result_audio = {
+            "waveform": merged_waveform,
+            "sample_rate": sample_rate
+        }
+        
+        return (result_audio,)
+
+class CutAudioLoop_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO",),
+                "fps": ("INT", {
+                    "default": 16,
+                    "min": 1,
+                    "max": 120,
+                    "step": 1,
+                    "display": "number"
+                }),
+                "segment_frame_count": ("INT", {
+                    "default": 81,
+                    "min": 1,
+                    "max": 1000,
+                    "step": 1,
+                    "display": "number"
+                }),
+                "overlap_frame_count": ("INT", {
+                    "default": 10,
+                    "min": 4,
+                    "max": 100,
+                    "step": 1,
+                    "display": "number",
+                    "tooltip": "Overlap frames for Context Window or for-loop long-vid generation."
+                }),
+                "index": ("INT", {
+                    "default": 0,
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "display": "number"
+                }),
+            },
+        }
+    
+    RETURN_TYPES = ("AUDIO", "FLOAT", "FLOAT", "FLOAT")
+    RETURN_NAMES = ("audio", "duration", "start", "end")
+    FUNCTION = "process"
+    CATEGORY = icons.get("JK/Audio")
+    DESCRIPTION = "Cut an audio file based on start and end time."
+    OUTPUT_NODE = False
+
+    def process(self, audio: Dict[str, Any], fps: int, segment_frame_count: int, overlap_frame_count: int, index: int):
+        
+        waveform = audio["waveform"]
+        sample_rate = audio["sample_rate"]
+        
+        total_duration = waveform.shape[-1] / sample_rate
+        
+        loop_duration = segment_frame_count / fps
+        overlap_duration = overlap_frame_count / fps
+        
+        if index == 0:
+            start_time = 0
+        else:
+            start_time = max(0, ((loop_duration - overlap_duration )* index))
+        
+        if start_time >= total_duration:
+            raise ValueError(f"Index {index} out of range (0 - {total_duration} secend).")
+        
+        end_time = start_time + loop_duration
+        
+        start_sample = int(start_time * sample_rate)
+        end_sample = int(end_time * sample_rate)
+        
+        start_sample = min(start_sample, waveform.shape[-1])
+        end_sample = min(end_sample, waveform.shape[-1])
+        
+        cut_waveform = waveform[..., start_sample:end_sample]
+        
+        if end_time > total_duration:
+            silence_duration = abs(end_time - total_duration)
+            silence_samples = int(silence_duration * sample_rate)
+            
+            silence_shape = list(cut_waveform.shape)
+            silence_shape[-1] = silence_samples
+            silence = torch.zeros(silence_shape, dtype=cut_waveform.dtype, device=cut_waveform.device)
+            
+            cut_waveform = torch.cat([cut_waveform, silence], dim=-1)
+        
+        result_audio = {
+            "waveform": cut_waveform,
+            "sample_rate": sample_rate
+        }
+        
+        return (result_audio, cut_waveform.shape[-1] / sample_rate, start_time, end_time)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Reroute Nodes

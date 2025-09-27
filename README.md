@@ -15,6 +15,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
 - Wan Video update 3 (long video color shift issue | i2v no-low-step-lora issue | VACE keyframe2long-vid | flf2long-vid | MTV Crafter | Real MiniMax Remover): [Youtube](https://youtu.be/CHlUq17lxN8) | [Bilibili](https://www.bilibili.com/video/BV18WHeznEiE/)
+- Wan Video update 4 (Video Gen based on Scene & Audio Cuts): [showcase](https://youtu.be/N__iDyJXAFU) wip
 - img2mesh workflows: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - img2mesh 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - img2mesh 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
@@ -264,6 +265,12 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 - 2025-09-18 - v2.0.15
 1. Add Imgen Qwen | Imgedit Qwen | Imgedit Flux Kontext | Imgedit Flux Redux | Imgedit Flux USO API and Krita workflows.
 
+- 2025-09-27 - v2.0.16
+1. Add HuMo t2v | ref2v + a2v | infinitetalk workflows.
+2. Add a description about the fp8_e5m2 model, which is available for Triton.
+3. Add Audio Cuts JK🐉 | Cut Audio JK🐉 | Cut Audio Index JK🐉 | Cut Audio Cuts JK🐉 | Cut Audio Loop JK🐉 | Get Nth String JK🐉 | Wan Frame Count JK🐉 nodes.
+4. Add first two of Wan Video "Cuts" series workflows (VACE | Talk), supports multiple video generation based on scene and audio cuts. [showcase](https://youtu.be/N__iDyJXAFU)
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -365,7 +372,7 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 | CineScale [2.1](https://github.com/Eyeline-Labs/CineScale) | lora | t2v ff2v | 
 | Echo Shot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v |
 | ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v |
-| AniSora [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v |
+| AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v |
 | ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v |
 | Lumen [2.1](https://lumen-relight.github.io/) | main model & lora | v2v |
 | MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | main model | v2v |
@@ -573,6 +580,14 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		Save String List To JSON JK🐉
 		Load String List From JSON JK🐉
 		Create Loop Schedule List JK🐉
+		Get Nth String JK🐉
+		Str List To Item List JK🐉
+	Audio Nodes
+		Audio Cuts JK🐉
+		Cut Audio JK🐉
+		Cut Audio Index JK🐉
+		Cut Audio Cuts JK🐉
+		Cut Audio Loop JK🐉
 	ControlNet Nodes
 		ControlNet Loader JK🐉
 		Multi-ControlNet Param Stack JK🐉
