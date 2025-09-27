@@ -19,6 +19,7 @@ icons = {
     "JK/Math/Number": "🐉 JK/✖️ Math/🔢 Number",
     "JK/Math/Vector": "🐉 JK/✖️ Math/💦 Vector",
     "JK/3D": "🐉 JK/🕒 3D",
+    "JK/Audio": "🐉 JK/🎻 Audio",
     "JK/Experiment": "🐉 JK/⏳ Experiment",
     "JK/Group/Workflow": "🐉 JK/🐙 Workflow",
     "JK/Group/Tools": "🐉 JK/🐒 Tools",

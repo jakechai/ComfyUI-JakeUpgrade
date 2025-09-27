@@ -26,12 +26,20 @@ NODE_CLASS_MAPPINGS = {
     "Save String List To JSON JK": SaveStringListToJSON_JK,
     "Load String List From JSON JK": LoadStringListFromJSON_JK,
     "Create Loop Schedule List": CreateLoopScheduleList,
+    "Get Nth String JK": GetNthString_JK,
+    "Wan Frame Count JK": WanFrameCount_JK,
     ### Misc Nodes [Deprecated]
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
     "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
     "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
     "Pipe End JK": PipeEnd_JK,
     "Image Crop by Mask Resolution JK": ImageCropByMaskResolution_JK,
+    ### Audio Nodes
+    "Scene Cuts JK": SceneCuts_JK,
+    "Cut Audio JK": CutAudio_JK,
+    "Cut Audio Index JK": CutAudioIndex_JK,
+    "Cut Audio Cuts JK": CutAudioCuts_JK,
+    "Cut Audio Loop JK": CutAudioLoop_JK,
     ### Reroute Nodes [Deprecated]
     "Reroute List JK": RerouteList_JK,
     "Reroute Ckpt JK": RerouteCkpt_JK,
@@ -227,12 +235,20 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Save String List To JSON JK": "Save String List To JSON JK🐉",
     "Load String List From JSON JK": "Load String List From JSON JK🐉",
     "Create Loop Schedule List": "Create Loop Schedule List JK🐉",
+    "Get Nth String JK": "Get Nth String JK🐉",
+    "Wan Frame Count JK": "Wan Frame Count JK🐉",
     ### Misc Nodes [Deprecated]
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
     "CR SD3 Aspect Ratio JK": "SD3 Aspect Ratio JK🐉",
     "Pipe End JK": "Pipe End JK🐉",
     "Image Crop by Mask Resolution JK": "Image Crop by Mask Resolution JK🐉",
+    ### Audio Nodes
+    "Scene Cuts JK": "Scene Cuts JK🐉",
+    "Cut Audio JK": "Cut Audio JK🐉",
+    "Cut Audio Index JK": "Cut Audio Index JK🐉",
+    "Cut Audio Cuts JK": "Cut Audio Cuts JK🐉",
+    "Cut Audio Loop JK": "Cut Audio Loop JK🐉",
     ### Reroute Nodes [Deprecated]
     "Reroute List JK": "Reroute List JK🐉",
     "Reroute Ckpt JK": "Reroute Ckpt JK🐉",
