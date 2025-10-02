@@ -4,12 +4,6 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).  
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
-Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
-Please check the [video](https://youtu.be/eyjy10T201M).  
-<a href="https://youtu.be/eyjy10T201M" target="_blank">
- <img src="https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/ComfyUIAPIUI.png" alt="UI for ComfyUI API" />
-</a>
-
 ## Video Introduction
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
@@ -246,30 +240,27 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 	- 2025-09-11 - v2.0.10	1. Update Auto Motion Module workflow. Both VACE and ATI support multiple trajectories in one Spline Editor.
 	- 2025-09-12 - v2.0.11	1. Update WanVideo ImageToVideo Encode Node.
 							2. Update Wan Eco Information.
+	- 2025-09-16 - v2.0.12	1. Add QWen imgen subgraphs and workflows.
+							2. Reduce and retain commonly used auto-prompt custom nodes.
+							3. Remove Prompt Stylers preset files.
+	- 2025-09-17 - v2.0.13	1. Add Flux Kontext | USO | USO Style | Redux | Redux Style subgraphs.
+							2. Update QWen | Flux imgen workflows.
+							3. Add image edit module workflow.
+
+	- 2025-09-17 - v2.0.14	1. Add Hunyuan Prompt Enhancer to imgen workflows.
+	- 2025-09-18 - v2.0.15	1. Add Imgen Qwen | Imgedit Qwen | Imgedit Flux Kontext | Imgedit Flux Redux | Imgedit Flux USO API and Krita workflows.
 
 </details>
 
-- 2025-09-16 - v2.0.12
-1. Add QWen imgen subgraphs and workflows.
-2. Reduce and retain commonly used auto-prompt custom nodes.
-3. Remove Prompt Stylers preset files.
-
-- 2025-09-17 - v2.0.13
-1. Add Flux Kontext | USO | USO Style | Redux | Redux Style subgraphs.
-2. Update QWen | Flux imgen workflows.
-3. Add image edit module workflow.
-
-- 2025-09-17 - v2.0.14
-1. Add Hunyuan Prompt Enhancer to imgen workflows.
-
-- 2025-09-18 - v2.0.15
-1. Add Imgen Qwen | Imgedit Qwen | Imgedit Flux Kontext | Imgedit Flux Redux | Imgedit Flux USO API and Krita workflows.
-
 - 2025-09-27 - v2.0.16
-1. Add HuMo t2v | ref2v + a2v | infinitetalk workflows.
+1. Add HuMo t2v | ref2v + s2v | infinitetalk workflows.
 2. Add a description about the fp8_e5m2 model, which is available for Triton.
 3. Add Audio Cuts JK🐉 | Cut Audio JK🐉 | Cut Audio Index JK🐉 | Cut Audio Cuts JK🐉 | Cut Audio Loop JK🐉 | Get Nth String JK🐉 | Wan Frame Count JK🐉 nodes.
 4. Add first two of Wan Video "Cuts" series workflows (VACE | Talk), supports multiple video generation based on scene and audio cuts. [showcase](https://youtu.be/N__iDyJXAFU)
+
+- 2025-10-02 - v2.0.17
+1. Add Native Wan HuMo workflows.
+2. Add Wan Video "Cuts" series workflows (ff | fun | HuMo), supports multiple video generation based on scene and audio cuts. [showcase](https://youtu.be/N__iDyJXAFU)
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -796,6 +787,12 @@ Please check the [video](https://youtu.be/eyjy10T201M).
 		JK🐉::Outpaint Checkpoint
 		JK🐉::Outpaint ControlNet
 </details>
+
+Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
+Please check the [video](https://youtu.be/eyjy10T201M).  
+<a href="https://youtu.be/eyjy10T201M" target="_blank">
+ <img src="https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/ComfyUIAPIUI.png" alt="UI for ComfyUI API" />
+</a>
 
 ## Reference Custom Nodes
 - [rgthree](https://github.com/rgthree/rgthree-comfy)
