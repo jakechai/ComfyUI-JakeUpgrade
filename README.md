@@ -262,6 +262,15 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Add Native Wan HuMo workflows.
 2. Add Wan Video "Cuts" series workflows (ff | fun | HuMo), supports multiple video generation based on scene and audio cuts. [showcase](https://youtu.be/N__iDyJXAFU)
 
+- 2025-10-10 - v2.1.0
+1. Add Wan22 cfg Scheduler List JK🐉 node.
+2. Add 🐉 JK:::KSampler (High+Low) Adv | 🐉 JK:::WAN Sampler (High+Low) | 🐉 JK:::WAN Sampler (High+Low) adv subgraphs.
+3. Add Wan Frame Count JK🐉 nodes to most of the Wan Video workflows.
+4. Add Wan2.2 video generation workflows.
+5. Add Wan2.1 native v2v workflow using i2v model.
+6. Rename Subgraphs prefix from `JK🐉:::` to `JK🐉-` for all workflows.
+7. Add JakeUpgrade Subgraph JSON files.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -282,10 +291,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ## Copy files in the replacement folder(optional)
 
+- [JakeUpgrade Subgraphs](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/subgraphs): Copy all the subgraph JSON files into `...\ComfyUI\user\default\subgraphs`.
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` or  `__JK_1_15_13.pack`(for `comfyui-frontend-package<=1.15.13`) to `...\ComfyUI\user\default\ComfyUI-Manager\components` for saving all JK Group Nodes within each workflow file.
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus) : (Workaround before IPAdapter approves my pull request) Copy and replace files to `custom_nodes\ComfyUI_IPAdapter_plus` for better API workflow control by adding "None" selection.
 
 > [!NOTE]
+> - Subraphs can be used as custom nodes if you copy the JSON files to the `...\ComfyUI\user\default\subgraphs`.
 > - Subraphs | Group Nodes can be copied and pasted between workflows in the ComfyUI. See details in my Video Introduction of Subraphs | Group Nodes.
 > - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
 > - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded them.
@@ -322,6 +333,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 | [TCFG](https://huggingface.co/papers/2503.18137) | enhancement | ~ |
 | [RAAG](https://arxiv.org/abs/2508.03442) | enhancement | ~ |
 | [Bidirectional Sampling](https://github.com/ff2416/WanFM) | enhancement | ~ |
+| [TSR](https://github.com/temporalscorerescaling/TSR) | enhancement | ~ |
 | [Loop](https://github.com/YisuiTT/Mobius/) | loop video | ~ |
 | [RIFLEx](https://github.com/thu-ml/RIFLEx) | long video | ~ |
 | [Context Window](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) | long & loop video | ~ |
@@ -361,6 +373,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v |
 | MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v |
 | CineScale [2.1](https://github.com/Eyeline-Labs/CineScale) | lora | t2v ff2v | 
+| lynx [2.1](https://github.com/bytedance/lynx) | lora | t2v | 
 | Echo Shot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v |
 | ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v |
 | AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v |
@@ -402,8 +415,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [API](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API)
 - [API dev & params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev)
   
-- Wan Video Generation Workflows breakdown
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/VidGen.png)
+- Wan2.1 Video Generation Workflows breakdown
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/VidGen-Wan2.1.png)
+- Wan2.2 Video Generation Workflows breakdown
+![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/VidGen-Wan2.2.png)
 
 ### Krita
 
@@ -658,41 +673,44 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 <summary><b>Subgraphs for comfyui-frontend-package>=1.24.0</b></summary>
 
 	Tools
-		JK🐉:::Image RemBG
-		JK🐉:::Image Crop by Mask
-		JK🐉:::Image Crop by Mask and Resize
-		JK🐉:::Image Resize
-		JK🐉:::Image Stitch by Mask
-		JK🐉:::Latent Crop by Mask
-		JK🐉:::Latent Crop by Mask and Resize
-		JK🐉:::Latent Resize
-		JK🐉:::Latent Stitch by Mask
+		JK🐉-Image RemBG
+		JK🐉-Image Crop by Mask
+		JK🐉-Image Crop by Mask and Resize
+		JK🐉-Image Resize
+		JK🐉-Image Stitch by Mask
+		JK🐉-Latent Crop by Mask
+		JK🐉-Latent Crop by Mask and Resize
+		JK🐉-Latent Resize
+		JK🐉-Latent Stitch by Mask
 	Sampler
-		JK🐉::Concept
-		JK🐉::Flux KSampler
-		JK🐉::Flux KSampler Adv
-		JK🐉::Variation Ksampler
-		JK🐉:::KSampler (High+Low)
+		JK🐉-Concept
+		JK🐉-Flux KSampler
+		JK🐉-Flux KSampler Adv
+		JK🐉-Variation Ksampler
+		JK🐉-KSampler (High+Low)
+		JK🐉-KSampler (High+Low) Adv
+		JK🐉-WAN Sampler (High+Low)
+		JK🐉-WAN Sampler (High+Low) adv
 	Workflow
-		JK🐉:::Image Gen Common
-		JK🐉:::Image Gen Common Adv
-		JK🐉:::Image Gen Flux
-		JK🐉:::Image Gen Flux Adv
-		JK🐉:::Image Gen SD15
-		JK🐉:::Image Gen SD15 Adv
-		JK🐉:::Image Gen SD3
-		JK🐉:::Image Gen SD3 Adv
-		JK🐉:::Image Gen SDXL
-		JK🐉:::Image Gen SDXL Adv
-		JK🐉:::Image Refine Common
-		JK🐉:::Image Gen QWen
-		JK🐉:::Image Gen QWen Adv
-		JK🐉:::Image Gen QWen Edit
-		JK🐉:::Flux Kontext
-		JK🐉:::Flux Redux
-		JK🐉:::Flux Redux Style
-		JK🐉:::Flux USO
-		JK🐉:::Flux USO Style
+		JK🐉-Image Gen Common
+		JK🐉-Image Gen Common Adv
+		JK🐉-Image Gen Flux
+		JK🐉-Image Gen Flux Adv
+		JK🐉-Image Gen SD15
+		JK🐉-Image Gen SD15 Adv
+		JK🐉-Image Gen SD3
+		JK🐉-Image Gen SD3 Adv
+		JK🐉-Image Gen SDXL
+		JK🐉-Image Gen SDXL Adv
+		JK🐉-Image Refine Common
+		JK🐉-Image Gen QWen
+		JK🐉-Image Gen QWen Adv
+		JK🐉-Image Gen QWen Edit
+		JK🐉-Flux Kontext
+		JK🐉-Flux Redux
+		JK🐉-Flux Redux Style
+		JK🐉-Flux USO
+		JK🐉-Flux USO Style
 </details>
 
 <details>

@@ -28,6 +28,7 @@ NODE_CLASS_MAPPINGS = {
     "Create Loop Schedule List": CreateLoopScheduleList,
     "Get Nth String JK": GetNthString_JK,
     "Wan Frame Count JK": WanFrameCount_JK,
+    "Wan22 cfg Scheduler List JK": Wan22cfgSchedulerList_JK,
     ### Misc Nodes [Deprecated]
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
     "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
@@ -237,6 +238,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Create Loop Schedule List": "Create Loop Schedule List JK🐉",
     "Get Nth String JK": "Get Nth String JK🐉",
     "Wan Frame Count JK": "Wan Frame Count JK🐉",
+    "Wan22 cfg Scheduler List JK": "Wan22 cfg Scheduler List JK🐉",
     ### Misc Nodes [Deprecated]
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
