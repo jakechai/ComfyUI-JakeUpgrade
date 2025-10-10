@@ -1138,7 +1138,7 @@ class SaveStringListToJSON_JK:
 
 class LoadStringListFromJSON_JK:
     def __init__(self):
-        # 缓存变量：每个节点实例都会有自己的缓存
+        
         self._cached_file_path = None
         self._cached_file_hash = None
         self._cached_data = None
@@ -1224,7 +1224,6 @@ class LoadStringListFromJSON_JK:
         else:
             print(f"Using cached JSON data for {file_path} (no change detected).")
         
-        # 5. 返回结果
         if self._cached_data is not None:
             return (json.dumps(self._cached_data),)
         else:
@@ -1346,6 +1345,32 @@ class WanFrameCount_JK:
         wan_frame_count = int(math.ceil(max(0, (frame_count - 1)) / 4) * 4 + 1)
         
         return (wan_frame_count,)
+
+class Wan22cfgSchedulerList_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "first_cfg": ("FLOAT", {"default": 3.5, "min": 0.0, "max": 30.0, "step": 0.01}),
+                "cfg": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 30.0, "step": 0.01}),
+                "steps": ("INT", {"default": 20, "min": 2, "max": 1000, "step": 1}),
+                "first_switch_at_step": ("INT", {"default": 2, "min": 1, "max": 1000, "step": 1}),
+            },
+        }
+    
+    RETURN_TYPES = ("FLOAT", )
+    RETURN_NAMES = ("cfg_list",)
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    DESCRIPTION = ""
+    OUTPUT_NODE = False
+    
+    def get_value(self, first_cfg, cfg, steps, first_switch_at_step):
+        
+        actual_switch_step = min(first_switch_at_step, steps)
+        cfg_list = [first_cfg] * actual_switch_step + [cfg] * (steps - actual_switch_step)
+        
+        return (cfg_list,)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Audio Nodes
