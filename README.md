@@ -9,7 +9,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
 - Wan Video update 3 (long video color shift issue | i2v no-low-step-lora issue | VACE keyframe2long-vid | flf2long-vid | MTV Crafter | Real MiniMax Remover): [Youtube](https://youtu.be/CHlUq17lxN8) | [Bilibili](https://www.bilibili.com/video/BV18WHeznEiE/)
-- Wan Video update 4 (Video Gen based on Scene & Audio Cuts): [showcase](https://youtu.be/N__iDyJXAFU) wip
+- Wan Video update 4 (Video Gen based on Scene & Audio Cuts | WAN 2.2 workflows): [showcase](https://youtu.be/N__iDyJXAFU) wip
 - img2mesh workflows: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - img2mesh 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - img2mesh 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
@@ -270,6 +270,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 5. Add Wan2.1 native v2v workflow using i2v model.
 6. Rename Subgraphs prefix from `JK🐉:::` to `JK🐉-` for all workflows.
 7. Add JakeUpgrade Subgraph JSON files.
+
+- 2025-10-10 - v2.1.1
+1. Update cuts_talk workflow, supports v2v lipsync.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -705,12 +708,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉-Image Refine Common
 		JK🐉-Image Gen QWen
 		JK🐉-Image Gen QWen Adv
-		JK🐉-Image Gen QWen Edit
-		JK🐉-Flux Kontext
-		JK🐉-Flux Redux
-		JK🐉-Flux Redux Style
-		JK🐉-Flux USO
-		JK🐉-Flux USO Style
+		JK🐉-Image Edit QWen
+		JK🐉-Image Edit Flux Kontext
+		JK🐉-Image Edit Flux Redux
+		JK🐉-Image Edit Flux Redux Style
+		JK🐉-Image Edit Flux USO
+		JK🐉-Image Edit Flux USO Style
 </details>
 
 <details>
