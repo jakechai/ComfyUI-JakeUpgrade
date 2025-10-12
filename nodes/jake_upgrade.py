@@ -1372,6 +1372,41 @@ class Wan22cfgSchedulerList_JK:
         
         return (cfg_list,)
 
+wanwrapper_scheduler_list = [
+    "unipc", "unipc/beta",
+    "dpm++", "dpm++/beta",
+    "dpm++_sde", "dpm++_sde/beta",
+    "euler", "euler/beta",
+    "deis",
+    "lcm", "lcm/beta",
+    "res_multistep",
+    "flowmatch_causvid",
+    "flowmatch_distill",
+    "flowmatch_pusa",
+    "multitalk",
+    "sa_ode_stable"
+]
+
+class WanWrapperSamplerDefault_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "scheduler": (wanwrapper_scheduler_list, {"default": "unipc"}),
+            },
+        }
+    
+    RETURN_TYPES = (wanwrapper_scheduler_list, "STRING")
+    RETURN_NAMES = ("scheduler", "rope_function")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    DESCRIPTION = ""
+    OUTPUT_NODE = False
+    
+    def get_value(self, scheduler):
+        
+        return (wanwrapper_scheduler_list, "comfy")
+
 #---------------------------------------------------------------------------------------------------------------------#
 # Audio Nodes
 #---------------------------------------------------------------------------------------------------------------------#

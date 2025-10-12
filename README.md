@@ -274,6 +274,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 2. Update QWen Image Gen | Edit workflows.
 3. Add IntSubOp node.
 
+- 2025-10-12 - v2.1.3
+1. Add Wan Wrapper Sampler Default node.
+2. Add 🐉 JK:::KSampler (High+Low) | 🐉 JK:::KSampler (High+Low) Adv Group Nodes for frontend v1.23.4.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -590,7 +594,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		Load String List From JSON JK🐉
 		Create Loop Schedule List JK🐉
 		Get Nth String JK🐉
-		Str List To Item List JK🐉
+		Wan Frame Count JK🐉
+		Wan22 cfg Scheduler List JK🐉
+		Wan Wrapper Sampler Default JK🐉
 	Audio Nodes
 		Audio Cuts JK🐉
 		Cut Audio JK🐉

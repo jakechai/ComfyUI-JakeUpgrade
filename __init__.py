@@ -29,6 +29,7 @@ NODE_CLASS_MAPPINGS = {
     "Get Nth String JK": GetNthString_JK,
     "Wan Frame Count JK": WanFrameCount_JK,
     "Wan22 cfg Scheduler List JK": Wan22cfgSchedulerList_JK,
+    "Wan Wrapper Sampler Default JK": WanWrapperSamplerDefault_JK,
     ### Misc Nodes [Deprecated]
     "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
     "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
@@ -240,6 +241,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Get Nth String JK": "Get Nth String JK🐉",
     "Wan Frame Count JK": "Wan Frame Count JK🐉",
     "Wan22 cfg Scheduler List JK": "Wan22 cfg Scheduler List JK🐉",
+    "Wan Wrapper Sampler Default JK": "Wan Wrapper Sampler Default JK🐉",
     ### Misc Nodes [Deprecated]
     "CR SD1.5 Aspect Ratio JK": "SD1.5 Aspect Ratio JK🐉",
     "CR SDXL Aspect Ratio JK": "SDXL Aspect Ratio JK🐉",
