@@ -9,7 +9,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
 - Wan Video update 3 (long video color shift issue | i2v no-low-step-lora issue | VACE keyframe2long-vid | flf2long-vid | MTV Crafter | Real MiniMax Remover): [Youtube](https://youtu.be/CHlUq17lxN8) | [Bilibili](https://www.bilibili.com/video/BV18WHeznEiE/)
-- Wan Video update 4 (Video Gen based on Scene & Audio Cuts | WAN 2.2 workflows): [showcase](https://youtu.be/N__iDyJXAFU) wip
+- Wan Video update 4 (Video Gen based on Scene & Audio Cuts | WAN 2.2 workflows): [showcase Wan 2.1](https://youtu.be/N__iDyJXAFU) | [showcase Wan 2.2](https://youtube.com/shorts/KEXIZLol4cg) wip
 - img2mesh workflows: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - img2mesh 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - img2mesh 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
@@ -246,21 +246,16 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	- 2025-09-17 - v2.0.13	1. Add Flux Kontext | USO | USO Style | Redux | Redux Style subgraphs.
 							2. Update QWen | Flux imgen workflows.
 							3. Add image edit module workflow.
-
 	- 2025-09-17 - v2.0.14	1. Add Hunyuan Prompt Enhancer to imgen workflows.
 	- 2025-09-18 - v2.0.15	1. Add Imgen Qwen | Imgedit Qwen | Imgedit Flux Kontext | Imgedit Flux Redux | Imgedit Flux USO API and Krita workflows.
+	- 2025-09-27 - v2.0.16	1. Add HuMo t2v | ref2v + s2v | infinitetalk workflows.
+							2. Add a description about the fp8_e5m2 model, which is available for Triton.
+							3. Add Audio Cuts JK🐉 | Cut Audio JK🐉 | Cut Audio Index JK🐉 | Cut Audio Cuts JK🐉 | Cut Audio Loop JK🐉 | Get Nth String JK🐉 | Wan Frame Count JK🐉 nodes.
+							4. Add first two of Wan Video "Cuts" series workflows (VACE | Talk), supports multiple video generation based on scene and audio cuts.
+	- 2025-10-02 - v2.0.17	1. Add Native Wan HuMo workflows.
+							2. Add Wan Video "Cuts" series workflows (ff | fun | HuMo), supports multiple video generation based on scene and audio cuts. [showcase](https://youtu.be/N__iDyJXAFU)
 
 </details>
-
-- 2025-09-27 - v2.0.16
-1. Add HuMo t2v | ref2v + s2v | infinitetalk workflows.
-2. Add a description about the fp8_e5m2 model, which is available for Triton.
-3. Add Audio Cuts JK🐉 | Cut Audio JK🐉 | Cut Audio Index JK🐉 | Cut Audio Cuts JK🐉 | Cut Audio Loop JK🐉 | Get Nth String JK🐉 | Wan Frame Count JK🐉 nodes.
-4. Add first two of Wan Video "Cuts" series workflows (VACE | Talk), supports multiple video generation based on scene and audio cuts. [showcase](https://youtu.be/N__iDyJXAFU)
-
-- 2025-10-02 - v2.0.17
-1. Add Native Wan HuMo workflows.
-2. Add Wan Video "Cuts" series workflows (ff | fun | HuMo), supports multiple video generation based on scene and audio cuts. [showcase](https://youtu.be/N__iDyJXAFU)
 
 - 2025-10-10 - v2.1.0
 1. Add Wan22 cfg Scheduler List JK🐉 node.
@@ -273,6 +268,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2025-10-10 - v2.1.1
 1. Update cuts_talk workflow, supports v2v lipsync.
+
+- 2025-10-12 - v2.1.2
+1. Add QWen Edit 2509 and QWen Edit 2509 RAW subgraphs.
+2. Update QWen Image Gen | Edit workflows.
+3. Add IntSubOp node.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -658,6 +658,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		IntBinaryCon JK🐉
 		IntUnaryOp JK🐉
 		IntBinaryOp JK🐉
+		IntSubOp JK🐉
 		Evaluate Ints JK🐉
 		Evaluate Floats JK🐉
 		Evaluate String JK🐉
@@ -709,6 +710,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉-Image Gen QWen
 		JK🐉-Image Gen QWen Adv
 		JK🐉-Image Edit QWen
+		JK🐉-Image Edit QWen 2509
+		JK🐉-Image Edit QWen 2509 RAW
 		JK🐉-Image Edit Flux Kontext
 		JK🐉-Image Edit Flux Redux
 		JK🐉-Image Edit Flux Redux Style

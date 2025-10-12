@@ -6560,6 +6560,23 @@ class IntBinaryOperation_JK:
     def op(self, op: str, a: int, b: int) -> tuple[int]:
         return (INT_BINARY_OPERATIONS[op](a, b),)
 
+class IntSubOperation_JK:
+    @classmethod
+    def INPUT_TYPES(cls) -> Mapping[str, Any]:
+        return {
+            "required": {
+                "a": DEFAULT_INT,
+                "b": DEFAULT_INT,
+            }
+        }
+
+    RETURN_TYPES = ("INT",)
+    FUNCTION = "op"
+    CATEGORY = icons.get("JK/Math/Int")
+
+    def op(self, a: int, b: int) -> tuple[int]:
+        return (INT_BINARY_OPERATIONS["Sub"](a, b),)
+
 class NumberUnaryOperation_JK:
     @classmethod
     def INPUT_TYPES(cls) -> Mapping[str, Any]:
