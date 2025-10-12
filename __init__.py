@@ -173,6 +173,7 @@ NODE_CLASS_MAPPINGS = {
     "CM_FloatBinaryOperation JK": FloatBinaryOperation_JK,
     "CM_IntUnaryOperation JK": IntUnaryOperation_JK,
     "CM_IntBinaryOperation JK": IntBinaryOperation_JK,
+    "Int Sub Operation JK": IntSubOperation_JK,
     ### ComfyMath Nodes [Deprecated]
     "CM_IntToNumber JK": IntToNumber_JK,
     "CM_NumberToInt JK": NumberToInt_JK,
@@ -383,6 +384,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CM_FloatBinaryOperation JK": "FloatBinaryOp JK🐉",
     "CM_IntUnaryOperation JK": "IntUnaryOp JK🐉",
     "CM_IntBinaryOperation JK": "IntBinaryOp JK🐉",
+    "Int Sub Operation JK": "IntSubOp JK🐉",
     ### ComfyMath Nodes [Deprecated]
     "CM_IntToNumber JK": "IntToNumber JK🐉",
     "CM_NumberToInt JK": "NumberToInt JK🐉",
