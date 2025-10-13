@@ -278,6 +278,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Add Wan Wrapper Sampler Default node.
 2. Add 🐉 JK:::KSampler (High+Low) | 🐉 JK:::KSampler (High+Low) Adv Group Nodes for frontend v1.23.4.
 
+- 2025-10-13 - v2.1.4
+1. Recreate missing Group Nodes from Subgraphs for Runninghub.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
