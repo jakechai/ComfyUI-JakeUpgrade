@@ -2325,7 +2325,7 @@ class CR_ApplyControlNet_JK:
             else:
                 controlnet = control_net
             
-            image, mask_from_image = SplitImageWithAlpha().split_image_with_alpha(image)
+            image, mask_from_image = SplitImageWithAlpha().execute(image)
             
             # the mask from the image overrides the input mask
             if mask == None or torch.all(mask_from_image == 0).int().item() == 0:
@@ -2422,7 +2422,7 @@ class CR_ApplyControlNetStackAdv_JK:
                 else:
                     controlnet = controlnet_name
                 
-                image, mask_from_image = SplitImageWithAlpha().split_image_with_alpha(image)
+                image, mask_from_image = SplitImageWithAlpha().execute(image)
                 
                 # the mask from the image overrides the input mask
                 if mask == None or torch.all(mask_from_image == 0).int().item() == 0:
