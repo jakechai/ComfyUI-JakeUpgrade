@@ -254,20 +254,16 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							4. Add first two of Wan Video "Cuts" series workflows (VACE | Talk), supports multiple video generation based on scene and audio cuts.
 	- 2025-10-02 - v2.0.17	1. Add Native Wan HuMo workflows.
 							2. Add Wan Video "Cuts" series workflows (ff | fun | HuMo), supports multiple video generation based on scene and audio cuts. [showcase](https://youtu.be/N__iDyJXAFU)
+	- 2025-10-10 - v2.1.0	1. Add Wan22 cfg Scheduler List JK🐉 node.
+							2. Add 🐉 JK:::KSampler (High+Low) Adv | 🐉 JK:::WAN Sampler (High+Low) | 🐉 JK:::WAN Sampler (High+Low) adv subgraphs.
+							3. Add Wan Frame Count JK🐉 nodes to most of the Wan Video workflows.
+							4. Add Wan2.2 video generation workflows.
+							5. Add Wan2.1 native v2v workflow using i2v model.
+							6. Rename Subgraphs prefix from `JK🐉:::` to `JK🐉-` for all workflows.
+							7. Add JakeUpgrade Subgraph JSON files.
+	- 2025-10-10 - v2.1.1	1. Update cuts_talk workflow, supports v2v lipsync.
 
 </details>
-
-- 2025-10-10 - v2.1.0
-1. Add Wan22 cfg Scheduler List JK🐉 node.
-2. Add 🐉 JK:::KSampler (High+Low) Adv | 🐉 JK:::WAN Sampler (High+Low) | 🐉 JK:::WAN Sampler (High+Low) adv subgraphs.
-3. Add Wan Frame Count JK🐉 nodes to most of the Wan Video workflows.
-4. Add Wan2.2 video generation workflows.
-5. Add Wan2.1 native v2v workflow using i2v model.
-6. Rename Subgraphs prefix from `JK🐉:::` to `JK🐉-` for all workflows.
-7. Add JakeUpgrade Subgraph JSON files.
-
-- 2025-10-10 - v2.1.1
-1. Update cuts_talk workflow, supports v2v lipsync.
 
 - 2025-10-12 - v2.1.2
 1. Add QWen Edit 2509 and QWen Edit 2509 RAW subgraphs.
@@ -279,7 +275,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 2. Add 🐉 JK:::KSampler (High+Low) | 🐉 JK:::KSampler (High+Low) Adv Group Nodes for frontend v1.23.4.
 
 - 2025-10-13 - v2.1.4
-1. Recreate missing Group Nodes from Subgraphs for Runninghub.
+1. Recreate missing Group Nodes for Runninghub based on Subgraphs.
+
+- 2025-10-13 - v2.1.5
+1. Fix `comfy_extras.nodes_compositing.SplitImageWithAlpha.split_image_with_alpha()` naming issue. Rename it to `comfy_extras.nodes_compositing.SplitImageWithAlpha.excute()`.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -308,7 +307,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > [!NOTE]
 > - Subraphs can be used as custom nodes if you copy the JSON files to the `...\ComfyUI\user\default\subgraphs`.
 > - Subraphs | Group Nodes can be copied and pasted between workflows in the ComfyUI. See details in my Video Introduction of Subraphs | Group Nodes.
-> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
+> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-WanVideoWrapper-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-Wan-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
 > - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded them.
 
 ## Update
@@ -747,6 +746,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉::Flux KSampler Adv
 		JK🐉::Variation Ksampler
 		JK🐉:::KSampler (High+Low)
+		JK🐉:::KSampler (High+Low) Adv
+		JK🐉:::WAN Sampler (High+Low)
+		JK🐉:::WAN Sampler (High+Low) adv
 	Workflow
 		JK🐉:::Image Gen Common
 		JK🐉:::Image Gen Common Adv
@@ -759,6 +761,16 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 		JK🐉:::Image Gen SDXL
 		JK🐉:::Image Gen SDXL Adv
 		JK🐉:::Image Refine Common
+		JK🐉:::Image Gen QWen
+		JK🐉:::Image Gen QWen Adv
+		JK🐉:::Image Edit QWen
+		JK🐉:::Image Edit QWen 2509
+		JK🐉:::Image Edit Flux Kontext
+		JK🐉:::Image Edit Flux Redux
+		JK🐉:::Image Edit Flux Redux Style
+		JK🐉:::Image Edit Flux USO
+		JK🐉:::Image Edit Flux USO Subject
+		JK🐉:::Image Edit Flux USO Style
 </details>
 
 <details>
