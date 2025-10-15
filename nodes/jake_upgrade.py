@@ -5043,10 +5043,10 @@ class CR_IntInputSwitch_JK:
         return {
             "required": {
                 "boolean_value": ("BOOLEAN", {"default": False}),
-                "int_false": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
+                "int_false": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615, "step": 1}),
             },
             "optional": {
-                "int_true": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615}),
+                "int_true": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615, "step": 1}),
             },
         }
 
@@ -5551,8 +5551,8 @@ class CR_TriMeshInputSwitch_JK:
 #---------------------------------------------------------------------------------------------------------------------#
 DEFAULT_BOOL = ("BOOLEAN", {"default": False})
 DEFAULT_STRING = ("STRING", {"default": ""})
-DEFAULT_FLOAT = ("FLOAT", {"default": 0.0, "step": 0.0001})
-DEFAULT_INT = ("INT", {"default": 0})
+DEFAULT_FLOAT = ("FLOAT", {"default": 0.0, "min": -sys.float_info.max, "max": sys.float_info.max, "step": 0.0001})
+DEFAULT_INT = ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615, "step": 1})
 DEFAULT_NUMBER = ("NUMBER", {"default": 0.0, "step": 0.0001})
 number: TypeAlias = int | float
 Vec2: TypeAlias = tuple[float, float]
@@ -6777,9 +6777,9 @@ class EvaluateInts_JK:
         return {"required": {
             "python_expression": ("STRING", {"default": "((a + b) - c) / 2", "multiline": False}), },
             "optional": {
-                "a": ("INT", {"default": 0, "min": -48000, "max": 48000, "step": 1}),
-                "b": ("INT", {"default": 0, "min": -48000, "max": 48000, "step": 1}),
-                "c": ("INT", {"default": 0, "min": -48000, "max": 48000, "step": 1}), },
+                "a": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615, "step": 1}),
+                "b": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615, "step": 1}),
+                "c": ("INT", {"default": 0, "min": -18446744073709551615, "max": 18446744073709551615, "step": 1}), },
         }
 
     RETURN_TYPES = ("INT", "FLOAT", "STRING",)
@@ -7017,6 +7017,7 @@ class Hy3DCamConfig20to21_JK:
     RETURN_TYPES = ("HY3D21CAMERA",)
     FUNCTION = "get_camconfig"
     CATEGORY = icons.get("JK/3D")
+    DEPRECATED = True
     
     def get_camconfig(self, camera_config):
         

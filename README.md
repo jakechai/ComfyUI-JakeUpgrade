@@ -262,23 +262,25 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							6. Rename Subgraphs prefix from `JK🐉:::` to `JK🐉-` for all workflows.
 							7. Add JakeUpgrade Subgraph JSON files.
 	- 2025-10-10 - v2.1.1	1. Update cuts_talk workflow, supports v2v lipsync.
+	- 2025-10-12 - v2.1.2	1. Add QWen Edit 2509 and QWen Edit 2509 RAW subgraphs.
+							2. Update QWen Image Gen | Edit workflows.
+							3. Add IntSubOp node.
+	- 2025-10-12 - v2.1.3	1. Add Wan Wrapper Sampler Default node.
+							2. Add 🐉 JK:::KSampler (High+Low) | 🐉 JK:::KSampler (High+Low) Adv Group Nodes for frontend v1.23.4.
 
 </details>
-
-- 2025-10-12 - v2.1.2
-1. Add QWen Edit 2509 and QWen Edit 2509 RAW subgraphs.
-2. Update QWen Image Gen | Edit workflows.
-3. Add IntSubOp node.
-
-- 2025-10-12 - v2.1.3
-1. Add Wan Wrapper Sampler Default node.
-2. Add 🐉 JK:::KSampler (High+Low) | 🐉 JK:::KSampler (High+Low) Adv Group Nodes for frontend v1.23.4.
 
 - 2025-10-13 - v2.1.4
 1. Recreate missing Group Nodes for Runninghub based on Subgraphs.
 
 - 2025-10-13 - v2.1.5
 1. Fix `comfy_extras.nodes_compositing.SplitImageWithAlpha.split_image_with_alpha()` naming issue. Rename it to `comfy_extras.nodes_compositing.SplitImageWithAlpha.excute()`.
+
+- 2025-10-15 - v2.1.6
+1. Update Hunyuan3D img2mesh workflow: ① supports 4K even 8K texture generation; ② Resize the input image to a valid resolution.
+2. Create Hunyuan3D2.1 one-click version img2mesh workflow for runninghub.
+3. Deprecate Hy3D Cam Config 20to21 JK🐉 node.
+4. Fixed INT and Float min | max value for Math nodes.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -307,7 +309,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > [!NOTE]
 > - Subraphs can be used as custom nodes if you copy the JSON files to the `...\ComfyUI\user\default\subgraphs`.
 > - Subraphs | Group Nodes can be copied and pasted between workflows in the ComfyUI. See details in my Video Introduction of Subraphs | Group Nodes.
-> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-WanVideoWrapper-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-Wan-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
+> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Subgraphs-WanVideoWrapper-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-Wan-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-WanVideoWrapper-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-Wan-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
 > - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded them.
 
 ## Update
@@ -501,6 +503,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [ComfyUI Hunyuan3D 2.1 Wrapper](https://github.com/visualbruno/ComfyUI-Hunyuan3d-2-1)
 - [Comfy mtb](https://github.com/melMass/comfy_mtb)
 - [ComfyUI-HQ-Image-Save](https://github.com/spacepxl/ComfyUI-HQ-Image-Save)
+- (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (18 mv tex)[ComfyUI MVAdapter](https://github.com/huanngzh/ComfyUI-MVAdapter)
 - (18 mv tex)[ComfyUI IG2MV](https://github.com/hunzmusic/ComfyUI-IG2MV)
 - (18 mv tex)[ComfyUI StableX Wrapper](https://github.com/kijai/ComfyUI-StableXWrapper)
