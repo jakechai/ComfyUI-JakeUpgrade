@@ -1571,7 +1571,10 @@ class SceneCuts_JK:
                 if not long_vid_method:
                     loop_frame_count = int(math.ceil(max(0, (duration * fps - 1)) / 4) * 4 + 1)
                 else:
-                    loop_frame_count = int(segment_frame_count + math.floor((duration * fps - segment_frame_count) / (segment_frame_count - overlap_frame_count)) * (segment_frame_count - overlap_frame_count) + math.ceil(max(0, ((duration * fps - segment_frame_count) % (segment_frame_count - overlap_frame_count) - 1)) / 4) * 4 + 1)
+                    if (duration * fps - segment_frame_count) > 0:
+                        loop_frame_count = int(segment_frame_count + math.floor((duration * fps - segment_frame_count) / (segment_frame_count - overlap_frame_count)) * (segment_frame_count - overlap_frame_count) + math.ceil(max(0, ((duration * fps - segment_frame_count) % (segment_frame_count - overlap_frame_count) - 1)) / 4) * 4 + 1)
+                    else:
+                        loop_frame_count = int(math.ceil(max(0, (duration * fps - 1)) / 4) * 4 + 1)
                 
                 cut_frame_count = max(0, int(round(duration * fps)) - warmup_frame_count)
                 

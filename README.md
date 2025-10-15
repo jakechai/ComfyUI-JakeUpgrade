@@ -282,6 +282,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 3. Deprecate Hy3D Cam Config 20to21 JK🐉 node.
 4. Fixed INT and Float min | max value for Math nodes.
 
+- 2025-10-15 - v2.1.7
+1. Fix Loop Frame count calculation bug in SceneCuts Node.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -394,6 +397,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v |
 | Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v |
+| Ovi [2.2](https://github.com/character-ai/Ovi) | main model | t2av i2av |
 | Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v |
 | MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v |
 | *control* | | |
