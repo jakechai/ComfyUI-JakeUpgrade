@@ -1449,7 +1449,8 @@ class SceneCuts_JK:
                 "min_loop_frame_count": ("BOOLEAN", {
                     "default": False,
                     "label_on": "segment",
-                    "label_off": "duration"
+                    "label_off": "duration",
+                    "tooltip": "Deactivated."
                 }),
                 "long_vid_method": ("BOOLEAN", {
                     "default": False,
@@ -1514,7 +1515,7 @@ class SceneCuts_JK:
             sample_rate = audio["sample_rate"]
             audio_duration = waveform.shape[-1] / sample_rate
         
-        #duration mode
+        # duration mode
         if mode:
             scene_cuts = []
             current_time = 0.0
@@ -1576,10 +1577,8 @@ class SceneCuts_JK:
                     else:
                         loop_frame_count = int(math.ceil(max(0, (duration * fps - 1)) / 4) * 4 + 1)
                 
+                # warmup_frame_count has been added to the duration calculation for each scene cut, so that it's been removed here.
                 cut_frame_count = max(0, int(round(duration * fps)) - warmup_frame_count)
-                
-                if min_loop_frame_count and loop_frame_count < segment_frame_count:
-                    loop_frame_count = segment_frame_count
                 
                 selected_total_frame_count += loop_frame_count
                 selected_cut_frame_counts.append(str(cut_frame_count))
