@@ -9,7 +9,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
 - Wan Video update 3 (long video color shift issue | i2v no-low-step-lora issue | VACE keyframe2long-vid | flf2long-vid | MTV Crafter | Real MiniMax Remover): [Youtube](https://youtu.be/CHlUq17lxN8) | [Bilibili](https://www.bilibili.com/video/BV18WHeznEiE/)
-- Wan Video update 4 (Video Gen based on Scene & Audio Cuts | WAN 2.2 workflows): [showcase Wan 2.1](https://youtu.be/N__iDyJXAFU) | [showcase Wan 2.2](https://youtube.com/shorts/KEXIZLol4cg) wip
+- Wan Video update 4 (Video Gen based on Scene & Audio Cuts | WAN 2.2 workflows): [showcase Wan 2.1](https://youtu.be/N__iDyJXAFU) | [showcase Wan 2.2](https://youtube.com/shorts/KEXIZLol4cg) | [Youtube](https://youtu.be/ZM8kDKj9ycw) | [Bilibili](https://www.bilibili.com/video/BV1XWWzzkERX/)
 - img2mesh workflows: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - img2mesh 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - img2mesh 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
@@ -285,6 +285,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2025-10-15 - v2.1.7
 1. Fix Loop Frame count calculation bug in SceneCuts Node.
 
+- 2025-10-16 - v2.1.8
+1. Disable min_loop_frame_count parameter in SceneCuts Node.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -400,6 +403,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 | Ovi [2.2](https://github.com/character-ai/Ovi) | main model | t2av i2av |
 | Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v |
 | MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v |
+| Flash VSR [2.1](https://github.com/OpenImagingLab/FlashVSR) | main model | v2v |
 | *control* | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v |
 | Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v |
