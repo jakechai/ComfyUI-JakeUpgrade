@@ -16,6 +16,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
 - img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
+- (new)imgen QWen Model Sheet workflow: wip
 - imgen workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - imgen SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) | [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - imgen API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) | [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
@@ -267,26 +268,33 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							3. Add IntSubOp node.
 	- 2025-10-12 - v2.1.3	1. Add Wan Wrapper Sampler Default node.
 							2. Add 🐉 JK:::KSampler (High+Low) | 🐉 JK:::KSampler (High+Low) Adv Group Nodes for frontend v1.23.4.
+	- 2025-10-13 - v2.1.4	1. Recreate missing Group Nodes for Runninghub based on Subgraphs.
+	- 2025-10-13 - v2.1.5	1. Fix `comfy_extras.nodes_compositing.SplitImageWithAlpha.split_image_with_alpha()` naming issue. Rename it to `comfy_extras.nodes_compositing.SplitImageWithAlpha.excute()`.
+	- 2025-10-15 - v2.1.6	1. Update Hunyuan3D img2mesh workflow: ① supports 4K even 8K texture generation; ② Resize the input image to a valid resolution.
+							2. Create Hunyuan3D2.1 one-click version img2mesh workflow for runninghub.
+							3. Deprecate Hy3D Cam Config 20to21 JK🐉 node.
+							4. Fixed INT and Float min | max value for Math nodes.
+	- 2025-10-15 - v2.1.7	1. Fix Loop Frame count calculation bug in SceneCuts Node.
+	- 2025-10-16 - v2.1.8	1. Disable min_loop_frame_count parameter in SceneCuts Node.
+	- 2025-10-16 - v2.1.9	1. Add Qwen resolution to resolution select list.
+							2. Add Random Prompter JK🐉 node. Replace Flux Prompt Generater with Random Prompter JK🐉.
+							3. Add JK🐉-Image Edit QWen 2509 Adv subgraph.
+							4. Delete SD3 imgen multigpu version workflow for no triple clip loader multi gpu node any more.
 
 </details>
 
-- 2025-10-13 - v2.1.4
-1. Recreate missing Group Nodes for Runninghub based on Subgraphs.
-
-- 2025-10-13 - v2.1.5
-1. Fix `comfy_extras.nodes_compositing.SplitImageWithAlpha.split_image_with_alpha()` naming issue. Rename it to `comfy_extras.nodes_compositing.SplitImageWithAlpha.excute()`.
-
-- 2025-10-15 - v2.1.6
-1. Update Hunyuan3D img2mesh workflow: ① supports 4K even 8K texture generation; ② Resize the input image to a valid resolution.
-2. Create Hunyuan3D2.1 one-click version img2mesh workflow for runninghub.
-3. Deprecate Hy3D Cam Config 20to21 JK🐉 node.
-4. Fixed INT and Float min | max value for Math nodes.
-
-- 2025-10-15 - v2.1.7
-1. Fix Loop Frame count calculation bug in SceneCuts Node.
-
-- 2025-10-16 - v2.1.8
-1. Disable min_loop_frame_count parameter in SceneCuts Node.
+- 2025-10-27 - v2.2.0
+1. Re-write all nodes: 
+2. Code Organization: Nodes are logically grouped by data type and functionality.
+3. Modular nodes loading control, including deprecated nodes.
+4. Comments: All key functions and classes have detailed.
+5. Documentation: Each node class has an description and tooltip.
+6. Type Hints: Type hints have been added to all functions.
+7. Naming Conventions: Naming conventions for return values ​​have been standardized.
+8. Error Handling: Necessary imports and error handling have been added.
+9. Add Random Prompter JK🐉 node, deprecate Flux Prompt Generator.
+10. Add QWen_ModelSheet and QWen_ModelSheet adv imgen/imgedit workflow.
+11. Add Portrait Master + Random Prompter imgen workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -297,14 +305,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 3. Change to the `custom_nodes\ComfyUI-JakeUpgrade` folder you just created 
     - e.g. `cd C:\ComfyUI_windows_portable\ComfyUI\custom_nodes\ComfyUI-JakeUpgrade`
 4.  Install python packages
-      - **Windows Standalone installation** (embedded python):
-	  
-        `../../../python_embeded/python.exe -s -m pip install -r requirements.txt`
-	    
-		OR: run install.bat.
-      - **Manual/non-Windows installation**
-	  
-        `pip install -r requirements.txt`
+      - **Windows Standalone installation** (embedded python):  
+		run install.bat  
+        Manual: `../../../python_embeded/python.exe -s -m pip install -r requirements.txt`  
+      - **non-Windows installation**:  
+        Manual: `pip install -r requirements.txt`  
 
 ## Copy files in the replacement folder(optional)
 
@@ -374,6 +379,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 | AccVid [2.1](https://github.com/aejion/AccVideo) | main model & lora | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0 |
 | Fast Wan [2.2](https://huggingface.co/FastVideo) [2.1](https://huggingface.co/FastVideo) | main model & lora | t2v v2v uni_pc simple steps 8 cfg 1.0 |
 | Turbo [2.2 TI2V 5B](https://github.com/quanhaol/Wan2.2-TI2V-5B-Turbo) | main model & lora | t2v v2v uni_pc simple steps 4 cfg 1.0 |
+| rCM [2.1](https://github.com/NVlabs/rcm) | main model & lora | t2v step 4 |
 | Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | lora | t2v ff2v flf2v v2v uni_pc(flowmatch_pusa) simple steps 5 cfg 5.0 |
 | *Functional Model* | | |
 | FUN Control [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | t2v ff2v |
@@ -404,6 +410,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 | Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v |
 | MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v |
 | Flash VSR [2.1](https://github.com/OpenImagingLab/FlashVSR) | main model | v2v |
+| MoCha [2.1](https://orange-3dv-team.github.io/MoCha/) | main model | v2v |
 | *control* | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v |
 | Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v |
@@ -485,7 +492,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
 - (auto prompt)[One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
 - (auto prompt)[Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
-- (auto prompt)[Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
 - (refine)[Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - (detailer)[Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
 - (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
@@ -498,6 +504,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - (legacy)[WD14 Tagger](https://github.com/pythongosssss/ComfyUI-WD14-Tagger)
 - (legacy)[Dynamic Prompts](https://github.com/adieyal/comfyui-dynamicprompts)
 - (legacy)[Prompt Stylers](https://github.com/wolfden/ComfyUi_PromptStylers)
+- (legacy)[Flux Prompt Generator](https://github.com/fairy-root/Flux-Prompt-Generator)
 - (legacy)[Merlin Magic Photo Prompter](https://github.com/Xclbr7/ComfyUI-Merlin)
 - (legacy)[VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
 - (legacy)[IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
