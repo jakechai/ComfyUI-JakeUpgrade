@@ -5,6 +5,7 @@ Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
 ## Video Introduction
+- (new)imgen QWen Model Sheet workflow: wip
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
@@ -16,7 +17,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/) | [portable ComfyUI v0.3.27+pytorch 2.5.1+cuda 12.4](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q/view?usp=sharing)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
 - img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
-- **(new)**imgen QWen Model Sheet workflow: wip
 - imgen workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - imgen SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) | [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - imgen API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) | [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
@@ -296,6 +296,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 10. Add QWen_ModelSheet and QWen_ModelSheet adv imgen/imgedit workflow.
 11. Add Portrait Master + Random Prompter imgen workflow.
 
+- 2025-10-28 - v2.2.1
+1. Update model sheet workflow.
+2. Add Hunyuan Prompt Enhancer and fal LLM nodes to portrait master + random prompter workflow.
+3. Add EXCLUSION_MARK parameter in the Random Prompter to exclude files in random mode.
+4. Add more choices for to Random Prompter data.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -487,6 +493,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
+- [QWen Image Wan Bridge](https://github.com/fblissjr/ComfyUI-QwenImageWanBridge)
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (auto prompt)[Hunyuan Prompt Enhancer](https://github.com/leeooo001/comfyui-Hunyuan-PromptEnhancer)
 - (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
