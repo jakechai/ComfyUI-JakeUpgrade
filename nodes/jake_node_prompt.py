@@ -31,8 +31,11 @@ class PromptConfig:
         "style": "style"
     }
     
-    # 排除的文件记号
-    EXCLUSION_STRING = "999-"
+    # 随机计算时排除的文件记号
+    # "900-"表示文件字符开头  ="900-"的某个文件
+    # 900表示文件开头字符数字 >=900  的所有文件
+    # EXCLUSION_MARK = "900-"
+    EXCLUSION_MARK = 900
     
     # 支持的文件格式
     SUPPORTED_FORMATS = {
@@ -299,10 +302,12 @@ class DirectoryWalker:
     """目录遍历器"""
     
     @staticmethod
-    def _walk_category_directory(category_dir: str, exclusion: str = "") -> List[Tuple[str, str, bool]]:
+    def _walk_category_directory(category_dir: str, exclusion: any = "") -> List[Tuple[str, str, bool]]:
         """
         公共目录遍历函数
-        返回: [(file_relative_path, full_prefix, should_add_prefix), ...]
+        支持两种排除方式：
+        - 字符串：排除以该字符串开头的条目
+        - 整数：排除编号大于等于该数字的条目
         """
         base_dir = os.path.join(os.path.dirname(__file__), PromptConfig.PROMPT_DATA_DIR)
         dir_path = os.path.join(base_dir, category_dir)
@@ -318,9 +323,26 @@ class DirectoryWalker:
             # 获取目录下所有条目
             entries = []
             for entry in os.listdir(current_dir):
-                if entry.startswith('.') or (exclusion and entry.startswith(exclusion)):
+                if entry.startswith('.'):
                     continue
-                entries.append(entry)
+                
+                # 排除逻辑
+                skip_entry = False
+                if exclusion:
+                    if isinstance(exclusion, int) and exclusion > 0:
+                        # 数字排除：排除编号大于等于指定数字的条目
+                        match = re.match(r'^(\d+)-', entry)
+                        if match:
+                            entry_number = int(match.group(1))
+                            if entry_number >= exclusion:
+                                skip_entry = True
+                    elif isinstance(exclusion, str) and exclusion:
+                        # 字符串排除：排除以指定字符串开头的条目
+                        if entry.startswith(exclusion):
+                            skip_entry = True
+                
+                if not skip_entry:
+                    entries.append(entry)
             
             # 按数字前缀排序
             entries.sort(key=lambda x: [int(t) if t.isdigit() else t.lower() for t in re.split(r'(\d+)', x)])
@@ -425,22 +447,22 @@ def load_all_data():
     """预加载所有数据"""
     return {
         'SCENE_OPTIONS': DataManager.load_category_options("scene"),
-        'SCENE_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("scene", ""),
+        'SCENE_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("scene", PromptConfig.EXCLUSION_MARK),
         'MOTION_OPTIONS': DataManager.load_category_options("motion"),
-        'MOTION_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("motion", ""),
+        'MOTION_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("motion", PromptConfig.EXCLUSION_MARK),
         'FACIAL_ACTION_OPTIONS': DataManager.load_category_options("facial_action"),
-        'FACIAL_ACTION_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("facial_action", PromptConfig.EXCLUSION_STRING),
+        'FACIAL_ACTION_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("facial_action", PromptConfig.EXCLUSION_MARK),
         'EXPRESSION_STR': DataManager.load_category_options("exp_str"),
         'EXPRESSION_OPTIONS': DataManager.load_category_options("expression"),
-        'EXPRESSION_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("expression", ""),
+        'EXPRESSION_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("expression", PromptConfig.EXCLUSION_MARK),
         'LIGHTING_OPTIONS': DataManager.load_category_options("lighting"),
-        'LIGHTING_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("lighting", ""),
+        'LIGHTING_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("lighting", PromptConfig.EXCLUSION_MARK),
         'CAMERA_OPTIONS': DataManager.load_category_options("camera"),
-        'CAMERA_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("camera", PromptConfig.EXCLUSION_STRING),
+        'CAMERA_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("camera", PromptConfig.EXCLUSION_MARK),
         'STYLE_OPTIONS': DataManager.load_category_options("style"),
-        'STYLE_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("style", PromptConfig.EXCLUSION_STRING),
+        'STYLE_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("style", PromptConfig.EXCLUSION_MARK),
         'DESCRIPTION_OPTIONS': DataManager.load_category_options("description"),
-        'DESCRIPTION_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("description", ""),
+        'DESCRIPTION_STRUCTURED_OPTIONS': DataManager.load_structured_category_options("description", PromptConfig.EXCLUSION_MARK),
     }
 
 # 全局数据缓存
