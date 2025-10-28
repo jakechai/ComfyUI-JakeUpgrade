@@ -425,7 +425,7 @@ class DataManager:
         return all_options
     
     @staticmethod
-    def load_structured_category_options(category_dir: str, exclusion: str = "") -> List[Dict[str, Any]]:
+    def load_structured_category_options(category_dir: str, exclusion: any = "") -> List[Dict[str, Any]]:
         """结构化版本 - 使用公共遍历函数"""
         structured_options = []
         entries = DirectoryWalker._walk_category_directory(category_dir, exclusion)

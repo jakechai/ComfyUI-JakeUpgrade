@@ -302,6 +302,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 3. Add EXCLUSION_MARK parameter in the Random Prompter to exclude files in random mode.
 4. Add more choices for to Random Prompter data.
 
+- 2025-10-28 - v2.2.2
+1. Random Prompter bug fixed.
+2. Fix bad connections in portrait master + random prompter workflow.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
