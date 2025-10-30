@@ -151,7 +151,6 @@ class RoughOutline_JK:
         # Concatenate after unifying shapes
         return numpy.concatenate(new_contour, axis=0)
 
-
 class OpenDWPose_JK:
     """Combine DWPose and OpenPose images by removing and reserving specific colors"""
     
@@ -247,7 +246,6 @@ class OpenDWPose_JK:
         result_image = numpy.add(DWPose, OpenPose)
         return (result_image,)
 
-
 class MakeImageGrid_JK:
     """Create image grid from multiple images"""
     
@@ -270,7 +268,7 @@ class MakeImageGrid_JK:
     def make_image_grid(self, images, grid_side_num, grid_side):
         """Create image grid from batch of images"""
         try:
-            from torchvision import transforms as TF
+            import torchvision.transforms.functional as TF
         except ImportError:
             raise ImportError("torchvision is required for MakeImageGrid_JK")
             
@@ -289,7 +287,6 @@ class MakeImageGrid_JK:
 
         return (image_grid,)
 
-
 class SplitImageGrid_JK:
     """Split image grid into individual images"""
     
@@ -298,8 +295,9 @@ class SplitImageGrid_JK:
         return {
             "required": {
                 "image": ("IMAGE",),
-                "grid_side": ("BOOLEAN", {"default": True, "label_on": "rows", "label_off": "columns"},),
+                "grid_side": ("BOOLEAN", {"default": True, "label_on": "rows", "label_off": "columns"}),
                 "grid_side_num": ("INT", {"default": 1, "min": 1, "max": 8192}),
+                "crop_excess": ("BOOLEAN", {"default": True, "label_on": "crop", "label_off": "error"}),
             },
         }
         
@@ -309,7 +307,7 @@ class SplitImageGrid_JK:
     CATEGORY = icons.get("JK/Image")
     DESCRIPTION = "Split image grid into individual images based on rows or columns"
 
-    def split_image_grid(self, image, grid_side_num, grid_side):
+    def split_image_grid(self, image, grid_side_num, grid_side, crop_excess=True):
         """Split image grid into multiple images"""
         images = []
         for image_pil in torch_imgs_to_pils(image):
@@ -320,12 +318,25 @@ class SplitImageGrid_JK:
                 cols = grid_side_num
                 rows = None
 
-            image_pils = pil_split_image(image_pil, rows, cols)
-            images.append(pils_to_torch_imgs(image_pils, image.dtype, image.device))
+            try:
+                image_pils = pil_split_image(image_pil, rows, cols, crop_excess)
+                if image_pils:  # Only process if we have images
+                    torch_imgs = pils_to_torch_imgs(image_pils, image.dtype, image.device)
+                    images.append(torch_imgs)
+            except Exception as e:
+                if not crop_excess:
+                    raise e
+                # In crop mode, try to handle the error more gracefully
+                print(f"Warning: {e}. Using fallback splitting.")
+                # Fallback: use single image
+                images.append(image)
+        
+        if not images:
+            # If no images were created, return the original
+            return (image,)
             
         images = torch.cat(images, dim=0)
         return (images,)
-
 
 class ImageRemoveAlpha_JK:
     """Remove alpha channel from RGBA images"""
@@ -353,7 +364,6 @@ class ImageRemoveAlpha_JK:
             ret_images.append(pil2tensor(tensor2pil(img).convert('RGB')))
         
         return (torch.cat(ret_images, dim=0),)
-
 
 class ColorGrading_JK:
     """Apply color grading with brightness, contrast, saturation and RGB adjustments"""
@@ -421,7 +431,6 @@ class ColorGrading_JK:
         
         return (torch.cat(ret_images, dim=0),)
 
-
 class GetSize_JK:
     """Get dimensions from image, latent, or mask"""
     
@@ -457,7 +466,6 @@ class GetSize_JK:
             image_height = 0
         
         return (image_width, image_height)
-
 
 # Helper functions for image cropping operations
 def get_bounding_box(mask):
@@ -506,7 +514,6 @@ def calculate_scale_factor(target_mega_pixel, width, height):
     current_pixels = width * height
     target_pixels = target_mega_pixel * 1000000  # Convert to pixels
     return math.sqrt(target_pixels / current_pixels)
-
 
 class ImageCropByMaskResolutionGrp_JK:
     """Calculate crop parameters based on mask for image processing"""
@@ -581,7 +588,6 @@ class ImageCropByMaskResolutionGrp_JK:
             target_width = multiple_of_int(target_height * (crop_width / crop_height), 8)
         
         return (crop_width, crop_height, offset_x, offset_y, target_width, target_height)
-
 
 class ImageCropByMaskParams_JK:
     """Provide crop parameters for mask-based image cropping"""
