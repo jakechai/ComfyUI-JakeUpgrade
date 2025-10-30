@@ -269,7 +269,7 @@ def calculate_loop_frame_count(
         return int(loop_frame_count)
 
 #---------------------------------------------------------------------------------------------------------------------#
-# Image Utilities from 3D Pack
+# Image Utilities copied and modified from 3D Pack
 #---------------------------------------------------------------------------------------------------------------------#
 def torch_imgs_to_pils(images, masks=None, alpha_min=0.1):
     """
@@ -313,33 +313,156 @@ def pils_to_torch_imgs(pils: Union[Image.Image, List[Image.Image]], dtype=torch.
 
     return images
 
-def pil_split_image(image, rows=None, cols=None):
+def pil_split_image(image, rows=None, cols=None, crop_excess=True):
     """
-        inverse function of make_image_grid
+    Split image into grid with proper error handling and validation
+    
+    Args:
+        image: PIL Image to split
+        rows: Number of rows (None for auto)
+        cols: Number of columns (None for auto)  
+        crop_excess: Whether to crop excess pixels or raise error
     """
-    # image is in square
-    if rows is None and cols is None:
-        # image.size [W, H]
-        rows = 1
-        cols = image.size[0] // image.size[1]
-        assert cols * image.size[1] == image.size[0]
-        subimg_size = image.size[1]
-    elif rows is None:
-        subimg_size = image.size[0] // cols
-        rows = image.size[1] // subimg_size
-        assert rows * subimg_size == image.size[1]
-    elif cols is None:
-        subimg_size = image.size[1] // rows
-        cols = image.size[0] // subimg_size
-        assert cols * subimg_size == image.size[0]
+    original_width, original_height = image.size
+    
+    # Validate input parameters
+    if rows is not None and rows <= 0:
+        raise ValueError(f"Rows must be positive, got {rows}")
+    if cols is not None and cols <= 0:
+        raise ValueError(f"Columns must be positive, got {cols}")
+    
+    # Case 1: Both rows and cols specified
+    if rows is not None and cols is not None:
+        subimg_width = original_width // cols
+        subimg_height = original_height // rows
+        
+        # Validate if splitting is possible
+        if subimg_width <= 0 or subimg_height <= 0:
+            raise ValueError(f"Cannot split image {original_width}x{original_height} into {cols}x{rows} grid - subimage size would be {subimg_width}x{subimg_height}")
+        
+        if crop_excess:
+            # Crop to make divisible
+            new_width = subimg_width * cols
+            new_height = subimg_height * rows
+            if new_width != original_width or new_height != original_height:
+                image = image.crop((0, 0, new_width, new_height))
+        else:
+            # Check if divisible
+            if subimg_width * cols != original_width or subimg_height * rows != original_height:
+                raise ValueError(
+                    f"Image size {original_width}x{original_height} cannot be evenly divided into {cols}x{rows} grid. "
+                    f"Subimage size would be {subimg_width}x{subimg_height} with excess pixels. "
+                    f"Use crop_excess=True or resize the image to {subimg_width * cols}x{subimg_height * rows}"
+                )
+    
+    # Case 2: Only columns specified
+    elif cols is not None:
+        subimg_width = original_width // cols
+        if subimg_width <= 0:
+            raise ValueError(f"Cannot split image width {original_width} into {cols} columns")
+        
+        # Calculate rows based on maintaining aspect ratio or using available height
+        rows = max(1, original_height // subimg_width)  # Ensure at least 1 row
+        
+        subimg_height = original_height // rows
+        
+        if crop_excess:
+            new_width = subimg_width * cols
+            new_height = subimg_height * rows
+            if new_width != original_width or new_height != original_height:
+                image = image.crop((0, 0, new_width, new_height))
+        else:
+            if subimg_width * cols != original_width or subimg_height * rows != original_height:
+                raise ValueError(
+                    f"Image size {original_width}x{original_height} cannot be evenly divided into {cols} columns. "
+                    f"Subimage size would be {subimg_width}x{subimg_height} with {original_width - subimg_width * cols}x{original_height - subimg_height * rows} excess. "
+                    f"Suggested grid: {cols}x{rows}"
+                )
+    
+    # Case 3: Only rows specified  
+    elif rows is not None:
+        subimg_height = original_height // rows
+        if subimg_height <= 0:
+            raise ValueError(f"Cannot split image height {original_height} into {rows} rows")
+        
+        # Calculate columns based on maintaining aspect ratio or using available width
+        cols = max(1, original_width // subimg_height)  # Ensure at least 1 column
+        
+        subimg_width = original_width // cols
+        
+        if crop_excess:
+            new_width = subimg_width * cols
+            new_height = subimg_height * rows
+            if new_width != original_width or new_height != original_height:
+                image = image.crop((0, 0, new_width, new_height))
+        else:
+            if subimg_width * cols != original_width or subimg_height * rows != original_height:
+                raise ValueError(
+                    f"Image size {original_width}x{original_height} cannot be evenly divided into {rows} rows. "
+                    f"Subimage size would be {subimg_width}x{subimg_height} with {original_width - subimg_width * cols}x{original_height - subimg_height * rows} excess. "
+                    f"Suggested grid: {cols}x{rows}"
+                )
+    
+    # Case 4: Auto-detect (assume square grid)
     else:
-        subimg_size = image.size[1] // rows
-        assert cols * subimg_size == image.size[0]
+        # Try to make square subimages
+        if original_width >= original_height:
+            cols = original_width // original_height
+            rows = 1
+            subimg_size = original_height
+        else:
+            rows = original_height // original_width
+            cols = 1
+            subimg_size = original_width
+        
+        if cols <= 0 or rows <= 0:
+            raise ValueError(f"Cannot auto-split image {original_width}x{original_height} - too small")
+        
+        if crop_excess:
+            new_width = subimg_size * cols
+            new_height = subimg_size * rows
+            if new_width != original_width or new_height != original_height:
+                image = image.crop((0, 0, new_width, new_height))
+        else:
+            if subimg_size * cols != original_width or subimg_size * rows != original_height:
+                raise ValueError(
+                    f"Image size {original_width}x{original_height} cannot be auto-split into square subimages. "
+                    f"Suggested grid: {cols}x{rows} with subimage size {subimg_size}"
+                )
+        subimg_width = subimg_height = subimg_size
+    
+    # Final validation
+    if 'subimg_width' not in locals() or 'subimg_height' not in locals():
+        subimg_width = original_width // cols
+        subimg_height = original_height // rows
+    
+    if subimg_width <= 0 or subimg_height <= 0:
+        raise ValueError(f"Calculated invalid subimage size: {subimg_width}x{subimg_height}")
+    
+    # Perform the actual splitting
     subimgs = []
     for i in range(rows):
         for j in range(cols):
-            subimg = image.crop((j*subimg_size, i*subimg_size, (j+1)*subimg_size, (i+1)*subimg_size))
-            subimgs.append(subimg)
+            left = j * subimg_width
+            upper = i * subimg_height
+            right = left + subimg_width
+            lower = upper + subimg_height
+            
+            # Safety check - ensure we don't go beyond image bounds
+            if right > image.width:
+                right = image.width
+            if lower > image.height:
+                lower = image.height
+                
+            # Only add if we have a valid region
+            if left < right and upper < lower:
+                subimg = image.crop((left, upper, right, lower))
+                subimgs.append(subimg)
+    
+    # Final safety check - ensure we have at least one image
+    if not subimgs:
+        raise ValueError("No valid subimages could be created from the grid")
+    
     return subimgs
 
 def pil_make_image_grid(images, rows=None, cols=None):

@@ -233,7 +233,8 @@ class FileLoader:
                 data = yaml.safe_load(f)
                 
                 if isinstance(data, list):
-                    return DataCleaner.clean_and_deduplicate(data)
+                    all_values = [str(item).strip() for item in data if str(item).strip()]
+                    return DataCleaner.clean_and_deduplicate(all_values)
                 elif isinstance(data, dict):
                     # 处理YAML字典格式
                     all_values = []
@@ -244,8 +245,10 @@ class FileLoader:
                             all_values.append(value)
                     return DataCleaner.clean_and_deduplicate(all_values)
                 else:
-                    print(f"Warning: YAML file {file_path} has unsupported structure: {type(data)}")
-                    return []
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        content = f.read().strip()
+                    # 如果不是标准的YAML结构，按文本文件处理
+                    return [line.strip() for line in content.split('\n') if line.strip()]
         except Exception as e:
             print(f"Error reading YAML file {file_path}: {e}")
             return []

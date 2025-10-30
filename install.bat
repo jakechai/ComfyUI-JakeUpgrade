@@ -52,8 +52,8 @@ echo.
 echo 📦 Starting smart dependency check...
 echo.
 
-:: 运行 Python 安装脚本
-%PYTHON_EXEC% install.py
+:: 运行 Python 安装脚本 - 使用手动安装版本
+%PYTHON_EXEC% install_manual.py
 
 if %errorlevel% neq 0 (
     echo.

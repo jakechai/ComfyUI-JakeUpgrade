@@ -4,8 +4,11 @@ A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) workflow customization by
 Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).  
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
+> [!NOTE]
+> - You might need ComfyUI v0.3.64 for JakeUpgrade v2.1.5up, for the `comfy_extras.nodes_compositing.SplitImageWithAlpha.split_image_with_alpha()` renaming issue.
+
 ## Video Introduction
-- (new)imgen QWen Model Sheet workflow: wip
+- (new)imgen QWen Eidt Model Sheet workflow: [Youtube](https://youtu.be/SGEo8vlppG0) | [Bilibili](https://www.bilibili.com/video/BV1J3yUBLEPH/)
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
@@ -306,6 +309,19 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Random Prompter bug fixed.
 2. Fix bad connections in portrait master + random prompter workflow.
 
+- 2025-10-30 - v2.2.3
+1. Fix Make Image Grid `from torchvision import transforms as TF` -> `import torchvision.transforms.functional as TF` issue.
+2. Upgrade Split Image Grid node:  
+① Reasonable default values: Ensure at least 1 row/column to avoid division by zero errors.  
+② Better error messages: Provide specific resolution suggestions.  
+③ Boundary checks: Ensure cropping does not exceed the image area.  
+④ Empty list protection: Ensure a valid image tensor is always returned.  
+⑤ Exception handling: Gracefully handle errors in crop mode.  
+3. Separated the `install.py` file for ComfyUI and the `install_manual.py` file for the `install.bat` file. It should work fine now.
+4. Zip IPAdapterPlus.py to IPAdapterPlus.zip to avoid node-conflict attention in ComfyUI Manager.
+5. Random Prompter supports both string dictionaries, lists or txt format for YAML files.
+6. Add more choices to Random Prompter.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -421,6 +437,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 | MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v |
 | Flash VSR [2.1](https://github.com/OpenImagingLab/FlashVSR) | main model | v2v |
 | MoCha [2.1](https://orange-3dv-team.github.io/MoCha/) | main model | v2v |
+| Kaleido [2.1](https://arxiv.org/html/2510.18573v1) | main model | s2v |
+| HoloCine [2.2](https://holo-cine.github.io/) | main model | t2v multi-scenes |
 | *control* | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v |
 | Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v |
