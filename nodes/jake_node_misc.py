@@ -49,7 +49,7 @@ class ProjectSetting_JK:
     RETURN_NAMES = ("Image_Name", "Path_Name", "Counter")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Project settings for workflow organization with customizable naming patterns"
+    DESCRIPTION = "Project settings for workflow organization with customizable naming patterns."
 
     def get_value(self, project_name: str, image_name: str, path_name: str, seed: int) -> Tuple[str, str, int]:
         """Get project settings values with pattern processing"""
@@ -62,7 +62,6 @@ class ProjectSetting_JK:
         number = random.randint(0, 18446744073709551615)
 
         return (processed_image_name, processed_path_name, seed)
-
 
 class KsamplerParametersDefault_JK:
     """Default parameters for KSampler (steps, CFG scale, denoise strength)"""
@@ -98,12 +97,11 @@ class KsamplerParametersDefault_JK:
     RETURN_NAMES = ("STEPS", "CFG", "DENOISE")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Default parameters for KSampler (steps, CFG scale, denoise strength)"
+    DESCRIPTION = "Default parameters for KSampler (steps, CFG scale, denoise strength)."
 
     def get_value(self, steps: int, cfg: float, denoise: float) -> Tuple[int, float, float]:
         """Get KSampler parameter values"""
         return (steps, cfg, denoise)
-
 
 class KsamplerAdvParametersDefault_JK:
     """Advanced KSampler parameters for step control and scheduling"""
@@ -125,12 +123,11 @@ class KsamplerAdvParametersDefault_JK:
     RETURN_NAMES = ("start_at_step", "switch_at_step", "end_at_step", "enable", "disable")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Advanced KSampler parameters for step control and scheduling"
+    DESCRIPTION = "Advanced KSampler parameters for step control and scheduling."
 
     def get_value(self, switch_at_step: int) -> Tuple[int, int, int, str, str]:
         """Get advanced KSampler parameter values with step ranges"""
         return (0, switch_at_step, 10000, "enable", "disable")
-
 
 class BaseModelParametersSD3API_JK:
     """SD3 API compatible base model parameters with prompt management"""
@@ -173,7 +170,8 @@ class BaseModelParametersSD3API_JK:
     RETURN_NAMES = ("POSITIVE", "NEGATIVE", "ASPECT_RATIO", "WIDTH", "HEIGHT")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "SD3 API compatible base model parameters with prompt management and aspect ratio selection"
+    DESCRIPTION = "SD3 API compatible base model parameters with prompt management and aspect ratio selection."
+    DEPRECATED = True
 
     def get_value(self, positive: str, negative: str, use_input_prompt: bool, aspect_ratio: str, 
                   input_positive: str = None, input_negative: str = None) -> Tuple[str, str, str, int, int]:
@@ -194,7 +192,6 @@ class BaseModelParametersSD3API_JK:
             width, height = 1024, 1024
         
         return (positive, negative, aspect_ratio, width, height)
-
 
 class Inject_Noise_Params_JK:
     """Parameters for noise injection with seed and strength control"""
@@ -228,12 +225,11 @@ class Inject_Noise_Params_JK:
     RETURN_NAMES = ("Seed", "Strength", "Normalize")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Parameters for noise injection with seed and strength control"
+    DESCRIPTION = "Parameters for noise injection with seed and strength control."
 
     def get_value(self, noise_seed: int, noise_strength: float, normalize: str) -> Tuple[int, float, str]:
         """Get noise injection parameters"""
         return (noise_seed, noise_strength, normalize)
-
 
 class SD3_Prompts_Switch_JK:
     """Switch between different prompt types for SD3 (CLIP-L, CLIP-G, T5-XXL)"""
@@ -276,7 +272,7 @@ class SD3_Prompts_Switch_JK:
     RETURN_NAMES = ("clip_l", "clip_g", "t5xxl")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Switch between different prompt types for SD3 (CLIP-L, CLIP-G, T5-XXL)"
+    DESCRIPTION = "Switch between different prompt types for SD3 (CLIP-L, CLIP-G, T5-XXL)."
 
     def get_value(self, clip_l: str, clip_g: str, t5xxl: str, clip_l_prompt: str, 
                   clip_g_prompt: str, t5xxl_prompt: str) -> Tuple[str, str, str]:
@@ -295,7 +291,6 @@ class SD3_Prompts_Switch_JK:
             return clip_g
         else:  # t5xxl
             return t5xxl
-
 
 class GuidanceDefault_JK:
     """Default guidance scale value for model conditioning"""
@@ -318,12 +313,11 @@ class GuidanceDefault_JK:
     RETURN_NAMES = ("GUIDANCE",)
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Default guidance scale value for model conditioning"
+    DESCRIPTION = "Default guidance scale value for model conditioning."
 
     def get_value(self, guidance: float) -> Tuple[float]:
         """Get guidance scale value"""
         return (guidance,)
-
 
 class ImageResizeMode_JK:
     """Image resize mode selection for various resizing strategies"""
@@ -345,12 +339,11 @@ class ImageResizeMode_JK:
     RETURN_NAMES = ("MODE",)
     FUNCTION = "execute"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Image resize mode selection for various resizing strategies"
+    DESCRIPTION = "Image resize mode selection for various resizing strategies."
 
     def execute(self, resize_mode: str) -> Tuple[str]:
         """Get resize mode value"""
         return (resize_mode,)
-
 
 class SamplerLoader_JK:
     """Sampler and scheduler selection with name output"""
@@ -372,12 +365,11 @@ class SamplerLoader_JK:
     RETURN_NAMES = ("sampler_name", "Sampler", "schedular_name", "Schedular")
     FUNCTION = "list"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Sampler and scheduler selection with name output"
+    DESCRIPTION = "Sampler and scheduler selection with name output."
 
     def list(self, sampler: str, scheduler: str) -> Tuple[str, str, str, str]:
         """Get sampler and scheduler with names"""
         return (sampler, sampler, scheduler, scheduler)
-
 
 class UpscaleMethod_JK:
     """Upscale method selection for images and latents"""
@@ -401,7 +393,7 @@ class UpscaleMethod_JK:
     RETURN_NAMES = ("image_upscale_method", "latent_upscale_method")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Upscale method selection for images and latents"
+    DESCRIPTION = "Upscale method selection for images and latents."
 
     def get_value(self, image_upscale_method: str, latent_upscale_method: str) -> Tuple[str, str]:
         """Get upscale method values"""
@@ -451,7 +443,7 @@ class CR_AspectRatio_JK:
     RETURN_NAMES = ("width", "height")
     FUNCTION = "Aspect_Ratio"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Aspect ratio selector for various model types with custom resolution support"
+    DESCRIPTION = "Aspect ratio selector for various model types with custom resolution support."
 
     def Aspect_Ratio(self, custom_width: int, custom_height: int, resolution: str, swap_dimensions: bool) -> Tuple[int, int]:
         """Calculate aspect ratio dimensions based on selection"""
@@ -469,45 +461,6 @@ class CR_AspectRatio_JK:
             return (height, width)
         else:
             return (width, height)
-
-
-class SDXL_TargetRes_JK:
-    """Target resolution calculator for SDXL with scaling support"""
-    
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "width": ("INT", {
-                    "default": 1024,
-                    "tooltip": "Original width to scale from"
-                }),
-                "height": ("INT", {
-                    "default": 1024,
-                    "tooltip": "Original height to scale from"
-                }),
-                "target_res_scale": ("FLOAT", {
-                    "default": 1.0, 
-                    "min": 0.01, 
-                    "max": 16.0, 
-                    "step": 0.01,
-                    "tooltip": "Scale factor for target resolution"
-                }),
-            },
-        }
-    
-    RETURN_TYPES = ("INT", "INT")
-    RETURN_NAMES = ("target_width", "target_height")
-    FUNCTION = "get_value"
-    CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Target resolution calculator for SDXL with scaling support"
-
-    def get_value(self, width: int, height: int, target_res_scale: float) -> Tuple[int, int]:
-        """Calculate target resolution with scaling and multiple-of-8 alignment"""
-        target_width = multiple_of_int(width * target_res_scale, 8)
-        target_height = multiple_of_int(height * target_res_scale, 8)
-        
-        return (target_width, target_height)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # String & Data Processing Nodes
@@ -533,7 +486,7 @@ class StringToCombo_JK:
     RETURN_NAMES = ("any",)
     FUNCTION = "convert"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Convert comma-separated string to combo selection (first item)"
+    DESCRIPTION = "Convert comma-separated string to combo selection (first item)."
 
     def convert(self, string: str) -> Tuple[Any]:
         """Convert string to combo value (first item in comma-separated list)"""
@@ -544,7 +497,6 @@ class StringToCombo_JK:
             text_list = values[0].strip()  # Take first item and strip whitespace
         
         return (text_list,)
-
 
 class GetNthString_JK:
     """Get nth item from comma-separated string list with type conversion"""
@@ -573,7 +525,7 @@ class GetNthString_JK:
     RETURN_NAMES = ("string", "int", "float", "boolean")
     FUNCTION = "process"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Get nth item from comma-separated string list with type conversion"
+    DESCRIPTION = "Get nth item from comma-separated string list with type conversion."
     OUTPUT_NODE = False
 
     def process(self, string_list: str, index: int) -> Tuple[str, int, float, bool]:
@@ -645,7 +597,7 @@ class SaveStringListToJSON_JK:
     RETURN_NAMES = ("string_output",) 
     FUNCTION = "save_strlist"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Save string data to JSON file with overwrite control and directory creation"
+    DESCRIPTION = "Save string data to JSON file with overwrite control and directory creation."
 
     def save_strlist(self, string_input: str, file_path: str, overwrite: bool) -> Tuple[str]:
         """Save string data to JSON file with error handling"""
@@ -712,7 +664,7 @@ class LoadStringListFromJSON_JK:
     RETURN_NAMES = ("string_output",)
     FUNCTION = "load_strlist"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Load string data from JSON file with caching and force reload options"
+    DESCRIPTION = "Load string data from JSON file with caching and force reload options."
 
     def load_strlist(self, file_path: str, force_reload: int = 0) -> Tuple[str]:
         """Load string data from JSON file with intelligent caching"""
@@ -816,12 +768,11 @@ class TilingMode_JK:
     RETURN_NAMES = ("TILING",)
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Tiling mode selection for image generation"
+    DESCRIPTION = "Tiling mode selection for image generation."
 
     def get_value(self, tiling: str) -> Tuple[str]:
         """Get tiling mode value"""
         return (tiling,)
-
 
 class RemoveInput_JK:
     """Remove input and provide default values for any type"""
@@ -838,6 +789,7 @@ class RemoveInput_JK:
     FUNCTION = "removeinput"
     CATEGORY = icons.get("JK/Misc")
     DESCRIPTION = "Remove input and provide default values for any type"
+    DEPRECATED = True
 
     def removeinput(self) -> Tuple[Any, bool, bool]:
         """Remove input and return default values"""

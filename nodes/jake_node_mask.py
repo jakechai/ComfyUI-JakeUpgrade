@@ -19,7 +19,7 @@ class IsMaskEmpty_JK:
     RETURN_NAMES = ["BOOLEAN"]
     FUNCTION = "main"
     CATEGORY = icons.get("JK/Mask")
-    DESCRIPTION = "Check if mask is completely empty (contains only zeros)"
+    DESCRIPTION = "Check if mask is completely empty (contains only zeros)."
 
     def main(self, mask):
         """Check if mask contains only zeros"""

@@ -186,7 +186,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							5. Add Wan Video ATI Trajectory ff2vid workflow.
 							6. Use bf16 Wan Video VAE by default for all Wan Video generation workflows.
 							7. Add Multi-GPU version of Flux Image Generation workflow.
-	- 2025-06-15 - v1.9.17	1. Find a workaround to recreate all of my original Group Nodes for `comfyui-frontend-package>=1.16.0`. [All Grp Nodes-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
+	- 2025-06-15 - v1.9.17	1. Find a workaround to recreate all of my original Group Nodes for `comfyui-frontend-package>=1.16.0`. [All Grp Nodes-JK](Workflow/ComfyUI/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
 							2. Seperate all workflows into two versions: `comfyui-frontend-package<=1.15.13` & `comfyui-frontend-package>=1.16.0`. Workflows for `comfyui-frontend-package<=1.15.13` are moved to the subfolder with a suffix name `~frontend-1.15.13`, such as `ComfyUI_~frontend-1.15.13` and `Krita_~frontend-1.15.13_v1.19.16`.
 							3. API workflows are separated into two versions: one for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the other for `ComfyUI-JakeUpgrade v1.9.17 or later`. API Workflows for `ComfyUI-JakeUpgrade v1.9.16 or earlier` are moved to the subfolder with a suffix name `~v1.9.16`, such as `ComfyUI_~frontend-1.15.13\API_~v1.9.16` and `Krita_~frontend-1.15.13_v1.19.16`.
 							4. Cleanup and rearrange the codes, and press Deprecated and Experimental to distinguish.
@@ -287,7 +287,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 </details>
 
 - 2025-10-27 - v2.2.0
-1. Re-write all nodes: 
+1. Re-write all nodes:  
 ① Code Organization: Nodes are logically grouped by data type and functionality.  
 ② Modular nodes loading control, including deprecated nodes.  
 ③ Comments: All key functions and classes have detailed.  
@@ -326,7 +326,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Add Random Prompter Geek Node, more convenient random control.
 2. Add ABC and non-ABC version of Random Prompter Nodes switch to config.ini.
 3. Add Random Prompter config to  config.ini.
-4. Add more choices for Random Prompter Nodes with more refined and accurate categories
+4. Add more choices for Random Prompter Nodes with more refined and accurate categories.
+
+- 2025-11-07 - v2.3.1
+1. Set SDXL Target Res node `DEPRECATED = True`.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -345,14 +348,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ## Copy files in the replacement folder(optional)
 
-- [JakeUpgrade Subgraphs](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/subgraphs): Copy all the subgraph JSON files into `...\ComfyUI\user\default\subgraphs`.
+- [JakeUpgrade Subgraphs](replacement/subgraphs): Copy all the subgraph JSON files into `...\ComfyUI\user\default\subgraphs`.
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` or  `__JK_1_15_13.pack`(for `comfyui-frontend-package<=1.15.13`) to `...\ComfyUI\user\default\ComfyUI-Manager\components` for saving all JK Group Nodes within each workflow file.
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus) : (Workaround before IPAdapter approves my pull request) Copy and replace files to `custom_nodes\ComfyUI_IPAdapter_plus` for better API workflow control by adding "None" selection.
 
 > [!NOTE]
 > - Subraphs can be used as custom nodes if you copy the JSON files to the `...\ComfyUI\user\default\subgraphs`.
 > - Subraphs | Group Nodes can be copied and pasted between workflows in the ComfyUI. See details in my Video Introduction of Subraphs | Group Nodes.
-> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Subgraphs-WanVideoWrapper-JK](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/All%20Subgraph-Wan-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-WanVideoWrapper-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-Wan-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
+> - For all JK Subraphs | Group Nodes, load [All Subgraphs-JK](Workflow/ComfyUI/All%20Subgraph-JK.json) | [All Subgraphs-WanVideoWrapper-JK](Workflow/ComfyUI/All%20Subgraph-Wan-JK.json) | [All Grp Nodes-JK_~frontend-1.23.4](Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-WanVideoWrapper-JK_~frontend-1.23.4](Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-Wan-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json)
 > - These replacement files cause the node conflict warning in the ComfyUI Manager. But don't worry, JakeUpgrade never loaded them.
 
 ## Update
@@ -458,27 +461,27 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ### ComfyUI
 
 > [!NOTE]
-> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17.0 and depprecats group node totally in v1.24.0. If you update your ComfyUI to v0.3.49, Comfyui frontend v 1.24.4 will be installed, which will cause group node running error. At the meantime, they released the official version of [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), the replacement of Group Node. I've separated two versions of my group nodes as backup and memory: one is for `1.23.4>=comfyui-frontend-package>=1.16.0`, and the other is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended). [All Grp Nodes-JK_~frontend-1.23.4](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json). If you want to use the workflows using Group Nodes especially the API workflow, downgrade your frontend to v1.23.4: `"...\python.exe" -m pip install comfyui-frontend-package==1.23.4` and choose ComfyUI v0.3.48(optional).
+> - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17.0 and depprecats group node totally in v1.24.0. If you update your ComfyUI to v0.3.49, Comfyui frontend v 1.24.4 will be installed, which will cause group node running error. At the meantime, they released the official version of [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), the replacement of Group Node. I've separated two versions of my group nodes as backup and memory: one is for `1.23.4>=comfyui-frontend-package>=1.16.0`, and the other is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended). [All Grp Nodes-JK_~frontend-1.23.4](Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json). If you want to use the workflows using Group Nodes especially the API workflow, downgrade your frontend to v1.23.4: `"...\python.exe" -m pip install comfyui-frontend-package==1.23.4` and choose ComfyUI v0.3.48(optional).
 > - ComfyUI frontend breaks the Impact-Pack Switch(Any) node. It is still functional, but can not be created. This issue has been fixed in the latest Impact-Pack version `>=v8.12`, but it only supports `comfyui-frontend-package>=1.16.9`. When using Group Nodes with `comfyui-frontend-package<=1.15.13`, it's recommended to switch Impact-Pack to `v8.8.1` in the ComfyUI Manager. 
 > - API workflows are separated into three versions: the first is for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the second is for `ComfyUI-JakeUpgrade v1.9.17~v1.9.20`, the third is for `ComfyUI-JakeUpgrade v2.0.0 or later`. When editing the first one, it is recommended to switch to `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` and `comfyui-frontend-package<=1.15.13`.
 > - You need `comfyui-frontend-package>=1.24.0` to use the latest workflows using Subgraph.
 > - ComfyUI API workflows are workflows created to allow other software to call ComfyUI, which include non-dev editable workflows and dev-for-call workflows, as well as python files with supporting parameters.
 > - Installing a separate version of ComfyUI to work with 3D Pack is recommended.   
-> - You need `comfyui-frontend-package<=1.23.4` to run [ComfyUI Main & Module workflows using Group Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4).
-> - You need `comfyui-frontend-package<=1.15.13` and `Impact Pact<=v8.8.1` to run [legacy ComfyUI Main & Module workflows using Group Nodes](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13).
-> - You need `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy ComfyUI API dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.23.4/API_~v1.9.20).
-> - You need `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy ComfyUI API dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI_~frontend-1.15.13/API_~v1.9.16).
+> - You need `comfyui-frontend-package<=1.23.4` to run [ComfyUI Main & Module workflows using Group Nodes](Workflow/ComfyUI_~frontend-1.23.4).
+> - You need `comfyui-frontend-package<=1.15.13` and `Impact Pact<=v8.8.1` to run [legacy ComfyUI Main & Module workflows using Group Nodes](Workflow/ComfyUI_~frontend-1.15.13).
+> - You need `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy ComfyUI API dev workflows](Workflow/ComfyUI_~frontend-1.23.4/API_~v1.9.20).
+> - You need `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy ComfyUI API dev workflows](Workflow/ComfyUI_~frontend-1.15.13/API_~v1.9.16).
 > - You need Wan Video Wrapper v1.1.8 to run Wan__Long_v1.1.8 workflows.
   
-- [Main](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Main)
-- [Module](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/Module)
-- [API](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API)
-- [API dev & params](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/ComfyUI/API/dev)
+- [Main](Workflow/ComfyUI/Main)
+- [Module](Workflow/ComfyUI/Module)
+- [API](Workflow/ComfyUI/API)
+- [API dev & params](Workflow/ComfyUI/API/dev)
   
 - Wan2.1 Video Generation Workflows breakdown
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/VidGen-Wan2.1.png)
+![image](imgs/VidGen-Wan2.1.png)
 - Wan2.2 Video Generation Workflows breakdown
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/VidGen-Wan2.2.png)
+![image](imgs/VidGen-Wan2.2.png)
 
 ### Krita
 
@@ -489,15 +492,15 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - Sync version of Krita workflows can be opened by ComyUI and synchronized with Krita AI Diffusion.
 > - You need `comfyui-frontend-package>=1.24.0` to use the latest Krita Sync workflows using Subgraph.
 > - Dev version of Krita workflows can only loaded by Krita AI Diffusion and should be moved to `...\AppData\Roaming\krita\ai_diffusion\workflows`.
-> - You need `comfyui-frontend-package<=1.15.13` and `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy Krita sync workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita_~frontend-1.15.13_v1.19.16).
-> - You need `comfyui-frontend-package<=1.23.4` and `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy Krita sync workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita_~frontend-1.23.4_v1.19.20).
-> - You need `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy Krita dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows_~v1.9.16).
-> - You need `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy Krita dev workflows](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows_~v1.9.20).
+> - You need `comfyui-frontend-package<=1.15.13` and `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy Krita sync workflows](Workflow/Krita_~frontend-1.15.13_v1.19.16).
+> - You need `comfyui-frontend-package<=1.23.4` and `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy Krita sync workflows](Workflow/Krita_~frontend-1.23.4_v1.19.20).
+> - You need `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` to run [legacy Krita dev workflows](replacement/krita/ai_diffusion/workflows_~v1.9.16).
+> - You need `1.9.16<=ComfyUI-JakeUpgrade<=1.9.20` to run [legacy Krita dev workflows](replacement/krita/ai_diffusion/workflows_~v1.9.20).
   
-- [Main Sync](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Main)
-- [Module Sync](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/Module)
-- [SAI Sync](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/Workflow/Krita/SAI)
-- [Main & Module & SAI dev](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/replacement/krita/ai_diffusion/workflows)
+- [Main Sync](Workflow/Krita/Main)
+- [Module Sync](Workflow/Krita/Module)
+- [SAI Sync](Workflow/Krita/SAI)
+- [Main & Module & SAI dev](replacement/krita/ai_diffusion/workflows)
 
 ## Required Custom Nodes
 
@@ -602,19 +605,19 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 <details>
 <summary><b>Explanation</b></summary>
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh-types.png)
+![image](imgs/img2mesh-types.png)
 - Workflow breakdown: img2mesh types
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_CRM&Zero123plus&MVDream&CharacterGen-structure.png)
+![image](imgs/img2mesh_CRM&Zero123plus&MVDream&CharacterGen-structure.png)
 - Workflow breakdown: CRM&Zero123plus&MVDream&CharacterGen
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Unique3D&Wonder3D&Era3D-structure.png)
+![image](imgs/img2mesh_Unique3D&Wonder3D&Era3D-structure.png)
 - Workflow breakdown: JUnique3D&Wonder3D&Era3D
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_Zero123&SV3D-structure.png)
+![image](imgs/img2mesh_Zero123&SV3D-structure.png)
 - Workflow breakdown: Zero123&SV3D
 
-![image](https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/img2mesh_3DGS-structure.png)
+![image](imgs/img2mesh_3DGS-structure.png)
 - Workflow breakdown: 3DGS
 
 </details>
@@ -623,115 +626,152 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 <details>
 <summary><b>Custom Nodes</b></summary>
 
-	Misc Nodes
-		Project Setting JK🐉
-		Ksampler Parameters Default JK🐉
-		Ksampler Adv Parameters Default JK🐉
-		Base Model Parameters SD3API JK🐉
-		Aspect Ratio JK🐉
-		Tiling Mode JK🐉
-		Empty Latent Color JK🐉
-		SDXL Target Res JK🐉
-		Get Size JK🐉
-		String To Combo JK🐉
-		Remove Input JK🐉
-		Image Resize Mode JK🐉
-		Sampler Loader JK🐉
-		Image Crop by Mask Resolution Grp JK🐉
-		Image Crop by Mask Params JK🐉
-		Upscale Method JK🐉
-		Latent Crop Offset JK🐉
-		Scale To Resolution JK🐉
-		Inject Noise Params JK🐉
-		SD3 Prompts Switch JK🐉
-		Guidance Default JK🐉
-		Save String List To JSON JK🐉
-		Load String List From JSON JK🐉
-		Create Loop Schedule List JK🐉
-		Get Nth String JK🐉
-		Wan Frame Count JK🐉
-		Wan22 cfg Scheduler List JK🐉
-		Wan Wrapper Sampler Default JK🐉
-	Audio Nodes
-		Audio Cuts JK🐉
-		Cut Audio JK🐉
-		Cut Audio Index JK🐉
-		Cut Audio Cuts JK🐉
-		Cut Audio Loop JK🐉
-	ControlNet Nodes
-		ControlNet Loader JK🐉
-		Multi-ControlNet Param Stack JK🐉
-		Apply ControlNet JK🐉
-		Apply Multi-ControlNet Adv JK🐉
-	LoRA Nodes
-		LoRA Stack JK🐉
-		Apply LoRA Stack JK🐉
-		LoRA Stack Model Only JK🐉
-		Apply LoRA Stack Model Only JK🐉
-	Image Nodes
-		Rough Outline JK🐉
-		Open+DW Pose JK🐉
-		Make Image Grid JK🐉
-		Split Image Grid JK🐉
-		Image Remove Alpha JK🐉
-		Color Grading JK🐉
-		Enchance And Resize Hint Images JK🐉
-    Mask Nodes
-		Is Mask Empty JK🐉
-	Logic switches Nodes
-		Boolean JK🐉
-		Image Input Switch JK🐉
-		Mask Input Switch JK🐉
-		Int Input Switch JK🐉
-		Float Input Switch JK🐉
-		Latent Input Switch JK🐉
-		Conditioning Input Switch JK🐉
-		Clip Input Switch JK🐉
-		Model Input Switch JK🐉
-		ControlNet Input Switch JK🐉
-		ControlNet Stack Input Switch JK🐉
-		Text Input Switch JK🐉
-		VAE Input Switch JK🐉
-		Noise Input Switch JK🐉
-		Guider Input Switch JK🐉
-		Sampler Input Switch JK🐉
-		Sigmas Input Switch JK🐉
-		Mesh Input Switch JK🐉
-		Ply Input Switch JK🐉
-		Orbit Pose Input Switch JK🐉
-		TriMesh Input Switch JK🐉
-	ComfyMath Nodes
-		BoolToInt JK🐉
-		IntToBool JK🐉
-		FloatToInt JK🐉
-		IntToFloat JK🐉
-		BoolUnaryOp JK🐉
-		BoolBinaryOp JK🐉
-		Bool And JK🐉
-		Bool OR JK🐉
-		StringBinaryCon JK🐉
-		Prompt Combine JK🐉
-		FloatUnaryCon JK🐉
-		FloatBinaryCon JK🐉
-		FloatUnaryOp JK🐉
-		FloatBinaryOp JK🐉
-		IntUnaryCon JK🐉
-		IntBinaryCon JK🐉
-		IntUnaryOp JK🐉
-		IntBinaryOp JK🐉
-		IntSubOp JK🐉
-		Evaluate Ints JK🐉
-		Evaluate Floats JK🐉
-		Evaluate String JK🐉
-		Evaluate Examples JK🐉
-    3D Nodes
-		Orbit Poses JK🐉
-		OrbitLists to OrbitPoses JK🐉
-		OrbitPoses to OrbitLists JK🐉
-		Get OrbitPoses From List JK🐉
-		Hy3D Cam Config 20to21 JK🐉
-    Experimental
-		Random Beats JK🐉
+- 3D Nodes
+![image](imgs/nodes/3D/Orbit%20Poses%20JK.png)
+Orbit Poses JK🐉: Generate 3D camera track pose configurations, supporting multiple preset and custom parameters.  
+![image](imgs/nodes/3D/Orbit%20Lists%20to%20Orbit%20Poses%20JK.png)
+Orbit Lists to Orbit Poses JK🐉: Convert track list format to camera pose format.  
+![image](imgs/nodes/3D/Orbit%20Poses%20to%20Orbit%Lists%20JK.png)
+Orbit Poses to Orbit Lists JK🐉: Convert camera pose format to track list format.  
+![image](imgs/nodes/3D/Get%20Orbit%20Poses%20From%20List%20JK.png)
+Get Orbit Poses From List JK🐉:Select a specific pose by index from a list of camera poses.  
+- Audio Nodes
+![image](imgs/nodes/Audio/Scene%20Cuts%20JK.png)
+Scene Cuts JK🐉: Create scene cuts based on multiple cut point times or durations and an optional audio duration.  
+![image](imgs/nodes/Audio/Cut%20Audio%20JK.png)
+Cut Audio JK🐉: Cut an audio file based on start and end time.  
+![image](imgs/nodes/Audio/Cut%20Audio%20Index JK.png)
+Cut Audio Index JK🐉: Cut an audio file based on scene cuts metadata and cut index.  
+![image](imgs/nodes/Audio/Cut%20Audio%20Cuts%20JK.png)
+Cut Audio Cuts JK🐉: Merge all cuts from scene_cuts into a single audio file in chronological order.  
+![image](imgs/nodes/Audio/Cut%20Audio%20Loop%20JK.png)
+Cut Audio Loop JK🐉: Cut an audio file based on loop metadata and cut index.  
+- Video Nodes
+![image](imgs/nodes/Video/Create%20Loop%20Schedule%20List%20JK.png)
+Create Loop Schedule List JK🐉: Generate a sequential integer list for animation loop scheduling.  
+![image](imgs/nodes/Video/Wan%20Frame%20Count%20JK.png)
+Wan Frame Count JK🐉: Calculate WAN-compatible frame count by rounding up to nearest multiple of 4 plus 1.  
+![image](imgs/nodes/Video/Wan22%20cfg%20Scheduler%20List%20JK.png)
+Wan22 cfg Scheduler List JK🐉: Generate CFG scheduler list with initial and subsequent values for WAN 2.2.  
+![image](imgs/nodes/Video/Wan%20Wrapper%20Sampler%20Default%20JK.png)
+Wan Wrapper Sampler Default JK🐉: Provide default sampler settings for WAN wrapper including scheduler and rope function.  
+- Prompt Nodes
+![image](imgs/nodes/Prompt/Random%20Prompter%20JK.png)
+Random Prompter JK🐉: Random prompt generator with categorized options for scene, motion, facial actions, expressions, lighting, camera, style, and description. Supports manual selection, random generation, and image reference integration for comprehensive prompt creation.  
+![image](imgs/nodes/Prompt/Random%20Prompter%20Geek%20JK.png)
+Random Prompter Geek JK🐉: Random Prompter Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion.  
+![image](imgs/nodes/Prompt/Prompt%20Combine%20JK.png)
+Prompt Combine JK🐉: Merge the two strings into one and clean up the result.  
+- ControlNet Nodes
+![image](imgs/nodes/ControlNet/ControlNet%20Loader%20JK.png)
+ControlNet Loader JK🐉: Load ControlNet models with configurable union types.  
+![image](imgs/nodes/ControlNet/Multi-ControlNet%20Param%20Stack%20JK.png)
+Multi-ControlNet Param Stack JK🐉: Stack multiple ControlNet parameters for complex control scenarios.  
+![image](imgs/nodes/ControlNet/Apply%20ControlNet%20JK.png)
+Apply ControlNet JK🐉: Apply single ControlNet to conditioning with mask support.  
+![image](imgs/nodes/ControlNet/Apply%20Multi-ControlNet%20Adv%20JK.png)
+Apply Multi-ControlNet%20Adv%20JK🐉: Apply multiple ControlNets from stack to conditioning.  
+- LoRA Nodes
+![image](imgs/nodes/LoRA/LoRA%20Stack%20JK.png)
+LoRA Stack JK🐉: Stack multiple LoRA models with prompt and metadata generation.  
+![image](imgs/nodes/LoRA/Apply%20LoRA%20Stack%20JK.png)
+Apply LoRA Stack JK🐉: Apply multiple LoRA models from stack to both model and CLIP.  
+![image](imgs/nodes/LoRA/LoRA%20Stack%20Model%20Only%20JK.png)
+LoRA Stack Model Only JK🐉: Stack LoRA models for model-only application.  
+![image](imgs/nodes/LoRA/Apply%20LoRA%20Stack%20Model%20Only%20JK.png)
+Apply LoRA Stack Model Only JK🐉: Apply multiple LoRA models from stack to model only.  
+- Image Nodes
+![image](imgs/nodes/Image/Rough%20Outline%20JK.png)
+Rough Outline JK🐉: Extract rough outlines from images using Canny edge detection and contour processing.  
+![image](imgs/nodes/Image/Open+DW%20Pose%20JK.png)
+Open+DW Pose JK🐉: Combine DWPose and OpenPose images by removing and reserving specific colors.  
+![image](imgs/nodes/Image/Make%20Image%20Grid%20JK.png)
+Make Image Grid JK🐉: Create image grid from multiple images with specified rows or columns.  
+![image](imgs/nodes/Image/Split%20Image%20Grid%20JK.png)
+Split Image Grid JK🐉: Split image grid into individual images based on rows or columns.  
+![image](imgs/nodes/Image/Image%20Remove%20Alpha%20JK.png)
+Image Remove Alpha JK🐉: Remove alpha channel from RGBA images and convert to RGB.  
+![image](imgs/nodes/Image/Color%20Grading%20JK.png)
+Color Grading JK🐉: Apply color grading with brightness, contrast, saturation and RGB channel adjustments.  
+![image](imgs/nodes/Image/Image%20Crop%20by%20Mask%20Resolution%20Grp%20JK.png)
+Image Crop by Mask Resolution Grp JK🐉: Calculate crop parameters based on mask with various resolution options.  
+![image](imgs/nodes/Image/Image%20Crop%20by%20Mask%20Params%20JK.png)
+Image Crop by Mask Params JK🐉: Provide crop parameters for mask-based image cropping operations.  
+![image](imgs/nodes/Image/Scale%20To%20Resolution%20JK.png)
+Scale To Resolution JK🐉: Scale image to target resolution based on width, height or megapixel constraints.  
+![image](imgs/nodes/Image/Enchance%20And%20Resize%20Hint%20Images%20JK.png)
+Enchance And Resize Hint Images JK🐉: Enhance hint images with high quality resizing, edge processing and multiple resize modes.  
+- Mask Nodes
+![image](imgs/nodes/Mask/Is%20Mask%20Empty%20JK.png)
+Is Mask Empty JK🐉: Check if mask is completely empty (contains only zeros).  
+- Math Nodes
+![image](imgs/nodes/Math/Math%20Nodes-Conversion.png)
+Conversion nodes: BoolToInt JK🐉 | IntToBool JK🐉 | FloatToInt JK🐉 | IntToFloat JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes-Bool.png)
+Boolean Math nodes: BoolUnaryOp JK🐉 | BoolBinaryOp JK🐉 | Bool And JK🐉 | Bool OR JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes-String.png)
+String Math Node: StringBinaryCon JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes_Float.png)
+Float Math Nodes: FloatUnaryCon JK🐉 | FloatBinaryCon JK🐉 | FloatUnaryOp JK🐉 | FloatBinaryOp JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes-Int.png)
+Int Math Nodes: IntUnaryCon JK🐉 | IntBinaryCon JK🐉 | IntUnaryOp JK🐉 | IntBinaryOp JK🐉 | IntSubOp JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes-Evaluate.png)
+Evaluate Nodes: Evaluate Ints JK🐉 | Evaluate Floats JK🐉 | Evaluate String JK🐉 | Evaluate Examples JK🐉  
+- Misc Nodes
+![image](imgs/nodes/Misc/Project%20Setting%20JK.png)
+Project Setting JK🐉: Project settings for workflow organization with customizable naming patterns.  
+![image](imgs/nodes/Misc/Ksampler%20Parameters%20Default%20JK.png)
+Ksampler Parameters Default JK🐉: Default parameters for KSampler (steps, CFG scale, denoise strength).  
+![image](imgs/nodes/Misc/Ksampler%20Adv%20Parameters%20Default%20JK.png)
+Ksampler Adv Parameters Default JK🐉: Advanced KSampler parameters for step control and scheduling.  
+![image](imgs/nodes/Misc/Inject%20Noise%20Params%20JK.png)
+Inject Noise Params JK🐉: Parameters for noise injection with seed and strength control.  
+![image](imgs/nodes/Misc/SD3%20Prompts%20Switch%20JK.png)
+SD3 Prompts Switch JK🐉: Switch between different prompt types for SD3 (CLIP-L, CLIP-G, T5-XXL).  
+![image](imgs/nodes/Misc/Guidance%20Default%20JK.png)
+Guidance Default JK🐉: Default guidance scale value for model conditioning.  
+![image](imgs/nodes/Misc/Image%20Resize%20Mode%20JK.png)
+Image Resize Mode JK🐉: Image resize mode selection for various resizing strategies.  
+![image](imgs/nodes/Misc/Sampler%20Loader%20JK.png)
+Sampler Loader JK🐉: Sampler and scheduler selection with name output.  
+![image](imgs/nodes/Misc/Upscale%20Method%20JK🐉 .png)
+Upscale Method JK🐉: Upscale method selection for images and latents.  
+![image](imgs/nodes/Misc/Aspect%20Ratio%20JK🐉 .png)
+Aspect Ratio JK🐉: Aspect ratio selector for various model types with custom resolution support.  
+![image](imgs/nodes/Misc/String%20To%20Combo%20JK.png)
+String To Combo JK🐉: Convert comma-separated string to combo selection (first item).  
+![image](imgs/nodes/Misc/Get%20Nth%20String%20JK.png)
+Get Nth String JK🐉: Get nth item from comma-separated string list with type conversion.  
+![image](imgs/nodes/Misc/Save%20String%20List%20To%20JSON%20JK.png)
+Save String List To JSON JK🐉: Save string data to JSON file with overwrite control and directory creation.  
+![image](imgs/nodes/Misc/Load%20String%20List%20From%20JSON JK.png)
+Load String List From JSON JK🐉: Load string data from JSON file with caching and force reload options.  
+![image](imgs/nodes/Misc/Tiling%20Mode%20JK.png)
+Tiling Mode JK🐉: Tiling mode selection for image generation.  
+- Switch Nodes
+![image](imgs/nodes/Swotcj/Switch%20Nodes.png)
+Boolean JK🐉  
+Image Input Switch JK🐉  
+Mask Input Switch JK🐉  
+Int Input Switch JK🐉  
+Float Input Switch JK🐉  
+Latent Input Switch JK🐉  
+Conditioning Input Switch JK🐉  
+Clip Input Switch JK🐉  
+Model Input Switch JK🐉  
+ControlNet Input Switch JK🐉  
+ControlNet Stack Input Switch JK🐉  
+Text Input Switch JK🐉  
+VAE Input Switch JK🐉  
+Noise Input Switch JK🐉  
+Guider Input Switch JK🐉  
+Sampler Input Switch JK🐉  
+Sigmas Input Switch JK🐉  
+Mesh Input Switch JK🐉  
+Ply Input Switch JK🐉  
+Orbit Pose Input Switch JK🐉  
+TriMesh Input Switch JK🐉  
+
 </details>
 
 <details>
@@ -889,7 +929,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
 Please check the [video](https://youtu.be/eyjy10T201M).  
 <a href="https://youtu.be/eyjy10T201M" target="_blank">
- <img src="https://github.com/jakechai/ComfyUI-JakeUpgrade/blob/master/imgs/ComfyUIAPIUI.png" alt="UI for ComfyUI API" />
+ <img src="imgs/ComfyUIAPIUI.png" alt="UI for ComfyUI API" />
 </a>
 
 ## Reference Custom Nodes

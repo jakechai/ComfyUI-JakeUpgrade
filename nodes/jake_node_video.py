@@ -25,7 +25,7 @@ class CreateLoopScheduleList:
     RETURN_NAMES = ("int_list",)
     FUNCTION = "process"
     CATEGORY = icons.get("JK/Video")
-    DESCRIPTION = "Generate a sequential integer list for animation loop scheduling"
+    DESCRIPTION = "Generate a sequential integer list for animation loop scheduling."
     
     def process(self, loop_count: int) -> Tuple[list]:
         """创建循环调度列表"""
@@ -58,7 +58,7 @@ class WanFrameCount_JK:
     RETURN_NAMES = ("wan_frame_count",)
     FUNCTION = "process"
     CATEGORY = icons.get("JK/Video")
-    DESCRIPTION = "Calculate WAN-compatible frame count by rounding up to nearest multiple of 4 plus 1"
+    DESCRIPTION = "Calculate WAN-compatible frame count by rounding up to nearest multiple of 4 plus 1."
     OUTPUT_NODE = False
 
     def process(self, frame_count: int) -> Tuple[int]:
@@ -108,7 +108,7 @@ class Wan22cfgSchedulerList_JK:
     RETURN_NAMES = ("cfg_list",)
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Video")
-    DESCRIPTION = "Generate CFG scheduler list with initial and subsequent values for WAN 2.2"
+    DESCRIPTION = "Generate CFG scheduler list with initial and subsequent values for WAN 2.2."
     OUTPUT_NODE = False
     
     def get_value(self, first_cfg: float, cfg: float, steps: int, first_switch_at_step: int) -> Tuple[float]:
@@ -151,7 +151,7 @@ class WanWrapperSamplerDefault_JK:
     RETURN_NAMES = ("scheduler", "rope_function")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Video")
-    DESCRIPTION = "Provide default sampler settings for WAN wrapper including scheduler and rope function"
+    DESCRIPTION = "Provide default sampler settings for WAN wrapper including scheduler and rope function."
     OUTPUT_NODE = False
     
     def get_value(self, scheduler: str) -> Tuple[str, str]:

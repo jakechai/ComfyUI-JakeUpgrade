@@ -71,7 +71,7 @@ class CR_LoRAStack_JK:
     RETURN_NAMES = ("LORA_STACK", "LORA_PROMPT", "LORA_MetaData",)
     FUNCTION = "lora_stacker"
     CATEGORY = icons.get("JK/LoRA")
-    DESCRIPTION = "Stack multiple LoRA models with prompt and metadata generation"
+    DESCRIPTION = "Stack multiple LoRA models with prompt and metadata generation."
 
     def lora_stacker(self, input_mode, save_hash, lora_stack=None, lora_prompt=None, lora_metadata=None, **kwargs):
         """堆叠多个LoRA模型，生成提示词和元数据"""
@@ -163,7 +163,7 @@ class CR_ApplyLoRAStack_JK:
     RETURN_NAMES = ("MODEL", "CLIP",)
     FUNCTION = "apply_lora_stack"
     CATEGORY = icons.get("JK/LoRA")
-    DESCRIPTION = "Apply multiple LoRA models from stack to both model and CLIP"
+    DESCRIPTION = "Apply multiple LoRA models from stack to both model and CLIP."
 
     def apply_lora_stack(self, model, clip, lora_stack=None):
         """应用堆叠的LoRA模型到模型和CLIP"""
@@ -229,7 +229,7 @@ class CR_LoRAStack_ModelOnly_JK:
     RETURN_NAMES = ("LORA_STACK",)
     FUNCTION = "lora_stacker"
     CATEGORY = icons.get("JK/LoRA")
-    DESCRIPTION = "Stack LoRA models for model-only application"
+    DESCRIPTION = "Stack LoRA models for model-only application."
 
     def lora_stacker(self, lora_stack=None, **kwargs):
         """堆叠LoRA模型，仅用于模型应用（不包含CLIP）"""
@@ -274,7 +274,7 @@ class CR_ApplyLoRAStack_ModelOnly_JK:
     RETURN_NAMES = ("MODEL",)
     FUNCTION = "apply_lora_stack"
     CATEGORY = icons.get("JK/LoRA")
-    DESCRIPTION = "Apply multiple LoRA models from stack to model only"
+    DESCRIPTION = "Apply multiple LoRA models from stack to model only."
 
     def apply_lora_stack(self, model, lora_stack=None):
         """应用堆叠的LoRA模型到模型（CLIP保持不变）"""
