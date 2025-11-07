@@ -39,7 +39,7 @@ class RoughOutline_JK:
     RETURN_NAMES = ("outline_image", "overlay_image", "canny_image")
     FUNCTION = "rough_outline"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Extract rough outlines from images using Canny edge detection and contour processing"
+    DESCRIPTION = "Extract rough outlines from images using Canny edge detection and contour processing."
     
     def rough_outline(self, images, blur_size, canny_low, canny_high, simplify_mode, simplify_tolerance, morph_kernel, thickness):
         """
@@ -167,7 +167,7 @@ class OpenDWPose_JK:
     RETURN_NAMES = ("pose_image",)
     FUNCTION = "add_images"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Combine DWPose and OpenPose images by removing and reserving specific colors"
+    DESCRIPTION = "Combine DWPose and OpenPose images by removing and reserving specific colors."
 
     def hex_to_rgb(self, hex_color):
         """Convert hex color to RGB values"""
@@ -263,7 +263,7 @@ class MakeImageGrid_JK:
     RETURN_NAMES = ("image_grid",)
     FUNCTION = "make_image_grid"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Create image grid from multiple images with specified rows or columns"
+    DESCRIPTION = "Create image grid from multiple images with specified rows or columns."
 
     def make_image_grid(self, images, grid_side_num, grid_side):
         """Create image grid from batch of images"""
@@ -305,7 +305,7 @@ class SplitImageGrid_JK:
     RETURN_NAMES = ("images",)
     FUNCTION = "split_image_grid"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Split image grid into individual images based on rows or columns"
+    DESCRIPTION = "Split image grid into individual images based on rows or columns."
 
     def split_image_grid(self, image, grid_side_num, grid_side, crop_excess=True):
         """Split image grid into multiple images"""
@@ -353,7 +353,7 @@ class ImageRemoveAlpha_JK:
     RETURN_NAMES = ("RGB_image",)
     FUNCTION = "image_remove_alpha"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Remove alpha channel from RGBA images and convert to RGB"
+    DESCRIPTION = "Remove alpha channel from RGBA images and convert to RGB."
 
     def image_remove_alpha(self, RGBA_image):
         """Convert RGBA images to RGB by removing alpha channel"""
@@ -386,7 +386,7 @@ class ColorGrading_JK:
     RETURN_NAMES = ("IMAGE",)
     FUNCTION = "color_grading"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Apply color grading with brightness, contrast, saturation and RGB channel adjustments"
+    DESCRIPTION = "Apply color grading with brightness, contrast, saturation and RGB channel adjustments."
 
     def color_grading(self, image, brightness, contrast, saturation, R, G, B):
         """Apply color grading adjustments to images"""
@@ -448,7 +448,8 @@ class GetSize_JK:
     RETURN_NAMES = ("width", "height")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Get width and height dimensions from image, latent, or mask input"
+    DESCRIPTION = "Get width and height dimensions from image, latent, or mask input."
+    DEPRECATED = True
 
     def get_value(self, image: torch.Tensor = None, latent: Dict = None, mask: torch.Tensor = None) -> Tuple[int, int]:
         """Get dimensions from input (image, latent, or mask)"""
@@ -540,7 +541,7 @@ class ImageCropByMaskResolutionGrp_JK:
     RETURN_NAMES = ("crop_width", "crop_height", "offset_x", "offset_y", "target_width", "target_height")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Calculate crop parameters based on mask with various resolution options"
+    DESCRIPTION = "Calculate crop parameters based on mask with various resolution options."
 
     def get_value(self, mask: torch.Tensor, padding: int, use_image_res: bool, use_target_mega_pixel: bool, 
                   target_mega_pixel: float, use_target_res: bool, target_res: int, 
@@ -610,7 +611,7 @@ class ImageCropByMaskParams_JK:
     RETURN_NAMES = ("inpaint_crop_and_stitch", "padding", "use_image_res", "use_target_res", "target_res", "use_target_mega_pixel", "target_mega_pixel")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Provide crop parameters for mask-based image cropping operations"
+    DESCRIPTION = "Provide crop parameters for mask-based image cropping operations."
 
     def get_value(self, inpaint_crop_and_stitch, padding, use_image_res, use_target_res, target_res, use_target_mega_pixel, target_mega_pixel):
         """Pass through crop parameters"""
@@ -640,7 +641,7 @@ class ScaleToResolution_JK:
     RETURN_NAMES = ("target_width", "target_height")
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Image")
-    DESCRIPTION = "Scale image to target resolution based on width, height or megapixel constraints"
+    DESCRIPTION = "Scale image to target resolution based on width, height or megapixel constraints."
 
     def get_value(self, direction, target_resolution, use_target_mega_pixel, target_mega_pixel, multiple_of, image=None, latent=None):
         """Calculate target dimensions for scaling"""
@@ -806,7 +807,7 @@ class HintImageEnchance_JK:
     RETURN_NAMES = ("IMAGE", "METADATA", "MODE")
     FUNCTION = "execute"
     CATEGORY = "🐉 JK/🛩️ Image"
-    DESCRIPTION = "Enhance hint images with high quality resizing, edge processing and multiple resize modes"
+    DESCRIPTION = "Enhance hint images with high quality resizing, edge processing and multiple resize modes."
 
     def execute(self, hint_image, image_gen_width, image_gen_height, resize_mode):
         """Process hint images with high quality enhancement"""

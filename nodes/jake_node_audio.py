@@ -521,7 +521,7 @@ class CutAudioLoop_JK:
     RETURN_NAMES = ("audio", "duration", "start", "end")
     FUNCTION = "process"
     CATEGORY = icons.get("JK/Audio")
-    DESCRIPTION = "Cut an audio file based on start and end time."
+    DESCRIPTION = "Cut an audio file based on loop metadata and cut index."
     OUTPUT_NODE = False
 
     def process(self, audio: Dict[str, Any], fps: int, segment_frame_count: int, 

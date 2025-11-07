@@ -20,12 +20,12 @@ class EmptyLatentColor_JK:
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Latent")
     DESCRIPTION = "Provide empty latent colors for different model types (SD15, SDXL, SD3, FLUX)"
+    DEPRECATED = True
 
     def get_value(self) -> Tuple[int, int, int, int]:
         """Get empty latent colors for different model types"""
         # Return predefined color values for different model types
         return (8548961, 9077127, 9214099, 8618319)
-
 
 class LatentCropOffset_JK:
     """Calculate latent space offset from image space offset for cropping operations"""
@@ -43,6 +43,7 @@ class LatentCropOffset_JK:
     FUNCTION = "get_value"
     CATEGORY = icons.get("JK/Latent")
     DESCRIPTION = "Calculate latent space offset from image space offset for cropping operations"
+    DEPRECATED = True
 
     def get_value(self, image_offset=0):
         """Convert image offset to latent offset (adding 8 for alignment)"""

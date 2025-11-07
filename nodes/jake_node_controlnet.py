@@ -30,7 +30,7 @@ class CR_ControlNetLoader_JK:
     RETURN_TYPES = ("CONTROL_NET",)
     FUNCTION = "load_controlnet"
     CATEGORY = icons.get("JK/ControlNet")
-    DESCRIPTION = "Load ControlNet models with configurable union types"
+    DESCRIPTION = "Load ControlNet models with configurable union types."
     
     def load_controlnet(self, control_net_name, union_type):
         """加载ControlNet模型，支持union类型配置"""
@@ -120,7 +120,7 @@ class CR_ControlNetParamStack_JK:
     RETURN_NAMES = ("CONTROLNET_STACK", "ContrlNet_Switch", "ContrlNet0_Switch", "ContrlNet1_Switch", "ContrlNet2_Switch", "ContrlNet3_Switch", "ContrlNet4_Switch", "ContrlNet5_Switch")
     FUNCTION = "controlnet_stacker"
     CATEGORY = icons.get("JK/ControlNet")
-    DESCRIPTION = "Stack multiple ControlNet parameters for complex control scenarios"
+    DESCRIPTION = "Stack multiple ControlNet parameters for complex control scenarios."
     
     def controlnet_stacker(self, control_switch, **kwargs):
         """堆叠多个ControlNet参数，支持复杂的多ControlNet配置"""
@@ -201,7 +201,7 @@ class CR_ApplyControlNet_JK:
     RETURN_NAMES = ("base_pos", "base_neg", )
     FUNCTION = "apply_controlnet"
     CATEGORY = icons.get("JK/ControlNet")
-    DESCRIPTION = "Apply single ControlNet to conditioning with mask support"
+    DESCRIPTION = "Apply single ControlNet to conditioning with mask support."
 
     def apply_controlnet(self, base_positive, base_negative, effective_mask, strength, start_percent, end_percent, 
                         image=None, vae=None, mask=None, control_net=None):
@@ -284,7 +284,7 @@ class CR_ApplyControlNetStackAdv_JK:
     RETURN_NAMES = ("base_pos", "base_neg", )
     FUNCTION = "apply_controlnet_stack"
     CATEGORY = icons.get("JK/ControlNet")
-    DESCRIPTION = "Apply multiple ControlNets from stack to conditioning"
+    DESCRIPTION = "Apply multiple ControlNets from stack to conditioning."
 
     def apply_controlnet_stack(self, base_positive, base_negative, effective_mask, vae=None, mask=None, controlnet_stack=None):
         """应用堆叠的多个ControlNet到条件输入"""

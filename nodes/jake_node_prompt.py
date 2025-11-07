@@ -1633,7 +1633,7 @@ class RandomPrompterGeek_JK:
     RETURN_NAMES = ("prompt",)
     FUNCTION = "execute"
     CATEGORY = icons.get("JK/Prompt")
-    DESCRIPTION = "Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion."
+    DESCRIPTION = "Random Prompter Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion."
     
     def execute(self, **kwargs):
         """执行提示词生成"""
@@ -1663,6 +1663,7 @@ class PromptCombine_JK:
     RETURN_NAMES = ("Prompt",)
     FUNCTION = "combine"
     CATEGORY = icons.get("JK/Prompt")
+    DESCRIPTION = "Merge the two strings into one and clean up the result."
     
     def combine(self, prompt_1=None, prompt_2=None):
         # 清理两个输入字符串
