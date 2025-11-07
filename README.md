@@ -378,13 +378,13 @@ Orbit Lists to Orbit Poses JK🐉: Convert track list format to camera pose form
 ![image](imgs/nodes/3D/Orbit%20Poses%20to%20Orbit%20Lists%20JK.png)  
 Orbit Poses to Orbit Lists JK🐉: Convert camera pose format to track list format.  
 ![image](imgs/nodes/3D/Get%20Orbit%20Poses%20From%20List%20JK.png)  
-Get Orbit Poses From List JK🐉:Select a specific pose by index from a list of camera poses.  
+Get Orbit Poses From List JK🐉: Select a specific pose by index from a list of camera poses.  
 - Audio Nodes  
 ![image](imgs/nodes/Audio/Scene%20Cuts%20JK.png)  
 Scene Cuts JK🐉: Create scene cuts based on multiple cut point times or durations and an optional audio duration.  
 ![image](imgs/nodes/Audio/Cut%20Audio%20JK.png)  
 Cut Audio JK🐉: Cut an audio file based on start and end time.  
-![image](imgs/nodes/Audio/Cut%20Audio%20Index JK.png)  
+![image](imgs/nodes/Audio/Cut%20Audio%20Index%20JK.png)  
 Cut Audio Index JK🐉: Cut an audio file based on scene cuts metadata and cut index.  
 ![image](imgs/nodes/Audio/Cut%20Audio%20Cuts%20JK.png)  
 Cut Audio Cuts JK🐉: Merge all cuts from scene_cuts into a single audio file in chronological order.  
@@ -414,7 +414,7 @@ Multi-ControlNet Param Stack JK🐉: Stack multiple ControlNet parameters for co
 ![image](imgs/nodes/ControlNet/Apply%20ControlNet%20JK.png)  
 Apply ControlNet JK🐉: Apply single ControlNet to conditioning with mask support.  
 ![image](imgs/nodes/ControlNet/Apply%20Multi-ControlNet%20Adv%20JK.png)  
-Apply Multi-ControlNet%20Adv%20JK🐉: Apply multiple ControlNets from stack to conditioning.  
+Apply Multi-ControlNet Adv JK🐉: Apply multiple ControlNets from stack to conditioning.  
 - LoRA Nodes  
 ![image](imgs/nodes/LoRA/LoRA%20Stack%20JK.png)  
 LoRA Stack JK🐉: Stack multiple LoRA models with prompt and metadata generation.  
@@ -493,7 +493,7 @@ Load String List From JSON JK🐉: Load string data from JSON file with caching 
 ![image](imgs/nodes/Misc/Tiling%20Mode%20JK.png)  
 Tiling Mode JK🐉: Tiling mode selection for image generation.  
 - Switch Nodes  
-![image](imgs/nodes/Swotch/Switch%20Nodes.png)  
+![image](imgs/nodes/Switch/Switch%20Nodes.png)  
 Boolean JK🐉  
 Image Input Switch JK🐉  
 Mask Input Switch JK🐉  
