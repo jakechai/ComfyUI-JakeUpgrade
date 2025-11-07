@@ -288,16 +288,16 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2025-10-27 - v2.2.0
 1. Re-write all nodes: 
-2. Code Organization: Nodes are logically grouped by data type and functionality.
-3. Modular nodes loading control, including deprecated nodes.
-4. Comments: All key functions and classes have detailed.
-5. Documentation: Each node class has an description and tooltip.
-6. Type Hints: Type hints have been added to all functions.
-7. Naming Conventions: Naming conventions for return values ​​have been standardized.
-8. Error Handling: Necessary imports and error handling have been added.
-9. Add Random Prompter JK🐉 node, deprecate Flux Prompt Generator.
-10. Add QWen_ModelSheet and QWen_ModelSheet adv imgen/imgedit workflow.
-11. Add Portrait Master + Random Prompter imgen workflow.
+① Code Organization: Nodes are logically grouped by data type and functionality.  
+② Modular nodes loading control, including deprecated nodes.  
+③ Comments: All key functions and classes have detailed.  
+④ Documentation: Each node class has an description and tooltip.  
+⑤ Type Hints: Type hints have been added to all functions.  
+⑥ Naming Conventions: Naming conventions for return values ​​have been standardized.  
+⑦ Error Handling: Necessary imports and error handling have been added.  
+2. Add Random Prompter JK🐉 node, deprecate Flux Prompt Generator.
+3. Add QWen_ModelSheet and QWen_ModelSheet adv imgen/imgedit workflow.
+4. Add Portrait Master + Random Prompter imgen workflow.
 
 - 2025-10-28 - v2.2.1
 1. Update model sheet workflow.
@@ -317,10 +317,16 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ③ Boundary checks: Ensure cropping does not exceed the image area.  
 ④ Empty list protection: Ensure a valid image tensor is always returned.  
 ⑤ Exception handling: Gracefully handle errors in crop mode.  
-3. Separated the `install.py` file for ComfyUI and the `install_manual.py` file for the `install.bat` file. It should work fine now.
+3. Separated the `install.py` file for ComfyUI and the `install_manual.py` file for the `install.bat` file.
 4. Zip IPAdapterPlus.py to IPAdapterPlus.zip to avoid node-conflict attention in ComfyUI Manager.
 5. Random Prompter supports both string dictionaries, lists or txt format for YAML files.
 6. Add more choices to Random Prompter.
+
+- 2025-11-07 - v2.3.0
+1. Add Random Prompter Geek Node, more convenient random control.
+2. Add ABC and non-ABC version of Random Prompter Nodes switch to config.ini.
+3. Add Random Prompter config to  config.ini.
+4. Add more choices for Random Prompter Nodes with more refined and accurate categories
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 

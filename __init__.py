@@ -74,10 +74,12 @@ def load_config():
     try:
         load_deprecated = config.getboolean('JakeUpgrade', 'LOAD_DEPRECATED_NODES', fallback=False)
         enabled_modules_str = config.get('JakeUpgrade', 'ENABLED_MODULES', fallback='')
+        random_prompter_abc = config.getboolean('JakeUpgrade', 'RANDOM_PROMPTER_ABC', fallback=False)
     except Exception as e:
         print(f"❌ Config parsing error: {e}")
         load_deprecated = False
         enabled_modules_str = ''
+        random_prompter_abc = False
     
     # 处理启用的模块列表
     if enabled_modules_str.strip().lower() == 'all':
@@ -90,7 +92,7 @@ def load_config():
         # 如果为空，也启用所有模块
         enabled_modules = []
     
-    return load_deprecated, enabled_modules
+    return load_deprecated, enabled_modules, random_prompter_abc
 
 def create_default_config(config_path):
     """创建默认配置文件 / Create default config file"""
@@ -107,6 +109,44 @@ LOAD_DEPRECATED_NODES = False
 ; Enabled modules list (Leave it blank or fill in "all" to load all modules, and specify the modules separated by commas.)
 ; 3d,audio,controlnet,lora,experimental,image,latent,mask,math,misc,prompt,switch,video
 ENABLED_MODULES = all
+
+; True表示使用ABC Stratagy架构的RandomPrompter节点，False不使用。
+; Should we use the ABC Stratagy architecture's RandomPrompter node? True indicates use, False indicates not use.
+RANDOM_PROMPTER_ABC = false
+
+[RandomPrompterConfig]
+; 提示词数据目录
+; Prompt data directory
+PROMPT_DATA_DIR = prompt_data
+
+; 目录映射配置 (格式: 内部名称:目录名称)
+; Directory mapping configuration (format: internal name: directory name)
+DIRECTORY_MAPPING_scene = scenes
+DIRECTORY_MAPPING_motion = motions
+DIRECTORY_MAPPING_facial_action = facial_actions
+DIRECTORY_MAPPING_exp_str = exp_strs
+DIRECTORY_MAPPING_expression = expressions
+DIRECTORY_MAPPING_lighting = lightings
+DIRECTORY_MAPPING_camera = cameras
+DIRECTORY_MAPPING_style = styles
+DIRECTORY_MAPPING_style_artist = 1-artists
+DIRECTORY_MAPPING_style_form = 2-forms
+DIRECTORY_MAPPING_description = descriptions
+
+; 概率参数配置
+; Probability parameter configuration
+RANDOM_EMPTY_PROB = 0.10
+CUSTOM_FIELD_PROB = 0.05
+EXP_STR_RANDOM_PROB = 0.80
+STRUCTURED_SELECT_PROB = 0.50
+
+; 参考图像数量 (QWen)
+; Number of reference images (QWen)
+REF_IMAGE_COUNT = 3
+
+; 随机计算时排除的文件记号 (900 表示文件开头字符数字 >=900 的所有文件)
+; File identifiers excluded during randomization (900 indicates all files whose first digits are >= 900).
+EXCLUSION_MARK = 900
 """
         
         with open(config_path, 'w', encoding='utf-8') as f:
@@ -117,7 +157,15 @@ ENABLED_MODULES = all
         print(f"❌ Failed to create config file: {e}")
 
 # 获取配置
-LOAD_DEPRECATED_NODES, ENABLED_MODULES = load_config()
+LOAD_DEPRECATED_NODES, ENABLED_MODULES, RANDOM_PROMPTER_ABC = load_config()
+
+# 根据配置选择提示词节点文件
+if RANDOM_PROMPTER_ABC:
+    PROMPT_NODE_FILE = "jake_node_prompt_ABC"
+    print("🔶 Using ABC Strategy version of RandomPrompter")
+else:
+    PROMPT_NODE_FILE = "jake_node_prompt"
+    print("🔶 Using standard version of RandomPrompter")
 
 # Main node mappings
 NODE_CLASS_MAPPINGS: Dict[str, Type[Any]] = {}
@@ -135,7 +183,7 @@ MODULE_MAPPING = {
     'mask': ('jake_node_mask', 'Mask Nodes'),
     'math': ('jake_node_math', 'Math Nodes'),
     'misc': ('jake_node_misc', 'Misc Nodes'),
-    'prompt': ('jake_node_prompt', 'Prompt Nodes'),
+    'prompt': (PROMPT_NODE_FILE, 'Prompt Nodes'),
     'switch': ('jake_node_switch', 'Switch Nodes'),
     'video': ('jake_node_video', 'Video Nodes')
 }
@@ -306,6 +354,7 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
         ### Prompt Nodes
         'prompt': lambda: {
             "RandomPrompter_JK": lambda: global_symbols.get("RandomPrompter_JK"),
+            "RandomPrompterGeek_JK": lambda: global_symbols.get("RandomPrompterGeek_JK"),
             "CM_PromptCombine_JK": lambda: global_symbols.get("PromptCombine_JK"),
         },
         ### Switch Nodes
