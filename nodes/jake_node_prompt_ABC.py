@@ -5,6 +5,7 @@ import re
 import configparser
 from functools import lru_cache
 from typing import List, Dict, Any, Tuple
+from abc import ABC, abstractmethod
 from ..categories import icons
 
 #---------------------------------------------------------------------------------------------------------------------#
@@ -400,10 +401,7 @@ class DirectoryWalker:
     @staticmethod
     def _walk_category_directory(category_dir: str, exclusion: any = "") -> List[Tuple[str, str, bool]]:
         """
-        公共目录遍历函数
-        支持两种排除方式：
-        - 字符串：排除以该字符串开头的条目
-        - 整数：排除编号大于等于该数字的条目
+        公共目录遍历函数 - 修复文件路径问题
         """
         base_dir = os.path.join(os.path.dirname(__file__), PromptConfig.PROMPT_DATA_DIR)
         dir_path = os.path.join(base_dir, category_dir)
@@ -426,14 +424,12 @@ class DirectoryWalker:
                 skip_entry = False
                 if exclusion:
                     if isinstance(exclusion, int) and exclusion > 0:
-                        # 数字排除：排除编号大于等于指定数字的条目
                         match = re.match(r'^(\d+)-', entry)
                         if match:
                             entry_number = int(match.group(1))
                             if entry_number >= exclusion:
                                 skip_entry = True
                     elif isinstance(exclusion, str) and exclusion:
-                        # 字符串排除：排除以指定字符串开头的条目
                         if entry.startswith(exclusion):
                             skip_entry = True
                 
@@ -454,10 +450,7 @@ class DirectoryWalker:
                 elif any(entry.endswith(ext) for ext in PromptConfig.SUPPORTED_FORMATS.keys()):
                     file_count += 1
             
-            # 判断当前目录是否需要添加前缀：
-            # 1. 如果当前目录有子目录，则需要前缀
-            # 2. 如果当前目录有多个文件，则需要前缀
-            # 3. 如果父目录有多个条目，则需要前缀
+            # 判断当前目录是否需要添加前缀
             should_add_prefix = (subdir_count > 0 or file_count > 1 or parent_has_multiple)
             
             for entry in entries:
@@ -474,7 +467,7 @@ class DirectoryWalker:
                     _process_directory(entry_path, new_prefix, should_add_prefix or len(entries) > 1)
                     
                 elif any(entry.endswith(ext) for ext in PromptConfig.SUPPORTED_FORMATS.keys()):
-                    # 处理支持的文件格式
+                    # 处理支持的文件格式 - 修复：构建正确的文件路径
                     category_name = os.path.splitext(entry)[0]
                     # 移除数字前缀
                     if '-' in category_name:
@@ -488,15 +481,16 @@ class DirectoryWalker:
                     else:
                         full_prefix = ""  # 不需要前缀
                     
-                    # 使用相对于base_dir的路径
+                    # 修复：构建相对于 base_dir 的正确路径
                     file_relative_path = os.path.relpath(entry_path, base_dir)
-                    # 确保使用正确的路径分隔符（Windows使用\）
+                    # 确保使用正确的路径分隔符
                     file_relative_path = file_relative_path.replace('/', '\\')
                     
                     entries_list.append((file_relative_path, full_prefix, should_add_prefix))
         
         # 开始处理目录
         _process_directory(dir_path)
+        
         return entries_list
 
 class DataManager:
@@ -525,18 +519,22 @@ class DataManager:
     @staticmethod
     def load_structured_category_options(category_dir: str, exclusion: any = "") -> List[Dict[str, Any]]:
         """结构化版本 - 使用公共遍历函数"""
+        
         structured_options = []
         entries = DirectoryWalker._walk_category_directory(category_dir, exclusion)
         
         for file_relative_path, prefix, should_add_prefix in entries:
             options = FileLoader.load_data_file(file_relative_path)
-            structured_options.append({
+            
+            structured_option = {
                 'file': os.path.basename(file_relative_path),
+                'file_relative_path': file_relative_path,  # 存储完整相对路径
                 'category': prefix,
                 'should_add_prefix': should_add_prefix,
                 'options': options
-            })
-        
+            }
+            structured_options.append(structured_option)
+            
         return structured_options
     
     @staticmethod
@@ -794,6 +792,17 @@ class ExpressionUtils:
     ) -> str:
         """
         统一的 expression 组合逻辑
+        可以被任何策略或生成器使用
+        
+        Args:
+            exp_str_value: 指定的 exp_str 值
+            expression_value: expression 内容
+            rng: 随机数生成器
+            exp_str_options: exp_str 选项列表（用于随机选择）
+            exp_str_prob: 使用 exp_str 的概率
+            
+        Returns:
+            组合后的 expression 字符串
         """
         # 如果 expression 为空，直接返回空
         if not expression_value or not expression_value.strip():
@@ -833,6 +842,506 @@ class ExpressionUtils:
             return ""
         selected = rng.choice(exp_str_options)
         return DataCleaner.clean_prompt_string(selected)
+    
+    @staticmethod
+    def process_expression_option(
+        choice: str, 
+        custom_value: str, 
+        rng: random.Random,
+        exp_str_options: List[str] = None,
+        generate_func = None
+    ) -> str:
+        """
+        处理 expression 选项的通用逻辑
+        
+        Args:
+            choice: 用户选择的选项（disable/random/具体选项）
+            custom_value: 自定义值
+            rng: 随机数生成器
+            exp_str_options: exp_str 选项列表
+            generate_func: 生成 expression 的函数
+            
+        Returns:
+            处理后的 expression 字符串
+        """
+        if choice.lower() == "disable":
+            return ""
+        
+        elif choice.lower() == "random":
+            # 几率使用 custom_value 的内容
+            if custom_value and custom_value.strip() and rng.random() < PromptConfig.CUSTOM_FIELD_PROB:
+                return DataCleaner.clean_prompt_string(custom_value)
+            
+            # 使用随机组合
+            exp_str_value = ""
+            if ExpressionUtils.should_include_exp_str(rng):
+                exp_str_value = ExpressionUtils.select_random_exp_str(exp_str_options, rng)
+            
+            # 生成随机 expression
+            random_expression = generate_func("") if generate_func else ""
+            
+            return ExpressionUtils.combine_expression(
+                exp_str_value, random_expression, rng, exp_str_options
+            )
+        
+        else:
+            # 具体选项，使用 custom_value
+            if custom_value and custom_value.strip():
+                return DataCleaner.clean_prompt_string(custom_value)
+            return ""
+
+#---------------------------------------------------------------------------------------------------------------------#
+# 策略类
+#---------------------------------------------------------------------------------------------------------------------#
+class PromptGenerationStrategy(ABC):
+    """提示词生成策略抽象基类"""
+    
+    def __init__(self, config: Dict[str, Any] = None):
+        self.config = config or {}
+    
+    @abstractmethod
+    def generate(self, context: Dict[str, Any]) -> str:
+        """生成提示词组件"""
+        pass
+    
+    @abstractmethod
+    def get_strategy_type(self) -> str:
+        """返回策略类型标识"""
+        pass
+    
+    def _should_generate_empty(self, rng: random.Random) -> bool:
+        """判断是否应该生成空内容"""
+        return rng.random() < self.config.get("random_empty_prob", PromptConfig.RANDOM_EMPTY_PROB)
+    
+    def _should_use_custom_value(self, custom_value: str, rng: random.Random) -> bool:
+        """判断是否应该使用自定义值"""
+        return (custom_value and custom_value.strip() and 
+                rng.random() < self.config.get("custom_field_prob", PromptConfig.CUSTOM_FIELD_PROB))
+
+class SingleFileRandomStrategy(PromptGenerationStrategy):
+    """单文件随机策略 - 用于 motion, lighting, style 等"""
+    
+    def generate(self, context: Dict[str, Any]) -> str:
+        rng = context.get('rng')
+        file_paths = context.get('file_paths', [])
+        custom_value = context.get('custom_value', '')
+        category_name = context.get('category_name', '')
+        
+        # 几率为空
+        if self._should_generate_empty(rng):
+            return ""
+        
+        # 几率使用自定义值
+        if self._should_use_custom_value(custom_value, rng):
+            return DataCleaner.clean_prompt_string(custom_value)
+        
+        if not file_paths:
+            return ""
+        
+        # 随机选择一个文件
+        selected_file = rng.choice(file_paths)
+        options = FileLoader.load_data_file(selected_file)
+        
+        if not options:
+            return ""
+        
+        # 从选中的文件中随机选择一条
+        choice = rng.choice(options)
+        clean_choice = DataCleaner.remove_category_prefix(choice)
+        
+        return DataCleaner.clean_prompt_string(clean_choice)
+    
+    def get_strategy_type(self) -> str:
+        return "single_file_random"
+
+class MultipleFilesRandomStrategy(PromptGenerationStrategy):
+    """多文件随机策略 - 用于 scene, facial_action, camera 等"""
+    
+    def generate(self, context: Dict[str, Any]) -> str:
+        rng = context.get('rng')
+        file_paths = context.get('file_paths', [])
+        custom_value = context.get('custom_value', '')
+        category_name = context.get('category_name', '')
+        
+        # 几率为空
+        if self._should_generate_empty(rng):
+            return ""
+        
+        # 几率使用自定义值
+        if self._should_use_custom_value(custom_value, rng):
+            return DataCleaner.clean_prompt_string(custom_value)
+        
+        if not file_paths:
+            return ""
+        
+        parts = []
+        structured_select_prob = self.config.get("structured_select_prob", PromptConfig.STRUCTURED_SELECT_PROB)
+        
+        # 所有文件几率选择，选择上的文件随机挑选一条，并按顺序组合
+        for file_path in file_paths:
+            options = FileLoader.load_data_file(file_path)
+            if options and rng.random() < structured_select_prob:
+                choice = rng.choice(options)
+                clean_choice = DataCleaner.remove_category_prefix(choice)
+                parts.append(clean_choice)
+        
+        # 清理每个部分，避免多余的分隔符
+        cleaned_parts = [DataCleaner.clean_prompt_string(part) for part in parts]
+        
+        return PromptUtils.smart_join(cleaned_parts)
+    
+    def get_strategy_type(self) -> str:
+        return "multiple_files_random"
+
+class ExpressionCombinationStrategy(PromptGenerationStrategy):
+    """表达式组合策略 - 专门处理 expression + exp_str 的组合"""
+    
+    def generate(self, context: Dict[str, Any]) -> str:
+        rng = context.get('rng')
+        file_paths = context.get('file_paths', [])
+        custom_value = context.get('custom_value', '')
+        data_cache = context.get('data_cache', {})
+        
+        # 几率为空
+        if self._should_generate_empty(rng):
+            return ""
+        
+        # 获取 exp_str 选项
+        exp_str_options = data_cache.get('EXPRESSION_STR', [])
+        
+        # 几率使用自定义值
+        if self._should_use_custom_value(custom_value, rng):
+            # 对于自定义值，也应用 exp_str 组合
+            exp_str_value = ""
+            if ExpressionUtils.should_include_exp_str(rng):
+                exp_str_value = ExpressionUtils.select_random_exp_str(exp_str_options, rng)
+            
+            return ExpressionUtils.combine_expression(
+                exp_str_value, custom_value, rng, exp_str_options
+            )
+        
+        if not file_paths:
+            return ""
+        
+        # 构建结构化选项格式（模拟 PromptComponentGenerator 的输入）
+        structured_options = []
+        for file_path in file_paths:
+            options = FileLoader.load_data_file(file_path)
+            if options:
+                structured_option = {
+                    'file': os.path.basename(file_path),
+                    'category': PromptConfig.DIRECTORY_MAPPING["expression"],
+                    'should_add_prefix': True,
+                    'options': options
+                }
+                structured_options.append(structured_option)
+        
+        # 生成随机 expression（使用单文件策略）
+        expression_value = ""
+        if structured_options:
+            selected_category = rng.choice(structured_options)
+            if selected_category['options']:
+                choice = rng.choice(selected_category['options'])
+                expression_value = DataCleaner.remove_category_prefix(choice)
+        
+        if not expression_value:
+            return ""
+        
+        # 使用 ExpressionUtils 进行组合
+        exp_str_value = ""
+        if ExpressionUtils.should_include_exp_str(rng):
+            exp_str_value = ExpressionUtils.select_random_exp_str(exp_str_options, rng)
+        
+        return ExpressionUtils.combine_expression(
+            exp_str_value, expression_value, rng, exp_str_options
+        )
+    
+    def get_strategy_type(self) -> str:
+        return "expression_combination"
+
+class TagReplacementStrategy(PromptGenerationStrategy):
+    """标记替换策略 - 用于 Geek 版本的 [category_name] 替换"""
+    
+    def generate(self, context: Dict[str, Any]) -> str:
+        """
+        替换模板中的分类标记为随机内容
+        
+        Args:
+            context: 包含以下键的字典：
+                - prompt_template: 包含标记的模板字符串
+                - category_mapping: 分类名称到文件路径的映射
+                - rng: 随机数生成器
+                - data_cache: 数据缓存
+                
+        Returns:
+            替换后的提示词字符串
+        """
+        prompt_template = context.get('prompt_template', '')
+        category_mapping = context.get('category_mapping', {})
+        rng = context.get('rng')
+        data_cache = context.get('data_cache', {})
+        
+        if not prompt_template:
+            return ""
+        
+        # 正则表达式匹配 [category_name] 格式的标记
+        pattern = r'\[([^\[\]]+)\]'
+        
+        def replace_match(match):
+            category_name = match.group(1)
+            return self._replace_single_tag(category_name, category_mapping, rng, data_cache)
+        
+        # 替换所有匹配的标记
+        result = re.sub(pattern, replace_match, prompt_template)
+        
+        return DataCleaner.clean_prompt_string(result)
+    
+    def _replace_single_tag(self, category_name: str, category_mapping: Dict[str, List[str]], 
+                           rng: random.Random, data_cache: Dict[str, Any]) -> str:
+        """替换单个分类标记"""
+        # 检查是否是有效的分类名称
+        if category_name not in category_mapping:
+            print(f"Warning: Category '{category_name}' not found in mapping")
+            # 尝试在映射键中查找相似键（调试用）
+            similar_keys = [k for k in category_mapping.keys() if category_name in k]
+            if similar_keys:
+                print(f"  Similar keys: {similar_keys[:5]}")
+            return f"[{category_name}]"  # 返回原标记
+        
+        # 从分类对应的文件中获取文件路径
+        file_paths = category_mapping[category_name]
+        if not file_paths:
+            print(f"Warning: No files found for category '{category_name}'")
+            return f"[{category_name}]"
+        
+        # 处理 "all xxx" 选项 - 使用对应的随机策略
+        if category_name.startswith("all "):
+            return self._generate_for_all_category(category_name, file_paths, rng, data_cache)
+        else:
+            # 对于具体分类，检查是否为expression相关分类
+            if self._is_expression_category(category_name, file_paths):
+                return self._generate_expression_content(file_paths, rng, data_cache)
+            else:
+                # 对于非expression分类，使用默认的随机选择逻辑
+                return self._generate_for_specific_category(category_name, file_paths, rng)
+    
+    def _is_expression_category(self, category_name: str, file_paths: List[str]) -> bool:
+        """判断是否为expression相关分类"""
+        expression_dir = PromptConfig.DIRECTORY_MAPPING["expression"]
+        
+        # 通过分类名称判断
+        if expression_dir in category_name.lower():
+            return True
+        
+        # 通过文件路径判断
+        for file_path in file_paths:
+            if expression_dir in file_path.lower():
+                return True
+        
+        return False
+    
+    def _generate_expression_content(self, file_paths: List[str], rng: random.Random, 
+                                   data_cache: Dict[str, Any]) -> str:
+        """为所有expression分类生成内容，包含exp_str"""
+        # 随机选择一个文件
+        selected_file = rng.choice(file_paths)
+        
+        # 加载文件内容
+        options = FileLoader.load_data_file(selected_file)
+        if not options:
+            print(f"Warning: No content found in file '{selected_file}' for expression category")
+            return ""
+        
+        # 随机选择一条expression内容
+        selected_expression = rng.choice(options)
+        cleaned_expression = DataCleaner.remove_category_prefix(selected_expression)
+        
+        # 获取exp_str选项
+        exp_str_options = data_cache.get('EXPRESSION_STR', [])
+        
+        # 使用ExpressionUtils进行组合
+        exp_str_value = ""
+        if ExpressionUtils.should_include_exp_str(rng):
+            exp_str_value = ExpressionUtils.select_random_exp_str(exp_str_options, rng)
+        
+        return ExpressionUtils.combine_expression(
+            exp_str_value, cleaned_expression, rng, exp_str_options
+        )
+    
+    def _generate_for_all_category(self, category_name: str, file_paths: List[str], 
+                                 rng: random.Random, data_cache: Dict[str, Any]) -> str:
+        """为 'all xxx' 分类生成内容"""
+        # 移除 "all " 前缀获取基础分类名
+        base_category = category_name[4:]
+        
+        # 根据分类类型使用不同的策略
+        if base_category == PromptConfig.DIRECTORY_MAPPING["expression"]:
+            # 特殊处理 expression：需要包含 exp_str
+            return self._generate_all_expression(file_paths, rng, data_cache)
+        else:
+            # 直接使用策略，避免创建新的上下文
+            strategy_type = PromptStrategyFactory.get_strategy_for_category(base_category)
+            strategy = PromptStrategyFactory.create_strategy(strategy_type)
+            
+            context_data = {
+                'rng': rng,
+                'file_paths': file_paths,
+                'data_cache': data_cache,
+                'custom_value': "",  # all 选项不使用自定义值
+            }
+            
+            return strategy.generate(context_data)
+    
+    def _generate_for_specific_category(self, category_name: str, file_paths: List[str], 
+                                      rng: random.Random) -> str:
+        """为具体分类生成内容"""
+        # 随机选择一个文件
+        selected_file = rng.choice(file_paths)
+        
+        # 加载文件内容
+        options = FileLoader.load_data_file(selected_file)
+        if not options:
+            print(f"Warning: No content found in file '{selected_file}' for category '{category_name}'")
+            return f"[{category_name}]"
+        
+        # 随机选择一条内容
+        selected_option = rng.choice(options)
+        
+        # 清理内容中的子分类前缀
+        cleaned_option = DataCleaner.remove_category_prefix(selected_option)
+        
+        return DataCleaner.clean_prompt_string(cleaned_option)
+    
+    def _generate_all_expression(self, file_paths: List[str], rng: random.Random, 
+                               data_cache: Dict[str, Any]) -> str:
+        """特殊处理 all expression：包含 exp_str 前缀"""
+        # 创建表达式组合策略
+        expression_strategy = ExpressionCombinationStrategy()
+        
+        context_data = {
+            'rng': rng,
+            'file_paths': file_paths,
+            'data_cache': data_cache,
+            'custom_value': ""
+        }
+        
+        return expression_strategy.generate(context_data)
+    
+    def get_strategy_type(self) -> str:
+        return "tag_replacement"
+
+class PromptStrategyFactory:
+    """提示词策略工厂"""
+    
+    # 策略类型映射 - 更新以包含 TagReplacementStrategy
+    STRATEGY_MAP = {
+        "single_file_random": SingleFileRandomStrategy,
+        "multiple_files_random": MultipleFilesRandomStrategy,
+        "expression_combination": ExpressionCombinationStrategy,
+        "tag_replacement": TagReplacementStrategy,
+    }
+    
+    # 分类到策略的映射 - 保持不变
+    CATEGORY_STRATEGY_MAP = {
+        "scene": "multiple_files_random",
+        "motion": "single_file_random", 
+        "facial_action": "multiple_files_random",
+        "expression": "expression_combination",
+        "lighting": "single_file_random",
+        "camera": "multiple_files_random",
+        "style": "single_file_random",
+        "artist": "single_file_random",  # style 子分类
+        "vision": "single_file_random",  # style 子分类
+    }
+    
+    @staticmethod
+    def create_strategy(strategy_type: str, config: Dict[str, Any] = None) -> PromptGenerationStrategy:
+        """根据类型创建策略实例"""
+        strategy_class = PromptStrategyFactory.STRATEGY_MAP.get(strategy_type)
+        if not strategy_class:
+            raise ValueError(f"未知的策略类型: {strategy_type}")
+        
+        return strategy_class(config) if config else strategy_class()
+    
+    @staticmethod
+    def get_strategy_for_category(category_name: str, is_all_option: bool = False) -> str:
+        """根据分类名称和选项类型返回推荐的策略类型"""
+        # 移除 "all " 前缀（如果存在）
+        base_category = category_name[4:] if category_name.startswith("all ") else category_name
+        
+        return PromptStrategyFactory.CATEGORY_STRATEGY_MAP.get(
+            base_category, "single_file_random"
+        )
+
+#---------------------------------------------------------------------------------------------------------------------#
+# 上下文类
+#---------------------------------------------------------------------------------------------------------------------#
+class PromptGenerationContext:
+    """提示词生成上下文 - 统一管理生成参数和策略"""
+    
+    def __init__(self, seed: int = None):
+        self.rng = random.Random(seed)
+        self.data_cache = get_data_cache()
+        self.strategies: Dict[str, PromptGenerationStrategy] = {}
+        
+        # 配置参数
+        self.config = {
+            "random_empty_prob": PromptConfig.RANDOM_EMPTY_PROB,
+            "custom_field_prob": PromptConfig.CUSTOM_FIELD_PROB,
+            "structured_select_prob": PromptConfig.STRUCTURED_SELECT_PROB,
+            "exp_str_random_prob": PromptConfig.EXP_STR_RANDOM_PROB,
+        }
+    
+    def set_strategy(self, strategy_type: str, strategy: PromptGenerationStrategy):
+        """设置策略"""
+        self.strategies[strategy_type] = strategy
+    
+    def get_strategy(self, strategy_type: str) -> PromptGenerationStrategy:
+        """获取策略，如果不存在则创建"""
+        if strategy_type not in self.strategies:
+            strategy = PromptStrategyFactory.create_strategy(strategy_type, self.config)
+            self.set_strategy(strategy_type, strategy)
+        return self.strategies[strategy_type]
+    
+    def generate_with_strategy(self, strategy_type: str, context_data: Dict[str, Any]) -> str:
+        """使用指定策略生成内容"""
+        strategy = self.get_strategy(strategy_type)
+        
+        # 注入公共上下文
+        context_data.update({
+            "rng": self.rng,
+            "data_cache": self.data_cache,
+            "config": self.config
+        })
+        
+        return strategy.generate(context_data)
+    
+    def generate_for_category(self, category_name: str, file_paths: List[str], 
+                            custom_value: str = "") -> str:
+        """为指定分类生成内容"""
+        strategy_type = PromptStrategyFactory.get_strategy_for_category(category_name)
+        
+        context_data = {
+            "category_name": category_name,
+            "file_paths": file_paths,
+            "custom_value": custom_value,
+        }
+        
+        return self.generate_with_strategy(strategy_type, context_data)
+    
+    def generate_for_all_category(self, category_name: str, file_paths: List[str]) -> str:
+        """为 'all xxx' 分类生成内容"""
+        # 移除 "all " 前缀获取基础分类名
+        base_category = category_name[4:] if category_name.startswith("all ") else category_name
+        strategy_type = PromptStrategyFactory.get_strategy_for_category(base_category)
+        
+        context_data = {
+            "category_name": base_category,
+            "file_paths": file_paths,
+            "custom_value": "",  # all 选项不使用自定义值
+        }
+        
+        return self.generate_with_strategy(strategy_type, context_data)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # 生成器类
@@ -883,6 +1392,7 @@ class PromptComponentGenerator:
         通用函数2：从所有文件中只选一个文件，再从这个文件中随机挑选一条
         适用于：motion, expression, lighting, style
         """
+        
         # 几率为空
         if self.rng.random() < PromptConfig.RANDOM_EMPTY_PROB:
             return ""
@@ -894,16 +1404,30 @@ class PromptComponentGenerator:
         if not structured_options:
             return ""
         
+        # 修复：确保有可用的选项
+        available_categories = [cat for cat in structured_options if cat.get('options')]
+        if not available_categories:
+            print(f"Warning: No available {category_name} categories with options")
+            return ""
+        
         # 随机选择一个文件
-        selected_category = self.rng.choice(structured_options)
+        selected_category = self.rng.choice(available_categories)
+        
         if selected_category['options']:
             # 从选中的文件中随机选择一条
             choice = self.rng.choice(selected_category['options'])
             # 如果该类别不需要添加前缀，那么choice已经是原始值
             if selected_category.get('should_add_prefix', True):
-                return DataCleaner.remove_category_prefix(choice)
+                clean_choice = DataCleaner.remove_category_prefix(choice)
             else:
-                return choice
+                clean_choice = choice
+            
+            result = DataCleaner.clean_prompt_string(clean_choice)
+            
+            if not result and category_name == "style":
+                print(f"Warning: Empty result for style selection from {selected_category.get('file', 'unknown')}")
+            
+            return result
         
         return ""
     
@@ -946,7 +1470,7 @@ class PromptComponentGenerator:
     def generate_style(self, custom_style_value: str) -> str:
         """生成随机style内容"""
         return self._generate_from_single_file(
-            self.data_cache['STYLE_STRUCTURED_OPTIONS'], custom_style_value, PromptConfig.DIRECTORY_MAPPING["style"]
+            self.data_cache['STYLE_STRUCTURED_OPTIONS'], custom_style_value, "style"
         )
     
     def generate_exp_str(self) -> str:
@@ -1014,65 +1538,96 @@ class PromptComponentGenerator:
         return f"A {sensory} of work with {detail} and {quality}, featuring a {composition} and {color}, presenting a {creativity}"
 
 class PromptGenerator:
-    """主提示词生成器"""
+    """主提示词生成器 - 使用策略模式重构"""
     
     def __init__(self, seed=None):
         self.rng = random.Random(seed)
-        self.component_generator = PromptComponentGenerator(self.rng)
-        # 添加数据缓存访问
+        self.context_manager = PromptGenerationContext(seed)
         self.data_cache = get_data_cache()
+        
+        # 保留原有的组件生成器用于兼容性
+        self.component_generator = PromptComponentGenerator(self.rng)
+    
+    def _process_category_with_strategy(self, choice: str, custom_value: str, category_name: str, 
+                                      file_paths: List[str], strategy_type: str) -> str:
+        """使用策略处理分类选项 - 修复版本"""
+        if choice.lower() == "disable":
+            return ""
+        elif choice.lower() == "enable":
+            if custom_value and custom_value.strip():
+                cleaned_value = DataCleaner.clean_prompt_string(custom_value)
+                if cleaned_value:
+                    return cleaned_value
+        elif choice.lower() == "random":
+            # 修复：使用传入的 file_paths（来自 category_mapping）
+            if file_paths:
+                return self.context_manager.generate_with_strategy(
+                    strategy_type, 
+                    {
+                        "category_name": category_name,
+                        "file_paths": file_paths,
+                        "custom_value": custom_value,
+                    }
+                )
+            
+            # 回退到组件生成器
+            return getattr(self.component_generator, f'generate_{category_name}')(custom_value)
+            
+        elif choice.lower().startswith("use image "):
+            if custom_value and custom_value.strip():
+                cleaned_value = DataCleaner.clean_prompt_string(custom_value)
+                if cleaned_value:
+                    return cleaned_value
+            else:
+                image_ref = self._get_image_ref_string(choice, category_name)
+                if image_ref:
+                    return image_ref
+        elif choice.lower() not in ["disable", "random", "enable"]:
+            if custom_value and custom_value.strip():
+                cleaned_value = DataCleaner.clean_prompt_string(custom_value)
+                if cleaned_value:
+                    return cleaned_value
+            else:
+                clean_value = DataCleaner.remove_category_prefix(choice)
+                if clean_value:
+                    return clean_value
+        
+        return ""
     
     def _get_expression_combination(self, exp_str_value: str, expression_value: str, custom_expression_value: str) -> str:
-        """使用ExpressionUtils处理exp_str和expression的组合"""
-        # 获取exp_str选项
-        exp_str_options = self.data_cache['EXPRESSION_STR']
-        
-        # 如果expression是disable，不使用任何表情
+        """使用 ExpressionUtils 处理 exp_str 和 expression 的组合"""
+        # 如果 expression 是 disable，不使用任何表情
         if expression_value.lower() == "disable":
             return ""
         
-        # 如果expression是random，随机生成expression和exp_str的组合
-        elif expression_value.lower() == "random":
-            # 几率使用custom_expression的内容
+        # 获取 exp_str 选项
+        exp_str_options = self.data_cache['EXPRESSION_STR']
+        
+        # 如果 expression 是 random，随机生成 expression 和 exp_str 的组合
+        if expression_value.lower() == "random":
+            # 几率使用 custom_expression 的内容
             if custom_expression_value and custom_expression_value.strip() and self.rng.random() < PromptConfig.CUSTOM_FIELD_PROB:
                 return ExpressionUtils.combine_expression(
-                    exp_str_value="",  # 不使用指定的exp_str_value，因为这里我们随机
-                    expression_value=custom_expression_value,
-                    rng=self.rng,
-                    exp_str_options=exp_str_options,
-                    exp_str_prob=PromptConfig.EXP_STR_RANDOM_PROB
+                    "", custom_expression_value, self.rng, exp_str_options
                 )
             
-            # 使用随机组合
+            # 使用 ExpressionUtils 进行组合
             exp_str_selected = ""
             if ExpressionUtils.should_include_exp_str(self.rng):
                 exp_str_selected = ExpressionUtils.select_random_exp_str(exp_str_options, self.rng)
             
-            # 生成随机expression
+            # 生成随机 expression
             random_expression = self.component_generator.generate_expression("")
             
-            # 如果expression为空，则返回空，不管exp_str的值
-            if not random_expression:
-                return ""
-            
-            # 使用ExpressionUtils组合
             return ExpressionUtils.combine_expression(
-                exp_str_value=exp_str_selected,
-                expression_value=random_expression,
-                rng=self.rng,
-                exp_str_options=exp_str_options,
-                exp_str_prob=PromptConfig.EXP_STR_RANDOM_PROB
+                exp_str_selected, random_expression, self.rng, exp_str_options
             )
         
-        # 如果expression是具体选项，使用custom_expression
+        # 如果 expression 是具体选项，使用 custom_expression
         else:
             if custom_expression_value and custom_expression_value.strip():
                 return ExpressionUtils.combine_expression(
-                    exp_str_value=exp_str_value,
-                    expression_value=custom_expression_value,
-                    rng=self.rng,
-                    exp_str_options=exp_str_options,
-                    exp_str_prob=PromptConfig.EXP_STR_RANDOM_PROB
+                    exp_str_value, custom_expression_value, self.rng, exp_str_options
                 )
             return ""
     
@@ -1117,58 +1672,8 @@ class PromptGenerator:
         
         return arranged_components
     
-    def _process_category(self, choice: str, custom_value: str, category_name: str, 
-                         generate_func=None, exp_mode: bool = False, exp_str_value: str = "") -> str:
-        """处理分类选项"""
-        if choice.lower() == "disable":
-            return ""
-        elif choice.lower() == "enable":
-            if custom_value and custom_value.strip():
-                cleaned_value = DataCleaner.clean_prompt_string(custom_value)
-                if cleaned_value:
-                    return cleaned_value
-        elif choice.lower() == "random":
-            if generate_func:
-                if not exp_mode:
-                    random_value = generate_func(custom_value)
-                else:
-                    random_value = generate_func(exp_str_value, choice, custom_value)
-                if random_value:
-                    return random_value
-        elif choice.lower().startswith("use image "):
-            if custom_value and custom_value.strip():
-                cleaned_value = DataCleaner.clean_prompt_string(custom_value)
-                if cleaned_value:
-                    return cleaned_value
-            else:
-                image_ref = self._get_image_ref_string(choice, category_name)
-                if image_ref:
-                    return image_ref
-        elif choice.lower() not in ["disable", "random", "enable"]:
-            if custom_value and custom_value.strip():
-                cleaned_value = DataCleaner.clean_prompt_string(custom_value)
-                if cleaned_value:
-                    return cleaned_value
-            elif not exp_mode:
-                clean_value = DataCleaner.remove_category_prefix(choice)
-                if clean_value:
-                    return clean_value
-            else:
-                exp_str_clean = DataCleaner.remove_category_prefix(exp_str_value) if exp_str_value else ""
-                expression_clean = DataCleaner.remove_category_prefix(choice)
-                
-                if not expression_clean:
-                    return ""
-                
-                if exp_str_clean and expression_clean:
-                    return f"{exp_str_clean} {expression_clean}"
-                else:
-                    return expression_clean
-        
-        return ""
-    
     def generate_prompt(self, **kwargs) -> str:
-        """生成提示词"""
+        """生成提示词 - 使用策略模式重构"""
         prompt_priority = kwargs.get("prompt_priority", "subject + scene")
         
         # 收集所有组件
@@ -1181,26 +1686,74 @@ class PromptGenerator:
             if cleaned_value:
                 components_dict["subject"] = cleaned_value
         
-        # 处理各个分类
-        categories = [
-            ("scene", "custom_scene", self.component_generator.generate_scene, False),
-            ("motion", "custom_motion", self.component_generator.generate_motion, False),
-            ("facial_action", "custom_facial_action", self.component_generator.generate_facial_action, False),
-            ("expression", "custom_expression", self._get_expression_combination, True),
-            ("lighting", "custom_lighting", self.component_generator.generate_lighting, False),
-            ("camera", "custom_camera", self.component_generator.generate_camera, False),
-            ("style", "custom_style", self.component_generator.generate_style, False),
-            ("description", "custom_description", self.component_generator.generate_description, False)
+        # 处理各个分类 - 使用策略模式
+        categories_config = [
+            ("scene", "custom_scene", "multiple_files_random"),
+            ("motion", "custom_motion", "single_file_random"),
+            ("facial_action", "custom_facial_action", "multiple_files_random"),
+            ("lighting", "custom_lighting", "single_file_random"),
+            ("camera", "custom_camera", "multiple_files_random"),
+            ("style", "custom_style", "single_file_random"),
         ]
         
-        for category_name, custom_field, generate_func, exp_mode in categories:
+        for category_name, custom_field, strategy_type in categories_config:
             choice = kwargs.get(category_name, "disable")
             custom_value = kwargs.get(custom_field, "")
-            exp_str_value = kwargs.get("exp_str", "quite") if exp_mode else ""
             
-            result = self._process_category(choice, custom_value, category_name, generate_func, exp_mode, exp_str_value)
+            # 修复：直接从数据缓存的结构化选项中获取文件路径
+            data_cache = get_data_cache()
+            structured_options_key = f"{category_name.upper()}_STRUCTURED_OPTIONS"
+            
+            file_paths = []
+            if structured_options_key in data_cache:
+                structured_options = data_cache[structured_options_key]
+                # 直接使用存储的完整相对路径
+                for category_data in structured_options:
+                    file_relative_path = category_data.get('file_relative_path', '')
+                    if file_relative_path:
+                        file_paths.append(file_relative_path)
+            
+            result = self._process_category_with_strategy(
+                choice, custom_value, category_name, file_paths, strategy_type
+            )
             if result:
                 components_dict[category_name] = result
+        
+        # 特殊处理 expression（使用 ExpressionUtils）
+        expression_choice = kwargs.get("expression", "disable")
+        custom_expression_value = kwargs.get("custom_expression", "")
+        exp_str_value = kwargs.get("exp_str", "quite")
+        
+        expression_result = self._get_expression_combination(
+            exp_str_value, expression_choice, custom_expression_value
+        )
+        if expression_result:
+            components_dict["expression"] = expression_result
+        
+        # 特殊处理 description（保持原有逻辑）
+        description_choice = kwargs.get("description", "disable")
+        custom_description_value = kwargs.get("custom_description", "")
+        
+        if description_choice.lower() == "disable":
+            pass
+        elif description_choice.lower() == "enable":
+            if custom_description_value and custom_description_value.strip():
+                cleaned_value = DataCleaner.clean_prompt_string(custom_description_value)
+                if cleaned_value:
+                    components_dict["description"] = cleaned_value
+        elif description_choice.lower() == "random":
+            random_description = self.component_generator.generate_description("")
+            if random_description:
+                components_dict["description"] = random_description
+        else:
+            if custom_description_value and custom_description_value.strip():
+                cleaned_value = DataCleaner.clean_prompt_string(custom_description_value)
+                if cleaned_value:
+                    components_dict["description"] = cleaned_value
+            else:
+                clean_value = DataCleaner.remove_category_prefix(description_choice)
+                if clean_value:
+                    components_dict["description"] = clean_value
         
         # 根据优先级设置组合组件
         components = self._arrange_components_by_priority(components_dict, prompt_priority)
@@ -1209,12 +1762,11 @@ class PromptGenerator:
         return full_prompt_string
 
 class PromptGeneratorGeek:
-    """Geek 版本提示词生成器"""
+    """Geek 版本提示词生成器 - 使用重构后的生成器"""
     
-    def __init__(self, seed=None):
-        self.rng = random.Random(seed)
-        self.prompt_generator = PromptGenerator(seed)
-        self.component_generator = self.prompt_generator.component_generator
+    def __init__(self, seed: int = None):
+        self.seed = seed
+        self.context_manager = PromptGenerationContext(seed)
         self.data_cache = get_data_cache()
     
     def generate_prompt(self, custom_prompt: str, custom_subject: str) -> str:
@@ -1222,195 +1774,88 @@ class PromptGeneratorGeek:
         # 处理主题
         cleaned_subject = DataCleaner.clean_prompt_string(custom_subject) if custom_subject else ""
         
-        # 替换分类标记
-        final_prompt = self._replace_category_tags(custom_prompt)
+        # 使用 TagReplacementStrategy 替换分类标记
+        final_prompt = self._replace_category_tags_with_strategy(custom_prompt)
         
-        # 组合主题和提示词
-        if cleaned_subject and final_prompt:
-            full_prompt = f"{cleaned_subject}, {final_prompt}"
-        elif cleaned_subject:
-            full_prompt = cleaned_subject
-        else:
-            full_prompt = final_prompt
+        # 修复：使用 smart_join 组合主题和提示词，避免多余的逗号
+        elements = []
+        if cleaned_subject:
+            elements.append(cleaned_subject)
+        if final_prompt:
+            elements.append(final_prompt)
+        
+        full_prompt = PromptUtils.smart_join(elements, separator=", ")
         
         return full_prompt
     
-    def _replace_category_tags(self, prompt: str) -> str:
-        """替换分类标记为随机内容 - 使用ExpressionUtils"""
+    def _replace_category_tags_with_strategy(self, prompt: str) -> str:
+        """使用 TagReplacementStrategy 替换分类标记"""
         if not prompt:
             return ""
         
-        category_mapping = self.data_cache['CATEGORY_MAPPING']
+        # 创建标记替换策略
+        tag_replacement_strategy = PromptStrategyFactory.create_strategy("tag_replacement")
         
-        # 正则表达式匹配 [category_name] 格式的标记
-        pattern = r'\[([^\[\]]+)\]'
+        # 准备上下文数据
+        context_data = {
+            'prompt_template': prompt,
+            'category_mapping': self.data_cache['CATEGORY_MAPPING'],
+            'rng': self.context_manager.rng,
+            'data_cache': self.data_cache
+        }
         
-        def replace_match(match):
-            category_name = match.group(1)
-            
-            # 检查是否是有效的分类名称
-            if category_name not in category_mapping:
-                print(f"Warning: Category '{category_name}' not found in mapping")
-                similar_keys = [k for k in category_mapping.keys() if category_name in k]
-                if similar_keys:
-                    print(f"  Similar keys: {similar_keys[:5]}")
-                return match.group(0)
-            
-            # 从分类对应的文件中获取文件路径
-            file_paths = category_mapping[category_name]
-            if not file_paths:
-                print(f"Warning: No files found for category '{category_name}'")
-                return match.group(0)
-            
-            # 处理expression相关标签 - 使用ExpressionUtils
-            if category_name == "all expression" or category_name in self._get_expression_category_names():
-                return self._generate_all_expression_with_utils(file_paths)
-            
-            # 处理 "all xxx" 选项 - 使用 RandomPrompter_JK 的随机策略
-            if category_name.startswith("all "):
-                base_category = category_name[4:]  # 移除 "all " 前缀
-                
-                if base_category in [PromptConfig.DIRECTORY_MAPPING["scene"], PromptConfig.DIRECTORY_MAPPING["facial_action"], PromptConfig.DIRECTORY_MAPPING["camera"]]:
-                    return self._generate_all_multiple_files(file_paths, base_category)
-                elif base_category in [PromptConfig.DIRECTORY_MAPPING["motion"], PromptConfig.DIRECTORY_MAPPING["lighting"], PromptConfig.DIRECTORY_MAPPING["style"]]:
-                    return self._generate_all_single_file(file_paths, base_category)
-                elif base_category in ["artist", "vision"]:
-                    return self._generate_all_single_file(file_paths, base_category)
-                else:
-                    return self._generate_all_single_file(file_paths, base_category)
-            else:
-                # 原有逻辑：对于具体分类，通常只有一个文件
-                selected_file = self.component_generator.rng.choice(file_paths)
-                
-                # 加载文件内容
-                options = FileLoader.load_data_file(selected_file)
-                if not options:
-                    print(f"Warning: No content found in file '{selected_file}' for category '{category_name}'")
-                    return match.group(0)
-                
-                # 随机选择一条内容
-                selected_option = self.component_generator.rng.choice(options)
-                
-                # 清理内容中的子分类前缀
-                cleaned_option = DataCleaner.remove_category_prefix(selected_option)
-                
-                return DataCleaner.clean_prompt_string(cleaned_option)
-        
-        # 替换所有匹配的标记
-        result = re.sub(pattern, replace_match, prompt)
-        
-        return DataCleaner.clean_prompt_string(result)
+        # 使用策略生成替换后的内容
+        return tag_replacement_strategy.generate(context_data)
 
-    def _generate_all_expression_with_utils(self, file_paths: List[str]) -> str:
-        """使用ExpressionUtils为所有expression分类生成内容"""
-        return self._generate_all_expression(file_paths)
-
-    def _get_expression_category_names(self) -> List[str]:
-        """获取所有 expression 分类名称"""
-        expression_categories = []
-        
-        # 从映射表中获取所有以 "expression" 开头的键
-        for key in self.data_cache['CATEGORY_MAPPING'].keys():
-            if key.startswith(PromptConfig.DIRECTORY_MAPPING["expression"]+"\\") or (key in self.data_cache['EXPRESSION_CATEGORIES'] and key != "select" and key != "all expression"):
-                expression_categories.append(key)
-        
-        return expression_categories
+class UnifiedPromptGenerator:
+    """统一提示词生成器 - 同时支持标准模式和 Geek 模式"""
     
-    def _generate_all_multiple_files(self, file_paths: List[str], category_name: str) -> str:
-        """使用 PromptComponentGenerator._generate_from_multiple_files 策略"""
-        # 构建结构化选项格式
-        structured_options = []
-        for file_path in file_paths:
-            options = FileLoader.load_data_file(file_path)
-            if options:
-                # 模拟结构化选项的格式
-                structured_option = {
-                    'file': os.path.basename(file_path),
-                    'category': category_name,
-                    'should_add_prefix': True,
-                    'options': options
-                }
-                structured_options.append(structured_option)
+    def __init__(self, seed: int = None):
+        self.seed = seed
+        self.context_manager = PromptGenerationContext(seed)
+        self.data_cache = get_data_cache()
         
-        # 使用 PromptComponentGenerator 的方法
-        return self.component_generator._generate_from_multiple_files(
-            structured_options, "", category_name
-        )
+        # 创建标准生成器
+        self.standard_generator = PromptGenerator(seed)
+        
+        # 创建 Geek 生成器
+        self.geek_generator = PromptGeneratorGeek(seed)
     
-    def _generate_all_single_file(self, file_paths: List[str], category_name: str) -> str:
-        """使用 PromptComponentGenerator._generate_from_single_file 策略"""
-        # 构建结构化选项格式
-        structured_options = []
-        for file_path in file_paths:
-            options = FileLoader.load_data_file(file_path)
-            if options:
-                # 模拟结构化选项的格式
-                structured_option = {
-                    'file': os.path.basename(file_path),
-                    'category': category_name,
-                    'should_add_prefix': True,
-                    'options': options
-                }
-                structured_options.append(structured_option)
-        
-        # 使用 PromptComponentGenerator 的方法
-        return self.component_generator._generate_from_single_file(
-            structured_options, "", category_name
-        )
+    def generate_standard_prompt(self, **kwargs) -> str:
+        """生成标准模式提示词"""
+        return self.standard_generator.generate_prompt(**kwargs)
     
-    def _generate_all_expression(self, file_paths: List[str]) -> str:
-        """使用ExpressionUtils处理所有expression分类的生成"""
-        # 获取exp_str选项
-        exp_str_options = self.data_cache['EXPRESSION_STR']
+    def generate_geek_prompt(self, custom_prompt: str, custom_subject: str = "") -> str:
+        """生成 Geek 模式提示词"""
+        return self.geek_generator.generate_prompt(custom_prompt, custom_subject)
+    
+    def generate_for_category(self, category_name: str, file_paths: List[str], 
+                            custom_value: str = "") -> str:
+        """为指定分类生成内容（通用方法）"""
+        return self.context_manager.generate_for_category(category_name, file_paths, custom_value)
+    
+    def generate_for_all_category(self, category_name: str, file_paths: List[str]) -> str:
+        """为 'all xxx' 分类生成内容"""
+        return self.context_manager.generate_for_all_category(category_name, file_paths)
+    
+    def replace_category_tags(self, prompt_template: str) -> str:
+        """替换模板中的分类标记"""
+        tag_replacement_strategy = PromptStrategyFactory.create_strategy("tag_replacement")
         
-        # 随机选择一个exp_str
-        exp_str_value = ""
-        if ExpressionUtils.should_include_exp_str(self.component_generator.rng):
-            exp_str_value = ExpressionUtils.select_random_exp_str(exp_str_options, self.component_generator.rng)
+        context_data = {
+            'prompt_template': prompt_template,
+            'category_mapping': self.data_cache['CATEGORY_MAPPING'],
+            'rng': self.context_manager.rng,
+            'data_cache': self.data_cache
+        }
         
-        # 根据文件数量决定使用哪种策略
-        if len(file_paths) == 1:
-            # 单个文件 - 从该文件中随机选择
-            selected_file = file_paths[0]
-            options = FileLoader.load_data_file(selected_file)
-            if options:
-                expression_value = self.component_generator.rng.choice(options)
-            else:
-                expression_value = ""
-        else:
-            # 多个文件 - 使用单文件策略从所有文件中随机选择
-            structured_options = []
-            for file_path in file_paths:
-                options = FileLoader.load_data_file(file_path)
-                if options:
-                    # 模拟结构化选项的格式
-                    structured_option = {
-                        'file': os.path.basename(file_path),
-                        'category': PromptConfig.DIRECTORY_MAPPING["expression"],
-                        'should_add_prefix': True,
-                        'options': options
-                    }
-                    structured_options.append(structured_option)
-            
-            # 随机生成一个expression（使用单文件策略）
-            expression_value = self.component_generator._generate_from_single_file(
-                structured_options, "", PromptConfig.DIRECTORY_MAPPING["expression"]
-            )
-        
-        # 使用ExpressionUtils组合expression
-        return ExpressionUtils.combine_expression(
-            exp_str_value=exp_str_value,
-            expression_value=expression_value,
-            rng=self.component_generator.rng,
-            exp_str_options=exp_str_options,
-            exp_str_prob=PromptConfig.EXP_STR_RANDOM_PROB
-        )
+        return tag_replacement_strategy.generate(context_data)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # 节点类
 #---------------------------------------------------------------------------------------------------------------------#
 class RandomPrompter_JK:
-    """ComfyUI 节点类"""
+    """ComfyUI 节点类 - 使用重构后的 PromptGenerator"""
     
     # 使用动态生成的图像选项
     IMAGE_BASED_OPTIONS = PromptUtils.generate_image_based_options(PromptConfig.REF_IMAGE_COUNT)
@@ -1543,18 +1988,16 @@ class RandomPrompter_JK:
     CATEGORY = icons.get("JK/Prompt")
     DESCRIPTION = "Random prompt generator with categorized options for scene, motion, facial actions, expressions, lighting, camera, style, and description. Supports manual selection, random generation, and image reference integration for comprehensive prompt creation."
     
-    @classmethod
-    # def IS_CHANGED(cls, **kwargs):
-        # return float("NaN")
-    
     def execute(self, **kwargs):
+        """执行提示词生成"""
         seed = kwargs.get('seed', 0)
-        prompt_generator = PromptGenerator(seed)
-        prompt = prompt_generator.generate_prompt(**kwargs)
+        # 改为使用 UnifiedPromptGenerator
+        unified_generator = UnifiedPromptGenerator(seed)
+        prompt = unified_generator.generate_standard_prompt(**kwargs)
         return (prompt,)
 
 class RandomPrompterGeek_JK:
-    """ComfyUI Geek 版本节点类 - 分类级别随机提示词生成器"""
+    """ComfyUI Geek 版本节点类 - 使用重构后的生成器"""
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -1638,15 +2081,12 @@ class RandomPrompterGeek_JK:
     def execute(self, **kwargs):
         """执行提示词生成"""
         seed = kwargs.get('seed', 0)
-        custom_prompt = kwargs.get('custom_prompt', '')
-        custom_subject = kwargs.get('custom_subject', '')
-        
-        # 创建 Geek 版本提示词生成器
-        prompt_generator_geek = PromptGeneratorGeek(seed)
-        
-        # 生成提示词
-        prompt = prompt_generator_geek.generate_prompt(custom_prompt, custom_subject)
-        
+        # 改为使用 UnifiedPromptGenerator
+        unified_generator = UnifiedPromptGenerator(seed)
+        prompt = unified_generator.generate_geek_prompt(
+            kwargs.get('custom_prompt', ''),
+            kwargs.get('custom_subject', '')
+        )
         return (prompt,)
 
 class PromptCombine_JK:
