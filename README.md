@@ -478,9 +478,9 @@ Guidance Default JK🐉: Default guidance scale value for model conditioning.
 Image Resize Mode JK🐉: Image resize mode selection for various resizing strategies.  
 ![image](imgs/nodes/Misc/Sampler%20Loader%20JK.png)  
 Sampler Loader JK🐉: Sampler and scheduler selection with name output.  
-![image](imgs/nodes/Misc/Upscale%20Method%20JK🐉 .png)
+![image](imgs/nodes/Misc/Upscale%20Method%20JK.png)  
 Upscale Method JK🐉: Upscale method selection for images and latents.  
-![image](imgs/nodes/Misc/Aspect%20Ratio%20JK🐉 .png)
+![image](imgs/nodes/Misc/Aspect%20Ratio%20JK.png)  
 Aspect Ratio JK🐉: Aspect ratio selector for various model types with custom resolution support.  
 ![image](imgs/nodes/Misc/String%20To%20Combo%20JK.png)  
 String To Combo JK🐉: Convert comma-separated string to combo selection (first item).  
@@ -488,12 +488,12 @@ String To Combo JK🐉: Convert comma-separated string to combo selection (first
 Get Nth String JK🐉: Get nth item from comma-separated string list with type conversion.  
 ![image](imgs/nodes/Misc/Save%20String%20List%20To%20JSON%20JK.png)  
 Save String List To JSON JK🐉: Save string data to JSON file with overwrite control and directory creation.  
-![image](imgs/nodes/Misc/Load%20String%20List%20From%20JSON JK.png)  
+![image](imgs/nodes/Misc/Load%20String%20List%20From%20JSON%20JK.png)  
 Load String List From JSON JK🐉: Load string data from JSON file with caching and force reload options.  
 ![image](imgs/nodes/Misc/Tiling%20Mode%20JK.png)  
 Tiling Mode JK🐉: Tiling mode selection for image generation.  
 - Switch Nodes  
-![image](imgs/nodes/Swotcj/Switch%20Nodes.png)  
+![image](imgs/nodes/Swotch/Switch%20Nodes.png)  
 Boolean JK🐉  
 Image Input Switch JK🐉  
 Mask Input Switch JK🐉  
