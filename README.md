@@ -391,7 +391,7 @@ Cut Audio Cuts JK🐉: Merge all cuts from scene_cuts into a single audio file i
 ![image](imgs/nodes/Audio/Cut%20Audio%20Loop%20JK.png)  
 Cut Audio Loop JK🐉: Cut an audio file based on loop metadata and cut index.  
 - Video Nodes  
-![image](imgs/nodes/Video/Create%20Loop%20Schedule%20List%20JK.png)  
+![image](imgs/nodes/Video/Create%20Loop%20Schedule%20List.png)  
 Create Loop Schedule List JK🐉: Generate a sequential integer list for animation loop scheduling.  
 ![image](imgs/nodes/Video/Wan%20Frame%20Count%20JK.png)  
 Wan Frame Count JK🐉: Calculate WAN-compatible frame count by rounding up to nearest multiple of 4 plus 1.  
@@ -493,7 +493,7 @@ Load String List From JSON JK🐉: Load string data from JSON file with caching 
 ![image](imgs/nodes/Misc/Tiling%20Mode%20JK.png)  
 Tiling Mode JK🐉: Tiling mode selection for image generation.  
 - Switch Nodes  
-![image](imgs/nodes/Swotcj/Switch%20Nodes.png)  
+![image](imgs/nodes/Swotch/Switch%20Nodes.png)  
 Boolean JK🐉  
 Image Input Switch JK🐉  
 Mask Input Switch JK🐉  
