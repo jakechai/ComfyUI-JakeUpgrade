@@ -329,7 +329,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 4. Add more choices for Random Prompter Nodes with more refined and accurate categories.
 
 - 2025-11-07 - v2.3.1
-1. Set SDXL Target Res node `DEPRECATED = True`.
+1. Add Nodes description.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -365,6 +365,310 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 > [!NOTE]
 > - Files in the replacement folder need to be updated by hand if needed.
+
+## JakeUpgrade Nodes
+<details>
+<summary><b>Custom Nodes</b></summary>
+
+- 3D Nodes  
+![image](imgs/nodes/3D/Orbit%20Poses%20JK.png)  
+Orbit Poses JK🐉: Generate 3D camera track pose configurations, supporting multiple preset and custom parameters.  
+![image](imgs/nodes/3D/Orbit%20Lists%20to%20Orbit%20Poses%20JK.png)  
+Orbit Lists to Orbit Poses JK🐉: Convert track list format to camera pose format.  
+![image](imgs/nodes/3D/Orbit%20Poses%20to%20Orbit%20Lists%20JK.png)  
+Orbit Poses to Orbit Lists JK🐉: Convert camera pose format to track list format.  
+![image](imgs/nodes/3D/Get%20Orbit%20Poses%20From%20List%20JK.png)  
+Get Orbit Poses From List JK🐉:Select a specific pose by index from a list of camera poses.  
+- Audio Nodes  
+![image](imgs/nodes/Audio/Scene%20Cuts%20JK.png)  
+Scene Cuts JK🐉: Create scene cuts based on multiple cut point times or durations and an optional audio duration.  
+![image](imgs/nodes/Audio/Cut%20Audio%20JK.png)  
+Cut Audio JK🐉: Cut an audio file based on start and end time.  
+![image](imgs/nodes/Audio/Cut%20Audio%20Index JK.png)  
+Cut Audio Index JK🐉: Cut an audio file based on scene cuts metadata and cut index.  
+![image](imgs/nodes/Audio/Cut%20Audio%20Cuts%20JK.png)  
+Cut Audio Cuts JK🐉: Merge all cuts from scene_cuts into a single audio file in chronological order.  
+![image](imgs/nodes/Audio/Cut%20Audio%20Loop%20JK.png)  
+Cut Audio Loop JK🐉: Cut an audio file based on loop metadata and cut index.  
+- Video Nodes  
+![image](imgs/nodes/Video/Create%20Loop%20Schedule%20List%20JK.png)  
+Create Loop Schedule List JK🐉: Generate a sequential integer list for animation loop scheduling.  
+![image](imgs/nodes/Video/Wan%20Frame%20Count%20JK.png)  
+Wan Frame Count JK🐉: Calculate WAN-compatible frame count by rounding up to nearest multiple of 4 plus 1.  
+![image](imgs/nodes/Video/Wan22%20cfg%20Scheduler%20List%20JK.png)  
+Wan22 cfg Scheduler List JK🐉: Generate CFG scheduler list with initial and subsequent values for WAN 2.2.  
+![image](imgs/nodes/Video/Wan%20Wrapper%20Sampler%20Default%20JK.png)  
+Wan Wrapper Sampler Default JK🐉: Provide default sampler settings for WAN wrapper including scheduler and rope function.  
+- Prompt Nodes  
+![image](imgs/nodes/Prompt/Random%20Prompter%20JK.png)  
+Random Prompter JK🐉: Random prompt generator with categorized options for scene, motion, facial actions, expressions, lighting, camera, style, and description. Supports manual selection, random generation, and image reference integration for comprehensive prompt creation.  
+![image](imgs/nodes/Prompt/Random%20Prompter%20Geek%20JK.png)  
+Random Prompter Geek JK🐉: Random Prompter Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion.  
+![image](imgs/nodes/Prompt/Prompt%20Combine%20JK.png)  
+Prompt Combine JK🐉: Merge the two strings into one and clean up the result.  
+- ControlNet Nodes  
+![image](imgs/nodes/ControlNet/ControlNet%20Loader%20JK.png)  
+ControlNet Loader JK🐉: Load ControlNet models with configurable union types.  
+![image](imgs/nodes/ControlNet/Multi-ControlNet%20Param%20Stack%20JK.png)  
+Multi-ControlNet Param Stack JK🐉: Stack multiple ControlNet parameters for complex control scenarios.  
+![image](imgs/nodes/ControlNet/Apply%20ControlNet%20JK.png)  
+Apply ControlNet JK🐉: Apply single ControlNet to conditioning with mask support.  
+![image](imgs/nodes/ControlNet/Apply%20Multi-ControlNet%20Adv%20JK.png)  
+Apply Multi-ControlNet%20Adv%20JK🐉: Apply multiple ControlNets from stack to conditioning.  
+- LoRA Nodes  
+![image](imgs/nodes/LoRA/LoRA%20Stack%20JK.png)  
+LoRA Stack JK🐉: Stack multiple LoRA models with prompt and metadata generation.  
+![image](imgs/nodes/LoRA/Apply%20LoRA%20Stack%20JK.png)  
+Apply LoRA Stack JK🐉: Apply multiple LoRA models from stack to both model and CLIP.  
+![image](imgs/nodes/LoRA/LoRA%20Stack%20Model%20Only%20JK.png)  
+LoRA Stack Model Only JK🐉: Stack LoRA models for model-only application.  
+![image](imgs/nodes/LoRA/Apply%20LoRA%20Stack%20Model%20Only%20JK.png)  
+Apply LoRA Stack Model Only JK🐉: Apply multiple LoRA models from stack to model only.  
+- Image Nodes  
+![image](imgs/nodes/Image/Rough%20Outline%20JK.png)  
+Rough Outline JK🐉: Extract rough outlines from images using Canny edge detection and contour processing.  
+![image](imgs/nodes/Image/Open+DW%20Pose%20JK.png)  
+Open+DW Pose JK🐉: Combine DWPose and OpenPose images by removing and reserving specific colors.  
+![image](imgs/nodes/Image/Make%20Image%20Grid%20JK.png)  
+Make Image Grid JK🐉: Create image grid from multiple images with specified rows or columns.  
+![image](imgs/nodes/Image/Split%20Image%20Grid%20JK.png)  
+Split Image Grid JK🐉: Split image grid into individual images based on rows or columns.  
+![image](imgs/nodes/Image/Image%20Remove%20Alpha%20JK.png)  
+Image Remove Alpha JK🐉: Remove alpha channel from RGBA images and convert to RGB.  
+![image](imgs/nodes/Image/Color%20Grading%20JK.png)  
+Color Grading JK🐉: Apply color grading with brightness, contrast, saturation and RGB channel adjustments.  
+![image](imgs/nodes/Image/Image%20Crop%20by%20Mask%20Resolution%20Grp%20JK.png)  
+Image Crop by Mask Resolution Grp JK🐉: Calculate crop parameters based on mask with various resolution options.  
+![image](imgs/nodes/Image/Image%20Crop%20by%20Mask%20Params%20JK.png)  
+Image Crop by Mask Params JK🐉: Provide crop parameters for mask-based image cropping operations.  
+![image](imgs/nodes/Image/Scale%20To%20Resolution%20JK.png)  
+Scale To Resolution JK🐉: Scale image to target resolution based on width, height or megapixel constraints.  
+![image](imgs/nodes/Image/Enchance%20And%20Resize%20Hint%20Images%20JK.png)  
+Enchance And Resize Hint Images JK🐉: Enhance hint images with high quality resizing, edge processing and multiple resize modes.  
+- Mask Nodes  
+![image](imgs/nodes/Mask/Is%20Mask%20Empty%20JK.png)  
+Is Mask Empty JK🐉: Check if mask is completely empty (contains only zeros).  
+- Math Nodes  
+![image](imgs/nodes/Math/Math%20Nodes-Conversion.png)  
+Conversion nodes: BoolToInt JK🐉 | IntToBool JK🐉 | FloatToInt JK🐉 | IntToFloat JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes-Bool.png)  
+Boolean Math nodes: BoolUnaryOp JK🐉 | BoolBinaryOp JK🐉 | Bool And JK🐉 | Bool OR JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes-String.png)  
+String Math Node: StringBinaryCon JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes_Float.png)  
+Float Math Nodes: FloatUnaryCon JK🐉 | FloatBinaryCon JK🐉 | FloatUnaryOp JK🐉 | FloatBinaryOp JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes-Int.png)  
+Int Math Nodes: IntUnaryCon JK🐉 | IntBinaryCon JK🐉 | IntUnaryOp JK🐉 | IntBinaryOp JK🐉 | IntSubOp JK🐉  
+![image](imgs/nodes/Math/Math%20Nodes-Evaluate.png)  
+Evaluate Nodes: Evaluate Ints JK🐉 | Evaluate Floats JK🐉 | Evaluate String JK🐉 | Evaluate Examples JK🐉  
+- Misc Nodes  
+![image](imgs/nodes/Misc/Project%20Setting%20JK.png)  
+Project Setting JK🐉: Project settings for workflow organization with customizable naming patterns.  
+![image](imgs/nodes/Misc/Ksampler%20Parameters%20Default%20JK.png)  
+Ksampler Parameters Default JK🐉: Default parameters for KSampler (steps, CFG scale, denoise strength).  
+![image](imgs/nodes/Misc/Ksampler%20Adv%20Parameters%20Default%20JK.png)  
+Ksampler Adv Parameters Default JK🐉: Advanced KSampler parameters for step control and scheduling.  
+![image](imgs/nodes/Misc/Inject%20Noise%20Params%20JK.png)  
+Inject Noise Params JK🐉: Parameters for noise injection with seed and strength control.  
+![image](imgs/nodes/Misc/SD3%20Prompts%20Switch%20JK.png)  
+SD3 Prompts Switch JK🐉: Switch between different prompt types for SD3 (CLIP-L, CLIP-G, T5-XXL).  
+![image](imgs/nodes/Misc/Guidance%20Default%20JK.png)  
+Guidance Default JK🐉: Default guidance scale value for model conditioning.  
+![image](imgs/nodes/Misc/Image%20Resize%20Mode%20JK.png)  
+Image Resize Mode JK🐉: Image resize mode selection for various resizing strategies.  
+![image](imgs/nodes/Misc/Sampler%20Loader%20JK.png)  
+Sampler Loader JK🐉: Sampler and scheduler selection with name output.  
+![image](imgs/nodes/Misc/Upscale%20Method%20JK🐉 .png)
+Upscale Method JK🐉: Upscale method selection for images and latents.  
+![image](imgs/nodes/Misc/Aspect%20Ratio%20JK🐉 .png)
+Aspect Ratio JK🐉: Aspect ratio selector for various model types with custom resolution support.  
+![image](imgs/nodes/Misc/String%20To%20Combo%20JK.png)  
+String To Combo JK🐉: Convert comma-separated string to combo selection (first item).  
+![image](imgs/nodes/Misc/Get%20Nth%20String%20JK.png)  
+Get Nth String JK🐉: Get nth item from comma-separated string list with type conversion.  
+![image](imgs/nodes/Misc/Save%20String%20List%20To%20JSON%20JK.png)  
+Save String List To JSON JK🐉: Save string data to JSON file with overwrite control and directory creation.  
+![image](imgs/nodes/Misc/Load%20String%20List%20From%20JSON JK.png)  
+Load String List From JSON JK🐉: Load string data from JSON file with caching and force reload options.  
+![image](imgs/nodes/Misc/Tiling%20Mode%20JK.png)  
+Tiling Mode JK🐉: Tiling mode selection for image generation.  
+- Switch Nodes  
+![image](imgs/nodes/Swotcj/Switch%20Nodes.png)  
+Boolean JK🐉  
+Image Input Switch JK🐉  
+Mask Input Switch JK🐉  
+Int Input Switch JK🐉  
+Float Input Switch JK🐉  
+Latent Input Switch JK🐉  
+Conditioning Input Switch JK🐉  
+Clip Input Switch JK🐉  
+Model Input Switch JK🐉  
+ControlNet Input Switch JK🐉  
+ControlNet Stack Input Switch JK🐉  
+Text Input Switch JK🐉  
+VAE Input Switch JK🐉  
+Noise Input Switch JK🐉  
+Guider Input Switch JK🐉  
+Sampler Input Switch JK🐉  
+Sigmas Input Switch JK🐉  
+Mesh Input Switch JK🐉  
+Ply Input Switch JK🐉  
+Orbit Pose Input Switch JK🐉  
+TriMesh Input Switch JK🐉  
+
+</details>
+
+<details>
+<summary><b>Subgraphs for comfyui-frontend-package>=1.24.0</b></summary>
+
+	Tools
+		JK🐉-Image RemBG
+		JK🐉-Image Crop by Mask
+		JK🐉-Image Crop by Mask and Resize
+		JK🐉-Image Resize
+		JK🐉-Image Stitch by Mask
+		JK🐉-Latent Crop by Mask
+		JK🐉-Latent Crop by Mask and Resize
+		JK🐉-Latent Resize
+		JK🐉-Latent Stitch by Mask
+	Sampler
+		JK🐉-Concept
+		JK🐉-Flux KSampler
+		JK🐉-Flux KSampler Adv
+		JK🐉-Variation Ksampler
+		JK🐉-KSampler (High+Low)
+		JK🐉-KSampler (High+Low) Adv
+		JK🐉-WAN Sampler (High+Low)
+		JK🐉-WAN Sampler (High+Low) adv
+	Workflow
+		JK🐉-Image Gen Common
+		JK🐉-Image Gen Common Adv
+		JK🐉-Image Gen Flux
+		JK🐉-Image Gen Flux Adv
+		JK🐉-Image Gen SD15
+		JK🐉-Image Gen SD15 Adv
+		JK🐉-Image Gen SD3
+		JK🐉-Image Gen SD3 Adv
+		JK🐉-Image Gen SDXL
+		JK🐉-Image Gen SDXL Adv
+		JK🐉-Image Refine Common
+		JK🐉-Image Gen QWen
+		JK🐉-Image Gen QWen Adv
+		JK🐉-Image Edit QWen
+		JK🐉-Image Edit QWen 2509
+		JK🐉-Image Edit QWen 2509 RAW
+		JK🐉-Image Edit Flux Kontext
+		JK🐉-Image Edit Flux Redux
+		JK🐉-Image Edit Flux Redux Style
+		JK🐉-Image Edit Flux USO
+		JK🐉-Image Edit Flux USO Style
+</details>
+
+<details>
+<summary><b>Group Nodes for comfyui-frontend-package>=1.16.0</b></summary>
+
+	Tools
+		JK🐉:::Image RemBG
+		JK🐉:::Image Crop by Mask
+		JK🐉:::Image Crop by Mask and Resize
+		JK🐉:::Image Resize
+		JK🐉:::Image Stitch by Mask
+		JK🐉:::Latent Crop by Mask
+		JK🐉:::Latent Crop by Mask and Resize
+		JK🐉:::Latent Resize
+		JK🐉:::Latent Stitch by Mask
+	Sampler
+		JK🐉::Concept
+		JK🐉::Flux KSampler
+		JK🐉::Flux KSampler Adv
+		JK🐉::Variation Ksampler
+		JK🐉:::KSampler (High+Low)
+		JK🐉:::KSampler (High+Low) Adv
+		JK🐉:::WAN Sampler (High+Low)
+		JK🐉:::WAN Sampler (High+Low) adv
+	Workflow
+		JK🐉:::Image Gen Common
+		JK🐉:::Image Gen Common Adv
+		JK🐉:::Image Gen Flux
+		JK🐉:::Image Gen Flux Adv
+		JK🐉:::Image Gen SD15
+		JK🐉:::Image Gen SD15 Adv
+		JK🐉:::Image Gen SD3
+		JK🐉:::Image Gen SD3 Adv
+		JK🐉:::Image Gen SDXL
+		JK🐉:::Image Gen SDXL Adv
+		JK🐉:::Image Refine Common
+		JK🐉:::Image Gen QWen
+		JK🐉:::Image Gen QWen Adv
+		JK🐉:::Image Edit QWen
+		JK🐉:::Image Edit QWen 2509
+		JK🐉:::Image Edit Flux Kontext
+		JK🐉:::Image Edit Flux Redux
+		JK🐉:::Image Edit Flux Redux Style
+		JK🐉:::Image Edit Flux USO
+		JK🐉:::Image Edit Flux USO Subject
+		JK🐉:::Image Edit Flux USO Style
+</details>
+
+<details>
+<summary><b>Group Nodes for comfyui-frontend-package<=1.15.13</b></summary>
+
+	Tools
+		JK🐉::Image RemBG
+		JK🐉::Image Crop by Mask
+		JK🐉::Image Crop by Mask and Resize
+		JK🐉::Image Crop by Mask and Resize (Input)
+		JK🐉::Image Resize
+		JK🐉::Image Stitch by Mask
+		JK🐉::Latent Crop by Mask
+		JK🐉::Latent Crop by Mask and Resize
+		JK🐉::Latent Crop by Mask and Resize (Input)
+		JK🐉::Latent Resize
+		JK🐉::Latent Stitch by Mask
+	Workflow
+		JK🐉::Concept
+		JK🐉::Flux KSampler
+		JK🐉::Flux KSampler Adv
+		JK🐉::Variation Ksampler
+		JK🐉::Image Gen Common
+		JK🐉::Image Gen Common (Input)
+		JK🐉::Image Gen Common (Pipe)
+		JK🐉::Image Gen Common Adv
+		JK🐉::Image Gen Common Adv (Input)
+		JK🐉::Image Gen Common Adv (Pipe)
+		JK🐉::Image Gen Flux
+		JK🐉::Image Gen Flux (Input)
+		JK🐉::Image Gen Flux (Pipe)
+		JK🐉::Image Gen Flux Adv
+		JK🐉::Image Gen Flux Adv (Input)
+		JK🐉::Image Gen Flux Adv (Pipe)
+		JK🐉::Image Gen SD15
+		JK🐉::Image Gen SD15 (Input)
+		JK🐉::Image Gen SD15 (Pipe)
+		JK🐉::Image Gen SD15 Adv
+		JK🐉::Image Gen SD15 Adv (Input)
+		JK🐉::Image Gen SD15 Adv (Pipe)
+		JK🐉::Image Gen SD3
+		JK🐉::Image Gen SD3 (Input)
+		JK🐉::Image Gen SD3 (Pipe)
+		JK🐉::Image Gen SD3 Adv
+		JK🐉::Image Gen SD3 Adv (Input)
+		JK🐉::Image Gen SD3 Adv (Pipe)
+		JK🐉::Image Gen SDXL
+		JK🐉::Image Gen SDXL (Input)
+		JK🐉::Image Gen SDXL (Pipe)
+		JK🐉::Image Gen SDXL Adv
+		JK🐉::Image Gen SDXL Adv (Input)
+		JK🐉::Image Gen SDXL Adv (Pipe)
+		JK🐉::Image Refine Common
+		JK🐉::Image Refine Common (Input)
+		JK🐉::Inpaint Latent
+		JK🐉::Inpaint Checkpoint
+		JK🐉::Inpaint ControlNet			
+		JK🐉::Outpaint Latent
+		JK🐉::Outpaint Checkpoint
+		JK🐉::Outpaint ControlNet
+</details>
 
 ## WAN Video Eco
 
@@ -622,310 +926,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 </details>
 
-## JakeUpgrade Nodes
-<details>
-<summary><b>Custom Nodes</b></summary>
-
-- 3D Nodes
-![image](imgs/nodes/3D/Orbit%20Poses%20JK.png)
-Orbit Poses JK🐉: Generate 3D camera track pose configurations, supporting multiple preset and custom parameters.  
-![image](imgs/nodes/3D/Orbit%20Lists%20to%20Orbit%20Poses%20JK.png)
-Orbit Lists to Orbit Poses JK🐉: Convert track list format to camera pose format.  
-![image](imgs/nodes/3D/Orbit%20Poses%20to%20Orbit%Lists%20JK.png)
-Orbit Poses to Orbit Lists JK🐉: Convert camera pose format to track list format.  
-![image](imgs/nodes/3D/Get%20Orbit%20Poses%20From%20List%20JK.png)
-Get Orbit Poses From List JK🐉:Select a specific pose by index from a list of camera poses.  
-- Audio Nodes
-![image](imgs/nodes/Audio/Scene%20Cuts%20JK.png)
-Scene Cuts JK🐉: Create scene cuts based on multiple cut point times or durations and an optional audio duration.  
-![image](imgs/nodes/Audio/Cut%20Audio%20JK.png)
-Cut Audio JK🐉: Cut an audio file based on start and end time.  
-![image](imgs/nodes/Audio/Cut%20Audio%20Index JK.png)
-Cut Audio Index JK🐉: Cut an audio file based on scene cuts metadata and cut index.  
-![image](imgs/nodes/Audio/Cut%20Audio%20Cuts%20JK.png)
-Cut Audio Cuts JK🐉: Merge all cuts from scene_cuts into a single audio file in chronological order.  
-![image](imgs/nodes/Audio/Cut%20Audio%20Loop%20JK.png)
-Cut Audio Loop JK🐉: Cut an audio file based on loop metadata and cut index.  
-- Video Nodes
-![image](imgs/nodes/Video/Create%20Loop%20Schedule%20List%20JK.png)
-Create Loop Schedule List JK🐉: Generate a sequential integer list for animation loop scheduling.  
-![image](imgs/nodes/Video/Wan%20Frame%20Count%20JK.png)
-Wan Frame Count JK🐉: Calculate WAN-compatible frame count by rounding up to nearest multiple of 4 plus 1.  
-![image](imgs/nodes/Video/Wan22%20cfg%20Scheduler%20List%20JK.png)
-Wan22 cfg Scheduler List JK🐉: Generate CFG scheduler list with initial and subsequent values for WAN 2.2.  
-![image](imgs/nodes/Video/Wan%20Wrapper%20Sampler%20Default%20JK.png)
-Wan Wrapper Sampler Default JK🐉: Provide default sampler settings for WAN wrapper including scheduler and rope function.  
-- Prompt Nodes
-![image](imgs/nodes/Prompt/Random%20Prompter%20JK.png)
-Random Prompter JK🐉: Random prompt generator with categorized options for scene, motion, facial actions, expressions, lighting, camera, style, and description. Supports manual selection, random generation, and image reference integration for comprehensive prompt creation.  
-![image](imgs/nodes/Prompt/Random%20Prompter%20Geek%20JK.png)
-Random Prompter Geek JK🐉: Random Prompter Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion.  
-![image](imgs/nodes/Prompt/Prompt%20Combine%20JK.png)
-Prompt Combine JK🐉: Merge the two strings into one and clean up the result.  
-- ControlNet Nodes
-![image](imgs/nodes/ControlNet/ControlNet%20Loader%20JK.png)
-ControlNet Loader JK🐉: Load ControlNet models with configurable union types.  
-![image](imgs/nodes/ControlNet/Multi-ControlNet%20Param%20Stack%20JK.png)
-Multi-ControlNet Param Stack JK🐉: Stack multiple ControlNet parameters for complex control scenarios.  
-![image](imgs/nodes/ControlNet/Apply%20ControlNet%20JK.png)
-Apply ControlNet JK🐉: Apply single ControlNet to conditioning with mask support.  
-![image](imgs/nodes/ControlNet/Apply%20Multi-ControlNet%20Adv%20JK.png)
-Apply Multi-ControlNet%20Adv%20JK🐉: Apply multiple ControlNets from stack to conditioning.  
-- LoRA Nodes
-![image](imgs/nodes/LoRA/LoRA%20Stack%20JK.png)
-LoRA Stack JK🐉: Stack multiple LoRA models with prompt and metadata generation.  
-![image](imgs/nodes/LoRA/Apply%20LoRA%20Stack%20JK.png)
-Apply LoRA Stack JK🐉: Apply multiple LoRA models from stack to both model and CLIP.  
-![image](imgs/nodes/LoRA/LoRA%20Stack%20Model%20Only%20JK.png)
-LoRA Stack Model Only JK🐉: Stack LoRA models for model-only application.  
-![image](imgs/nodes/LoRA/Apply%20LoRA%20Stack%20Model%20Only%20JK.png)
-Apply LoRA Stack Model Only JK🐉: Apply multiple LoRA models from stack to model only.  
-- Image Nodes
-![image](imgs/nodes/Image/Rough%20Outline%20JK.png)
-Rough Outline JK🐉: Extract rough outlines from images using Canny edge detection and contour processing.  
-![image](imgs/nodes/Image/Open+DW%20Pose%20JK.png)
-Open+DW Pose JK🐉: Combine DWPose and OpenPose images by removing and reserving specific colors.  
-![image](imgs/nodes/Image/Make%20Image%20Grid%20JK.png)
-Make Image Grid JK🐉: Create image grid from multiple images with specified rows or columns.  
-![image](imgs/nodes/Image/Split%20Image%20Grid%20JK.png)
-Split Image Grid JK🐉: Split image grid into individual images based on rows or columns.  
-![image](imgs/nodes/Image/Image%20Remove%20Alpha%20JK.png)
-Image Remove Alpha JK🐉: Remove alpha channel from RGBA images and convert to RGB.  
-![image](imgs/nodes/Image/Color%20Grading%20JK.png)
-Color Grading JK🐉: Apply color grading with brightness, contrast, saturation and RGB channel adjustments.  
-![image](imgs/nodes/Image/Image%20Crop%20by%20Mask%20Resolution%20Grp%20JK.png)
-Image Crop by Mask Resolution Grp JK🐉: Calculate crop parameters based on mask with various resolution options.  
-![image](imgs/nodes/Image/Image%20Crop%20by%20Mask%20Params%20JK.png)
-Image Crop by Mask Params JK🐉: Provide crop parameters for mask-based image cropping operations.  
-![image](imgs/nodes/Image/Scale%20To%20Resolution%20JK.png)
-Scale To Resolution JK🐉: Scale image to target resolution based on width, height or megapixel constraints.  
-![image](imgs/nodes/Image/Enchance%20And%20Resize%20Hint%20Images%20JK.png)
-Enchance And Resize Hint Images JK🐉: Enhance hint images with high quality resizing, edge processing and multiple resize modes.  
-- Mask Nodes
-![image](imgs/nodes/Mask/Is%20Mask%20Empty%20JK.png)
-Is Mask Empty JK🐉: Check if mask is completely empty (contains only zeros).  
-- Math Nodes
-![image](imgs/nodes/Math/Math%20Nodes-Conversion.png)
-Conversion nodes: BoolToInt JK🐉 | IntToBool JK🐉 | FloatToInt JK🐉 | IntToFloat JK🐉  
-![image](imgs/nodes/Math/Math%20Nodes-Bool.png)
-Boolean Math nodes: BoolUnaryOp JK🐉 | BoolBinaryOp JK🐉 | Bool And JK🐉 | Bool OR JK🐉  
-![image](imgs/nodes/Math/Math%20Nodes-String.png)
-String Math Node: StringBinaryCon JK🐉  
-![image](imgs/nodes/Math/Math%20Nodes_Float.png)
-Float Math Nodes: FloatUnaryCon JK🐉 | FloatBinaryCon JK🐉 | FloatUnaryOp JK🐉 | FloatBinaryOp JK🐉  
-![image](imgs/nodes/Math/Math%20Nodes-Int.png)
-Int Math Nodes: IntUnaryCon JK🐉 | IntBinaryCon JK🐉 | IntUnaryOp JK🐉 | IntBinaryOp JK🐉 | IntSubOp JK🐉  
-![image](imgs/nodes/Math/Math%20Nodes-Evaluate.png)
-Evaluate Nodes: Evaluate Ints JK🐉 | Evaluate Floats JK🐉 | Evaluate String JK🐉 | Evaluate Examples JK🐉  
-- Misc Nodes
-![image](imgs/nodes/Misc/Project%20Setting%20JK.png)
-Project Setting JK🐉: Project settings for workflow organization with customizable naming patterns.  
-![image](imgs/nodes/Misc/Ksampler%20Parameters%20Default%20JK.png)
-Ksampler Parameters Default JK🐉: Default parameters for KSampler (steps, CFG scale, denoise strength).  
-![image](imgs/nodes/Misc/Ksampler%20Adv%20Parameters%20Default%20JK.png)
-Ksampler Adv Parameters Default JK🐉: Advanced KSampler parameters for step control and scheduling.  
-![image](imgs/nodes/Misc/Inject%20Noise%20Params%20JK.png)
-Inject Noise Params JK🐉: Parameters for noise injection with seed and strength control.  
-![image](imgs/nodes/Misc/SD3%20Prompts%20Switch%20JK.png)
-SD3 Prompts Switch JK🐉: Switch between different prompt types for SD3 (CLIP-L, CLIP-G, T5-XXL).  
-![image](imgs/nodes/Misc/Guidance%20Default%20JK.png)
-Guidance Default JK🐉: Default guidance scale value for model conditioning.  
-![image](imgs/nodes/Misc/Image%20Resize%20Mode%20JK.png)
-Image Resize Mode JK🐉: Image resize mode selection for various resizing strategies.  
-![image](imgs/nodes/Misc/Sampler%20Loader%20JK.png)
-Sampler Loader JK🐉: Sampler and scheduler selection with name output.  
-![image](imgs/nodes/Misc/Upscale%20Method%20JK🐉 .png)
-Upscale Method JK🐉: Upscale method selection for images and latents.  
-![image](imgs/nodes/Misc/Aspect%20Ratio%20JK🐉 .png)
-Aspect Ratio JK🐉: Aspect ratio selector for various model types with custom resolution support.  
-![image](imgs/nodes/Misc/String%20To%20Combo%20JK.png)
-String To Combo JK🐉: Convert comma-separated string to combo selection (first item).  
-![image](imgs/nodes/Misc/Get%20Nth%20String%20JK.png)
-Get Nth String JK🐉: Get nth item from comma-separated string list with type conversion.  
-![image](imgs/nodes/Misc/Save%20String%20List%20To%20JSON%20JK.png)
-Save String List To JSON JK🐉: Save string data to JSON file with overwrite control and directory creation.  
-![image](imgs/nodes/Misc/Load%20String%20List%20From%20JSON JK.png)
-Load String List From JSON JK🐉: Load string data from JSON file with caching and force reload options.  
-![image](imgs/nodes/Misc/Tiling%20Mode%20JK.png)
-Tiling Mode JK🐉: Tiling mode selection for image generation.  
-- Switch Nodes
-![image](imgs/nodes/Swotcj/Switch%20Nodes.png)
-Boolean JK🐉  
-Image Input Switch JK🐉  
-Mask Input Switch JK🐉  
-Int Input Switch JK🐉  
-Float Input Switch JK🐉  
-Latent Input Switch JK🐉  
-Conditioning Input Switch JK🐉  
-Clip Input Switch JK🐉  
-Model Input Switch JK🐉  
-ControlNet Input Switch JK🐉  
-ControlNet Stack Input Switch JK🐉  
-Text Input Switch JK🐉  
-VAE Input Switch JK🐉  
-Noise Input Switch JK🐉  
-Guider Input Switch JK🐉  
-Sampler Input Switch JK🐉  
-Sigmas Input Switch JK🐉  
-Mesh Input Switch JK🐉  
-Ply Input Switch JK🐉  
-Orbit Pose Input Switch JK🐉  
-TriMesh Input Switch JK🐉  
-
-</details>
-
-<details>
-<summary><b>Subgraphs for comfyui-frontend-package>=1.24.0</b></summary>
-
-	Tools
-		JK🐉-Image RemBG
-		JK🐉-Image Crop by Mask
-		JK🐉-Image Crop by Mask and Resize
-		JK🐉-Image Resize
-		JK🐉-Image Stitch by Mask
-		JK🐉-Latent Crop by Mask
-		JK🐉-Latent Crop by Mask and Resize
-		JK🐉-Latent Resize
-		JK🐉-Latent Stitch by Mask
-	Sampler
-		JK🐉-Concept
-		JK🐉-Flux KSampler
-		JK🐉-Flux KSampler Adv
-		JK🐉-Variation Ksampler
-		JK🐉-KSampler (High+Low)
-		JK🐉-KSampler (High+Low) Adv
-		JK🐉-WAN Sampler (High+Low)
-		JK🐉-WAN Sampler (High+Low) adv
-	Workflow
-		JK🐉-Image Gen Common
-		JK🐉-Image Gen Common Adv
-		JK🐉-Image Gen Flux
-		JK🐉-Image Gen Flux Adv
-		JK🐉-Image Gen SD15
-		JK🐉-Image Gen SD15 Adv
-		JK🐉-Image Gen SD3
-		JK🐉-Image Gen SD3 Adv
-		JK🐉-Image Gen SDXL
-		JK🐉-Image Gen SDXL Adv
-		JK🐉-Image Refine Common
-		JK🐉-Image Gen QWen
-		JK🐉-Image Gen QWen Adv
-		JK🐉-Image Edit QWen
-		JK🐉-Image Edit QWen 2509
-		JK🐉-Image Edit QWen 2509 RAW
-		JK🐉-Image Edit Flux Kontext
-		JK🐉-Image Edit Flux Redux
-		JK🐉-Image Edit Flux Redux Style
-		JK🐉-Image Edit Flux USO
-		JK🐉-Image Edit Flux USO Style
-</details>
-
-<details>
-<summary><b>Group Nodes for comfyui-frontend-package>=1.16.0</b></summary>
-
-	Tools
-		JK🐉:::Image RemBG
-		JK🐉:::Image Crop by Mask
-		JK🐉:::Image Crop by Mask and Resize
-		JK🐉:::Image Resize
-		JK🐉:::Image Stitch by Mask
-		JK🐉:::Latent Crop by Mask
-		JK🐉:::Latent Crop by Mask and Resize
-		JK🐉:::Latent Resize
-		JK🐉:::Latent Stitch by Mask
-	Sampler
-		JK🐉::Concept
-		JK🐉::Flux KSampler
-		JK🐉::Flux KSampler Adv
-		JK🐉::Variation Ksampler
-		JK🐉:::KSampler (High+Low)
-		JK🐉:::KSampler (High+Low) Adv
-		JK🐉:::WAN Sampler (High+Low)
-		JK🐉:::WAN Sampler (High+Low) adv
-	Workflow
-		JK🐉:::Image Gen Common
-		JK🐉:::Image Gen Common Adv
-		JK🐉:::Image Gen Flux
-		JK🐉:::Image Gen Flux Adv
-		JK🐉:::Image Gen SD15
-		JK🐉:::Image Gen SD15 Adv
-		JK🐉:::Image Gen SD3
-		JK🐉:::Image Gen SD3 Adv
-		JK🐉:::Image Gen SDXL
-		JK🐉:::Image Gen SDXL Adv
-		JK🐉:::Image Refine Common
-		JK🐉:::Image Gen QWen
-		JK🐉:::Image Gen QWen Adv
-		JK🐉:::Image Edit QWen
-		JK🐉:::Image Edit QWen 2509
-		JK🐉:::Image Edit Flux Kontext
-		JK🐉:::Image Edit Flux Redux
-		JK🐉:::Image Edit Flux Redux Style
-		JK🐉:::Image Edit Flux USO
-		JK🐉:::Image Edit Flux USO Subject
-		JK🐉:::Image Edit Flux USO Style
-</details>
-
-<details>
-<summary><b>Group Nodes for comfyui-frontend-package<=1.15.13</b></summary>
-
-	Tools
-		JK🐉::Image RemBG
-		JK🐉::Image Crop by Mask
-		JK🐉::Image Crop by Mask and Resize
-		JK🐉::Image Crop by Mask and Resize (Input)
-		JK🐉::Image Resize
-		JK🐉::Image Stitch by Mask
-		JK🐉::Latent Crop by Mask
-		JK🐉::Latent Crop by Mask and Resize
-		JK🐉::Latent Crop by Mask and Resize (Input)
-		JK🐉::Latent Resize
-		JK🐉::Latent Stitch by Mask
-	Workflow
-		JK🐉::Concept
-		JK🐉::Flux KSampler
-		JK🐉::Flux KSampler Adv
-		JK🐉::Variation Ksampler
-		JK🐉::Image Gen Common
-		JK🐉::Image Gen Common (Input)
-		JK🐉::Image Gen Common (Pipe)
-		JK🐉::Image Gen Common Adv
-		JK🐉::Image Gen Common Adv (Input)
-		JK🐉::Image Gen Common Adv (Pipe)
-		JK🐉::Image Gen Flux
-		JK🐉::Image Gen Flux (Input)
-		JK🐉::Image Gen Flux (Pipe)
-		JK🐉::Image Gen Flux Adv
-		JK🐉::Image Gen Flux Adv (Input)
-		JK🐉::Image Gen Flux Adv (Pipe)
-		JK🐉::Image Gen SD15
-		JK🐉::Image Gen SD15 (Input)
-		JK🐉::Image Gen SD15 (Pipe)
-		JK🐉::Image Gen SD15 Adv
-		JK🐉::Image Gen SD15 Adv (Input)
-		JK🐉::Image Gen SD15 Adv (Pipe)
-		JK🐉::Image Gen SD3
-		JK🐉::Image Gen SD3 (Input)
-		JK🐉::Image Gen SD3 (Pipe)
-		JK🐉::Image Gen SD3 Adv
-		JK🐉::Image Gen SD3 Adv (Input)
-		JK🐉::Image Gen SD3 Adv (Pipe)
-		JK🐉::Image Gen SDXL
-		JK🐉::Image Gen SDXL (Input)
-		JK🐉::Image Gen SDXL (Pipe)
-		JK🐉::Image Gen SDXL Adv
-		JK🐉::Image Gen SDXL Adv (Input)
-		JK🐉::Image Gen SDXL Adv (Pipe)
-		JK🐉::Image Refine Common
-		JK🐉::Image Refine Common (Input)
-		JK🐉::Inpaint Latent
-		JK🐉::Inpaint Checkpoint
-		JK🐉::Inpaint ControlNet			
-		JK🐉::Outpaint Latent
-		JK🐉::Outpaint Checkpoint
-		JK🐉::Outpaint ControlNet
-</details>
-
+## UI for ComfyUI API
 Here's my other product [UI for ComfyUI API](https://chaikefu.gumroad.com/l/ComfyAPIUI) using my ComfyUI API workflow.  
 Please check the [video](https://youtu.be/eyjy10T201M).  
 <a href="https://youtu.be/eyjy10T201M" target="_blank">
