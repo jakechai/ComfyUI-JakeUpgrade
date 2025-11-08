@@ -292,6 +292,45 @@ class SD3_Prompts_Switch_JK:
         else:  # t5xxl
             return t5xxl
 
+class SDXL_TargetRes_JK:
+    """Target resolution calculator for SDXL with scaling support"""
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "width": ("INT", {
+                    "default": 1024,
+                    "tooltip": "Original width to scale from"
+                }),
+                "height": ("INT", {
+                    "default": 1024,
+                    "tooltip": "Original height to scale from"
+                }),
+                "target_res_scale": ("FLOAT", {
+                    "default": 1.0, 
+                    "min": 0.01, 
+                    "max": 16.0, 
+                    "step": 0.01,
+                    "tooltip": "Scale factor for target resolution"
+                }),
+            },
+        }
+    
+    RETURN_TYPES = ("INT", "INT")
+    RETURN_NAMES = ("target_width", "target_height")
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("JK/Misc")
+    DESCRIPTION = "Target resolution calculator for SDXL with scaling support"
+    DEPRECATED = True
+
+    def get_value(self, width: int, height: int, target_res_scale: float) -> Tuple[int, int]:
+        """Calculate target resolution with scaling and multiple-of-8 alignment"""
+        target_width = multiple_of_int(width * target_res_scale, 8)
+        target_height = multiple_of_int(height * target_res_scale, 8)
+        
+        return (target_width, target_height)
+
 class GuidanceDefault_JK:
     """Default guidance scale value for model conditioning"""
     

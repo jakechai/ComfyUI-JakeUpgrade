@@ -331,6 +331,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2025-11-07 - v2.3.1
 1. Add Nodes description.
 
+- 2025-11-08 - v2.3.2
+1. Move SDXL Target res node back to misc from deprecated.
+2. Add more choice for Random Prompter.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -829,6 +833,7 @@ TriMesh Input Switch JK🐉
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [QWen Image Wan Bridge](https://github.com/fblissjr/ComfyUI-QwenImageWanBridge)
+- (auto prompt)[QWen VL]https://github.com/1038lab/ComfyUI-QwenVL）
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (auto prompt)[Hunyuan Prompt Enhancer](https://github.com/leeooo001/comfyui-Hunyuan-PromptEnhancer)
 - (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
@@ -874,7 +879,8 @@ TriMesh Input Switch JK🐉
 - [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
 - [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
 - [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
-- [Florence 2](https://github.com/kijai/ComfyUI-Florence2)
+- (auto prompt)[QWen VL]https://github.com/1038lab/ComfyUI-QwenVL）
+- (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 
 ### Krita workflow
