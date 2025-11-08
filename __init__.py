@@ -338,6 +338,7 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
             "Base Model Parameters SD3API JK": lambda: global_symbols.get("BaseModelParametersSD3API_JK"),
             "Inject Noise Params JK": lambda: global_symbols.get("Inject_Noise_Params_JK"),
             "SD3 Prompts Switch JK": lambda: global_symbols.get("SD3_Prompts_Switch_JK"),
+            "SDXL Target Res JK": lambda: global_symbols.get("SDXL_TargetRes_JK"),
             "Guidance Default JK": lambda: global_symbols.get("GuidanceDefault_JK"),
             "Image Resize Mode JK": lambda: global_symbols.get("ImageResizeMode_JK"),
             "Sampler Loader JK": lambda: global_symbols.get("SamplerLoader_JK"),
@@ -482,7 +483,6 @@ def create_deprecated_node_mappings() -> Dict[str, Type[Any]]:
         "CR SD1.5 Aspect Ratio JK": CR_AspectRatioSD15_JK,
         "CR SDXL Aspect Ratio JK": CR_AspectRatioSDXL_JK,
         "CR SD3 Aspect Ratio JK": CR_AspectRatioSD3_JK,
-        "SDXL Target Res JK": SDXL_TargetRes_JK,
         ### Pipe Nodes [Deprecated]
         "Pipe End JK": PipeEnd_JK,
         "NodesState JK": NodesState_JK,
