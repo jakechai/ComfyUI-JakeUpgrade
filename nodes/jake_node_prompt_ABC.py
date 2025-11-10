@@ -2419,7 +2419,7 @@ class ShotScriptExtractor_JK:
     RETURN_NAMES = ("shot_prompt", "shot_count", "shot_key", "actual_index")
     FUNCTION = "extract_shot"
     CATEGORY = icons.get("JK/Prompt")
-    DESCRIPTION = "Extract specific shot prompt from shot script JSON based on index and count total shots"
+    DESCRIPTION = "Extract specific shot prompt from shot script JSON based on index and count total shots."
     
     def extract_shot(self, shot_script: str, shot_index: int) -> Tuple[str, int, int, str]:
         """Extract shot prompt from JSON script based on index and count total shots"""
@@ -2561,7 +2561,7 @@ class ShotScriptCombiner_JK:
     RETURN_NAMES = ("output_text",)
     FUNCTION = "combine_shots"
     CATEGORY = icons.get("JK/Prompt")
-    DESCRIPTION = "Combine shot scripts into formatted output"
+    DESCRIPTION = "Combine shot scripts into formatted output."
     
     def combine_shots(self, shot_script: str, max_shots: int, format_output: bool, 
                      merge_json_details: bool) -> Tuple[str]:

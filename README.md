@@ -412,6 +412,10 @@ Random Prompter JK🐉: Random prompt generator with categorized options for sce
 Random Prompter Geek JK🐉: Random Prompter Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion.  
 ![image](imgs/nodes/Prompt/Sys%20Prompter%20JK.png)  
 System Prompter JK🐉: Build single image | shot script system prompt for LLM/VLM based on preset templates and user configuration. Supports JSON format and multi-language output request. QWen3-VL is recommended.  
+![image](imgs/nodes/Prompt/Shot%20Script%20Extractor%20JK.png)  
+Shot Script Extractor JK🐉: Extract specific shot prompt from shot script JSON based on index and count total shots.  
+![image](imgs/nodes/Prompt/Shot%20Script%20Combiner%20JK.png)  
+Shot Script Combiner JK🐉: Combine shot scripts into formatted output.  
 ![image](imgs/nodes/Prompt/Prompt%20Combine%20JK.png)  
 Prompt Combine JK🐉: Merge the two strings into one and clean up the result.  
 - ControlNet Nodes  
