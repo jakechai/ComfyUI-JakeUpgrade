@@ -283,31 +283,25 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							2. Add Random Prompter JK🐉 node. Replace Flux Prompt Generater with Random Prompter JK🐉.
 							3. Add JK🐉-Image Edit QWen 2509 Adv subgraph.
 							4. Delete SD3 imgen multigpu version workflow for no triple clip loader multi gpu node any more.
+	- 2025-10-27 - v2.2.0	1. Re-write all nodes:  
+							① Code Organization: Nodes are logically grouped by data type and functionality.  
+							② Modular nodes loading control, including deprecated nodes.  
+							③ Comments: All key functions and classes have detailed.  
+							④ Documentation: Each node class has an description and tooltip.  
+							⑤ Type Hints: Type hints have been added to all functions.  
+							⑥ Naming Conventions: Naming conventions for return values ​​have been standardized.  
+							⑦ Error Handling: Necessary imports and error handling have been added.  
+							2. Add Random Prompter JK🐉 node, deprecate Flux Prompt Generator.
+							3. Add QWen_ModelSheet and QWen_ModelSheet adv imgen/imgedit workflow.
+							4. Add Portrait Master + Random Prompter imgen workflow.
+	- 2025-10-28 - v2.2.1	1. Update model sheet workflow.
+							2. Add Hunyuan Prompt Enhancer and fal LLM nodes to portrait master + random prompter workflow.
+							3. Add EXCLUSION_MARK parameter in the Random Prompter to exclude files in random mode.
+							4. Add more choices for to Random Prompter data.
+	- 2025-10-28 - v2.2.2	1. Random Prompter bug fixed.
+							2. Fix bad connections in portrait master + random prompter workflow.
 
 </details>
-
-- 2025-10-27 - v2.2.0
-1. Re-write all nodes:  
-① Code Organization: Nodes are logically grouped by data type and functionality.  
-② Modular nodes loading control, including deprecated nodes.  
-③ Comments: All key functions and classes have detailed.  
-④ Documentation: Each node class has an description and tooltip.  
-⑤ Type Hints: Type hints have been added to all functions.  
-⑥ Naming Conventions: Naming conventions for return values ​​have been standardized.  
-⑦ Error Handling: Necessary imports and error handling have been added.  
-2. Add Random Prompter JK🐉 node, deprecate Flux Prompt Generator.
-3. Add QWen_ModelSheet and QWen_ModelSheet adv imgen/imgedit workflow.
-4. Add Portrait Master + Random Prompter imgen workflow.
-
-- 2025-10-28 - v2.2.1
-1. Update model sheet workflow.
-2. Add Hunyuan Prompt Enhancer and fal LLM nodes to portrait master + random prompter workflow.
-3. Add EXCLUSION_MARK parameter in the Random Prompter to exclude files in random mode.
-4. Add more choices for to Random Prompter data.
-
-- 2025-10-28 - v2.2.2
-1. Random Prompter bug fixed.
-2. Fix bad connections in portrait master + random prompter workflow.
 
 - 2025-10-30 - v2.2.3
 1. Fix Make Image Grid `from torchvision import transforms as TF` -> `import torchvision.transforms.functional as TF` issue.
@@ -334,6 +328,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2025-11-08 - v2.3.2
 1. Move SDXL Target res node back to misc from deprecated.
 2. Add more choice for Random Prompter.
+
+- 2025-11-10 - v2.3.3
+1. Fix path separator mismatch issue of Random Prompter in Linux.
+2. Add more choices for Random Prompter.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
