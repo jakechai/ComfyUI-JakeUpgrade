@@ -226,10 +226,16 @@ class DataCleaner:
         if not value or value in ["enable", "disable", "random"]:
             return value
         
-        # 查找最后一个反斜杠，取后面的内容
+        # 查找最后一个路径分隔符，取后面的内容
+        last_separator = value.rfind(os.path.sep)
+        if last_separator != -1:
+            return value[last_separator + 1:]
+        
+        # 同时检查反斜杠（兼容旧数据）
         last_backslash = value.rfind('\\')
         if last_backslash != -1:
             return value[last_backslash + 1:]
+        
         return value
 
 class FileLoader:
@@ -240,6 +246,10 @@ class FileLoader:
     def load_data_file(file_path: str) -> List[str]:
         """统一的数据文件加载器，支持多种格式（带缓存）"""
         full_path = os.path.join(os.path.dirname(__file__), PromptConfig.PROMPT_DATA_DIR, file_path)
+        
+        # 添加调试信息
+        # print(f"Debug: Trying to load file from {full_path}")
+        # print(f"Debug: File exists: {os.path.exists(full_path)}")
         
         if not os.path.exists(full_path):
             print(f"Warning: File not found at {full_path}")
@@ -463,7 +473,7 @@ class DirectoryWalker:
                     if '-' in subdir_name:
                         subdir_name = subdir_name.split('-', 1)[1]
                     
-                    new_prefix = f"{current_prefix}\\{subdir_name}" if current_prefix else subdir_name
+                    new_prefix = f"{current_prefix}{os.path.sep}{subdir_name}" if current_prefix else subdir_name
                     _process_directory(entry_path, new_prefix, should_add_prefix or len(entries) > 1)
                     
                 elif any(entry.endswith(ext) for ext in PromptConfig.SUPPORTED_FORMATS.keys()):
@@ -475,7 +485,7 @@ class DirectoryWalker:
                     
                     # 构建完整前缀
                     if current_prefix and should_add_prefix:
-                        full_prefix = f"{current_prefix}\\{category_name}"
+                        full_prefix = f"{current_prefix}{os.path.sep}{category_name}"
                     elif should_add_prefix:
                         full_prefix = category_name
                     else:
@@ -484,7 +494,7 @@ class DirectoryWalker:
                     # 修复：构建相对于 base_dir 的正确路径
                     file_relative_path = os.path.relpath(entry_path, base_dir)
                     # 确保使用正确的路径分隔符
-                    file_relative_path = file_relative_path.replace('/', '\\')
+                    file_relative_path = os.path.normpath(file_relative_path)
                     
                     entries_list.append((file_relative_path, full_prefix, should_add_prefix))
         
@@ -508,7 +518,7 @@ class DataManager:
             # 根据是否需要添加前缀来处理选项
             if should_add_prefix and prefix:
                 # 需要添加前缀
-                prefixed_options = [f"{prefix}\\{option}" for option in options]
+                prefixed_options = [f"{prefix}{os.path.sep}{option}" for option in options]
                 all_options.extend(prefixed_options)
             else:
                 # 不需要添加前缀，直接使用原始选项
@@ -639,15 +649,15 @@ class DataManager:
                 if should_add_prefix and prefix:
                     # 清理前缀中的数字和路径分隔符
                     clean_prefix = prefix
-                    if '\\' in clean_prefix:
-                        parts = clean_prefix.split('\\')
+                    if os.path.sep in clean_prefix:
+                        parts = clean_prefix.split(os.path.sep)
                         cleaned_parts = []
                         for part in parts:
                             if '-' in part:
                                 cleaned_parts.append(part.split('-', 1)[1])
                             else:
                                 cleaned_parts.append(part)
-                        clean_prefix = '\\'.join(cleaned_parts)
+                        clean_prefix = os.path.sep.join(cleaned_parts)
                     elif '-' in clean_prefix:
                         clean_prefix = clean_prefix.split('-', 1)[1]
                     
@@ -685,7 +695,7 @@ class DataManager:
                         clean_prefix = clean_prefix.split('-', 1)[1]
                     
                     # 为子分类创建映射键
-                    geek_category_name = f"{subcategory_display_name}\\{clean_prefix}"
+                    geek_category_name = f"{subcategory_display_name}{os.path.sep}{clean_prefix}"
                     
                     if geek_category_name not in mapping:
                         mapping[geek_category_name] = []
@@ -695,7 +705,7 @@ class DataManager:
                     if '-' in file_name:
                         file_name = file_name.split('-', 1)[1]
                     
-                    geek_category_name = f"{subcategory_display_name}\\{file_name}"
+                    geek_category_name = f"{subcategory_display_name}{os.path.sep}{file_name}"
                     
                     if geek_category_name not in mapping:
                         mapping[geek_category_name] = []

@@ -1,0 +1,124 @@
+{
+	"detail_preset": {
+		"simple": {
+			"en": "Generate a simple, single-sentence prompt. Concisely describe the content and theme of the original text; \n",
+			"cn": "生成一个简单的单句提示词。简明扼要地描述原文中涉及到的内容和主题；\n"
+		},
+		"detailed": {
+			"en": "Create a detailed and artistic prompt. Integrate the content and themes from the original text into a coherent paragraph. Highlight key visual details; \n",
+			"cn": "创作一段详尽且富有艺术感的提示词。将原文中涉及到的内容和主题融合到一个连贯的段落中。重点突出关键的视觉细节；\n"
+		},
+		"extreme_detailed": {
+			"en": "Write a rich, extremely detailed, and highly descriptive paragraph that describes in detail the content and themes covered in the original text. Strive to create a highly descriptive and immersive prompt; \n",
+			"cn": "撰写一段内容丰富、极其详尽且描述性强的段落，详细描述原文中涉及到的内容和主题。力求创作出一段极具描述性和沉浸感的提示；\n"
+		},
+	},
+	"json_detail": {
+		"description": {
+			"en": "The detailed descriptions include the subject, background, atmosphere, action, expression, lighting, camera type (shot size and view angle), camera movement, and style. \n5. Place the prompt and detailed descriptions into the corresponding areas of a JSON file and output them in <specified_language>, <json_format>. \n",
+			"cn": "细节描述包含主体、背景、氛围、动作、表情、灯光、相机类型（景别及视角）、相机运动、风格。\n5. 将提示词和细节描述放入JSON格式中对应区域并以<特定语种>输出，<json_format>。 \n"
+		},
+		"format": "{'subject': '', 'background': '', 'atmosphere': '', 'motion': '', 'expression': '', 'lighting': '', 'shot type': '', 'movement': '', 'style': ''}",
+	},
+	"llm":{
+		"single":{
+			"part_01": {
+				"en": "You are an expert in creating image generation prompts. Please rewrite and generate new prompts based on the user-input text description. Requirements: \n\n1. The rewritten paragraph must maintain the same intent as the original; \n2. Follow the original text's content order and structure to ensure clear information hierarchy; \n",
+				"cn": "你是一位图像生成提示词撰写专家，请根据用户输入的文本描述改写生成新的提示词，要求：\n\n1. 改写后的段落，必须和改写前的意图一致；\n2. 遵循原文本描述的内容顺序结构，确保信息的层次清晰；\n"
+			},
+			"part_02": "3. "
+		},
+		"script":{
+			"part_01": {
+				"en": "\n",
+				"cn": "你是一位电影分镜脚本撰写专家，请根据用户输入的文本描述改写生成分镜提示词，要求：\n\n1. "
+			},
+			"part_02": {
+				"en": "2. ",
+				"cn": "2. 为每个分镜头："
+			},
+			"part_03": "3. "
+		},
+		"part_05": {
+			"en": "The following is the user-input text description.",
+			"cn": "以下是用户输入的文本描述。"
+		}
+	},
+	"vlm": {
+		"single":{
+			"part_01": {
+				"en": "\n",
+				"cn": "你是一位图像生成提示词撰写专家，请根据参考图编写提示词，要求：\n\n"
+			},
+			"part_02": "1. ",
+			"part_03": {
+				"json_detail": {
+					"en": "4. Finally, complete the prompt and corresponding detailed descriptions. ",
+					"cn": "4. 最终生成基于完整的提示词和对应的细节描述。"
+				},
+				"no_json_detail": {
+					"en": "4. Finally, complete the prompt in <specified language>. \n",
+					"cn": "4. 最终生成完整的<特定语种>提示词。\n"
+				}
+			}
+		},
+		"script":{
+			"part_01": {
+				"en": "\n",
+				"cn": "你是一位电影分镜脚本撰写专家，请根据用户输入的文本描述改写生成分镜提示词，要求：\n\n"
+			},
+			"part_02": "1. ",
+			"part_03": "2. ",
+			"part_04": {
+				"en": "3. ",
+				"cn": "3. 为每个分镜头："
+			},
+			"part_05": "4. ",
+			"part_06": "5. "
+		},
+	},
+	"common_01": {
+		"en": "",
+		"cn": "根据故事发展，拆分成<shot_count>个分镜头；改写后的分镜脚本，必须和改写前的意图一致；遵循原文本描述的故事及内容顺序结构，确保信息的层次清晰、前后镜头之间各元素的延续以及相机的景别、视角和运动的衔接；\n"
+	}
+	"common_02": {
+		"single": {
+			"json_detail": {
+				"en": "4. Finally, complete the prompt and corresponding detailed descriptions. ",
+				"cn": "4. 将提示词中的细节描述进行拆分。"
+			},
+			"no_json_detail": {
+				"en": "4. Finally, complete the prompt in <specified language>. \n",
+				"cn": "4. 生成一段完整的<特定语种>提示词。\n"
+			}
+		},
+		"script": {
+			"json_detail": {
+				"en": "",
+				"cn": "将每个镜头基于2生成的分镜提示词进行细节描述的拆分，"
+			},
+			"no_json_detail": {
+				"en": "",
+				"cn": "每个镜头的分镜脚本即2生成的<特定语种>分镜提示词；\n"
+			}
+		}
+	},
+	"common_03": {
+		"single": {
+			"en": "",
+			"cn": ""
+		},
+		"script": {
+			"en": "",
+			"cn": "生成完整的中文分镜脚本段落，将生5成的各个分镜头的描述放在按JSON文件代表对应镜头编号的英文名称简写中，{'shot01': '', 'shot02': ...}。\n"
+		}
+	}
+}
+
+
+
+
+
+
+
+
