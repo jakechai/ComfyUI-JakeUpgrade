@@ -145,6 +145,9 @@ class PromptConfig:
     
     # 格式优先级
     PREFERRED_FORMATS = ['.txt', '.json', '.yaml', '.yml', '.toml', '.csv']
+    
+    # Sys Prompter的预设文件名
+    PRESET_FILE = "sys_prompt_preset.json"
 
 class DependencyManager:
     """依赖管理类"""
@@ -204,19 +207,34 @@ class DataCleaner:
     
     @staticmethod
     def clean_prompt_string(text: str) -> str:
-        """清理提示词字符串"""
+        """清理提示词字符串，支持中英混合标点"""
         if not text:
             return ""
         
-        # 合并处理连续逗号
-        text = re.sub(r',(\s*,)+', ',', text)
+        # 合并处理连续逗号（中英文）
+        text = re.sub(r'[,，](\s*[,，])+', ',', text)
         
-        # 标准化空白和逗号格式
+        # 合并处理连续句号（中英文）
+        text = re.sub(r'[.。](\s*[.。])+', '.', text)
+        
+        # 标准化空白字符
         text = re.sub(r'\s+', ' ', text)
-        text = re.sub(r'\s*,\s*', ', ', text)
         
-        # 清理边界
-        text = text.strip(', .')
+        # 标准化逗号格式（中英文逗号统一为英文逗号加空格）
+        text = re.sub(r'\s*[,，]\s*', ', ', text)
+        
+        # 标准化句号格式（中英文句号统一为英文句号加空格）
+        text = re.sub(r'\s*[.。]\s*', '. ', text)
+        
+        # 清理边界（中英文逗号和句号）
+        text = text.strip(',.，。 ')
+        
+        # 确保只有一个空格分隔单词
+        text = re.sub(r' +', ' ', text)
+        
+        # 修复：移除多余的". ,"组合
+        text = re.sub(r'\.\s*,', ',', text)
+        text = re.sub(r'。\s*,', ',', text)
         
         return text.strip()
     
@@ -2129,3 +2147,614 @@ class PromptCombine_JK:
         prompt_output = PromptUtils.smart_join(elements, separator=", ")
         
         return (prompt_output,)
+
+#---------------------------------------------------------------------------------------------------------------------#
+# System Prompter
+#---------------------------------------------------------------------------------------------------------------------#
+
+class SysPromptBuilder:
+    """Build prompts based on user input and preset templates"""
+    
+    # Language mapping for <特定语种> replacement
+    LANGUAGE_MAPPING = {
+        "Chinese": "中文",
+        "English": "英文", 
+        "Spanish": "西班牙文",
+        "France": "法文",
+        "German": "德文",
+        "Japanese": "日文",
+        "Korean": "韩文",
+        "Russian": "俄文",
+        "Arabic": "阿拉伯文",
+        "Italian": "意大利文",
+        "Portuguese": "葡萄牙文"
+    }
+    
+    def __init__(self):
+        self.preset_data = self._load_preset_data()
+    
+    def _load_preset_data(self):
+        """Load preset data from JSON file"""
+        try:
+            file_path = os.path.join(os.path.dirname(__file__), PromptConfig.PROMPT_DATA_DIR, PromptConfig.PRESET_FILE)
+            
+            if not os.path.exists(file_path):
+                print(f"Error: File does not exist: {file_path}")
+                return {}
+                
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading preset data: {e}")
+            return {}
+    
+    def _get_language_key(self, language: str) -> str:
+        """Convert language to preset key"""
+        return "cn" if language == "Chinese" else "en"
+    
+    def _replace_variables(self, text: str, output_language: str, shot_count: int, json_format: bool) -> str:
+        """Replace variables in text with actual values"""
+        if not text:
+            return text
+            
+        # Replace <specified_language>
+        text = text.replace("<specified_language>", output_language)
+        
+        # Replace <特定语种>
+        chinese_lang = self.LANGUAGE_MAPPING.get(output_language, "英文")
+        text = text.replace("<特定语种>", chinese_lang)
+        
+        # Replace <shot_count>
+        text = text.replace("<shot_count>", str(shot_count))
+        
+        # Replace <json_format>
+        json_format_str = self.preset_data.get("json_detail", {}).get("format", "{}")
+        text = text.replace("<json_format>", json_format_str)
+        
+        return text
+    
+    def _get_preset_value(self, path: list, system_language: str) -> str:
+        """Get value from preset data using path"""
+        try:
+            current = self.preset_data
+            
+            for key in path:
+                if isinstance(current, dict) and key in current:
+                    current = current[key]
+                else:
+                    return ""
+            
+            # Handle the final value
+            if isinstance(current, dict):
+                lang_key = self._get_language_key(system_language)
+                return current.get(lang_key, "")
+            else:
+                return str(current) if current else ""
+                
+        except Exception as e:
+            return ""
+    
+    def _build_common_parts(self, model_type: str, mode: str, detail: str, json_format: bool, 
+                           ref_img_as_1st_shot: bool) -> list:
+        """Build common template parts for both LLM and VLM"""
+        json_key = "json_detail" if json_format else "no_json_detail"
+        
+        if mode == "single image":
+            if json_format:
+                return [
+                    [model_type, "single", "part_01"],
+                    ["detail_preset", detail],
+                    [model_type, "single", "part_02"],
+                    ["add_json_detail", "single", json_key],
+                    ["json_detail", "description"]
+                ]
+            else:
+                return [
+                    [model_type, "single", "part_01"],
+                    ["detail_preset", detail],
+                    [model_type, "single", "part_02"],
+                    ["add_json_detail", "single", json_key]
+                ]
+        else:  # shot script
+            ref_parts = []
+            if ref_img_as_1st_shot:
+                ref_parts = [["ref_image_01"], ["ref_image_02"]]
+            
+            if json_format:
+                return [
+                    [model_type, "script", "part_01"],
+                    ["detail_preset", detail],
+                    *([ref_parts[0]] if ref_parts else []),
+                    [model_type, "script", "part_02"],
+                    ["split_shots"],
+                    [model_type, "script", "part_03"],
+                    *([ref_parts[1]] if ref_parts else []),
+                    ["detail_preset", detail],
+                    [model_type, "script", "part_04"],
+                    ["add_json_detail", "script", json_key],
+                    ["json_detail", "description"],
+                    [model_type, "script", "part_05"],
+                    ["combine_shots"]
+                ]
+            else:
+                return [
+                    [model_type, "script", "part_01"],
+                    ["detail_preset", detail],
+                    *([ref_parts[0]] if ref_parts else []),
+                    [model_type, "script", "part_02"],
+                    ["split_shots"],
+                    [model_type, "script", "part_03"],
+                    *([ref_parts[1]] if ref_parts else []),
+                    ["detail_preset", detail],
+                    [model_type, "script", "part_04"],
+                    ["add_json_detail", "script", json_key],
+                    [model_type, "script", "part_05"],
+                    ["combine_shots"]
+                ]
+    
+    def build_prompt(self, model: str, mode: str, detail: str, json_format: bool, 
+                    shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> str:
+        """Build prompt based on input parameters"""
+        
+        # Determine model type for template paths
+        model_type = model.lower()
+        
+        # Build template parts based on model and mode
+        template_parts = self._build_common_parts(model_type, mode, detail, json_format, input_as_1st_shot)
+        
+        # Add final part for LLM
+        if model == "LLM":
+            template_parts.append(["llm", "part_final"])
+        
+        # Build the prompt by concatenating all parts
+        prompt_parts = []
+        
+        for part_path in template_parts:
+            part_text = self._get_preset_value(part_path, system_language)
+            if part_text:
+                prompt_parts.append(part_text)
+        
+        # Combine all parts and replace variables
+        full_prompt = "".join(prompt_parts)
+        full_prompt = self._replace_variables(full_prompt, output_language, shot_count, json_format)
+        
+        return full_prompt
+
+class SystemPrompter_JK:
+    """ComfyUI Node for building prompts based on preset templates"""
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "model": (["LLM", "VLM"], {
+                    "default": "LLM",
+                    "tooltip": "Select model type: LLM for text, VLM for vision-language."
+                }),
+                "mode": (["single image", "shot script"], {
+                    "default": "single image", 
+                    "tooltip": "Select mode: single image or shot script."
+                }),
+                "detail": (["simple", "detailed", "extreme_detailed"], {
+                    "default": "detailed",
+                    "tooltip": "Select detail level for prompt generation."
+                }),
+                "json_format": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Only available for QWen3-VL for now. Whether to output in JSON format with detailed breakdown."
+                }),
+                "shot_count": ("INT", {
+                    "default": 3,
+                    "min": 1,
+                    "max": 20,
+                    "step": 1,
+                    "tooltip": "Number of shots for script mode. Total count +1 if input_as_1st_shot is True."
+                }),
+                "input_as_1st_shot": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Whether to use the custom prompt or reference image as the first shot"
+                }),
+                "system_language": (["Chinese", "English"], {
+                    "default": "English",
+                    "tooltip": "System language for LLM/VLM."
+                }),
+                "output_language": (["Chinese", "English", "Spanish", "France", "German", 
+                                   "Japanese", "Korean", "Russian", "Arabic", "Italian", 
+                                   "Portuguese"], {
+                    "default": "English",
+                    "tooltip": "Output language for the generated prompt."
+                }),
+            }
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("prompt",)
+    FUNCTION = "build_prompt"
+    CATEGORY = icons.get("JK/Prompt")
+    DESCRIPTION = "Build single image | shot script system prompt for LLM/VLM based on preset templates and user configuration. Supports JSON format and multi-language output request."
+    
+    def __init__(self):
+        self.builder = SysPromptBuilder()
+    
+    def build_prompt(self, model: str, mode: str, detail: str, json_format: bool,
+                    shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> Tuple[str]:
+        """Build and return the prompt string"""
+        
+        prompt = self.builder.build_prompt(
+            model=model,
+            mode=mode,
+            detail=detail,
+            json_format=json_format,
+            shot_count=shot_count,
+            input_as_1st_shot=input_as_1st_shot,
+            system_language=system_language,
+            output_language=output_language
+        )
+        
+        return (prompt,)
+
+class ShotScriptExtractor_JK:
+    """Extract specific shot prompt from shot script JSON and count total shots"""
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "shot_script": ("STRING", {
+                    "default": "",
+                    "multiline": True,
+                    "tooltip": "JSON string containing shot prompts (e.g., {'shot01': 'prompt1', 'shot02': 'prompt2'})"
+                }),
+                "shot_index": ("INT", {
+                    "default": 1,
+                    "min": 1,
+                    "max": 50,
+                    "step": 1,
+                    "tooltip": "Index of the shot to extract (starting from 1)"
+                }),
+            }
+        }
+    
+    RETURN_TYPES = ("STRING", "INT", "STRING", "INT")
+    RETURN_NAMES = ("shot_prompt", "shot_count", "shot_key", "actual_index")
+    FUNCTION = "extract_shot"
+    CATEGORY = icons.get("JK/Prompt")
+    DESCRIPTION = "Extract specific shot prompt from shot script JSON based on index and count total shots."
+    
+    def extract_shot(self, shot_script: str, shot_index: int) -> Tuple[str, int, int, str]:
+        """Extract shot prompt from JSON script based on index and count total shots"""
+        
+        if not shot_script.strip():
+            return ("", shot_index, 0, "")
+        
+        shot_count = self._count_shots(shot_script)
+        actual_key = ""
+        
+        try:
+            # Try to parse as JSON
+            script_data = json.loads(shot_script)
+            
+            # Generate possible keys based on index
+            possible_keys = [
+                f"shot{shot_index:02d}",
+                f"shot{shot_index}",
+                f"frame{shot_index:02d}", 
+                f"frame{shot_index}",
+                f"shot_{shot_index:02d}",
+                f"shot_{shot_index}",
+                str(shot_index)
+            ]
+            
+            # Find the first matching key
+            for key in possible_keys:
+                if key in script_data:
+                    actual_key = key
+                    prompt = script_data[key]
+                    # Preserve original format for JSON objects
+                    if isinstance(prompt, dict):
+                        return (json.dumps(prompt, ensure_ascii=False, indent=2), shot_index, shot_count, actual_key)
+                    else:
+                        return (str(prompt), shot_index, shot_count, actual_key)
+            
+            # If still not found, try to find any key containing the index
+            index_str = str(shot_index)
+            for key, value in script_data.items():
+                if index_str in key:
+                    actual_key = key
+                    prompt = value
+                    if isinstance(prompt, dict):
+                        return (json.dumps(prompt, ensure_ascii=False, indent=2), shot_index, shot_count, actual_key)
+                    else:
+                        return (str(prompt), shot_index, shot_count, actual_key)
+            
+            return ("", shot_index, shot_count, "")
+            
+        except json.JSONDecodeError:
+            # If not valid JSON, try to extract using regex pattern
+            prompt, actual_index = self._extract_from_text(shot_script, shot_index)
+            return (prompt, shot_count, f"shot{shot_index:02d}", actual_index)
+    
+    def _extract_from_text(self, shot_script: str, shot_index: int) -> Tuple[str, int]:
+        """Extract shot prompt from text using regex patterns when JSON parsing fails"""
+        
+        # Pattern for shot01: "prompt text"
+        pattern1 = rf"['\"]?shot{shot_index:02d}['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
+        match1 = re.search(pattern1, shot_script, re.IGNORECASE)
+        if match1:
+            return (match1.group(1), shot_index)
+        
+        # Pattern for shot1: "prompt text"  
+        pattern2 = rf"['\"]?shot{shot_index}['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
+        match2 = re.search(pattern2, shot_script, re.IGNORECASE)
+        if match2:
+            return (match2.group(1), shot_index)
+        
+        # Pattern for frame01: "prompt text"
+        pattern3 = rf"['\"]?frame{shot_index:02d}['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
+        match3 = re.search(pattern3, shot_script, re.IGNORECASE)
+        if match3:
+            return (match3.group(1), shot_index)
+        
+        # Pattern for generic key with index
+        pattern4 = rf"['\"]?[a-zA-Z_]*{shot_index:02d}[a-zA-Z_]*['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
+        match4 = re.search(pattern4, shot_script, re.IGNORECASE)
+        if match4:
+            return (match4.group(1), shot_index)
+        
+        return ("", shot_index)
+    
+    def _count_shots(self, shot_script: str) -> int:
+        """Count number of shots in script"""
+        if not shot_script.strip():
+            return 0
+        
+        try:
+            script_data = json.loads(shot_script)
+            return len(script_data)
+        except json.JSONDecodeError:
+            # Count using regex for shot patterns
+            shot_patterns = [
+                r"['\"]?shot\d+['\"]?\s*:",
+                r"['\"]?frame\d+['\"]?\s*:", 
+                r"['\"]?\d+['\"]?\s*:"
+            ]
+            
+            max_count = 0
+            for pattern in shot_patterns:
+                matches = re.findall(pattern, shot_script, re.IGNORECASE)
+                if len(matches) > max_count:
+                    max_count = len(matches)
+            
+            return max_count
+
+class ShotScriptCombiner_JK:
+    """Combine shot scripts into formatted output"""
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "shot_script": ("STRING", {
+                    "default": "",
+                    "multiline": True,
+                    "tooltip": "JSON string containing shot prompts or single description"
+                }),
+                "max_shots": ("INT", {
+                    "default": 10,
+                    "min": 1,
+                    "max": 50,
+                    "step": 1,
+                    "tooltip": "Maximum number of shots to extract"
+                }),
+                "format_output": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Format output with shot numbers and line breaks"
+                }),
+                "merge_json_details": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Merge JSON detail fields into coherent paragraphs"
+                }),
+            }
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("output_text",)
+    FUNCTION = "combine_shots"
+    CATEGORY = icons.get("JK/Prompt")
+    DESCRIPTION = "Combine shot scripts into formatted output."
+    
+    def combine_shots(self, shot_script: str, max_shots: int, format_output: bool, 
+                     merge_json_details: bool) -> Tuple[str]:
+        """Combine shot scripts into formatted output"""
+        
+        if not shot_script.strip():
+            return ("",)
+        
+        # 如果不需要合并JSON详情且不需要格式化输出，直接返回原始内容
+        if not merge_json_details and not format_output:
+            return (shot_script,)
+        
+        # 检测输入格式
+        input_format = self._detect_format(shot_script)
+        
+        if input_format == "single_description" or (input_format == "json_details" and not merge_json_details):
+            # 单描述或JSON详情但不合并，直接返回
+            if format_output:
+                # 如果需要格式化，简单清理后返回
+                return (DataCleaner.clean_prompt_string(shot_script),)
+            else:
+                return (shot_script,)
+        elif input_format == "json_details" and merge_json_details:
+            # 合并JSON详情
+            return (self._merge_json_details(shot_script),)
+        else:
+            # 多镜头处理
+            return (self._process_multiple_shots(shot_script, max_shots, format_output, merge_json_details),)
+    
+    def _detect_format(self, shot_script: str) -> str:
+        """检测输入格式"""
+        try:
+            script_data = json.loads(shot_script)
+            
+            # 检查是否是单描述（非字典）
+            if not isinstance(script_data, dict):
+                return "single_description"
+            
+            # 检查是否有镜头键（shot01, shot1等）
+            shot_keys = [key for key in script_data.keys() 
+                        if re.match(r'^(shot|frame)\d+', key, re.IGNORECASE)]
+            
+            if shot_keys:
+                return "multiple_shots"
+            
+            # 检查是否有JSON详情格式的键
+            detail_keys = ['subject', 'background', 'atmosphere', 'motion', 
+                          'expression', 'lighting', 'shot type', 'movement', 'style']
+            has_detail_keys = any(key in script_data for key in detail_keys)
+            
+            if has_detail_keys:
+                return "json_details"
+            
+            # 默认认为是单描述
+            return "single_description"
+            
+        except json.JSONDecodeError:
+            # 如果不是JSON，检查是否有镜头模式
+            if self._has_shot_patterns(shot_script):
+                return "multiple_shots"
+            return "single_description"
+    
+    def _has_shot_patterns(self, text: str) -> bool:
+        """检查文本是否包含镜头模式"""
+        shot_patterns = [
+            r"['\"]?shot\d+['\"]?\s*:",
+            r"['\"]?frame\d+['\"]?\s*:",
+            r"['\"]?\d+['\"]?\s*:"
+        ]
+        
+        for pattern in shot_patterns:
+            if re.search(pattern, text, re.IGNORECASE):
+                return True
+        return False
+    
+    def _merge_json_details(self, shot_script: str) -> str:
+        """合并JSON详情格式为连贯段落"""
+        try:
+            script_data = json.loads(shot_script)
+            
+            # 处理单描述（非字典）
+            if not isinstance(script_data, dict):
+                return DataCleaner.clean_prompt_string(str(script_data))
+            
+            # 提取详情字段
+            detail_fields = [
+                'subject', 'background', 'atmosphere', 'lighting', 
+                'shot type', 'movement', 'motion', 'expression', 'style'
+            ]
+            
+            parts = []
+            for field in detail_fields:
+                if field in script_data and script_data[field]:
+                    value = script_data[field].strip()
+                    if value:
+                        parts.append(value)
+            
+            if parts:
+                # 使用智能连接
+                result = PromptUtils.smart_join(parts, ", ")
+                # 清理结果字符串
+                result = DataCleaner.clean_prompt_string(result)
+                # 首字母大写
+                if result and not result[0].isupper():
+                    result = result[0].upper() + result[1:]
+                # 添加句号（如果缺失）
+                if not result.endswith(('.', '!', '?')):
+                    result += '.'
+                return result
+            else:
+                return DataCleaner.clean_prompt_string(str(script_data))
+                
+        except json.JSONDecodeError:
+            # 如果不是JSON，清理后返回
+            return DataCleaner.clean_prompt_string(shot_script)
+    
+    def _process_multiple_shots(self, shot_script: str, max_shots: int, format_output: bool, merge_json_details: bool) -> str:
+        """处理多个镜头"""
+        try:
+            script_data = json.loads(shot_script)
+            processed_data = {}
+            
+            # 遍历所有可能的镜头键
+            for i in range(1, max_shots + 1):
+                found = False
+                for key_format in [f"shot{i:02d}", f"shot{i}", f"frame{i:02d}", f"frame{i}", str(i)]:
+                    if key_format in script_data:
+                        shot_value = script_data[key_format]
+                        
+                        # 如果镜头值是字典（JSON详情）且需要合并
+                        if isinstance(shot_value, dict) and merge_json_details:
+                            merged = self._merge_json_details(json.dumps(shot_value))
+                            processed_data[key_format] = merged
+                        else:
+                            # 如果不需要合并JSON详情，保持原始格式
+                            if isinstance(shot_value, dict) and not merge_json_details and not format_output:
+                                # 保持JSON格式
+                                processed_data[key_format] = shot_value
+                            else:
+                                processed_data[key_format] = str(shot_value)
+                        found = True
+                        break
+                
+                # 如果没有找到当前索引的键，停止查找
+                if not found:
+                    break
+            
+            # 添加其他非镜头键
+            for key, value in script_data.items():
+                if key not in processed_data:
+                    processed_data[key] = value
+            
+            # 根据输出格式返回结果
+            if format_output:
+                # 格式化输出：每个镜头一行
+                shots = []
+                for i in range(1, max_shots + 1):
+                    for key_format in [f"shot{i:02d}", f"shot{i}", f"frame{i:02d}", f"frame{i}", str(i)]:
+                        if key_format in processed_data:
+                            shots.append(f"Shot {i}: {processed_data[key_format]}")
+                            break
+                return PromptUtils.smart_join(shots, "\n") if shots else "No shots found"
+            else:
+                # 非格式化输出：返回JSON
+                if merge_json_details:
+                    # 如果合并了JSON详情，返回处理后的JSON
+                    return json.dumps(processed_data, ensure_ascii=False, indent=2)
+                else:
+                    # 如果没有合并JSON详情，返回原始JSON
+                    return shot_script
+            
+        except json.JSONDecodeError:
+            # 回退：使用正则表达式提取
+            shots = []
+            for i in range(1, max_shots + 1):
+                # 尝试多种模式
+                patterns = [
+                    rf"['\"]?shot{i:02d}['\"]?\s*:\s*['\"]([^'\"]+)['\"]",
+                    rf"['\"]?shot{i}['\"]?\s*:\s*['\"]([^'\"]+)['\"]",
+                    rf"['\"]?frame{i:02d}['\"]?\s*:\s*['\"]([^'\"]+)['\"]",
+                    rf"['\"]?\d+['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
+                ]
+                
+                for pattern in patterns:
+                    match = re.search(pattern, shot_script, re.IGNORECASE)
+                    if match:
+                        if format_output:
+                            shots.append(f"Shot {i}: {match.group(1)}")
+                        else:
+                            shots.append(match.group(1))
+                        break
+            
+            if format_output:
+                return PromptUtils.smart_join(shots, "\n") if shots else shot_script
+            else:
+                return PromptUtils.smart_join(shots, ", ") if shots else shot_script
