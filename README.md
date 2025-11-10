@@ -333,6 +333,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Fix path separator mismatch issue of Random Prompter in Linux.
 2. Add more choices for Random Prompter.
 
+- 2025-11-10 - v2.3.4
+1. Add System Prompter node for generating single image | shot script system prompt for LLM/VLM model. Supports JSON format and multi-language output request. QWen3-VL is recommended.
+2. Add QWen3-VL to auto-prompt workflows along with System Prompter node.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -406,6 +410,8 @@ Wan Wrapper Sampler Default JK🐉: Provide default sampler settings for WAN wra
 Random Prompter JK🐉: Random prompt generator with categorized options for scene, motion, facial actions, expressions, lighting, camera, style, and description. Supports manual selection, random generation, and image reference integration for comprehensive prompt creation.  
 ![image](imgs/nodes/Prompt/Random%20Prompter%20Geek%20JK.png)  
 Random Prompter Geek JK🐉: Random Prompter Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion.  
+![image](imgs/nodes/Prompt/Sys%20Prompter%20JK.png)  
+System Prompter JK🐉: Build single image | shot script system prompt for LLM/VLM based on preset templates and user configuration. Supports JSON format and multi-language output request. QWen3-VL is recommended.  
 ![image](imgs/nodes/Prompt/Prompt%20Combine%20JK.png)  
 Prompt Combine JK🐉: Merge the two strings into one and clean up the result.  
 - ControlNet Nodes  

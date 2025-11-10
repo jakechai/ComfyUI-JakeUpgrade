@@ -2114,30 +2114,6 @@ class CR_PipeInputSwitch_JK:
         else:
             return (pipe_false, boolean_value)
 
-class CR_ImpactPipeInputSwitch_JK:
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "boolean_value": ("BOOLEAN", {"default": False}),
-                "pipe_false": ("BASIC_PIPE",),
-            },
-            "optional": {
-                "pipe_true": ("BASIC_PIPE",),
-            },
-        }
-    
-    RETURN_TYPES = ("BASIC_PIPE", "BOOLEAN",)   
-    FUNCTION = "pipe_switch"
-    CATEGORY = icons.get("JK/Switch")
-    DEPRECATED = True
-
-    def pipe_switch(self, boolean_value, pipe_false, pipe_true=None):
-        if pipe_true != None and boolean_value == True:
-            return (pipe_true, boolean_value)
-        else:
-            return (pipe_false, boolean_value)
-
 #---------------------------------------------------------------------------------------------------------------------#
 # Deprecated Math Nodes
 #---------------------------------------------------------------------------------------------------------------------#

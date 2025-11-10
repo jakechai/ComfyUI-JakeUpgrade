@@ -356,6 +356,9 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
             "RandomPrompter_JK": lambda: global_symbols.get("RandomPrompter_JK"),
             "RandomPrompterGeek_JK": lambda: global_symbols.get("RandomPrompterGeek_JK"),
             "CM_PromptCombine_JK": lambda: global_symbols.get("PromptCombine_JK"),
+            "SystemPrompter_JK": lambda: global_symbols.get("SystemPrompter_JK"),
+            "ShotScriptExtractor_JK": lambda: global_symbols.get("ShotScriptExtractor_JK"),
+            "ShotScriptCombiner_JK": lambda: global_symbols.get("ShotScriptCombiner_JK"),
         },
         ### Switch Nodes
         'switch': lambda: {
@@ -380,6 +383,7 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
             "CR Ply Input Switch JK": lambda: global_symbols.get("CR_PlyInputSwitch_JK"),
             "CR Orbit Pose Input Switch JK": lambda: global_symbols.get("CR_OrbitPoseInputSwitch_JK"),
             "CR TriMesh Input Switch JK": lambda: global_symbols.get("CR_TriMeshInputSwitch_JK"),
+            "CR Impact Pipe Input Switch JK": lambda: global_symbols.get("CR_ImpactPipeInputSwitch_JK"),
         },
         ### Video Nodes
         'video': lambda: {
@@ -520,7 +524,6 @@ def create_deprecated_node_mappings() -> Dict[str, Type[Any]]:
         "Reroute String JK": RerouteString_JK,
         ### Switch Nodes [Deprecated]
         "CR Pipe Input Switch JK": CR_PipeInputSwitch_JK,
-        "CR Impact Pipe Input Switch JK": CR_ImpactPipeInputSwitch_JK,
     }
 
 def filter_valid_mappings(mappings: Dict[str, Type[Any]]) -> Dict[str, Type[Any]]:
