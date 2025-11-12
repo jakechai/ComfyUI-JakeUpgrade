@@ -206,35 +206,47 @@ class DataCleaner:
         return list(dict.fromkeys(cleaned))
     
     @staticmethod
-    def clean_prompt_string(text: str) -> str:
-        """清理提示词字符串，支持中英混合标点"""
+    def clean_prompt_string(text: str, language: str = "english") -> str:
+        """清理提示词字符串，根据语言处理标点"""
         if not text:
             return ""
         
+        # 判断是否使用中文标点规则
+        use_chinese_punctuation = language in ["chinese", "japanese", "korean"]
+        
         # 合并处理连续逗号（中英文）
-        text = re.sub(r'[,，](\s*[,，])+', ',', text)
+        text = re.sub(r'[,，](\s*[,，])+', ',' if not use_chinese_punctuation else '，', text)
         
         # 合并处理连续句号（中英文）
-        text = re.sub(r'[.。](\s*[.。])+', '.', text)
+        text = re.sub(r'[.。](\s*[.。])+', '.' if not use_chinese_punctuation else '。', text)
         
         # 标准化空白字符
         text = re.sub(r'\s+', ' ', text)
         
-        # 标准化逗号格式（中英文逗号统一为英文逗号加空格）
-        text = re.sub(r'\s*[,，]\s*', ', ', text)
+        if use_chinese_punctuation:
+            # 中文标点标准化
+            # 标准化逗号格式（统一为中文逗号，不加空格）
+            text = re.sub(r'\s*[,，]\s*', '，', text)
+            # 标准化句号格式（统一为中文句号，不加空格）
+            text = re.sub(r'\s*[.。]\s*', '。', text)
+            # 清理边界（中英文逗号和句号）
+            text = text.strip(',.，。 ')
+            # 修复：移除多余的"。，"组合
+            text = re.sub(r'。\s*，', '，', text)
+        else:
+            # 英文标点标准化
+            # 标准化逗号格式（中英文逗号统一为英文逗号加空格）
+            text = re.sub(r'\s*[,，]\s*', ', ', text)
+            # 标准化句号格式（中英文句号统一为英文句号加空格）
+            text = re.sub(r'\s*[.。]\s*', '. ', text)
+            # 清理边界（中英文逗号和句号）
+            text = text.strip(',.，。 ')
+            # 修复：移除多余的". ,"组合
+            text = re.sub(r'\.\s*,', ',', text)
         
-        # 标准化句号格式（中英文句号统一为英文句号加空格）
-        text = re.sub(r'\s*[.。]\s*', '. ', text)
-        
-        # 清理边界（中英文逗号和句号）
-        text = text.strip(',.，。 ')
-        
-        # 确保只有一个空格分隔单词
-        text = re.sub(r' +', ' ', text)
-        
-        # 修复：移除多余的". ,"组合
-        text = re.sub(r'\.\s*,', ',', text)
-        text = re.sub(r'。\s*,', ',', text)
+        # 确保只有一个空格分隔单词（英文）
+        if not use_chinese_punctuation:
+            text = re.sub(r' +', ' ', text)
         
         return text.strip()
     
@@ -2117,37 +2129,6 @@ class RandomPrompterGeek_JK:
         )
         return (prompt,)
 
-class PromptCombine_JK:
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "prompt_1": ("STRING", {"default": '', "multiline": True}),
-                "prompt_2": ("STRING", {"default": '', "multiline": True}),
-            },
-        }
-    
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("Prompt",)
-    FUNCTION = "combine"
-    CATEGORY = icons.get("JK/Prompt")
-    
-    def combine(self, prompt_1=None, prompt_2=None):
-        # 清理两个输入字符串
-        cleaned_1 = DataCleaner.clean_prompt_string(prompt_1) if prompt_1 else ""
-        cleaned_2 = DataCleaner.clean_prompt_string(prompt_2) if prompt_2 else ""
-        
-        # 使用 smart_join 合并两个字符串
-        elements = []
-        if cleaned_1:
-            elements.append(cleaned_1)
-        if cleaned_2:
-            elements.append(cleaned_2)
-        
-        prompt_output = PromptUtils.smart_join(elements, separator=", ")
-        
-        return (prompt_output,)
-
 #---------------------------------------------------------------------------------------------------------------------#
 # System Prompter
 #---------------------------------------------------------------------------------------------------------------------#
@@ -2192,7 +2173,7 @@ class SysPromptBuilder:
         """Convert language to preset key"""
         return "cn" if language == "Chinese" else "en"
     
-    def _replace_variables(self, text: str, output_language: str, shot_count: int, json_format: bool) -> str:
+    def _replace_variables(self, text: str, output_language: str, shot_count: int, json_detail_format: bool) -> str:
         """Replace variables in text with actual values"""
         if not text:
             return text
@@ -2207,9 +2188,9 @@ class SysPromptBuilder:
         # Replace <shot_count>
         text = text.replace("<shot_count>", str(shot_count))
         
-        # Replace <json_format>
-        json_format_str = self.preset_data.get("json_detail", {}).get("format", "{}")
-        text = text.replace("<json_format>", json_format_str)
+        # Replace <json_detail_format>
+        json_detail_format_str = self.preset_data.get("json_detail", {}).get("format", "{}")
+        text = text.replace("<json_detail_format>", json_detail_format_str)
         
         return text
     
@@ -2234,13 +2215,13 @@ class SysPromptBuilder:
         except Exception as e:
             return ""
     
-    def _build_common_parts(self, model_type: str, mode: str, detail: str, json_format: bool, 
+    def _build_common_parts(self, model_type: str, mode: str, detail: str, json_detail_format: bool, 
                            ref_img_as_1st_shot: bool) -> list:
         """Build common template parts for both LLM and VLM"""
-        json_key = "json_detail" if json_format else "no_json_detail"
+        json_key = "json_detail" if json_detail_format else "no_json_detail"
         
         if mode == "single image":
-            if json_format:
+            if json_detail_format:
                 return [
                     [model_type, "single", "part_01"],
                     ["detail_preset", detail],
@@ -2260,7 +2241,7 @@ class SysPromptBuilder:
             if ref_img_as_1st_shot:
                 ref_parts = [["ref_image_01"], ["ref_image_02"]]
             
-            if json_format:
+            if json_detail_format:
                 return [
                     [model_type, "script", "part_01"],
                     ["detail_preset", detail],
@@ -2292,7 +2273,7 @@ class SysPromptBuilder:
                     ["combine_shots"]
                 ]
     
-    def build_prompt(self, model: str, mode: str, detail: str, json_format: bool, 
+    def build_prompt(self, model: str, mode: str, detail: str, json_detail_format: bool, 
                     shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> str:
         """Build prompt based on input parameters"""
         
@@ -2300,7 +2281,7 @@ class SysPromptBuilder:
         model_type = model.lower()
         
         # Build template parts based on model and mode
-        template_parts = self._build_common_parts(model_type, mode, detail, json_format, input_as_1st_shot)
+        template_parts = self._build_common_parts(model_type, mode, detail, json_detail_format, input_as_1st_shot)
         
         # Add final part for LLM
         if model == "LLM":
@@ -2316,7 +2297,7 @@ class SysPromptBuilder:
         
         # Combine all parts and replace variables
         full_prompt = "".join(prompt_parts)
-        full_prompt = self._replace_variables(full_prompt, output_language, shot_count, json_format)
+        full_prompt = self._replace_variables(full_prompt, output_language, shot_count, json_detail_format)
         
         return full_prompt
 
@@ -2339,7 +2320,7 @@ class SystemPrompter_JK:
                     "default": "detailed",
                     "tooltip": "Select detail level for prompt generation."
                 }),
-                "json_format": ("BOOLEAN", {
+                "json_detail_format": ("BOOLEAN", {
                     "default": False,
                     "tooltip": "Only available for QWen3-VL for now. Whether to output in JSON format with detailed breakdown."
                 }),
@@ -2376,7 +2357,7 @@ class SystemPrompter_JK:
     def __init__(self):
         self.builder = SysPromptBuilder()
     
-    def build_prompt(self, model: str, mode: str, detail: str, json_format: bool,
+    def build_prompt(self, model: str, mode: str, detail: str, json_detail_format: bool,
                     shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> Tuple[str]:
         """Build and return the prompt string"""
         
@@ -2384,7 +2365,7 @@ class SystemPrompter_JK:
             model=model,
             mode=mode,
             detail=detail,
-            json_format=json_format,
+            json_detail_format=json_detail_format,
             shot_count=shot_count,
             input_as_1st_shot=input_as_1st_shot,
             system_language=system_language,
@@ -2393,258 +2374,104 @@ class SystemPrompter_JK:
         
         return (prompt,)
 
-class ShotScriptExtractor_JK:
-    """Extract specific shot prompt from shot script JSON and count total shots"""
-    
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "shot_script": ("STRING", {
-                    "default": "",
-                    "multiline": True,
-                    "tooltip": "JSON string containing shot prompts (e.g., {'shot01': 'prompt1', 'shot02': 'prompt2'})"
-                }),
-                "shot_index": ("INT", {
-                    "default": 1,
-                    "min": 1,
-                    "max": 50,
-                    "step": 1,
-                    "tooltip": "Index of the shot to extract (starting from 1)"
-                }),
-            }
-        }
-    
-    RETURN_TYPES = ("STRING", "INT", "STRING", "INT")
-    RETURN_NAMES = ("shot_prompt", "shot_count", "shot_key", "actual_index")
-    FUNCTION = "extract_shot"
-    CATEGORY = icons.get("JK/Prompt")
-    DESCRIPTION = "Extract specific shot prompt from shot script JSON based on index and count total shots."
-    
-    def extract_shot(self, shot_script: str, shot_index: int) -> Tuple[str, int, int, str]:
-        """Extract shot prompt from JSON script based on index and count total shots"""
-        
-        if not shot_script.strip():
-            return ("", shot_index, 0, "")
-        
-        shot_count = self._count_shots(shot_script)
-        actual_key = ""
-        
-        try:
-            # Try to parse as JSON
-            script_data = json.loads(shot_script)
-            
-            # Generate possible keys based on index
-            possible_keys = [
-                f"shot{shot_index:02d}",
-                f"shot{shot_index}",
-                f"frame{shot_index:02d}", 
-                f"frame{shot_index}",
-                f"shot_{shot_index:02d}",
-                f"shot_{shot_index}",
-                str(shot_index)
-            ]
-            
-            # Find the first matching key
-            for key in possible_keys:
-                if key in script_data:
-                    actual_key = key
-                    prompt = script_data[key]
-                    # Preserve original format for JSON objects
-                    if isinstance(prompt, dict):
-                        return (json.dumps(prompt, ensure_ascii=False, indent=2), shot_index, shot_count, actual_key)
-                    else:
-                        return (str(prompt), shot_index, shot_count, actual_key)
-            
-            # If still not found, try to find any key containing the index
-            index_str = str(shot_index)
-            for key, value in script_data.items():
-                if index_str in key:
-                    actual_key = key
-                    prompt = value
-                    if isinstance(prompt, dict):
-                        return (json.dumps(prompt, ensure_ascii=False, indent=2), shot_index, shot_count, actual_key)
-                    else:
-                        return (str(prompt), shot_index, shot_count, actual_key)
-            
-            return ("", shot_index, shot_count, "")
-            
-        except json.JSONDecodeError:
-            # If not valid JSON, try to extract using regex pattern
-            prompt, actual_index = self._extract_from_text(shot_script, shot_index)
-            return (prompt, shot_count, f"shot{shot_index:02d}", actual_index)
-    
-    def _extract_from_text(self, shot_script: str, shot_index: int) -> Tuple[str, int]:
-        """Extract shot prompt from text using regex patterns when JSON parsing fails"""
-        
-        # Pattern for shot01: "prompt text"
-        pattern1 = rf"['\"]?shot{shot_index:02d}['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
-        match1 = re.search(pattern1, shot_script, re.IGNORECASE)
-        if match1:
-            return (match1.group(1), shot_index)
-        
-        # Pattern for shot1: "prompt text"  
-        pattern2 = rf"['\"]?shot{shot_index}['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
-        match2 = re.search(pattern2, shot_script, re.IGNORECASE)
-        if match2:
-            return (match2.group(1), shot_index)
-        
-        # Pattern for frame01: "prompt text"
-        pattern3 = rf"['\"]?frame{shot_index:02d}['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
-        match3 = re.search(pattern3, shot_script, re.IGNORECASE)
-        if match3:
-            return (match3.group(1), shot_index)
-        
-        # Pattern for generic key with index
-        pattern4 = rf"['\"]?[a-zA-Z_]*{shot_index:02d}[a-zA-Z_]*['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
-        match4 = re.search(pattern4, shot_script, re.IGNORECASE)
-        if match4:
-            return (match4.group(1), shot_index)
-        
-        return ("", shot_index)
-    
-    def _count_shots(self, shot_script: str) -> int:
-        """Count number of shots in script"""
-        if not shot_script.strip():
-            return 0
-        
-        try:
-            script_data = json.loads(shot_script)
-            return len(script_data)
-        except json.JSONDecodeError:
-            # Count using regex for shot patterns
-            shot_patterns = [
-                r"['\"]?shot\d+['\"]?\s*:",
-                r"['\"]?frame\d+['\"]?\s*:", 
-                r"['\"]?\d+['\"]?\s*:"
-            ]
-            
-            max_count = 0
-            for pattern in shot_patterns:
-                matches = re.findall(pattern, shot_script, re.IGNORECASE)
-                if len(matches) > max_count:
-                    max_count = len(matches)
-            
-            return max_count
+#---------------------------------------------------------------------------------------------------------------------#
+# Shot Script Nodes
+#---------------------------------------------------------------------------------------------------------------------#
 
-class ShotScriptCombiner_JK:
-    """Combine shot scripts into formatted output"""
+class ShotScriptUtils:
+    """工具类，包含ShotScript节点的共用方法"""
     
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "shot_script": ("STRING", {
-                    "default": "",
-                    "multiline": True,
-                    "tooltip": "JSON string containing shot prompts or single description"
-                }),
-                "max_shots": ("INT", {
-                    "default": 10,
-                    "min": 1,
-                    "max": 50,
-                    "step": 1,
-                    "tooltip": "Maximum number of shots to extract"
-                }),
-                "format_output": ("BOOLEAN", {
-                    "default": False,
-                    "tooltip": "Format output with shot numbers and line breaks"
-                }),
-                "merge_json_details": ("BOOLEAN", {
-                    "default": False,
-                    "tooltip": "Merge JSON detail fields into coherent paragraphs"
-                }),
-            }
-        }
-    
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("output_text",)
-    FUNCTION = "combine_shots"
-    CATEGORY = icons.get("JK/Prompt")
-    DESCRIPTION = "Combine shot scripts into formatted output."
-    
-    def combine_shots(self, shot_script: str, max_shots: int, format_output: bool, 
-                     merge_json_details: bool) -> Tuple[str]:
-        """Combine shot scripts into formatted output"""
-        
-        if not shot_script.strip():
-            return ("",)
-        
-        # 如果不需要合并JSON详情且不需要格式化输出，直接返回原始内容
-        if not merge_json_details and not format_output:
-            return (shot_script,)
-        
-        # 检测输入格式
-        input_format = self._detect_format(shot_script)
-        
-        if input_format == "single_description" or (input_format == "json_details" and not merge_json_details):
-            # 单描述或JSON详情但不合并，直接返回
-            if format_output:
-                # 如果需要格式化，简单清理后返回
-                return (DataCleaner.clean_prompt_string(shot_script),)
+    @staticmethod
+    def detect_format(script: str) -> str:
+        """检测输入格式：dict, list, 或 string"""
+        if not script.strip():
+            return "string"
+            
+        try:
+            script_data = json.loads(script)
+            
+            if isinstance(script_data, dict):
+                return "dict"
+            elif isinstance(script_data, list):
+                return "list"
             else:
-                return (shot_script,)
-        elif input_format == "json_details" and merge_json_details:
-            # 合并JSON详情
-            return (self._merge_json_details(shot_script),)
-        else:
-            # 多镜头处理
-            return (self._process_multiple_shots(shot_script, max_shots, format_output, merge_json_details),)
-    
-    def _detect_format(self, shot_script: str) -> str:
-        """检测输入格式"""
-        try:
-            script_data = json.loads(shot_script)
-            
-            # 检查是否是单描述（非字典）
-            if not isinstance(script_data, dict):
-                return "single_description"
-            
-            # 检查是否有镜头键（shot01, shot1等）
-            shot_keys = [key for key in script_data.keys() 
-                        if re.match(r'^(shot|frame)\d+', key, re.IGNORECASE)]
-            
-            if shot_keys:
-                return "multiple_shots"
-            
-            # 检查是否有JSON详情格式的键
-            detail_keys = ['subject', 'background', 'atmosphere', 'motion', 
-                          'expression', 'lighting', 'shot type', 'movement', 'style']
-            has_detail_keys = any(key in script_data for key in detail_keys)
-            
-            if has_detail_keys:
-                return "json_details"
-            
-            # 默认认为是单描述
-            return "single_description"
-            
+                return "string"
+                
         except json.JSONDecodeError:
-            # 如果不是JSON，检查是否有镜头模式
-            if self._has_shot_patterns(shot_script):
-                return "multiple_shots"
-            return "single_description"
+            return "string"
     
-    def _has_shot_patterns(self, text: str) -> bool:
-        """检查文本是否包含镜头模式"""
-        shot_patterns = [
-            r"['\"]?shot\d+['\"]?\s*:",
-            r"['\"]?frame\d+['\"]?\s*:",
-            r"['\"]?\d+['\"]?\s*:"
-        ]
+    @staticmethod  
+    def preserve_format(value) -> str:
+        """保持值的原始格式，包括换行符"""
+        if isinstance(value, (dict, list)):
+            # 对于字典或列表，使用JSON格式保持结构
+            return json.dumps(value, ensure_ascii=False, indent=2)
+        else:
+            # 对于其他类型，直接转为字符串，保留原始格式
+            return str(value)
+    
+    @staticmethod
+    def split_string_into_lines(text: str, max_lines: int = 0) -> List[str]:
+        """将字符串分割为行并过滤空行"""
+        if not text.strip():
+            return []
+            
+        lines = text.split('\n')
+        # 过滤空行并去除前后空格
+        cleaned_lines = [line.strip() for line in lines if line.strip()]
+        # 限制最大行数
+        if max_lines > 0:
+            return cleaned_lines[:max_lines]
+        return cleaned_lines
+    
+    @staticmethod
+    def detect_language(text: str) -> str:
+        """检测文本语言类型"""
+        if not text.strip():
+            return "english"  # 默认英文
+            
+        # 检查是否包含中文字符
+        chinese_pattern = re.compile(r'[\u4e00-\u9fff]')
+        if chinese_pattern.search(text):
+            return "chinese"
         
-        for pattern in shot_patterns:
-            if re.search(pattern, text, re.IGNORECASE):
-                return True
-        return False
+        # 检查是否包含日文字符
+        japanese_pattern = re.compile(r'[\u3040-\u309f\u30a0-\u30ff]')  # 平假名和片假名
+        if japanese_pattern.search(text):
+            return "japanese"
+        
+        # 检查是否包含韩文字符
+        korean_pattern = re.compile(r'[\uac00-\ud7af]')  # 韩文字母
+        if korean_pattern.search(text):
+            return "korean"
+        
+        # 默认返回英文
+        return "english"
     
-    def _merge_json_details(self, shot_script: str) -> str:
+    @staticmethod
+    def get_punctuation_for_language(language: str) -> tuple:
+        """根据语言获取适当的分隔符和结束标点"""
+        # 东亚文字使用中文标点
+        if language in ["chinese", "japanese", "korean"]:
+            return "。", "。"
+        # 其他语言使用英文标点
+        else:
+            return ". ", "."
+    
+    @staticmethod
+    def merge_json_details(script: str) -> str:
         """合并JSON详情格式为连贯段落"""
+        if not script.strip():
+            return ""
+            
         try:
-            script_data = json.loads(shot_script)
+            script_data = json.loads(script)
             
             # 处理单描述（非字典）
             if not isinstance(script_data, dict):
-                return DataCleaner.clean_prompt_string(str(script_data))
+                # 先检测语言
+                language = ShotScriptUtils.detect_language(str(script_data))
+                return DataCleaner.clean_prompt_string(str(script_data), language)
             
             # 提取详情字段
             detail_fields = [
@@ -2660,48 +2487,191 @@ class ShotScriptCombiner_JK:
                         parts.append(value)
             
             if parts:
+                # 检测语言并选择适当的分隔符和结束标点
+                language = ShotScriptUtils.detect_language(" ".join(parts))
+                separator, end_punctuation = ShotScriptUtils.get_punctuation_for_language(language)
+                
                 # 使用智能连接
-                result = PromptUtils.smart_join(parts, ", ")
-                # 清理结果字符串
-                result = DataCleaner.clean_prompt_string(result)
-                # 首字母大写
-                if result and not result[0].isupper():
-                    result = result[0].upper() + result[1:]
-                # 添加句号（如果缺失）
-                if not result.endswith(('.', '!', '?')):
-                    result += '.'
+                result = PromptUtils.smart_join(parts, separator)
+                # 使用DataCleaner清理结果字符串，并传递语言参数
+                result = DataCleaner.clean_prompt_string(result, language)
+                # 添加结束标点（如果缺失）
+                if not result.endswith(('.', '!', '?', '。', '！', '？')):
+                    result += end_punctuation
                 return result
             else:
-                return DataCleaner.clean_prompt_string(str(script_data))
+                # 先检测语言
+                language = ShotScriptUtils.detect_language(str(script_data))
+                return DataCleaner.clean_prompt_string(str(script_data), language)
                 
         except json.JSONDecodeError:
             # 如果不是JSON，清理后返回
-            return DataCleaner.clean_prompt_string(shot_script)
+            # 先检测语言
+            language = ShotScriptUtils.detect_language(script)
+            return DataCleaner.clean_prompt_string(script, language)
+
+    @staticmethod
+    def get_shot_keys(max_shots: int) -> List[List[str]]:
+        """获取可能的镜头键格式"""
+        keys = []
+        for i in range(1, max_shots + 1):
+            keys.append([
+                f"shot{i:02d}", f"shot{i}", 
+                f"frame{i:02d}", f"frame{i}", 
+                f"shot_{i:02d}", f"shot_{i}",
+                str(i)
+            ])
+        return keys
     
-    def _process_multiple_shots(self, shot_script: str, max_shots: int, format_output: bool, merge_json_details: bool) -> str:
-        """处理多个镜头"""
+    @staticmethod
+    def count_shots_in_dict(data: dict) -> int:
+        """计算字典中的镜头数量"""
+        shot_count = 0
+        for key in data.keys():
+            if re.match(r'^(shot|frame)\d+', str(key), re.IGNORECASE) or re.match(r'^\d+$', str(key)):
+                shot_count += 1
+        return shot_count
+    
+    @staticmethod
+    def extract_from_dict(data: dict, shot_index: int) -> Tuple[str, str]:
+        """从字典中提取指定索引的镜头"""
+        possible_keys = [
+            f"shot{shot_index:02d}", f"shot{shot_index}",
+            f"frame{shot_index:02d}", f"frame{shot_index}",
+            f"shot_{shot_index:02d}", f"shot_{shot_index}",
+            str(shot_index)
+        ]
+        
+        # 查找匹配的键
+        for key in possible_keys:
+            if key in data:
+                return ShotScriptUtils.preserve_format(data[key]), key
+        
+        # 如果未找到，尝试查找包含索引的键
+        index_str = str(shot_index)
+        for key, value in data.items():
+            if index_str in key:
+                return ShotScriptUtils.preserve_format(value), key
+        
+        return "", ""
+    
+    @staticmethod
+    def is_special_json_detail_format(data: dict) -> bool:
+        """检查是否是特殊JSON格式（包含subject, background等字段）"""
+        special_fields = [
+            'subject', 'background', 'atmosphere', 'lighting', 
+            'shot type', 'movement', 'motion', 'expression', 'style'
+        ]
+        
+        # 检查是否包含特殊字段
+        has_special_fields = any(field in data for field in special_fields)
+        
+        # 检查是否不包含明显的shot键
+        has_shot_keys = any(re.match(r'^(shot|frame)\d+', str(key), re.IGNORECASE) for key in data.keys())
+        has_numeric_keys = any(re.match(r'^\d+$', str(key)) for key in data.keys())
+        
+        return has_special_fields and not (has_shot_keys or has_numeric_keys)
+    
+    @staticmethod
+    def has_shot_keys(data: dict, max_shots: int = 10) -> bool:
+        """检查字典中是否有shot键"""
+        for i in range(1, max_shots + 1):
+            for key_format in [f"shot{i:02d}", f"shot{i}", f"frame{i:02d}", f"frame{i}", str(i)]:
+                if key_format in data:
+                    return True
+        return False
+
+class ShotScriptCombiner_JK:
+    """Combine shot scripts into string list output"""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "shot_scripts": ("STRING", {
+                    "default": "",
+                    "multiline": True,
+                    "tooltip": "JSON string containing shot prompts or single description"
+                }),
+                "max_shots": ("INT", {
+                    "default": 10,
+                    "min": 1,
+                    "max": 50,
+                    "step": 1,
+                    "tooltip": "Maximum number of shots to extract"
+                }),
+                "merge_json_details": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Merge JSON detail fields into coherent paragraphs"
+                }),
+            }
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("script_list",)
+    OUTPUT_IS_LIST = (True,)
+    FUNCTION = "combine_shots"
+    CATEGORY = icons.get("JK/Prompt")
+    DESCRIPTION = "Combine shot scripts into string list output."
+    
+    def combine_shots(self, shot_scripts: str, max_shots: int, merge_json_details: bool) -> Tuple[List[str], str]:
+        """Combine shot scripts into string list output"""
+        
+        if not shot_scripts.strip():
+            return ([""],)
+        
+        # 检测输入格式并处理
+        result_list = self._process_to_list(shot_scripts, max_shots, merge_json_details)
+        
+        return (result_list,)
+    
+    def _process_to_list(self, shot_scripts: str, max_shots: int, merge_json_details: bool) -> List[str]:
+        """处理输入为字符串列表"""
+        
+        # 检测输入格式
+        input_format = ShotScriptUtils.detect_format(shot_scripts)
+        
+        if input_format == "dict":
+            # JSON字典格式：按顶级key拆分
+            return self._process_dict(shot_scripts, max_shots, merge_json_details)
+        elif input_format == "list":
+            # JSON列表格式：直接转换
+            return self._process_list(shot_scripts, merge_json_details)
+        else:
+            # 字符串格式：按行分割
+            return self._process_string(shot_scripts, max_shots)
+    
+    def _process_dict(self, shot_scripts: str, max_shots: int, merge_json_details: bool) -> List[str]:
+        """处理字典格式输入"""
         try:
-            script_data = json.loads(shot_script)
-            processed_data = {}
+            data = json.loads(shot_scripts)
+            result = []
             
-            # 遍历所有可能的镜头键
+            # 检查是否是特殊JSON格式（包含subject, background等字段）
+            is_special_format = ShotScriptUtils.is_special_json_detail_format(data)
+            
+            # 如果是特殊格式且没有shot键，直接作为单个shot处理
+            if is_special_format and not ShotScriptUtils.has_shot_keys(data, max_shots):
+                if merge_json_details:
+                    merged = ShotScriptUtils.merge_json_details(shot_scripts)
+                    result.append(merged)
+                else:
+                    result.append(ShotScriptUtils.preserve_format(data))
+                return result
+            
+            # 处理镜头键（按数字顺序）
             for i in range(1, max_shots + 1):
                 found = False
                 for key_format in [f"shot{i:02d}", f"shot{i}", f"frame{i:02d}", f"frame{i}", str(i)]:
-                    if key_format in script_data:
-                        shot_value = script_data[key_format]
-                        
-                        # 如果镜头值是字典（JSON详情）且需要合并
-                        if isinstance(shot_value, dict) and merge_json_details:
-                            merged = self._merge_json_details(json.dumps(shot_value))
-                            processed_data[key_format] = merged
+                    if key_format in data:
+                        value = data[key_format]
+                        if merge_json_details and isinstance(value, dict):
+                            # 合并JSON详情
+                            merged = ShotScriptUtils.merge_json_details(json.dumps(value))
+                            result.append(merged)
                         else:
-                            # 如果不需要合并JSON详情，保持原始格式
-                            if isinstance(shot_value, dict) and not merge_json_details and not format_output:
-                                # 保持JSON格式
-                                processed_data[key_format] = shot_value
-                            else:
-                                processed_data[key_format] = str(shot_value)
+                            # 保持原有格式
+                            result.append(ShotScriptUtils.preserve_format(value))
                         found = True
                         break
                 
@@ -2709,52 +2679,262 @@ class ShotScriptCombiner_JK:
                 if not found:
                     break
             
-            # 添加其他非镜头键
-            for key, value in script_data.items():
-                if key not in processed_data:
-                    processed_data[key] = value
-            
-            # 根据输出格式返回结果
-            if format_output:
-                # 格式化输出：每个镜头一行
-                shots = []
-                for i in range(1, max_shots + 1):
-                    for key_format in [f"shot{i:02d}", f"shot{i}", f"frame{i:02d}", f"frame{i}", str(i)]:
-                        if key_format in processed_data:
-                            shots.append(f"Shot {i}: {processed_data[key_format]}")
-                            break
-                return PromptUtils.smart_join(shots, "\n") if shots else "No shots found"
-            else:
-                # 非格式化输出：返回JSON
+            # 如果是特殊格式且有shot键，但没找到任何shot，则处理整个字典
+            if is_special_format and len(result) == 0:
                 if merge_json_details:
-                    # 如果合并了JSON详情，返回处理后的JSON
-                    return json.dumps(processed_data, ensure_ascii=False, indent=2)
+                    merged = ShotScriptUtils.merge_json_details(shot_scripts)
+                    result.append(merged)
                 else:
-                    # 如果没有合并JSON详情，返回原始JSON
-                    return shot_script
+                    result.append(ShotScriptUtils.preserve_format(data))
+            
+            # 添加其他非镜头键（只有在不是特殊格式的情况下）
+            if not is_special_format:
+                for key, value in data.items():
+                    # 跳过已经处理的镜头键
+                    if any(re.match(r'^(shot|frame)\d+', str(key), re.IGNORECASE) for pattern in 
+                          [r'^(shot|frame)\d+', r'^\d+$'] if re.match(pattern, str(key), re.IGNORECASE)):
+                        continue
+                    
+                    if merge_json_details and isinstance(value, dict):
+                        merged = ShotScriptUtils.merge_json_details(json.dumps(value))
+                        result.append(merged)
+                    else:
+                        result.append(ShotScriptUtils.preserve_format(value))
+            
+            return result
             
         except json.JSONDecodeError:
-            # 回退：使用正则表达式提取
-            shots = []
-            for i in range(1, max_shots + 1):
-                # 尝试多种模式
-                patterns = [
-                    rf"['\"]?shot{i:02d}['\"]?\s*:\s*['\"]([^'\"]+)['\"]",
-                    rf"['\"]?shot{i}['\"]?\s*:\s*['\"]([^'\"]+)['\"]",
-                    rf"['\"]?frame{i:02d}['\"]?\s*:\s*['\"]([^'\"]+)['\"]",
-                    rf"['\"]?\d+['\"]?\s*:\s*['\"]([^'\"]+)['\"]"
-                ]
-                
-                for pattern in patterns:
-                    match = re.search(pattern, shot_script, re.IGNORECASE)
-                    if match:
-                        if format_output:
-                            shots.append(f"Shot {i}: {match.group(1)}")
-                        else:
-                            shots.append(match.group(1))
-                        break
+            return [shot_scripts]
+    
+    def _process_list(self, shot_scripts: str, merge_json_details: bool) -> List[str]:
+        """处理列表格式输入"""
+        try:
+            data = json.loads(shot_scripts)
+            result = []
+            for item in data:
+                if merge_json_details and isinstance(item, dict):
+                    merged = ShotScriptUtils.merge_json_details(json.dumps(item))
+                    result.append(merged)
+                else:
+                    result.append(ShotScriptUtils.preserve_format(item))
+            return result
             
-            if format_output:
-                return PromptUtils.smart_join(shots, "\n") if shots else shot_script
+        except json.JSONDecodeError:
+            return [shot_scripts]
+    
+    def _process_string(self, text: str, max_shots: int) -> List[str]:
+        """处理字符串格式输入"""
+        return ShotScriptUtils.split_string_into_lines(text, max_shots)
+
+class ShotScriptExtractor_JK:
+    """Extract specific shot prompt from shot script JSON or string list"""
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "shot_scripts": ("STRING", {
+                    "default": "",
+                    "multiline": True,
+                    "tooltip": "Shot script JSON or string list to extract from"
+                }),
+                "shot_index": ("INT", {
+                    "default": 1,
+                    "min": -999999,
+                    "max": 999999,
+                    "step": 1,
+                    "tooltip": "Index of the element to extract (starting from 1, negative values count from the end)"
+                }),
+                "input_type": (["shot_script", "string_list"], {
+                    "default": "shot_script",
+                    "tooltip": "Input type: shot script or string list"
+                }),
+            }
+        }
+    
+    # 两个输入都是列表
+    INPUT_IS_LIST = True
+    
+    RETURN_TYPES = ("STRING", "INT", "STRING")
+    RETURN_NAMES = ("shot_script", "shot_counts", "status")
+    FUNCTION = "extract_element"
+    CATEGORY = icons.get("JK/Prompt")
+    DESCRIPTION = "Extract specific element from shot script or string list based on index."
+    
+    def extract_element(self, shot_scripts, shot_index, input_type):
+        """Extract specific element from shot script or string list based on index"""
+        
+        if not shot_scripts:
+            return ("", 0, "Empty input")
+        
+        # 获取索引值
+        i = shot_index[0]
+        
+        # 获取输入类型
+        input_type = input_type[0] if input_type else "shot_script"
+        
+        if input_type == "shot_script":
+            # 使用原有的镜头脚本提取逻辑
+            return self._extract_from_shot_script(shot_scripts[0], i)
+        else:
+            # 使用字符串列表提取逻辑
+            return self._extract_from_string_list(shot_scripts, i)
+    
+    def _extract_from_shot_script(self, shot_script: str, shot_index: int) -> Tuple[str, int, str]:
+        """从镜头脚本中提取元素"""
+        if not shot_script.strip():
+            return ("", 0, "Empty script")
+        
+        try:
+            # 检测输入格式
+            input_format = ShotScriptUtils.detect_format(shot_script)
+            shot_counts = 0
+            result_script = ""  # 使用不同的变量名避免冲突
+            status = ""
+            
+            if input_format == "dict":
+                # JSON字典格式
+                script_data = json.loads(shot_script)
+                
+                # 检查是否是特殊JSON格式（没有shot键）
+                if ShotScriptUtils.is_special_json_detail_format(script_data):
+                    # 特殊格式：只有一个元素
+                    shot_counts = 1
+                    if shot_index == 1:
+                        result_script = ShotScriptUtils.preserve_format(script_data)
+                        status = "special_format"
+                    else:
+                        result_script = ""
+                        status = f"Index out of range (1-{shot_counts})"
+                else:
+                    # 普通字典格式
+                    shot_counts = ShotScriptUtils.count_shots_in_dict(script_data)
+                    result_script, key = ShotScriptUtils.extract_from_dict(script_data, shot_index)
+                    status = key if result_script else f"Index out of range (1-{shot_counts})"
+                
+            elif input_format == "list":
+                # JSON列表格式
+                script_data = json.loads(shot_script)
+                shot_counts = len(script_data)
+                
+                # 处理负索引
+                if shot_index < 0:
+                    shot_index = shot_counts + shot_index + 1
+                
+                if 1 <= shot_index <= shot_counts:
+                    result_script = ShotScriptUtils.preserve_format(script_data[shot_index-1])
+                    status = f"item{shot_index}"
+                else:
+                    result_script = ""
+                    status = f"Index out of range (1-{shot_counts})"
+                    
             else:
-                return PromptUtils.smart_join(shots, ", ") if shots else shot_script
+                # 字符串格式
+                lines = ShotScriptUtils.split_string_into_lines(shot_script)
+                shot_counts = len(lines)
+                
+                # 处理负索引
+                if shot_index < 0:
+                    shot_index = shot_counts + shot_index + 1
+                
+                if 1 <= shot_index <= shot_counts:
+                    result_script = lines[shot_index-1]
+                    status = f"line{shot_index}"
+                else:
+                    result_script = ""
+                    status = f"Index out of range (1-{shot_counts})"
+            
+            return (result_script, shot_counts, status)
+            
+        except Exception as e:
+            print(f"Error extracting from shot script: {e}")
+            return ("", 0, f"Error: {str(e)}")
+    
+    def _extract_from_string_list(self, string_list: List[str], shot_index: int) -> Tuple[str, int, str]:
+        """从字符串列表中提取元素"""
+        if not string_list:
+            return ("", 0, "Empty list")
+        
+        shot_counts = len(string_list)
+        
+        # 处理负索引（从末尾开始计数）
+        if shot_index < 0:
+            shot_index = shot_counts + shot_index + 1
+        
+        # 检查索引是否有效
+        if shot_index < 1 or shot_index > shot_counts:
+            # 索引超出范围，返回最后一个元素
+            result_script = string_list[-1]
+            status = f"Index out of range, returning last element ({shot_counts} of {shot_counts})"
+        else:
+            # 提取元素
+            result_script = string_list[shot_index - 1]
+            status = f"Element {shot_index} of {shot_counts}"
+        
+        return (result_script, shot_counts, status)
+
+class PromptCombine_JK:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "prompt_1": ("STRING", {"default": '', "multiline": True}),
+                "prompt_2": ("STRING", {"default": '', "multiline": True}),
+                "preserve_format": ("BOOLEAN", {
+                    "default": True,
+                    "tooltip": "Preserve original format of prompts (including line breaks)"
+                }),
+            },
+        }
+    
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("Prompt",)
+    FUNCTION = "combine"
+    CATEGORY = icons.get("JK/Prompt")
+    DESCRIPTION = "Merge the two strings into one and clean up the result."
+    
+    def combine(self, prompt_1=None, prompt_2=None, preserve_format=True):
+        # 根据 preserve_format 参数选择处理方式
+        if preserve_format:
+            # 保持原始格式，使用换行符作为分隔符
+            processed_1 = ShotScriptUtils.preserve_format(prompt_1) if prompt_1 else ""
+            processed_2 = ShotScriptUtils.preserve_format(prompt_2) if prompt_2 else ""
+            
+            # 使用换行符连接两个字符串
+            elements = []
+            if processed_1:
+                elements.append(processed_1)
+            if processed_2:
+                elements.append(processed_2)
+            
+            prompt_output = "\n".join(elements)
+        else:
+            # 清理两个输入字符串
+            processed_1 = DataCleaner.clean_prompt_string(prompt_1) if prompt_1 else ""
+            processed_2 = DataCleaner.clean_prompt_string(prompt_2) if prompt_2 else ""
+            
+            # 检查 processed_1 的结尾是否有标点符号
+            ends_with_punctuation = False
+            if processed_1:
+                # 去除末尾空白字符后检查最后一个字符
+                trimmed_1 = processed_1.rstrip()
+                if trimmed_1:
+                    last_char = trimmed_1[-1]
+                    # 检查是否为中英文标点符号
+                    punctuation_chars = ['.', '。', ',', '，', '!', '！', '?', '？', ':', '：', ';', '；']
+                    if last_char in punctuation_chars:
+                        ends_with_punctuation = True
+            
+            # 根据条件选择分隔符
+            separator = " " if ends_with_punctuation else ". "
+            
+            # 使用 smart_join 合并两个字符串
+            elements = []
+            if processed_1:
+                elements.append(processed_1)
+            if processed_2:
+                elements.append(processed_2)
+            
+            prompt_output = PromptUtils.smart_join(elements, separator=separator)
+        
+        return (prompt_output,)

@@ -355,10 +355,10 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
         'prompt': lambda: {
             "RandomPrompter_JK": lambda: global_symbols.get("RandomPrompter_JK"),
             "RandomPrompterGeek_JK": lambda: global_symbols.get("RandomPrompterGeek_JK"),
-            "CM_PromptCombine_JK": lambda: global_symbols.get("PromptCombine_JK"),
             "SystemPrompter_JK": lambda: global_symbols.get("SystemPrompter_JK"),
-            "ShotScriptExtractor_JK": lambda: global_symbols.get("ShotScriptExtractor_JK"),
             "ShotScriptCombiner_JK": lambda: global_symbols.get("ShotScriptCombiner_JK"),
+            "ShotScriptExtractor_JK": lambda: global_symbols.get("ShotScriptExtractor_JK"),
+            "CM_PromptCombine_JK": lambda: global_symbols.get("PromptCombine_JK"),
         },
         ### Switch Nodes
         'switch': lambda: {
