@@ -337,11 +337,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2025-11-10 - v2.3.4
 1. Add System Prompter node for generating single image | shot script system prompt for LLM/VLM model. Supports JSON format and multi-language output request. QWen3-VL is recommended.
-2. Add Shot Script Extrator and Combiner nodes.
+2. Add Shot Script Extractor and Combiner nodes.
 3. Add QWen3-VL to auto-prompt workflows along with System Prompter node.
 
 - 2025-11-12 - v2.3.5
-1. Update Shot Script Extrator and Combiner nodes.
+1. Update Shot Script Extractor and Combiner nodes.
 2. Update Prompt Combiner node.
 3. Add portable img2mesh ComfyUI `v0.3.68` with `pytorch 2.7.0+cu128`.
 4. Add shot size and view angle choices for Random Prompter, useful when using QWen Edit 2509 Multiple Angles Lora.
