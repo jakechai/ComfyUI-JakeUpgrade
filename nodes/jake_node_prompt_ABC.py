@@ -212,41 +212,58 @@ class DataCleaner:
             return ""
         
         # 判断是否使用中文标点规则
-        use_chinese_punctuation = language in ["chinese", "japanese", "korean"]
+        use_chinese = language in ["chinese", "japanese", "korean"]
+        comma = "，" if use_chinese else ", "
+        period = "。" if use_chinese else ". "
+        semicolon = "；" if use_chinese else "; "
+        question_mark = "？" if use_chinese else "? "
+        exclamation_mark = "！" if use_chinese else "! "
         
-        # 合并处理连续逗号（中英文）
-        text = re.sub(r'[,，](\s*[,，])+', ',' if not use_chinese_punctuation else '，', text)
-        
-        # 合并处理连续句号（中英文）
-        text = re.sub(r'[.。](\s*[.。])+', '.' if not use_chinese_punctuation else '。', text)
-        
-        # 标准化空白字符
+        # 标准化空白
         text = re.sub(r'\s+', ' ', text)
         
-        if use_chinese_punctuation:
-            # 中文标点标准化
-            # 标准化逗号格式（统一为中文逗号，不加空格）
-            text = re.sub(r'\s*[,，]\s*', '，', text)
-            # 标准化句号格式（统一为中文句号，不加空格）
-            text = re.sub(r'\s*[.。]\s*', '。', text)
-            # 清理边界（中英文逗号和句号）
-            text = text.strip(',.，。 ')
-            # 修复：移除多余的"。，"组合
-            text = re.sub(r'。\s*，', '，', text)
-        else:
-            # 英文标点标准化
-            # 标准化逗号格式（中英文逗号统一为英文逗号加空格）
-            text = re.sub(r'\s*[,，]\s*', ', ', text)
-            # 标准化句号格式（中英文句号统一为英文句号加空格）
-            text = re.sub(r'\s*[.。]\s*', '. ', text)
-            # 清理边界（中英文逗号和句号）
-            text = text.strip(',.，。 ')
-            # 修复：移除多余的". ,"组合
-            text = re.sub(r'\.\s*,', ',', text)
+        # 使用循环处理连续标点，直到没有变化为止
+        max_iterations = 5
+        for i in range(max_iterations):
+            old_text = text
+            
+            # 一次性处理所有标点类型
+            patterns = [
+                (r'[,，]\s*[。，；？！.,;?!]', comma),
+                (r'[.。]\s*[。，；？！.,;?!]', period),
+                (r'[;；]\s*[。，；？！.,;?!]', semicolon),
+                (r'[?？]\s*[。，；？！.,;?!]', question_mark),
+                (r'[!！]\s*[。，；？！.,;?!]', exclamation_mark)
+            ]
+            
+            for pattern, replacement in patterns:
+                text = re.sub(pattern, replacement, text)
+            
+            # 如果没有变化，提前退出
+            if text == old_text:
+                break
         
-        # 确保只有一个空格分隔单词（英文）
-        if not use_chinese_punctuation:
+        # 标准化标点周围空格
+        if use_chinese:
+            # 中文：移除标点周围的所有空格
+            text = re.sub(r'\s*，\s*', comma, text)
+            text = re.sub(r'\s*。\s*', period, text)
+            text = re.sub(r'\s*；\s*', semicolon, text)
+            text = re.sub(r'\s*？\s*', question_mark, text)
+            text = re.sub(r'\s*！\s*', exclamation_mark, text)
+        else:
+            # 英文：确保标点后有空格
+            text = re.sub(r'\s*,\s*', comma, text)
+            text = re.sub(r'\s*\.\s*', period, text)
+            text = re.sub(r'\s*;\s*', semicolon, text)
+            text = re.sub(r'\s*\?\s*', question_mark, text)
+            text = re.sub(r'\s*!\s*', exclamation_mark, text)
+            # 确保单词间只有一个空格
             text = re.sub(r' +', ' ', text)
+        
+        # 扩展边界清理，包含所有标点
+        all_punctuation = ',.，。;；?？!！'
+        text = text.strip(all_punctuation + ' ')
         
         return text.strip()
     
@@ -818,6 +835,26 @@ class PromptUtils:
         base_options = ["enable", "disable", "random"]
         image_options = [f"use image {i+1}" for i in range(ref_count)]
         return base_options + image_options
+
+    @staticmethod
+    def remove_prompt_emphasis(text):
+        """
+        移除提示词中的强调符号和权重标记
+        """
+        if not text:
+            return text
+        
+        # 1. [a:b:weight] → a-b
+        text = re.sub(r'\[([^:]+):([^:]+):[^]]*\]', r'\1-\2', text)
+
+        # 2. (a:weight) → a
+        text = re.sub(
+            r'\(([^)]+?)\s*:\s*\d+(?:\.\s*\d+)?\)', 
+            r'\1', 
+            text
+        )
+        
+        return text
 
 class ExpressionUtils:
     """Expression 组合工具类 - 纯逻辑，无状态"""
@@ -1575,7 +1612,7 @@ class PromptComponentGenerator:
         color = selected_parts.get('color', 'harmonious colors')
         creativity = selected_parts.get('creativity', 'groundbreaking concept')
         
-        return f"A {sensory} of work with {detail} and {quality}, featuring a {composition} and {color}, presenting a {creativity}"
+        return f"a {sensory} of work with {detail} and {quality}, featuring a {composition} and {color}, presenting a {creativity}"
 
 class PromptGenerator:
     """主提示词生成器 - 使用策略模式重构"""
@@ -2015,8 +2052,12 @@ class RandomPrompter_JK:
             }),
             "custom_description": ("STRING", {
                 "multiline": True, 
-                "default": "A masterpiece of work with insane detail and best quality, featuring a masterfully balanced composition and harmonious colors, presenting a groundbreaking concept",
-                "tooltip": "Custom description template. Used when description is set to 'enable' or specific templates are selected. Follows the format: 'A [sensory] of work with [detail] and [quality], featuring a [composition] and [color], presenting a [creativity]'"
+                "default": "a masterpiece of work with insane detail and best quality, featuring a masterfully balanced composition and harmonious colors, presenting a groundbreaking concept",
+                "tooltip": "Custom description template. Used when description is set to 'enable' or specific templates are selected. Follows the format: 'a [sensory] of work with [detail] and [quality], featuring a [composition] and [color], presenting a [creativity]'"
+            }),
+            "remove_prompt_emphasis": ("BOOLEAN", {
+                "default": True,
+                "tooltip": "Remove emphasis symbols and weight markers from custom_subject (e.g., (word:1.5) -> word, [A:B:0.5] -> A-B)"
             }),
         }
         
@@ -2031,9 +2072,11 @@ class RandomPrompter_JK:
     def execute(self, **kwargs):
         """执行提示词生成"""
         seed = kwargs.get('seed', 0)
-        # 改为使用 UnifiedPromptGenerator
+        remove_prompt_emphasis = kwargs.get('remove_prompt_emphasis', True)
         unified_generator = UnifiedPromptGenerator(seed)
         prompt = unified_generator.generate_standard_prompt(**kwargs)
+        if remove_prompt_emphasis:
+            prompt = PromptUtils.remove_prompt_emphasis(prompt)
         return (prompt,)
 
 class RandomPrompterGeek_JK:
@@ -2108,26 +2151,112 @@ class RandomPrompterGeek_JK:
                 "default": "",
                 "tooltip": "Build your prompt using category tags like [category_name]. These will be replaced with random content from the corresponding files at runtime."
             }),
+            "remove_prompt_emphasis": ("BOOLEAN", {
+                "default": True,
+                "tooltip": "Remove emphasis symbols and weight markers from custom_subject (e.g., (word:1.5) -> word, [A:B:0.5] -> A-B)"
+            }),
         }
         
         return {"required": required_inputs}
     
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("prompt",)
+    RETURN_TYPES = ("STRING", "STRING")
+    RETURN_NAMES = ("prompt", "sys_prompt")
     FUNCTION = "execute"
     CATEGORY = icons.get("JK/Prompt")
-    DESCRIPTION = "Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion."
+    DESCRIPTION = "Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion."
     
     def execute(self, **kwargs):
         """执行提示词生成"""
         seed = kwargs.get('seed', 0)
-        # 改为使用 UnifiedPromptGenerator
+        custom_prompt = kwargs.get('custom_prompt', '')
+        custom_subject = kwargs.get('custom_subject', '')
+        remove_prompt_emphasis = kwargs.get('remove_prompt_emphasis', True)
+        
+        # 创建unified版本提示词生成器
         unified_generator = UnifiedPromptGenerator(seed)
-        prompt = unified_generator.generate_geek_prompt(
-            kwargs.get('custom_prompt', ''),
-            kwargs.get('custom_subject', '')
+        
+        # 生成提示词
+        prompt = unified_generator.generate_geek_prompt(custom_prompt, custom_subject)
+        if remove_prompt_emphasis:
+            prompt = PromptUtils.remove_prompt_emphasis(prompt)
+        
+        config_file_path = os.path.join(
+            os.path.dirname(__file__), 
+            PromptConfig.PROMPT_DATA_DIR, 
+            'sys_prompt_random_mapping.json'
         )
-        return (prompt,)
+        
+        try:
+            with open(config_file_path, 'r', encoding='utf-8') as f:
+                mapping_config = json.load(f)
+        except FileNotFoundError:
+            print(f"Warning: Config file not found at {config_file_path}")
+            # 如果文件不存在，使用默认配置
+            mapping_config = {
+                "use_llm": {},
+                "replace_01": {},
+                "replace_02": {}
+            }
+        except Exception as e:
+            print(f"Error loading config file: {e}")
+            mapping_config = {
+                "use_llm": {},
+                "replace_01": {},
+                "replace_02": {}
+            }
+        
+        # 初始化 sys_prompt
+        sys_prompt = custom_prompt
+        
+        # 步骤1: 根据 use_llm 决定是否执行替换
+        use_llm = mapping_config.get("use_llm", {})
+        replace_01 = mapping_config.get("replace_01", {})
+        replace_02 = mapping_config.get("replace_02", {})
+        
+        # 步骤2: 执行 replace_01 替换
+        for original, replacement in replace_01.items():
+            # 检查是否需要替换（use_llm 中对应项为 True）
+            # 注意：配置文件中 use_llm 的键可能包含方括号，需要匹配
+            use_llm_key = original  # 直接使用原键，因为配置文件中就是带方括号的
+            if use_llm.get(use_llm_key, True):
+                sys_prompt = sys_prompt.replace(original, replacement)
+        
+        # 步骤3: 字符去重处理
+        def keep_first_tag(text, tag):
+            first_match = re.search(re.escape(tag), text)
+            if first_match:
+                return text[:first_match.end()] + re.sub(re.escape(tag), '', text[first_match.end():])
+            return text
+        
+        # 去重处理特定标签
+        duplicate_tags = [
+            '[all scenes]', '[season]', '[weather]', '[color]', 
+            '[all facial_actions]', '[composition]', '[all styles]', 
+            '[all artists]', '[all forms]'
+        ]
+        
+        for tag in duplicate_tags:
+            sys_prompt = keep_first_tag(sys_prompt, tag)
+        
+        # 步骤4: 执行 replace_02 替换
+        for original, replacement in replace_02.items():
+            # 检查是否需要替换（use_llm 中对应项为 True）
+            use_llm_key = original  # 直接使用原键
+            if use_llm.get(use_llm_key, True):
+                if isinstance(replacement, list):
+                    # 如果是列表，随机选择一个
+                    chosen_replacement = random.choice(replacement)
+                    sys_prompt = sys_prompt.replace(original, chosen_replacement)
+                else:
+                    # 如果是字符串，直接替换
+                    sys_prompt = sys_prompt.replace(original, replacement)
+        
+        # 步骤5: 执行最终的 generate_prompt 方法
+        sys_prompt = unified_generator.generate_geek_prompt(sys_prompt, custom_subject)
+        if remove_prompt_emphasis:
+            sys_prompt = PromptUtils.remove_prompt_emphasis(sys_prompt)
+        
+        return (prompt, sys_prompt)
 
 #---------------------------------------------------------------------------------------------------------------------#
 # System Prompter
@@ -2216,7 +2345,7 @@ class SysPromptBuilder:
             return ""
     
     def _build_common_parts(self, model_type: str, mode: str, detail: str, json_detail_format: bool, 
-                           ref_img_as_1st_shot: bool) -> list:
+                           input_as_1st_shot: bool) -> list:
         """Build common template parts for both LLM and VLM"""
         json_key = "json_detail" if json_detail_format else "no_json_detail"
         
@@ -2237,19 +2366,15 @@ class SysPromptBuilder:
                     ["add_json_detail", "single", json_key]
                 ]
         else:  # shot script
-            ref_parts = []
-            if ref_img_as_1st_shot:
-                ref_parts = [["ref_image_01"], ["ref_image_02"]]
-            
             if json_detail_format:
                 return [
                     [model_type, "script", "part_01"],
                     ["detail_preset", detail],
-                    *([ref_parts[0]] if ref_parts else []),
+                    (["first_shot_01"] if input_as_1st_shot else []),
                     [model_type, "script", "part_02"],
                     ["split_shots"],
                     [model_type, "script", "part_03"],
-                    *([ref_parts[1]] if ref_parts else []),
+                    (["first_shot_02"] if input_as_1st_shot else []),
                     ["detail_preset", detail],
                     [model_type, "script", "part_04"],
                     ["add_json_detail", "script", json_key],
@@ -2261,11 +2386,11 @@ class SysPromptBuilder:
                 return [
                     [model_type, "script", "part_01"],
                     ["detail_preset", detail],
-                    *([ref_parts[0]] if ref_parts else []),
+                    (["first_shot_01"] if input_as_1st_shot else []),
                     [model_type, "script", "part_02"],
                     ["split_shots"],
                     [model_type, "script", "part_03"],
-                    *([ref_parts[1]] if ref_parts else []),
+                    (["first_shot_02"] if input_as_1st_shot else []),
                     ["detail_preset", detail],
                     [model_type, "script", "part_04"],
                     ["add_json_detail", "script", json_key],
@@ -2284,8 +2409,8 @@ class SysPromptBuilder:
         template_parts = self._build_common_parts(model_type, mode, detail, json_detail_format, input_as_1st_shot)
         
         # Add final part for LLM
-        if model == "LLM":
-            template_parts.append(["llm", "part_final"])
+        if model == "Text":
+            template_parts.append(["text", "part_final"])
         
         # Build the prompt by concatenating all parts
         prompt_parts = []
@@ -2308,9 +2433,9 @@ class SystemPrompter_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": (["LLM", "VLM"], {
-                    "default": "LLM",
-                    "tooltip": "Select model type: LLM for text, VLM for vision-language."
+                "model": (["Text", "Image"], {
+                    "default": "Text",
+                    "tooltip": "Select model type. Text: generate prompt from user text; Image: generate prompt from ref image."
                 }),
                 "mode": (["single image", "shot script"], {
                     "default": "single image", 
@@ -2357,7 +2482,7 @@ class SystemPrompter_JK:
     def __init__(self):
         self.builder = SysPromptBuilder()
     
-    def build_prompt(self, model: str, mode: str, detail: str, json_detail_format: bool,
+    def build_prompt(self, model: str, mode: str, detail: str, json_detail_format: bool, 
                     shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> Tuple[str]:
         """Build and return the prompt string"""
         

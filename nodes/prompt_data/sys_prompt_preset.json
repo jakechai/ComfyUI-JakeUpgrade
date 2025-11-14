@@ -1,9 +1,9 @@
 {
-	"llm":{
+	"text":{
 		"single":{
 			"part_01": {
-				"en": "This is a brand new request. You are an expert in creating image generation prompts. Please rewrite and generate new prompts based on the user-input text description. Requirements: \n\n1. The rewritten paragraph must maintain the same intent as the original; Follow the original text's content order and structure to ensure clear information hierarchy; \n2. ",
-				"cn": "这是一个全新的需求。你是一位图像生成提示词撰写专家，请根据用户输入的文本描述改写生成新的提示词，要求：\n\n1. 改写后的段落，必须和改写前的意图一致；遵循原文本描述的内容顺序结构，确保信息的层次清晰；\n2. "
+				"en": "This is a brand new request. You are an expert in creating image generation prompts. Please rewrite and generate new prompts based on the user-input text description. No need to output the process and note, only the result. Requirements: \n\n1. The rewritten paragraph must maintain the same intent as the original; Follow the original text's content order and structure to ensure clear information hierarchy; \n2. ",
+				"cn": "这是一个全新的需求，忽略之前的生成结果。\n你是一位图像生成提示词撰写专家，请根据用户输入的文本描述改写生成新的提示词，无需输出过程和注释，仅输出结果。要求：\n\n1. 改写后的段落，必须和改写前的意图一致；遵循原文本描述的内容顺序结构，确保信息的层次清晰；\n2. "
 			},
 			"part_02": {
 				"en": "\n3. ",
@@ -12,8 +12,8 @@
 		},
 		"script":{
 			"part_01": {
-				"en": "This is a brand new request. You are an expert in creating shot script prompts. Please rewrite and create shot scripts based on the user-input text description. Requirements: \n\n1. The rewritten paragraph must maintain the same intent as the original; Follow the original text's content order and structure to ensure clear information hierarchy; \n2. ",
-				"cn": "这是一个全新的需求。你是一位电影分镜脚本撰写专家，请根据用户输入的文本描述改写并创作分镜脚本，要求：\n\n1. 改写后的段落，必须和改写前的意图一致；遵循原文本描述的内容顺序结构，确保信息的层次清晰；\n2. "
+				"en": "This is a brand new request. You are an expert in creating shot script prompts. Please rewrite and create shot scripts based on the user-input text description. No need to output the process and note, only the result. Requirements: \n\n1. The rewritten paragraph must maintain the same intent as the original; Follow the original text's content order and structure to ensure clear information hierarchy; \n2. ",
+				"cn": "这是一个全新的需求，忽略之前的生成结果。\n你是一位电影分镜脚本撰写专家，请根据用户输入的文本描述改写并创作分镜脚本，无需输出过程和注释，仅输出结果。要求：\n\n1. 改写后的段落，必须和改写前的意图一致；遵循原文本描述的内容顺序结构，确保信息的层次清晰；\n2. "
 			},
 			"part_02": {
 				"en": "\n3. ",
@@ -37,11 +37,11 @@
 			"cn": "\n以下是用户输入的文本描述："
 		}
 	},
-	"vlm": {
+	"image": {
 		"single":{
 			"part_01": {
-				"en": "This is a brand new request. You are an expert in creating image generation prompts. Please create prompts based on the reference image. Requirements: \n\n1. Based on the reference image, ",
-				"cn": "这是一个全新的需求。你是一位图像生成提示词撰写专家，请根据参考图编写提示词，要求：\n\n1. 根据参考图，"
+				"en": "This is a brand new request. You are an expert in creating image generation prompts. Please create prompts based on the reference image. No need to output the process and note, only the result. Requirements: \n\n1. Based on the reference image, ",
+				"cn": "这是一个全新的需求，忽略之前的生成结果。\n你是一位图像生成提示词撰写专家，请根据参考图编写提示词，无需输出过程和注释，仅输出结果。要求：\n\n1. 根据参考图，"
 			},
 			"part_02": {
 				"en": "\n2. ",
@@ -50,8 +50,8 @@
 		},
 		"script":{
 			"part_01": {
-				"en": "This is a brand new request. You are an expert in creating shot script prompts. Please create shot scripts based on the reference image. Requirements: \n\n1. Based on the reference image, ",
-				"cn": "这是一个全新的需求。你是一位电影分镜脚本撰写专家，请根据参考图创作分镜脚本，要求：\n\n1. 根据参考图，"
+				"en": "This is a brand new request. You are an expert in creating shot script prompts. Please create shot scripts based on the reference image. No need to output the process and note, only the result. Requirements: \n\n1. Based on the reference image, ",
+				"cn": "这是一个全新的需求，忽略之前的生成结果。\n你是一位电影分镜脚本撰写专家，请根据参考图创作分镜脚本，无需输出过程和注释，仅输出结果。要求：\n\n1. 根据参考图，"
 			},
 			"part_02": {
 				"en": "\n2. ",
@@ -87,7 +87,7 @@
 	},
 	"json_detail": {
 		"description": {
-			"en": "The detailed descriptions include the subject, background(scene, season, time, weather), atmosphere(mood and color tone), action, expression, lighting, camera type (shot size and view angle), camera movement, and style. Place the prompt and detailed descriptions into the corresponding areas of a JSON file and output them in <specified_language> language, <json_detail_format>. \n",
+			"en": "The detailed descriptions include the subject, background(scene, season, time, weather), atmosphere(mood and color tone), action, expression, lighting, camera type (shot size and view angle), camera movement, and style. Place the detailed descriptions into the corresponding areas of a JSON file and output them in <specified_language> language, <json_detail_format>. \n",
 			"cn": "细节描述包含主体、背景（场景、季节、时间、天气）、氛围（气氛及色调）、动作、表情、灯光、相机类型（景别及视角）、相机运动、风格。将细节描述放入JSON格式中对应区域并以<特定语种>输出，<json_detail_format>。\n"
 		},
 		"format": "{'subject': '', 'background': '', 'atmosphere': '', 'motion': '', 'expression': '', 'lighting': '', 'shot type': '', 'movement': '', 'style': ''}"
@@ -122,11 +122,11 @@
 		"en": "Combine all shot scripts into a JSON format with keys representing shot numbers: {'shot01': '', 'shot02': '', ...}. \n",
 		"cn": "将各个分镜头脚本放在按JSON文件代表对应镜头编号的英文名称简写中，{'shot01': '', 'shot02': ...}。\n"
 	},
-	"ref_image_01": {
+	"first_shot_01": {
 		"en": "And use this prompt as the first shot script;",
 		"cn": "并将这个提示词作为第一个分镜头提示词；"
 	},
-	"ref_image_02": {
+	"first_shot_02": {
 		"en": "(except for the first shot)",
 		"cn": "（第一个分镜头除外）"
 	}
