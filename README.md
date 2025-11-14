@@ -8,6 +8,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - You might need ComfyUI v0.3.64 for JakeUpgrade v2.1.5up, for the `comfy_extras.nodes_compositing.SplitImageWithAlpha.split_image_with_alpha()` renaming issue.
 > - [portable img2mesh ComfyUI v0.3.68 with pytorch 2.7.0+cu128](https://drive.google.com/file/d/1WTZ1Mx79VhyYmJa7un8h4lyuKWrH8yDX) includes: 3D-Pack | Hy3D 2.0 | Hy3D 2.1 | MVAdapter | IG2MV
 > - [portable img2mesh ComfyUI v0.3.27 with pytorch 2.5.1+cu124](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q) includes: 3D-Pack | Hy3D 2.0 | MVAdapter | IG2MV
+> - If you found some JK nodes missing in your workflow or in the node library, they might be set to deprecated, [here's how to enable them](https://github.com/jakechai/ComfyUI-JakeUpgrade/issues/225#issuecomment-3527504565).
 
 ## Video Introduction
 - (new)imgen QWen Eidt Model Sheet workflow: [Youtube](https://youtu.be/SGEo8vlppG0) | [Bilibili](https://www.bilibili.com/video/BV1J3yUBLEPH/)
@@ -302,27 +303,23 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							4. Add more choices for to Random Prompter data.
 	- 2025-10-28 - v2.2.2	1. Random Prompter bug fixed.
 							2. Fix bad connections in portrait master + random prompter workflow.
+	- 2025-10-30 - v2.2.3	1. Fix Make Image Grid `from torchvision import transforms as TF` -> `import torchvision.transforms.functional as TF` issue.
+							2. Upgrade Split Image Grid node:  
+							① Reasonable default values: Ensure at least 1 row/column to avoid division by zero errors.  
+							② Better error messages: Provide specific resolution suggestions.  
+							③ Boundary checks: Ensure cropping does not exceed the image area.  
+							④ Empty list protection: Ensure a valid image tensor is always returned.  
+							⑤ Exception handling: Gracefully handle errors in crop mode.  
+							3. Separated the `install.py` file for ComfyUI and the `install_manual.py` file for the `install.bat` file.
+							4. Zip IPAdapterPlus.py to IPAdapterPlus.zip to avoid node-conflict attention in ComfyUI Manager.
+							5. Random Prompter supports both string dictionaries, lists or txt format for YAML files.
+							6. Add more choices to Random Prompter.
+	- 2025-11-07 - v2.3.0	1. Add Random Prompter Geek Node, more convenient random control.
+							2. Add ABC and non-ABC version of Random Prompter Nodes switch to config.ini.
+							3. Add Random Prompter config to config.ini.
+							4. Add more choices for Random Prompter Nodes with more refined and accurate categories.
 
 </details>
-
-- 2025-10-30 - v2.2.3
-1. Fix Make Image Grid `from torchvision import transforms as TF` -> `import torchvision.transforms.functional as TF` issue.
-2. Upgrade Split Image Grid node:  
-① Reasonable default values: Ensure at least 1 row/column to avoid division by zero errors.  
-② Better error messages: Provide specific resolution suggestions.  
-③ Boundary checks: Ensure cropping does not exceed the image area.  
-④ Empty list protection: Ensure a valid image tensor is always returned.  
-⑤ Exception handling: Gracefully handle errors in crop mode.  
-3. Separated the `install.py` file for ComfyUI and the `install_manual.py` file for the `install.bat` file.
-4. Zip IPAdapterPlus.py to IPAdapterPlus.zip to avoid node-conflict attention in ComfyUI Manager.
-5. Random Prompter supports both string dictionaries, lists or txt format for YAML files.
-6. Add more choices to Random Prompter.
-
-- 2025-11-07 - v2.3.0
-1. Add Random Prompter Geek Node, more convenient random control.
-2. Add ABC and non-ABC version of Random Prompter Nodes switch to config.ini.
-3. Add Random Prompter config to  config.ini.
-4. Add more choices for Random Prompter Nodes with more refined and accurate categories.
 
 - 2025-11-07 - v2.3.1
 1. Add Nodes description.
@@ -345,6 +342,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 2. Update Prompt Combiner node.
 3. Add portable img2mesh ComfyUI `v0.3.68` with `pytorch 2.7.0+cu128`.
 4. Add shot size and view angle choices for Random Prompter, useful when using QWen Edit 2509 Multiple Angles Lora.
+
+- 2025-11-14 - v2.3.6
+1. Random Prompter Geek supports custom selection of database random processing and reserved LLM processing, retaining the advantage of database random processing in certain aspects of semantic accuracy, and making the most of the more possibilities that LLM can provide in other aspects.
+2. Fix some typo issues.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 

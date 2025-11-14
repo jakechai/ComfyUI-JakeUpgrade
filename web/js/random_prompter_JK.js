@@ -18,7 +18,7 @@ const CONFIG = {
         "style": "style"
     },
     DEFAULT_EXP_STR: "quite",
-    DEFAULT_DESCRIPTION_TEMPLATE: "A masterpiece of work with insane detail and best quality, featuring a masterfully balanced composition and harmonious colors, presenting a groundbreaking concept",
+    DEFAULT_DESCRIPTION_TEMPLATE: "a masterpiece of work with insane detail and best quality, featuring a masterfully balanced composition and harmonious colors, presenting a groundbreaking concept",
     
     // Geek 版本配置
     GEEK_SELECT_OPTION: "select",
@@ -310,7 +310,7 @@ class RandomPrompterExtension {
         const colorText = color || "harmonious colors";
         const creativityText = creativity || "groundbreaking concept";
         
-        return `A ${sensoryText} of work with ${detailText} and ${qualityText}, featuring a ${compositionText} and ${colorText}, presenting a ${creativityText}`;
+        return `a ${sensoryText} of work with ${detailText} and ${qualityText}, featuring a ${compositionText} and ${colorText}, presenting a ${creativityText}`;
     }
 
     parseDescriptionTemplate(node, descriptionText) {
