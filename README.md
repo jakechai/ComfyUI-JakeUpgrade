@@ -344,8 +344,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 4. Add shot size and view angle choices for Random Prompter, useful when using QWen Edit 2509 Multiple Angles Lora.
 
 - 2025-11-14 - v2.3.6
-1. Random Prompter Geek supports custom selection of database random processing and reserved LLM processing, retaining the advantage of database random processing in certain aspects of semantic accuracy, and making the most of the more possibilities that LLM can provide in other aspects.
+1. Random Prompter Geek supports the custom selection of database random processing and reserved LLM processing, retaining the advantages of database random processing in certain aspects of semantic accuracy while leveraging the possibilities that LLM can provide in other elements.
 2. Fix some typo issues.
+
+- 2025-11-15 - v2.3.7
+1. Add remove_prompt_emphasis function to Prompt Combiner.
+2. Update Portrait Master + Random Prompter imgen workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -428,6 +432,10 @@ Shot Script Combiner JK🐉: Combine shot scripts into string list output.
 Shot Script Extractor JK🐉: Extract specific element from shot script or string list based on index.  
 ![image](imgs/nodes/Prompt/Prompt%20Combine%20JK.png)  
 Prompt Combine JK🐉: Merge the two strings into one and clean up the result.  
+![image](imgs/nodes/Prompt/promptworkflow.png)  
+Prompt node exsample 01: In conjunction with QWen VL, input different system prompts from the System Prompter node to generate a single image or shot script list, supporting JSON format output. The workflow is embedded in the image.  
+![image](imgs/nodes/Prompt/sysprompterworkflow.png)  
+Prompt node exsample 02: Random Prompter Geek supports the custom selection of database random processing and reserved LLM processing, retaining the advantages of database random processing in certain aspects of semantic accuracy while leveraging the possibilities that LLM can provide in other elements. The workflow is embedded in the image.  
 - ControlNet Nodes  
 ![image](imgs/nodes/ControlNet/ControlNet%20Loader%20JK.png)  
 ControlNet Loader JK🐉: Load ControlNet models with configurable union types.  
