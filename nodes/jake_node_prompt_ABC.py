@@ -2377,6 +2377,7 @@ class SysPromptBuilder:
                     (["first_shot_02"] if input_as_1st_shot else []),
                     ["detail_preset", detail],
                     [model_type, "script", "part_04"],
+                    (["first_shot_03"] if input_as_1st_shot else []),
                     ["add_json_detail", "script", json_key],
                     ["json_detail", "description"],
                     [model_type, "script", "part_05"],
@@ -2393,6 +2394,7 @@ class SysPromptBuilder:
                     (["first_shot_02"] if input_as_1st_shot else []),
                     ["detail_preset", detail],
                     [model_type, "script", "part_04"],
+                    (["first_shot_03"] if input_as_1st_shot else []),
                     ["add_json_detail", "script", json_key],
                     [model_type, "script", "part_05"],
                     ["combine_shots"]
@@ -3009,6 +3011,10 @@ class PromptCombine_JK:
                     "default": True,
                     "tooltip": "Preserve original format of prompts (including line breaks)"
                 }),
+                "remove_prompt_emphasis": ("BOOLEAN", {
+                    "default": True,
+                    "tooltip": "Remove emphasis symbols and weight markers from custom_subject (e.g., (word:1.5) -> word, [A:B:0.5] -> A-B)"
+                }),
             },
         }
     
@@ -3018,12 +3024,15 @@ class PromptCombine_JK:
     CATEGORY = icons.get("JK/Prompt")
     DESCRIPTION = "Merge the two strings into one and clean up the result."
     
-    def combine(self, prompt_1=None, prompt_2=None, preserve_format=True):
+    def combine(self, prompt_1=None, prompt_2=None, preserve_format=True, remove_prompt_emphasis=True):
         # 根据 preserve_format 参数选择处理方式
         if preserve_format:
             # 保持原始格式，使用换行符作为分隔符
             processed_1 = ShotScriptUtils.preserve_format(prompt_1) if prompt_1 else ""
             processed_2 = ShotScriptUtils.preserve_format(prompt_2) if prompt_2 else ""
+            if remove_prompt_emphasis:
+                processed_1 = PromptUtils.remove_prompt_emphasis(processed_1)
+                processed_2 = PromptUtils.remove_prompt_emphasis(processed_2)
             
             # 使用换行符连接两个字符串
             elements = []
@@ -3037,6 +3046,9 @@ class PromptCombine_JK:
             # 清理两个输入字符串
             processed_1 = DataCleaner.clean_prompt_string(prompt_1) if prompt_1 else ""
             processed_2 = DataCleaner.clean_prompt_string(prompt_2) if prompt_2 else ""
+            if remove_prompt_emphasis:
+                processed_1 = PromptUtils.remove_prompt_emphasis(processed_1)
+                processed_2 = PromptUtils.remove_prompt_emphasis(processed_2)
             
             # 检查 processed_1 的结尾是否有标点符号
             ends_with_punctuation = False
