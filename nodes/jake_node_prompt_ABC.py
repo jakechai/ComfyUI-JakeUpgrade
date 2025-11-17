@@ -2683,6 +2683,33 @@ class ShotScriptUtils:
         return "", ""
     
     @staticmethod
+    def extract_from_dict_by_key(data: dict, key: str) -> Tuple[str, str]:
+        """从字典中根据键名提取值"""
+        # 精确匹配
+        if key in data:
+            return ShotScriptUtils.preserve_format(data[key]), key
+        
+        # 如果没有精确匹配，尝试大小写不敏感匹配
+        key_lower = key.lower()
+        for dict_key, value in data.items():
+            if str(dict_key).lower() == key_lower:
+                return ShotScriptUtils.preserve_format(value), dict_key
+        
+        # 如果没有找到，尝试将key转换为数字作为回退
+        try:
+            index = int(key)
+            return ShotScriptUtils.extract_from_dict(data, index)
+        except (ValueError, TypeError):
+            pass
+        
+        return "", ""
+    
+    @staticmethod
+    def get_available_keys(data: dict) -> List[str]:
+        """获取字典中所有可用的键"""
+        return [str(key) for key in data.keys()]
+    
+    @staticmethod
     def is_special_json_detail_format(data: dict) -> bool:
         """检查是否是特殊JSON格式（包含subject, background等字段）"""
         special_fields = [
@@ -2860,143 +2887,180 @@ class ShotScriptExtractor_JK:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "shot_scripts": ("STRING", {
+                "string_inputs": ("STRING", {
                     "default": "",
                     "multiline": True,
                     "tooltip": "Shot script JSON or string list to extract from"
                 }),
-                "shot_index": ("INT", {
-                    "default": 1,
-                    "min": -999999,
-                    "max": 999999,
-                    "step": 1,
-                    "tooltip": "Index of the element to extract (starting from 1, negative values count from the end)"
+                "key_or_index": ("STRING", {
+                    "default": "1",
+                    "tooltip": "Key name for dict_string, index for other types (supports negative indexing)"
                 }),
-                "input_type": (["shot_script", "string_list"], {
-                    "default": "shot_script",
-                    "tooltip": "Input type: shot script or string list"
+                "input_type": (["string_list", "dict_string", "array_string", "multilines"], {
+                    "default": "string_list",
+                    "tooltip": "Input type: string_list, dict_string, array_string, or multilines"
                 }),
             }
         }
     
     # 两个输入都是列表
     INPUT_IS_LIST = True
-    
     RETURN_TYPES = ("STRING", "INT", "STRING")
-    RETURN_NAMES = ("shot_script", "shot_counts", "status")
+    RETURN_NAMES = ("element", "element_counts", "status")
     FUNCTION = "extract_element"
     CATEGORY = icons.get("JK/Prompt")
-    DESCRIPTION = "Extract specific element from shot script or string list based on index."
+    DESCRIPTION = "Extract specific element from string list, dictionary stirng, array string or multiline string based on index or key value."
     
-    def extract_element(self, shot_scripts, shot_index, input_type):
-        """Extract specific element from shot script or string list based on index"""
+    def extract_element(self, string_inputs, key_or_index, input_type):
+        """Extract specific element from shot script or string list based on key or index"""
         
-        if not shot_scripts:
+        if not string_inputs:
             return ("", 0, "Empty input")
         
-        # 获取索引值
-        i = shot_index[0]
+        # 获取key_or_index值
+        key_or_index_str = key_or_index[0] if key_or_index else "1"
         
         # 获取输入类型
-        input_type = input_type[0] if input_type else "shot_script"
+        input_type = input_type[0] if input_type else "string_list"
         
-        if input_type == "shot_script":
-            # 使用原有的镜头脚本提取逻辑
-            return self._extract_from_shot_script(shot_scripts[0], i)
+        if input_type == "dict_string":
+            # 使用字典键提取逻辑
+            return self._extract_from_dict_string(string_inputs[0], key_or_index_str)
+        elif input_type == "array_string":
+            # 使用数组字符串提取逻辑
+            return self._extract_from_array_string(string_inputs[0], key_or_index_str)
+        elif input_type == "multilines":
+            # 使用多行文本提取逻辑
+            return self._extract_from_multilines(string_inputs[0], key_or_index_str)
         else:
             # 使用字符串列表提取逻辑
-            return self._extract_from_string_list(shot_scripts, i)
+            return self._extract_from_string_list(string_inputs, key_or_index_str)
     
-    def _extract_from_shot_script(self, shot_script: str, shot_index: int) -> Tuple[str, int, str]:
-        """从镜头脚本中提取元素"""
-        if not shot_script.strip():
-            return ("", 0, "Empty script")
+    def _extract_from_dict_string(self, dict_string: str, key: str) -> Tuple[str, int, str]:
+        """从字典字符串中根据键名提取元素"""
+        if not dict_string.strip():
+            return ("", 0, "Empty dict string")
         
         try:
-            # 检测输入格式
-            input_format = ShotScriptUtils.detect_format(shot_script)
-            shot_counts = 0
-            result_script = ""  # 使用不同的变量名避免冲突
-            status = ""
+            # 解析JSON为字典
+            data = json.loads(dict_string)
             
-            if input_format == "dict":
-                # JSON字典格式
-                script_data = json.loads(shot_script)
-                
-                # 检查是否是特殊JSON格式（没有shot键）
-                if ShotScriptUtils.is_special_json_detail_format(script_data):
-                    # 特殊格式：只有一个元素
-                    shot_counts = 1
-                    if shot_index == 1:
-                        result_script = ShotScriptUtils.preserve_format(script_data)
-                        status = "special_format"
-                    else:
-                        result_script = ""
-                        status = f"Index out of range (1-{shot_counts})"
-                else:
-                    # 普通字典格式
-                    shot_counts = ShotScriptUtils.count_shots_in_dict(script_data)
-                    result_script, key = ShotScriptUtils.extract_from_dict(script_data, shot_index)
-                    status = key if result_script else f"Index out of range (1-{shot_counts})"
-                
-            elif input_format == "list":
-                # JSON列表格式
-                script_data = json.loads(shot_script)
-                shot_counts = len(script_data)
-                
-                # 处理负索引
-                if shot_index < 0:
-                    shot_index = shot_counts + shot_index + 1
-                
-                if 1 <= shot_index <= shot_counts:
-                    result_script = ShotScriptUtils.preserve_format(script_data[shot_index-1])
-                    status = f"item{shot_index}"
-                else:
-                    result_script = ""
-                    status = f"Index out of range (1-{shot_counts})"
-                    
+            if not isinstance(data, dict):
+                return ("", 0, "Input is not a dictionary")
+            
+            # 获取所有可用键
+            available_keys = ShotScriptUtils.get_available_keys(data)
+            shot_counts = len(available_keys)
+            
+            # 根据键名提取值
+            result_script, matched_key = ShotScriptUtils.extract_from_dict_by_key(data, key)
+            
+            if result_script:
+                status = f"Key '{matched_key}' found"
             else:
-                # 字符串格式
-                lines = ShotScriptUtils.split_string_into_lines(shot_script)
-                shot_counts = len(lines)
-                
-                # 处理负索引
-                if shot_index < 0:
-                    shot_index = shot_counts + shot_index + 1
-                
-                if 1 <= shot_index <= shot_counts:
-                    result_script = lines[shot_index-1]
-                    status = f"line{shot_index}"
-                else:
-                    result_script = ""
-                    status = f"Index out of range (1-{shot_counts})"
+                status = f"Key '{key}' not found. Available keys: {', '.join(available_keys)}"
             
             return (result_script, shot_counts, status)
             
+        except json.JSONDecodeError as e:
+            return ("", 0, f"Invalid JSON: {str(e)}")
         except Exception as e:
-            print(f"Error extracting from shot script: {e}")
             return ("", 0, f"Error: {str(e)}")
     
-    def _extract_from_string_list(self, string_list: List[str], shot_index: int) -> Tuple[str, int, str]:
+    def _extract_from_array_string(self, array_string: str, index_str: str) -> Tuple[str, int, str]:
+        """从数组字符串中提取元素"""
+        if not array_string.strip():
+            return ("", 0, "Empty array string")
+        
+        try:
+            # 解析JSON数组
+            data = json.loads(array_string)
+            
+            if not isinstance(data, list):
+                return ("", 0, "Input is not an array")
+            
+            shot_counts = len(data)
+            
+            # 将索引字符串转换为整数
+            try:
+                index = int(index_str)
+            except ValueError:
+                return ("", shot_counts, f"Invalid index: {index_str}")
+            
+            # 处理负索引
+            if index < 0:
+                index = shot_counts + index + 1
+            
+            # 检查索引是否有效
+            if 1 <= index <= shot_counts:
+                result_script = ShotScriptUtils.preserve_format(data[index-1])
+                status = f"Element {index} of {shot_counts}"
+            else:
+                result_script = ""
+                status = f"Index out of range (1-{shot_counts})"
+            
+            return (result_script, shot_counts, status)
+            
+        except json.JSONDecodeError as e:
+            return ("", 0, f"Invalid JSON: {str(e)}")
+        except Exception as e:
+            return ("", 0, f"Error: {str(e)}")
+    
+    def _extract_from_multilines(self, text: str, index_str: str) -> Tuple[str, int, str]:
+        """从多行文本中提取元素"""
+        if not text.strip():
+            return ("", 0, "Empty text")
+        
+        # 分割文本为行
+        lines = ShotScriptUtils.split_string_into_lines(text)
+        shot_counts = len(lines)
+        
+        # 将索引字符串转换为整数
+        try:
+            index = int(index_str)
+        except ValueError:
+            return ("", shot_counts, f"Invalid index: {index_str}")
+        
+        # 处理负索引
+        if index < 0:
+            index = shot_counts + index + 1
+        
+        # 检查索引是否有效
+        if 1 <= index <= shot_counts:
+            result_script = lines[index-1]
+            status = f"Line {index} of {shot_counts}"
+        else:
+            result_script = ""
+            status = f"Index out of range (1-{shot_counts})"
+        
+        return (result_script, shot_counts, status)
+    
+    def _extract_from_string_list(self, string_list: List[str], index_str: str) -> Tuple[str, int, str]:
         """从字符串列表中提取元素"""
         if not string_list:
             return ("", 0, "Empty list")
         
         shot_counts = len(string_list)
         
+        # 将索引字符串转换为整数
+        try:
+            index = int(index_str)
+        except ValueError:
+            return ("", shot_counts, f"Invalid index: {index_str}")
+        
         # 处理负索引（从末尾开始计数）
-        if shot_index < 0:
-            shot_index = shot_counts + shot_index + 1
+        if index < 0:
+            index = shot_counts + index + 1
         
         # 检查索引是否有效
-        if shot_index < 1 or shot_index > shot_counts:
+        if index < 1 or index > shot_counts:
             # 索引超出范围，返回最后一个元素
             result_script = string_list[-1]
             status = f"Index out of range, returning last element ({shot_counts} of {shot_counts})"
         else:
             # 提取元素
-            result_script = string_list[shot_index - 1]
-            status = f"Element {shot_index} of {shot_counts}"
+            result_script = string_list[index - 1]
+            status = f"Element {index} of {shot_counts}"
         
         return (result_script, shot_counts, status)
 

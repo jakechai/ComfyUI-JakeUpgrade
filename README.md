@@ -318,24 +318,16 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							2. Add ABC and non-ABC version of Random Prompter Nodes switch to config.ini.
 							3. Add Random Prompter config to config.ini.
 							4. Add more choices for Random Prompter Nodes with more refined and accurate categories.
+	- 2025-11-07 - v2.3.1	1. Add Nodes description.
+	- 2025-11-08 - v2.3.2	1. Move SDXL Target res node back to misc from deprecated.
+							2. Add more choice for Random Prompter.
+	- 2025-11-10 - v2.3.3	1. Fix path separator mismatch issue of Random Prompter in Linux.
+							2. Add more choices for Random Prompter.
+	- 2025-11-10 - v2.3.4	1. Add System Prompter node for generating single image | shot script system prompt for LLM/VLM model. Supports JSON format and multi-language output request. QWen3-VL is recommended.
+							2. Add Shot Script Extractor and Combiner nodes.
+							3. Add QWen3-VL to auto-prompt workflows along with System Prompter node.
 
 </details>
-
-- 2025-11-07 - v2.3.1
-1. Add Nodes description.
-
-- 2025-11-08 - v2.3.2
-1. Move SDXL Target res node back to misc from deprecated.
-2. Add more choice for Random Prompter.
-
-- 2025-11-10 - v2.3.3
-1. Fix path separator mismatch issue of Random Prompter in Linux.
-2. Add more choices for Random Prompter.
-
-- 2025-11-10 - v2.3.4
-1. Add System Prompter node for generating single image | shot script system prompt for LLM/VLM model. Supports JSON format and multi-language output request. QWen3-VL is recommended.
-2. Add Shot Script Extractor and Combiner nodes.
-3. Add QWen3-VL to auto-prompt workflows along with System Prompter node.
 
 - 2025-11-12 - v2.3.5
 1. Update Shot Script Extractor and Combiner nodes.
@@ -348,8 +340,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 2. Fix some typo issues.
 
 - 2025-11-15 - v2.3.7
-1. Add remove_prompt_emphasis function to Prompt Combiner.
+1. Add remove_prompt_emphasis function to Random Prompter and Prompt Combiner.
 2. Update Portrait Master + Random Prompter imgen workflow.
+
+- 2025-11-17 - v2.3.8
+1. Update Shot Script Extractor node, supports extracting specific element from string list, dictionary stirng, array string or multiline string based on index or key value.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -429,7 +424,7 @@ System Prompter JK🐉: Build single image | shot script system prompt for LLM/V
 ![image](imgs/nodes/Prompt/Shot%20Script%20Combiner%20JK.png)  
 Shot Script Combiner JK🐉: Combine shot scripts into string list output.  
 ![image](imgs/nodes/Prompt/Shot%20Script%20Extractor%20JK.png)  
-Shot Script Extractor JK🐉: Extract specific element from shot script or string list based on index.  
+Shot Script Extractor JK🐉: Extract specific element from string list, dictionary stirng, array string or multiline string based on index or key value.  
 ![image](imgs/nodes/Prompt/Prompt%20Combine%20JK.png)  
 Prompt Combine JK🐉: Merge the two strings into one and clean up the result.  
 ![image](imgs/nodes/Prompt/promptworkflow.png)  
@@ -797,6 +792,7 @@ TriMesh Input Switch JK🐉
 | CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) | main model | t2v i2v | √ |
 | Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | i2v | √ |
 | Motion Stream [2.1](https://github.com/alex4727/motionstream) | not yet released | i2v | √ |
+| Time-to-Move [2.2](https://time-to-move.github.io/) | main model | i2v | √ |
 
 ## JakeUpgrade Workflow
 
