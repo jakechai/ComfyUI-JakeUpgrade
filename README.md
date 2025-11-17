@@ -346,6 +346,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2025-11-17 - v2.3.8
 1. Update Shot Script Extractor node, supports extracting specific element from string list, dictionary stirng, array string or multiline string based on index or key value.
 
+- 2025-11-17 - v2.3.9
+1. Update prompt nodes codes. Separate into jake_node_prompt_shared | jake_node_prompt | jake_node_prompt_random | jake_node_prompt_random_ABC.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
