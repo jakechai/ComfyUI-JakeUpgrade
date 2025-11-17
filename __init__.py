@@ -159,12 +159,14 @@ EXCLUSION_MARK = 900
 # 获取配置
 LOAD_DEPRECATED_NODES, ENABLED_MODULES, RANDOM_PROMPTER_ABC = load_config()
 
+BASE_PROMPT_FILE = "jake_node_prompt"
+
 # 根据配置选择提示词节点文件
 if RANDOM_PROMPTER_ABC:
-    PROMPT_NODE_FILE = "jake_node_prompt_ABC"
+    PROMPT_NODE_FILE = "jake_node_prompt_random_ABC"
     print("🔶 Using ABC Strategy version of RandomPrompter")
 else:
-    PROMPT_NODE_FILE = "jake_node_prompt"
+    PROMPT_NODE_FILE = "jake_node_prompt_random"
     print("🔶 Using standard version of RandomPrompter")
 
 # Main node mappings
@@ -200,6 +202,7 @@ def load_modules():
         # print("🔶 Loading all main modules.")
         for module_key, (module_file, module_name) in MODULE_MAPPING.items():
             import_commands.append(f"from .nodes.{module_file} import *")
+            import_commands.append(f"from .nodes.{BASE_PROMPT_FILE} import *")
             loaded_modules.append(module_key)
     else:
         # 加载指定的模块
@@ -207,6 +210,11 @@ def load_modules():
         for module_key in ENABLED_MODULES:
             if module_key in MODULE_MAPPING:
                 module_file, module_name = MODULE_MAPPING[module_key]
+                
+                # 特殊处理prompt模块：先加载基础文件（不记录到loaded_modules）
+                if module_key == 'prompt':
+                    import_commands.append(f"from .nodes.{BASE_PROMPT_FILE} import *")
+                
                 # print(f"🔶 Attempting to import: {module_file}") 
                 import_commands.append(f"from .nodes.{module_file} import *")
                 loaded_modules.append(module_key)
