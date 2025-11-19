@@ -349,6 +349,16 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2025-11-17 - v2.3.9
 1. Update prompt nodes codes. Separate into jake_node_prompt_shared | jake_node_prompt | jake_node_prompt_random | jake_node_prompt_random_ABC.
 
+- 2025-11-19 - v2.3.10
+1. Add Wan 2.1 lynx ref2v sub-workflow.
+2. Add Wan 2.1 MoCha v2v subject replacement sub-workflow.
+3. Add Wan 2.1 FlashVSR video upscale sub-workflow.
+4. Add Wan 2.1 UniLumos v2v relight sub-workflow.
+5. Add Wan 2.1 LongCat long video gen sub-workflow.
+6. Add Wan 2.2 Time-to-Move ff2v sub-workflow.
+7. Add Wan 2.2 5B Ovi txt2v and ff2v sub-workflow.
+8. Add Wan 2.2 5B Lucy Edit v2v sub-workflow.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -714,7 +724,7 @@ TriMesh Input Switch JK🐉
 | [MagCache](https://github.com/Zehong-Ma/MagCache) | speed up | ~ | - |
 | [TeaCache](https://github.com/ali-vilab/TeaCache) | speed up | ~ | √ |
 | [Enhanced A Video](https://oahzxl.github.io/Enhance_A_Video/) | enhancement | ~ | √ |
-| [SLG](https://www.reddit.com/r/StableDiffusion/comments/1jac3wm/dramatically_enhance_the_quality_of_wan_21_using/) | enhancement | ~ | - |
+| [SLG](https://www.reddit.com/r/StableDiffusion/comments/1jac3wm/dramatically_enhance_the_quality_of_wan_21_using/) | enhancement | ~ | √ |
 | [CFG Zero Star](https://github.com/WeichenFan/CFG-Zero-star) | enhancement | ~ | √ |
 | [FreSca](https://github.com/WikiChao/FreSca) | enhancement | ~ | - |
 | [FreeInit](https://tianxingwu.github.io/pages/FreeInit/) | enhancement | ~ | √ |
@@ -730,7 +740,7 @@ TriMesh Input Switch JK🐉
 | *Main Model* | | | |
 | WAN Video [2.2](https://github.com/Wan-Video/Wan2.2) [2.1](https://github.com/Wan-Video/Wan2.1) | main model | t2v ff2v flf2v v2v s2v | √ |
 | WAN Animate [2.2](https://github.com/Wan-Video/Wan2.2) | main model | ff2v ref2v v2v | √ |
-| WAN Video GGUF [2.2](https://huggingface.co/collections/QuantStack/wan22-ggufs-6887ec891bdea453a35b95f3) [2.1](https://huggingface.co/city96) | main model | t2v ff2v flf2v v2v | - |
+| WAN Video GGUF [2.2](https://huggingface.co/collections/QuantStack/wan22-ggufs-6887ec891bdea453a35b95f3) [2.1](https://huggingface.co/city96) | main model | t2v ff2v flf2v v2v | √ |
 | VACE [2.2 Test](https://huggingface.co/lym00/Wan2.2_T2V_A14B_VACE-test) [2.2 Fake](https://huggingface.co/CCP6/FakeVace2.2) [2.1](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | main & module model | t2v ff2v flf2v ref2v v2v ref+v2v | √ |
 | VACE GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_14B_VACE-GGUF) [2.1](https://github.com/ali-vilab/VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | VACE LightX2V [2.1](https://huggingface.co/lym00/Wan2.1_T2V_14B_LightX2V_StepCfgDistill_VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
@@ -739,6 +749,16 @@ TriMesh Input Switch JK🐉
 | VACE FusionX GGUF [2.1](https://huggingface.co/collections/QuantStack/wan21-fusionx-ggufs-68498e41b3597737512c0636) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | VACE Phantom [2.1](https://huggingface.co/Inner-Reflections/Wan2.1_VACE_Phantom) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | VACE SF (GGUF) [2.1](https://huggingface.co/lym00) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
+| FUN Control [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | t2v ff2v | √ |
+| FUN InP [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | ff2v flf2v | √ |
+| FUN InP Reward LoRA [2.2](https://huggingface.co/alibaba-pai/Wan2.2-Fun-Reward-LoRAs) [2.1](https://huggingface.co/alibaba-pai/Wan2.1-Fun-Reward-LoRAs) | lora | t2v ff2v flf2v v2v | √ |
+| FUN Camera [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model | ff2v | √ |
+| FUN VACE [2.2](https://huggingface.co/alibaba-pai/Wan2.2-VACE-Fun-A14B) | main & module model | t2v ff2v ref2v | - |
+| *fine tune Model* | | | |
+| Skyreel V2 [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main & lora | t2v ff2v v2v | - |
+| MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v | - |
+| AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v | - |
+| Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | lora | t2v ff2v v2v uni_pc simple steps 5 cfg 5.0 | - |
 | *Low-Step model* | | | |
 | lightX2V [2.2](https://huggingface.co/lightx2v/Wan2.2-Lightning) [2.1](https://huggingface.co/lightx2v) | main model & lora | t2v ff2v v2v lcm simple steps 4 cfg 1.0 | √ |
 | FusionX [2.1](https://huggingface.co/vrgamedevgirl84/Wan14BT2VFusioniX) | main model & lora | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0| √ |
@@ -748,54 +768,56 @@ TriMesh Input Switch JK🐉
 | Fast Wan [2.2](https://huggingface.co/FastVideo) [2.1](https://huggingface.co/FastVideo) | main model & lora | t2v v2v uni_pc simple steps 8 cfg 1.0 | - |
 | Turbo [2.2 TI2V 5B](https://github.com/quanhaol/Wan2.2-TI2V-5B-Turbo) | main model & lora | t2v v2v uni_pc simple steps 4 cfg 1.0 | - |
 | rCM [2.1](https://github.com/NVlabs/rcm) | main model & lora | t2v step 4 | - |
-| Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | lora | t2v ff2v flf2v v2v uni_pc simple steps 5 cfg 5.0 | - |
-| *Functional Model* | | | |
-| FUN Control [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | t2v ff2v | √ |
-| FUN InP [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | ff2v flf2v | √ |
-| FUN InP Reward LoRA [2.2](https://huggingface.co/alibaba-pai/Wan2.2-Fun-Reward-LoRAs) [2.1](https://huggingface.co/alibaba-pai/Wan2.1-Fun-Reward-LoRAs) | lora | t2v ff2v flf2v v2v | √ |
-| FUN Camera [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model | ff2v | √ |
-| FUN VACE [2.2](https://huggingface.co/alibaba-pai/Wan2.2-VACE-Fun-A14B) | main & module model | t2v ff2v ref2v | - |
-| HuMo [2.1](https://phantom-video.github.io/HuMo) | main model | t2v ff2v ref2v v2v s2v | - |
-| Phantom [2.1](https://github.com/Phantom-video/Phantom) | main model & lora | ref2v ref+v2v | - |
+| *ref2v Model* | | | |
+| HuMo [2.1](https://phantom-video.github.io/HuMo) | main model | t2v ff2v ref2v v2v s2v | √ |
+| Phantom [2.1](https://github.com/Phantom-video/Phantom) | main model & lora | ref2v ref+v2v | √ |
 | Stand-In [2.1](https://www.stand-in.tech/) | lora | ref2v ref+v2v | - |
 | MAGREF [2.1](https://github.com/MAGREF-Video/MAGREF) | main model | ref2v | - |
 | Skyreel A2 [2.1](https://github.com/SkyworkAI/SkyReels-A2) | main model | ref2v | - |
-| Skyreel V2 [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main & lora | t2v ff2v v2v | - |
+| lynx [2.1](https://github.com/bytedance/lynx) | module model | ref2v | √ |
+| Kaleido [2.1](https://arxiv.org/html/2510.18573v1) | main model | ref2v | x |
+| BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | ? |
+| *long video Model* | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
-| MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v | - |
-| CineScale [2.1](https://github.com/Eyeline-Labs/CineScale) | lora | t2v ff2v |  ? |
-| lynx [2.1](https://github.com/bytedance/lynx) | lora | t2v |  ? |
+| LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2vv2v | - |
+| *multi-shot Model* | | | |
 | Echo Shot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v | - |
-| ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v | √ |
-| AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v | ? |
-| ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v | × |
+| HoloCine [2.2](https://holo-cine.github.io/) | main model | t2v | ? |
+| *relight Model* | | | |
 | Lumen [2.1](https://lumen-relight.github.io/) | main model & lora | v2v | × |
-| MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | main model | v2v | √ |
+| UniLumos [2.1](https://github.com/alibaba-damo-academy/Lumos-Custom) | main model | v2v | - |
+| *talking Model* | | | |
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v | - |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v | √ |
 | Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v | √ |
-| Ovi [2.2](https://github.com/character-ai/Ovi) | main model | t2av i2av | ? |
-| Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v | - |
-| MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v | - |
-| Flash VSR [2.1](https://github.com/OpenImagingLab/FlashVSR) | main model | v2v | √ |
-| MoCha [2.1](https://orange-3dv-team.github.io/MoCha/) | main model | ref2v v2v | √ |
-| Kaleido [2.1](https://arxiv.org/html/2510.18573v1) | main model | s2v | ? |
-| HoloCine [2.2](https://holo-cine.github.io/) | main model | t2v multi-scenes | ? |
-| ChronoEdit [2.1](https://research.nvidia.com/labs/toronto-ai/chronoedit/) | main model & lora | i2v | √ |
-| BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | √ |
-| UniLumos [2.1](https://github.com/alibaba-damo-academy/Lumos-Custom) | main model | v2v | √ |
-| LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v i2v v2v | √ |
-| *control* | | | |
-| Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v | - |
-| Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v | - |
+| *audio Model* | | | |
+| Ovi [2.2](https://github.com/character-ai/Ovi) | main & module model | t2av i2av | - |
+| *edit Model* | | | |
+| MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | standalone & main model | v2v | √ |
+| MoCha [2.1](https://orange-3dv-team.github.io/MoCha/) | main model | v2v | √ |
+| LucyEdit [2.2](https://github.com/DecartAI/Lucy-Edit-ComfyUI) | main model | v2v | √ |
+| ChronoEdit [2.1](https://research.nvidia.com/labs/toronto-ai/chronoedit/) | main model | ff2v| ? |
+| Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | ff2v| ? |
+| *Upscale Model* | | | |
 | Tile lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/tile) | control lora | v2v | √ |
+| CineScale [2.1](https://github.com/Eyeline-Labs/CineScale) | lora | t2v ff2v | - |
+| Flash VSR [2.1](https://github.com/OpenImagingLab/FlashVSR) | main model | v2v | √ |
+| *controlnet Model* | | | |
+| Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v | - |
 | Dilated ControlNet [2.2](https://huggingface.co/collections/TheDenk/wan22-controlnets-688b754ca3ee3bc7b34253bf) [2.1](https://github.com/TheDenk/wan2.1-dilated-controlnet) | controlnet | t2v v2v | √ |
+| *camera+motion control Model* | | | |
+| ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v | √ |
+| Time-to-Move [2.2](https://time-to-move.github.io/) | main model | ff2v | √ |
+| *camera control Model* | | | |
+| ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v | - |
 | Uni3C* [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | ff2v | √ |
+| CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) | main model | ff2vv2v | ? |
+| *motion control Model* | | | |
+| Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v | × |
 | RealisDance* [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | ff2v | × |
-| CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) | main model | t2v i2v | √ |
-| Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | i2v | √ |
-| Motion Stream [2.1](https://github.com/alex4727/motionstream) | not yet released | i2v | √ |
-| Time-to-Move [2.2](https://time-to-move.github.io/) | main model | i2v | √ |
+| MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v | - |
+| Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v | - |
+| Motion Stream [2.1](https://github.com/alex4727/motionstream) | not yet released | ff2v| ? |
 
 ## JakeUpgrade Workflow
 
