@@ -123,14 +123,14 @@ WANWRAPPER_SCHEDULER_LIST = [
     "dpm++", "dpm++/beta",
     "dpm++_sde", "dpm++_sde/beta",
     "euler", "euler/beta",
-    "deis",
+    "longcat_distill_euler", "deis",
     "lcm", "lcm/beta",
     "res_multistep",
     "flowmatch_causvid",
     "flowmatch_distill",
     "flowmatch_pusa",
     "multitalk",
-    "sa_ode_stable"
+    "sa_ode_stable", "rcm"
 ]
 
 class WanWrapperSamplerDefault_JK:

@@ -359,6 +359,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 7. Add Wan 2.2 5B Ovi txt2v and ff2v sub-workflow.
 8. Add Wan 2.2 5B Lucy Edit v2v sub-workflow.
 
+- 2025-11-22 - v2.3.11
+1. Remove `funtools` from project.toml.
+2. update Wan Video Sheduler list.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -742,7 +746,7 @@ TriMesh Input Switch JK🐉
 | WAN Animate [2.2](https://github.com/Wan-Video/Wan2.2) | main model | ff2v ref2v v2v | √ |
 | WAN Video GGUF [2.2](https://huggingface.co/collections/QuantStack/wan22-ggufs-6887ec891bdea453a35b95f3) [2.1](https://huggingface.co/city96) | main model | t2v ff2v flf2v v2v | √ |
 | VACE [2.2 Test](https://huggingface.co/lym00/Wan2.2_T2V_A14B_VACE-test) [2.2 Fake](https://huggingface.co/CCP6/FakeVace2.2) [2.1](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | main & module model | t2v ff2v flf2v ref2v v2v ref+v2v | √ |
-| VACE GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_14B_VACE-GGUF) [2.1](https://github.com/ali-vilab/VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
+| VACE GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_14B_VACE-GGUF) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | VACE LightX2V [2.1](https://huggingface.co/lym00/Wan2.1_T2V_14B_LightX2V_StepCfgDistill_VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | VACE LightX2V GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_T2V_14B_LightX2V_StepCfgDistill_VACE-GGUF) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | VACE FusionX [2.1](https://huggingface.co/QuantStack/Wan2.1_T2V_14B_FusionX_VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
@@ -758,15 +762,15 @@ TriMesh Input Switch JK🐉
 | Skyreel V2 [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main & lora | t2v ff2v v2v | - |
 | MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v | - |
 | AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v | - |
-| Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | lora | t2v ff2v v2v uni_pc simple steps 5 cfg 5.0 | - |
+| Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | lora | t2v ff2v uni_pc simple steps 5 cfg 5.0 | - |
 | *Low-Step model* | | | |
 | lightX2V [2.2](https://huggingface.co/lightx2v/Wan2.2-Lightning) [2.1](https://huggingface.co/lightx2v) | main model & lora | t2v ff2v v2v lcm simple steps 4 cfg 1.0 | √ |
-| FusionX [2.1](https://huggingface.co/vrgamedevgirl84/Wan14BT2VFusioniX) | main model & lora | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0| √ |
-| FusionX GGUF [2.1](https://huggingface.co/collections/QuantStack/wan21-fusionx-ggufs-68498e41b3597737512c0636) | main model | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0| - |
-| CausVid [2.1](https://github.com/tianweiy/CausVid) | main model & lora | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0 | - |
-| AccVid [2.1](https://github.com/aejion/AccVideo) | main model & lora | t2v ff2v v2v uni_pc simple steps 8 cfg 1.0 | - |
+| FusionX [2.1](https://huggingface.co/vrgamedevgirl84/Wan14BT2VFusioniX) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0| √ |
+| FusionX GGUF [2.1](https://huggingface.co/collections/QuantStack/wan21-fusionx-ggufs-68498e41b3597737512c0636) | main model | t2v ff2v uni_pc simple steps 8 cfg 1.0| - |
+| CausVid [2.1](https://github.com/tianweiy/CausVid) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0 | - |
+| AccVid [2.1](https://github.com/aejion/AccVideo) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0 | - |
 | Fast Wan [2.2](https://huggingface.co/FastVideo) [2.1](https://huggingface.co/FastVideo) | main model & lora | t2v v2v uni_pc simple steps 8 cfg 1.0 | - |
-| Turbo [2.2 TI2V 5B](https://github.com/quanhaol/Wan2.2-TI2V-5B-Turbo) | main model & lora | t2v v2v uni_pc simple steps 4 cfg 1.0 | - |
+| Turbo [2.2 TI2V 5B](https://github.com/quanhaol/Wan2.2-TI2V-5B-Turbo) | main model & lora | t2v uni_pc simple steps 4 cfg 1.0 | - |
 | rCM [2.1](https://github.com/NVlabs/rcm) | main model & lora | t2v step 4 | - |
 | *ref2v Model* | | | |
 | HuMo [2.1](https://phantom-video.github.io/HuMo) | main model | t2v ff2v ref2v v2v s2v | √ |
@@ -793,7 +797,7 @@ TriMesh Input Switch JK🐉
 | *audio Model* | | | |
 | Ovi [2.2](https://github.com/character-ai/Ovi) | main & module model | t2av i2av | - |
 | *edit Model* | | | |
-| MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | standalone & main model | v2v | √ |
+| MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | main model | v2v recommend standalone | √ |
 | MoCha [2.1](https://orange-3dv-team.github.io/MoCha/) | main model | v2v | √ |
 | LucyEdit [2.2](https://github.com/DecartAI/Lucy-Edit-ComfyUI) | main model | v2v | √ |
 | ChronoEdit [2.1](https://research.nvidia.com/labs/toronto-ai/chronoedit/) | main model | ff2v| ? |
@@ -805,7 +809,7 @@ TriMesh Input Switch JK🐉
 | *controlnet Model* | | | |
 | Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v | - |
 | Dilated ControlNet [2.2](https://huggingface.co/collections/TheDenk/wan22-controlnets-688b754ca3ee3bc7b34253bf) [2.1](https://github.com/TheDenk/wan2.1-dilated-controlnet) | controlnet | t2v v2v | √ |
-| *camera+motion control Model* | | | |
+| *camera+motion con Model* | | | |
 | ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v | √ |
 | Time-to-Move [2.2](https://time-to-move.github.io/) | main model | ff2v | √ |
 | *camera control Model* | | | |
