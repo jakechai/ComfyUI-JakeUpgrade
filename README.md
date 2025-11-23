@@ -326,18 +326,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	- 2025-11-10 - v2.3.4	1. Add System Prompter node for generating single image | shot script system prompt for LLM/VLM model. Supports JSON format and multi-language output request. QWen3-VL is recommended.
 							2. Add Shot Script Extractor and Combiner nodes.
 							3. Add QWen3-VL to auto-prompt workflows along with System Prompter node.
+	- 2025-11-12 - v2.3.5	1. Update Shot Script Extractor and Combiner nodes.
+							2. Update Prompt Combiner node.
+							3. Add portable img2mesh ComfyUI `v0.3.68` with `pytorch 2.7.0+cu128`.
+							4. Add shot size and view angle choices for Random Prompter, useful when using QWen Edit 2509 Multiple Angles Lora.
+	- 2025-11-14 - v2.3.6	1. Random Prompter Geek supports the custom selection of database random processing and reserved LLM processing, retaining the advantages of database random processing in certain aspects of semantic accuracy while leveraging the possibilities that LLM can provide in other elements.
+							2. Fix some typo issues.
 
 </details>
-
-- 2025-11-12 - v2.3.5
-1. Update Shot Script Extractor and Combiner nodes.
-2. Update Prompt Combiner node.
-3. Add portable img2mesh ComfyUI `v0.3.68` with `pytorch 2.7.0+cu128`.
-4. Add shot size and view angle choices for Random Prompter, useful when using QWen Edit 2509 Multiple Angles Lora.
-
-- 2025-11-14 - v2.3.6
-1. Random Prompter Geek supports the custom selection of database random processing and reserved LLM processing, retaining the advantages of database random processing in certain aspects of semantic accuracy while leveraging the possibilities that LLM can provide in other elements.
-2. Fix some typo issues.
 
 - 2025-11-15 - v2.3.7
 1. Add remove_prompt_emphasis function to Random Prompter and Prompt Combiner.
@@ -362,6 +358,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2025-11-22 - v2.3.11
 1. Remove `funtools` from project.toml.
 2. update Wan Video Sheduler list.
+
+- 2025-11-23 - v2.3.12
+1. Add SAM3 to imgen detailer and videogen auto mask workflows.
+2. Add 🐉 JK-Tools-AddAllMasks subgraph.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -564,24 +564,25 @@ TriMesh Input Switch JK🐉
 <summary><b>Subgraphs for comfyui-frontend-package>=1.24.0</b></summary>
 
 	Tools
-		JK🐉-Image RemBG
-		JK🐉-Image Crop by Mask
-		JK🐉-Image Crop by Mask and Resize
-		JK🐉-Image Resize
-		JK🐉-Image Stitch by Mask
-		JK🐉-Latent Crop by Mask
-		JK🐉-Latent Crop by Mask and Resize
-		JK🐉-Latent Resize
-		JK🐉-Latent Stitch by Mask
+		JK🐉-Tools-AddAllMasks
+		JK🐉-Tools-Image RemBG
+		JK🐉-Tools-Image Crop by Mask
+		JK🐉-Tools-Image Crop by Mask and Resize
+		JK🐉-Tools-Image Resize
+		JK🐉-Tools-Image Stitch by Mask
+		JK🐉-Tools-Latent Crop by Mask
+		JK🐉-Tools-Latent Crop by Mask and Resize
+		JK🐉-Tools-Latent Resize
+		JK🐉-Tools-Latent Stitch by Mask
 	Sampler
-		JK🐉-Concept
-		JK🐉-Flux KSampler
-		JK🐉-Flux KSampler Adv
-		JK🐉-Variation Ksampler
-		JK🐉-KSampler (High+Low)
-		JK🐉-KSampler (High+Low) Adv
-		JK🐉-WAN Sampler (High+Low)
-		JK🐉-WAN Sampler (High+Low) adv
+		JK🐉-Sampler-Concept
+		JK🐉-Sampler-Flux KSampler
+		JK🐉-Sampler-Flux KSampler Adv
+		JK🐉-Sampler-Variation Ksampler
+		JK🐉-Sampler-KSampler (High+Low)
+		JK🐉-Sampler-KSampler (High+Low) Adv
+		JK🐉-Sampler-WAN Sampler (High+Low)
+		JK🐉-Sampler-WAN Sampler (High+Low) adv
 	Workflow
 		JK🐉-Image Gen Common
 		JK🐉-Image Gen Common Adv
@@ -729,10 +730,10 @@ TriMesh Input Switch JK🐉
 | [TeaCache](https://github.com/ali-vilab/TeaCache) | speed up | ~ | √ |
 | [Enhanced A Video](https://oahzxl.github.io/Enhance_A_Video/) | enhancement | ~ | √ |
 | [SLG](https://www.reddit.com/r/StableDiffusion/comments/1jac3wm/dramatically_enhance_the_quality_of_wan_21_using/) | enhancement | ~ | √ |
-| [CFG Zero Star](https://github.com/WeichenFan/CFG-Zero-star) | enhancement | ~ | √ |
-| [FreSca](https://github.com/WikiChao/FreSca) | enhancement | ~ | - |
 | [FreeInit](https://tianxingwu.github.io/pages/FreeInit/) | enhancement | ~ | √ |
 | [NAG](https://chendaryen.github.io/NAG.github.io/) | enhancement | ~ | √ |
+| [CFG Zero Star](https://github.com/WeichenFan/CFG-Zero-star) | enhancement | ~ | √ |
+| [FreSca](https://github.com/WikiChao/FreSca) | enhancement | ~ | - |
 | [TCFG](https://huggingface.co/papers/2503.18137) | enhancement | ~ | - |
 | [RAAG](https://arxiv.org/abs/2508.03442) | enhancement | ~ | - |
 | [Bidirectional Sampling](https://github.com/ff2416/WanFM) | enhancement | ~ | - |
@@ -762,7 +763,7 @@ TriMesh Input Switch JK🐉
 | Skyreel V2 [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main & lora | t2v ff2v v2v | - |
 | MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v | - |
 | AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v | - |
-| Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | lora | t2v ff2v uni_pc simple steps 5 cfg 5.0 | - |
+| Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | main model & lora | t2v ff2v uni_pc simple steps 5 cfg 5.0 | - |
 | *Low-Step model* | | | |
 | lightX2V [2.2](https://huggingface.co/lightx2v/Wan2.2-Lightning) [2.1](https://huggingface.co/lightx2v) | main model & lora | t2v ff2v v2v lcm simple steps 4 cfg 1.0 | √ |
 | FusionX [2.1](https://huggingface.co/vrgamedevgirl84/Wan14BT2VFusioniX) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0| √ |
@@ -781,6 +782,7 @@ TriMesh Input Switch JK🐉
 | lynx [2.1](https://github.com/bytedance/lynx) | module model | ref2v | √ |
 | Kaleido [2.1](https://arxiv.org/html/2510.18573v1) | main model | ref2v | x |
 | BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | ? |
+| FFGO [2.2](https://firstframego.github.io/) | lora | ref2v | √ |
 | *long video Model* | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
 | LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2vv2v | - |
@@ -902,6 +904,7 @@ TriMesh Input Switch JK🐉
 - (detailer)[Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
 - (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - (detailer)[Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
+- (detailer)[Sam3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
 - (Seamless Texture)[Comfy mtb](https://github.com/melMass/comfy_mtb)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 - (legacy)[NNLatentUpscale](https://github.com/Ttl/ComfyUi_NNLatentUpscale)
@@ -935,6 +938,7 @@ TriMesh Input Switch JK🐉
 - [Video Helper Suite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite)
 - [Frame Interpolation](https://github.com/Fannovel16/ComfyUI-Frame-Interpolation)
 - [Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
+- [Sam3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
 - [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
 - [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
 - [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
