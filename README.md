@@ -363,6 +363,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Add SAM3 to imgen detailer and videogen auto mask workflows.
 2. Add 🐉 JK-Tools-AddAllMasks subgraph.
 
+- 2025-11-25 - v2.3.13
+1. Add Wan 2.2 FFGO ref2v sub workflows.
+2. Add Stable-Video-Infinity lora supports to Wan 2.1 long | Cuts ff2v sub workflows.
+3. Add Wan 2.1 Ditto video edit sub workflows.
+4. Add Wan 2.1 longcat refiner v2v sub workflows.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -785,7 +791,8 @@ TriMesh Input Switch JK🐉
 | FFGO [2.2](https://firstframego.github.io/) | lora | ref2v | √ |
 | *long video Model* | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
-| LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2vv2v | - |
+| LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2v v2v | - |
+| Stable Video Infinity [2.1](https://github.com/vita-epfl/Stable-Video-Infinity) | lora | ff2v | √ |
 | *multi-shot Model* | | | |
 | Echo Shot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v | - |
 | HoloCine [2.2](https://holo-cine.github.io/) | main model | t2v | ? |
@@ -802,6 +809,7 @@ TriMesh Input Switch JK🐉
 | MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | main model | v2v recommend standalone | √ |
 | MoCha [2.1](https://orange-3dv-team.github.io/MoCha/) | main model | v2v | √ |
 | LucyEdit [2.2](https://github.com/DecartAI/Lucy-Edit-ComfyUI) | main model | v2v | √ |
+| Ditto [2.1](https://github.com/EzioBy/Ditto) | lora | v2v + VACE2.1 | √ |
 | ChronoEdit [2.1](https://research.nvidia.com/labs/toronto-ai/chronoedit/) | main model | ff2v| ? |
 | Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | ff2v| ? |
 | *Upscale Model* | | | |
