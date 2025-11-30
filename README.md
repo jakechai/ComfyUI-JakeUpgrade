@@ -369,6 +369,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 3. Add Wan 2.1 Ditto video edit sub workflows.
 4. Add Wan 2.1 longcat refiner v2v sub workflows.
 
+- 2025-11-30 - v2.3.14
+1. Fix Get node error caused by the latest ComfyUI in the QWen Model Sheet workflow.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
