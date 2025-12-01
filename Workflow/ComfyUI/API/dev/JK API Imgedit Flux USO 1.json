@@ -1,0 +1,498 @@
+{
+  "1": {
+    "inputs": {
+      "unet_name": "Flux\\bf\\flux1-dev.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "2": {
+    "inputs": {
+      "clip_name1": "t5xxl\\clip_l.safetensors",
+      "clip_name2": "t5xxl\\t5xxl_fp8_e4m3fn_scaled.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "3": {
+    "inputs": {
+      "vae_name": "flux\\ae.sft"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "4": {
+    "inputs": {
+      "clip_name": "Flux\\sigclip_vision_patch14_384.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "5": {
+    "inputs": {
+      "name": "Flux\\uso-flux1-projector-v1.safetensors"
+    },
+    "class_type": "ModelPatchLoader",
+    "_meta": {
+      "title": "ModelPatchLoader - uso"
+    }
+  },
+  "10": {
+    "inputs": {
+      "image": "Face01.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Subject Image"
+    }
+  },
+  "11": {
+    "inputs": {
+      "image": "face12.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Style Image 1"
+    }
+  },
+  "13": {
+    "inputs": {
+      "images": [
+        "7:8",
+        0
+      ]
+    },
+    "class_type": "SaveImageWebsocket",
+    "_meta": {
+      "title": "SaveImageWebsocket"
+    }
+  },
+  "14": {
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_stack": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "CR Apply LoRA Stack Model Only JK",
+    "_meta": {
+      "title": "Apply LoRA Stack Model Only JK🐉"
+    }
+  },
+  "15": {
+    "inputs": {
+      "lora_1": true,
+      "lora_name_1": "Flux\\uso-flux1-dit-lora-v1.safetensors",
+      "model_weight_1": 1,
+      "lora_2": true,
+      "lora_name_2": "None",
+      "model_weight_2": 1,
+      "lora_3": true,
+      "lora_name_3": "None",
+      "model_weight_3": 1,
+      "lora_4": true,
+      "lora_name_4": "None",
+      "model_weight_4": 1,
+      "lora_5": false,
+      "lora_name_5": "None",
+      "model_weight_5": 1,
+      "lora_6": false,
+      "lora_name_6": "None",
+      "model_weight_6": 1
+    },
+    "class_type": "CR LoRA Stack Model Only JK",
+    "_meta": {
+      "title": "LoRA Stack Model Only JK🐉"
+    }
+  },
+  "8:112": {
+    "inputs": {
+      "model": [
+        "14",
+        0
+      ],
+      "model_patch": [
+        "5",
+        0
+      ],
+      "clip_vision_output": [
+        "8:111",
+        0
+      ]
+    },
+    "class_type": "USOStyleReference",
+    "_meta": {
+      "title": "USOStyleReference"
+    }
+  },
+  "8:111": {
+    "inputs": {
+      "crop": "none",
+      "clip_vision": [
+        "4",
+        0
+      ],
+      "image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode",
+    "_meta": {
+      "title": "CLIP Vision Encode"
+    }
+  },
+  "7:118": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1,
+      "model": [
+        "7:124",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "7:127": {
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "7:124",
+        0
+      ],
+      "positive": [
+        "7:130",
+        0
+      ],
+      "negative": [
+        "7:48",
+        0
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "7:117": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "7:129": {
+    "inputs": {
+      "conditioning": [
+        "7:6",
+        0
+      ],
+      "latent": [
+        "7:51",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  },
+  "7:130": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "7:145",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FluxGuidance"
+    }
+  },
+  "7:48": {
+    "inputs": {
+      "conditioning": [
+        "7:140",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "7:6": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "positive"
+    }
+  },
+  "7:138": {
+    "inputs": {
+      "op": "Add",
+      "a": [
+        "7:137",
+        2
+      ],
+      "b": 1
+    },
+    "class_type": "CM_IntBinaryOperation JK",
+    "_meta": {
+      "title": "IntBinaryOp JK🐉"
+    }
+  },
+  "7:137": {
+    "inputs": {
+      "boolean_value": true
+    },
+    "class_type": "CR Boolean JK",
+    "_meta": {
+      "title": "Boolean JK🐉-Suject Image?"
+    }
+  },
+  "7:135": {
+    "inputs": {
+      "width": [
+        "7:125",
+        0
+      ],
+      "height": [
+        "7:125",
+        1
+      ],
+      "batch_size": 1,
+      "color": 0
+    },
+    "class_type": "EmptyImage",
+    "_meta": {
+      "title": "EmptyImage"
+    }
+  },
+  "7:125": {
+    "inputs": {
+      "resolution": "Custom",
+      "custom_width": 1024,
+      "custom_height": 1024,
+      "swap_dimensions": false
+    },
+    "class_type": "CR Aspect Ratio JK",
+    "_meta": {
+      "title": "Aspect Ratio JK🐉"
+    }
+  },
+  "7:51": {
+    "inputs": {
+      "pixels": [
+        "7:109",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "7:121": {
+    "inputs": {
+      "noise_seed": 0
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "7:134": {
+    "inputs": {
+      "boolean_value": true,
+      "image_false": [
+        "7:135",
+        0
+      ],
+      "image_true": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉"
+    }
+  },
+  "7:109": {
+    "inputs": {
+      "upscale_method": "area",
+      "largest_size": 1024,
+      "image": [
+        "7:134",
+        0
+      ]
+    },
+    "class_type": "ImageScaleToMaxDimension",
+    "_meta": {
+      "title": "ImageScaleToMaxDimension"
+    }
+  },
+  "7:119": {
+    "inputs": {
+      "width": [
+        "7:125",
+        0
+      ],
+      "height": [
+        "7:125",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "EmptySD3LatentImage"
+    }
+  },
+  "7:124": {
+    "inputs": {
+      "max_shift": 1.15,
+      "base_shift": 0.5,
+      "width": [
+        "7:125",
+        0
+      ],
+      "height": [
+        "7:125",
+        1
+      ],
+      "model": [
+        "8:112",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "ModelSamplingFlux"
+    }
+  },
+  "7:120": {
+    "inputs": {
+      "noise": [
+        "7:121",
+        0
+      ],
+      "guider": [
+        "7:127",
+        0
+      ],
+      "sampler": [
+        "7:117",
+        0
+      ],
+      "sigmas": [
+        "7:118",
+        0
+      ],
+      "latent_image": [
+        "7:119",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "7:8": {
+    "inputs": {
+      "samples": [
+        "7:120",
+        1
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "7:140": {
+    "inputs": {
+      "boolean_value": false,
+      "conditioning_false": [
+        "7:6",
+        0
+      ]
+    },
+    "class_type": "CR Conditioning Input Switch JK",
+    "_meta": {
+      "title": "Conditioning Input Switch JK🐉"
+    }
+  },
+  "7:131": {
+    "inputs": {
+      "reference_latents_method": "uxo/uno",
+      "conditioning": [
+        "7:129",
+        0
+      ]
+    },
+    "class_type": "FluxKontextMultiReferenceLatentMethod",
+    "_meta": {
+      "title": "FluxKontextMultiReferenceLatentMethod"
+    }
+  },
+  "7:145": {
+    "inputs": {
+      "select": [
+        "7:138",
+        0
+      ],
+      "sel_mode": false,
+      "input1": [
+        "7:140",
+        0
+      ],
+      "input2": [
+        "7:131",
+        0
+      ]
+    },
+    "class_type": "ImpactSwitch",
+    "_meta": {
+      "title": "Switch (Any)"
+    }
+  }
+}

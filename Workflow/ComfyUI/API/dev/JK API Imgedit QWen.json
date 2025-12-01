@@ -1,0 +1,264 @@
+{
+  "1": {
+    "inputs": {
+      "unet_name": "QWenImage\\qwen_image_edit_fp8_e4m3fn.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "2": {
+    "inputs": {
+      "clip_name": "QWenImage\\qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "type": "qwen_image",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "3": {
+    "inputs": {
+      "vae_name": "QWenImage\\qwen_image_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "5": {
+    "inputs": {
+      "image": "example.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "6": {
+    "inputs": {
+      "images": [
+        "4:408",
+        0
+      ]
+    },
+    "class_type": "SaveImageWebsocket",
+    "_meta": {
+      "title": "SaveImageWebsocket"
+    }
+  },
+  "7": {
+    "inputs": {
+      "lora_1": true,
+      "lora_name_1": "None",
+      "model_weight_1": 1,
+      "lora_2": true,
+      "lora_name_2": "None",
+      "model_weight_2": 1,
+      "lora_3": true,
+      "lora_name_3": "None",
+      "model_weight_3": 1,
+      "lora_4": true,
+      "lora_name_4": "None",
+      "model_weight_4": 1,
+      "lora_5": false,
+      "lora_name_5": "None",
+      "model_weight_5": 1,
+      "lora_6": false,
+      "lora_name_6": "None",
+      "model_weight_6": 1
+    },
+    "class_type": "CR LoRA Stack Model Only JK",
+    "_meta": {
+      "title": "LoRA Stack Model Only JK🐉"
+    }
+  },
+  "8": {
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_stack": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "CR Apply LoRA Stack Model Only JK",
+    "_meta": {
+      "title": "Apply LoRA Stack Model Only JK🐉"
+    }
+  },
+  "4:402": {
+    "inputs": {
+      "boolean_value": false,
+      "image_false": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "CR Image Input Switch JK",
+    "_meta": {
+      "title": "Image Input Switch JK🐉"
+    }
+  },
+  "4:403": {
+    "inputs": {
+      "prompt": "",
+      "clip": [
+        "4:405",
+        0
+      ],
+      "vae": [
+        "4:410",
+        0
+      ],
+      "image": [
+        "4:402",
+        0
+      ]
+    },
+    "class_type": "TextEncodeQwenImageEdit",
+    "_meta": {
+      "title": "TextEncodeQwenImageEdit"
+    }
+  },
+  "4:404": {
+    "inputs": {
+      "prompt": "",
+      "clip": [
+        "4:405",
+        0
+      ],
+      "vae": [
+        "4:410",
+        0
+      ],
+      "image": [
+        "4:402",
+        0
+      ]
+    },
+    "class_type": "TextEncodeQwenImageEdit",
+    "_meta": {
+      "title": "TextEncodeQwenImageEdit"
+    }
+  },
+  "4:405": {
+    "inputs": {
+      "boolean_value": false,
+      "clip_false": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "CR Clip Input Switch JK",
+    "_meta": {
+      "title": "Clip Input Switch JK🐉"
+    }
+  },
+  "4:406": {
+    "inputs": {
+      "seed": 0,
+      "steps": 20,
+      "cfg": 2.5,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "4:411",
+        0
+      ],
+      "positive": [
+        "4:403",
+        0
+      ],
+      "negative": [
+        "4:404",
+        0
+      ],
+      "latent_image": [
+        "4:412",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "4:407": {
+    "inputs": {
+      "shift": 3,
+      "model": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingAuraFlow",
+    "_meta": {
+      "title": "ModelSamplingAuraFlow"
+    }
+  },
+  "4:410": {
+    "inputs": {
+      "boolean_value": false,
+      "VAE_false": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "CR VAE Input Switch JK",
+    "_meta": {
+      "title": "VAE Input Switch JK🐉"
+    }
+  },
+  "4:412": {
+    "inputs": {
+      "pixels": [
+        "4:402",
+        0
+      ],
+      "vae": [
+        "4:410",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "4:411": {
+    "inputs": {
+      "strength": 1,
+      "model": [
+        "4:407",
+        0
+      ]
+    },
+    "class_type": "CFGNorm",
+    "_meta": {
+      "title": "CFGNorm"
+    }
+  },
+  "4:408": {
+    "inputs": {
+      "samples": [
+        "4:406",
+        0
+      ],
+      "vae": [
+        "4:410",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  }
+}
