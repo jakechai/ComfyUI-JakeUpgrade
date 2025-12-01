@@ -1,0 +1,97 @@
+{
+  "1": {
+    "inputs": {
+      "image": "example.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "2": {
+    "inputs": {
+      "model_name": "Kim2091-4xUltraSharp.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  },
+  "4": {
+    "inputs": {
+      "upscale_model": [
+        "2",
+        0
+      ],
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "ImageUpscaleWithModel",
+    "_meta": {
+      "title": "Upscale Image (using Model)"
+    }
+  },
+  "5": {
+    "inputs": {
+      "images": [
+        "3:3",
+        0
+      ]
+    },
+    "class_type": "SaveImageWebsocket",
+    "_meta": {
+      "title": "SaveImageWebsocket"
+    }
+  },
+  "3:1": {
+    "inputs": {},
+    "class_type": "Remove Input JK",
+    "_meta": {
+      "title": "Remove Input JK🐉"
+    }
+  },
+  "3:2": {
+    "inputs": {
+      "direction": false,
+      "target_resolution": 512,
+      "use_target_mega_pixel": false,
+      "target_mega_pixel": 1,
+      "multiple_of": 8,
+      "image": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "Scale To Resolution JK",
+    "_meta": {
+      "title": "Scale To Resolution JK🐉"
+    }
+  },
+  "3:3": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "width": [
+        "3:2",
+        0
+      ],
+      "height": [
+        "3:2",
+        1
+      ],
+      "crop": [
+        "3:1",
+        0
+      ],
+      "image": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  }
+}
