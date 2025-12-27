@@ -359,6 +359,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2025-12-27 - v2.4.0
 1. Add Advanced 3D Viewer Node, supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without camera animation, and with custom camera animation and exported as GLB.
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
