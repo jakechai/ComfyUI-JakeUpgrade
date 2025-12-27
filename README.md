@@ -11,7 +11,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - If you found some JK nodes missing in your workflow or in the node library, they might be set to deprecated, [here's how to enable them](https://github.com/jakechai/ComfyUI-JakeUpgrade/issues/225#issuecomment-3527504565).
 
 ## Video Introduction
-- (new)imgen QWen Eidt Model Sheet workflow: [Youtube](https://youtu.be/SGEo8vlppG0) | [Bilibili](https://www.bilibili.com/video/BV1J3yUBLEPH/)
+- (new)Adv 3D Viewer for Video Gen: [Youtube] WIP | [Bilibili] WIP
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
@@ -23,6 +23,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - img2mesh Hunyuan3D Wrapper workflow: [Youtube](https://youtu.be/g94Jufz9Znw) | [Bilibili](https://www.bilibili.com/video/BV1w7ZMY2Ehp/)
 - img2mesh Hunyuan3D Add more MV texture samples: [Youtube](https://www.youtube.com/watch?v=hdMAksRD9jM)
 - img2mesh Hunyuan3D 2.1 workflow: [Youtube](https://youtu.be/KxwdmCVB93g) | [Bilibili](https://www.bilibili.com/video/BV1sE8Rz9EGW/)
+- imgen QWen Eidt Model Sheet workflow: [Youtube](https://youtu.be/SGEo8vlppG0) | [Bilibili](https://www.bilibili.com/video/BV1J3yUBLEPH/)
 - imgen workflow: [Youtube](https://www.youtube.com/watch?v=PKnxhFZNu2c) | [Bilibili](https://www.bilibili.com/video/BV1h6421f7AQ/)
 - imgen SD3 workflow: [Youtube](https://youtu.be/MZBNzaWHdr8) | [Bilibili](https://www.bilibili.com/video/BV1ceHheqEru/)
 - imgen API workflow: [Youtube](https://www.youtube.com/watch?v=4DWWUQij9jM) | [Bilibili](https://www.bilibili.com/video/BV1QR1BYUE5r/)
@@ -332,45 +333,32 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							4. Add shot size and view angle choices for Random Prompter, useful when using QWen Edit 2509 Multiple Angles Lora.
 	- 2025-11-14 - v2.3.6	1. Random Prompter Geek supports the custom selection of database random processing and reserved LLM processing, retaining the advantages of database random processing in certain aspects of semantic accuracy while leveraging the possibilities that LLM can provide in other elements.
 							2. Fix some typo issues.
+	- 2025-11-15 - v2.3.7	1. Add remove_prompt_emphasis function to Random Prompter and Prompt Combiner.
+							2. Update Portrait Master + Random Prompter imgen workflow.
+	- 2025-11-17 - v2.3.8	1. Update Shot Script Extractor node, supports extracting specific element from string list, dictionary stirng, array string or multiline string based on index or key value.
+	- 2025-11-17 - v2.3.9	1. Update prompt nodes codes. Separate into jake_node_prompt_shared | jake_node_prompt | jake_node_prompt_random | jake_node_prompt_random_ABC.
+	- 2025-11-19 - v2.3.10	1. Add Wan 2.1 lynx ref2v sub-workflow.
+							2. Add Wan 2.1 MoCha v2v subject replacement sub-workflow.
+							3. Add Wan 2.1 FlashVSR video upscale sub-workflow.
+							4. Add Wan 2.1 UniLumos v2v relight sub-workflow.
+							5. Add Wan 2.1 LongCat long video gen sub-workflow.
+							6. Add Wan 2.2 Time-to-Move ff2v sub-workflow.
+							7. Add Wan 2.2 5B Ovi txt2v and ff2v sub-workflow.
+							8. Add Wan 2.2 5B Lucy Edit v2v sub-workflow.
+	- 2025-11-22 - v2.3.11	1. Remove `funtools` from project.toml.
+							2. update Wan Video Sheduler list.
+	- 2025-11-23 - v2.3.12	1. Add SAM3 to imgen detailer and videogen auto mask workflows.
+							2. Add 🐉 JK-Tools-AddAllMasks subgraph.
+	- 2025-11-25 - v2.3.13	1. Add Wan 2.2 FFGO ref2v sub workflows.
+							2. Add Stable-Video-Infinity lora supports to Wan 2.1 long | Cuts ff2v sub workflows.
+							3. Add Wan 2.1 Ditto video edit sub workflows.
+							4. Add Wan 2.1 longcat refiner v2v sub workflows.
+	- 2025-11-30 - v2.3.14	1. Fix Get node error caused by the latest ComfyUI in the QWen Model Sheet workflow.
 
 </details>
 
-- 2025-11-15 - v2.3.7
-1. Add remove_prompt_emphasis function to Random Prompter and Prompt Combiner.
-2. Update Portrait Master + Random Prompter imgen workflow.
-
-- 2025-11-17 - v2.3.8
-1. Update Shot Script Extractor node, supports extracting specific element from string list, dictionary stirng, array string or multiline string based on index or key value.
-
-- 2025-11-17 - v2.3.9
-1. Update prompt nodes codes. Separate into jake_node_prompt_shared | jake_node_prompt | jake_node_prompt_random | jake_node_prompt_random_ABC.
-
-- 2025-11-19 - v2.3.10
-1. Add Wan 2.1 lynx ref2v sub-workflow.
-2. Add Wan 2.1 MoCha v2v subject replacement sub-workflow.
-3. Add Wan 2.1 FlashVSR video upscale sub-workflow.
-4. Add Wan 2.1 UniLumos v2v relight sub-workflow.
-5. Add Wan 2.1 LongCat long video gen sub-workflow.
-6. Add Wan 2.2 Time-to-Move ff2v sub-workflow.
-7. Add Wan 2.2 5B Ovi txt2v and ff2v sub-workflow.
-8. Add Wan 2.2 5B Lucy Edit v2v sub-workflow.
-
-- 2025-11-22 - v2.3.11
-1. Remove `funtools` from project.toml.
-2. update Wan Video Sheduler list.
-
-- 2025-11-23 - v2.3.12
-1. Add SAM3 to imgen detailer and videogen auto mask workflows.
-2. Add 🐉 JK-Tools-AddAllMasks subgraph.
-
-- 2025-11-25 - v2.3.13
-1. Add Wan 2.2 FFGO ref2v sub workflows.
-2. Add Stable-Video-Infinity lora supports to Wan 2.1 long | Cuts ff2v sub workflows.
-3. Add Wan 2.1 Ditto video edit sub workflows.
-4. Add Wan 2.1 longcat refiner v2v sub workflows.
-
-- 2025-11-30 - v2.3.14
-1. Fix Get node error caused by the latest ComfyUI in the QWen Model Sheet workflow.
+- 2025-12-27 - v2.4.0
+1. Add Advanced 3D Viewer Node, supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without camera animation, and with custom camera animation and exported as GLB.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -412,6 +400,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 <summary><b>Custom Nodes</b></summary>
 
 - 3D Nodes  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
+Adv3DViewer JK🐉: Supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without camera animation, and with custom camera animation and exported as GLB.  
 ![image](imgs/nodes/3D/Orbit%20Poses%20JK.png)  
 Orbit Poses JK🐉: Generate 3D camera track pose configurations, supporting multiple preset and custom parameters.  
 ![image](imgs/nodes/3D/Orbit%20Lists%20to%20Orbit%20Poses%20JK.png)  

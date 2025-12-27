@@ -203,6 +203,7 @@ def load_modules():
         for module_key, (module_file, module_name) in MODULE_MAPPING.items():
             import_commands.append(f"from .nodes.{module_file} import *")
             import_commands.append(f"from .nodes.{BASE_PROMPT_FILE} import *")
+            import_commands.append(f"from .nodes.jake_node_3d_viewer import *")
             loaded_modules.append(module_key)
     else:
         # 加载指定的模块
@@ -210,6 +211,10 @@ def load_modules():
         for module_key in ENABLED_MODULES:
             if module_key in MODULE_MAPPING:
                 module_file, module_name = MODULE_MAPPING[module_key]
+
+                # 特殊处理3d模块：先加载基础文件（不记录到loaded_modules）
+                if module_key == '3d':
+                    import_commands.append(f"from .nodes.jake_node_3d_viewer import *")
                 
                 # 特殊处理prompt模块：先加载基础文件（不记录到loaded_modules）
                 if module_key == 'prompt':
@@ -259,6 +264,7 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
     module_mappings = {    
         ### 3D Nodes
         '3d': lambda: {
+            "Adv3DViewer_JK": lambda: global_symbols.get("Adv3DViewer_JK"),
             "Orbit Poses JK": lambda: global_symbols.get("OrbitPoses_JK"),
             "OrbitLists to OrbitPoses JK": lambda: global_symbols.get("OrbitLists_to_OrbitPoses_JK"),
             "OrbitPoses to OrbitLists JK": lambda: global_symbols.get("OrbitPoses_to_OrbitLists_JK"),
