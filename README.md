@@ -358,8 +358,20 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 </details>
 
 - 2025-12-27 - v2.4.0
-1. Add Advanced 3D Viewer Node, supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without camera animation, and with custom camera animation and exported as GLB.
+1. Add Advanced 3D Viewer Node, supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without animation, and with custom camera animation and exported as GLB.
+
+- 2026-01-07 - v2.4.1
+1. Add adv3d_viewer_jk features:  
+	① wireframe, Normal, Depth, lineart, canny, edge, contour, ssao, and gtao shading support.
+	② shading and default light gui support.
+	③ center to object and focus to object function
+2. Update img2mesh 3D Data workflow.
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_lineart.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_edge.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_gtao.png)  
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -402,7 +414,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 3D Nodes  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
-Adv3DViewer JK🐉: Supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without camera animation, and with custom camera animation and exported as GLB.  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_lineart.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_edge.png)  
+![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_gtao.png)  
+Adv3DViewer JK🐉: Supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without animation, and with custom camera animation and exported as GLB.  
 ![image](imgs/nodes/3D/Orbit%20Poses%20JK.png)  
 Orbit Poses JK🐉: Generate 3D camera track pose configurations, supporting multiple preset and custom parameters.  
 ![image](imgs/nodes/3D/Orbit%20Lists%20to%20Orbit%20Poses%20JK.png)  
@@ -772,11 +789,11 @@ TriMesh Input Switch JK🐉
 | AccVid [2.1](https://github.com/aejion/AccVideo) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0 | - |
 | Fast Wan [2.2](https://huggingface.co/FastVideo) [2.1](https://huggingface.co/FastVideo) | main model & lora | t2v v2v uni_pc simple steps 8 cfg 1.0 | - |
 | Turbo [2.2 TI2V 5B](https://github.com/quanhaol/Wan2.2-TI2V-5B-Turbo) | main model & lora | t2v uni_pc simple steps 4 cfg 1.0 | - |
-| rCM [2.1](https://github.com/NVlabs/rcm) | main model & lora | t2v step 4 | - |
+| rCM [2.2](https://github.com/NVlabs/rcm) [2.1](https://github.com/NVlabs/rcm) | main model & lora | t2v i2v step 4 | - |
 | *ref2v Model* | | | |
 | HuMo [2.1](https://phantom-video.github.io/HuMo) | main model | t2v ff2v ref2v v2v s2v | √ |
 | Phantom [2.1](https://github.com/Phantom-video/Phantom) | main model & lora | ref2v ref+v2v | √ |
-| Stand-In [2.1](https://www.stand-in.tech/) | lora | ref2v ref+v2v | - |
+| Stand-In [2.2](https://www.stand-in.tech/) [2.1](https://www.stand-in.tech/) | lora | ref2v ref+v2v | - |
 | MAGREF [2.1](https://github.com/MAGREF-Video/MAGREF) | main model | ref2v | - |
 | Skyreel A2 [2.1](https://github.com/SkyworkAI/SkyReels-A2) | main model | ref2v | - |
 | lynx [2.1](https://github.com/bytedance/lynx) | module model | ref2v | √ |
@@ -793,7 +810,7 @@ TriMesh Input Switch JK🐉
 | *relight Model* | | | |
 | Lumen [2.1](https://lumen-relight.github.io/) | main model & lora | v2v | × |
 | UniLumos [2.1](https://github.com/alibaba-damo-academy/Lumos-Custom) | main model | v2v | - |
-| *talking Model* | | | |
+| *voice Model* | | | |
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v | - |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v | √ |
 | Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v | √ |
@@ -804,8 +821,8 @@ TriMesh Input Switch JK🐉
 | MoCha [2.1](https://orange-3dv-team.github.io/MoCha/) | main model | v2v | √ |
 | LucyEdit [2.2](https://github.com/DecartAI/Lucy-Edit-ComfyUI) | main model | v2v | √ |
 | Ditto [2.1](https://github.com/EzioBy/Ditto) | lora | v2v + VACE2.1 | √ |
-| ChronoEdit [2.1](https://research.nvidia.com/labs/toronto-ai/chronoedit/) | main model | ff2v| ? |
-| Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | ff2v| ? |
+| ChronoEdit [2.1](https://research.nvidia.com/labs/toronto-ai/chronoedit/) | main model & Lora | ff2v | ? |
+| Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | ff2v | ? |
 | *Upscale Model* | | | |
 | Tile lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/tile) | control lora | v2v | √ |
 | CineScale [2.1](https://github.com/Eyeline-Labs/CineScale) | lora | t2v ff2v | - |
