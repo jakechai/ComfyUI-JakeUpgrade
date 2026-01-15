@@ -375,6 +375,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	④ Fix bug: recording never stop; GTAO GUI broken.  
 	⑤ Add screenshot btn.  
 	⑥ Add Loading UI.
+
+- 2026-01-15 - v2.4.3
+1. Add adv3d_viewer_jk features: Generate 3D Data.   
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  
