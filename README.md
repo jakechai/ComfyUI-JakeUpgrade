@@ -362,10 +362,19 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-01-07 - v2.4.1
 1. Add adv3d_viewer_jk features:  
-	① wireframe, Normal, Depth, lineart, canny, edge, contour, ssao, and gtao shading support.
-	② shading and default light gui support.
-	③ center to object and focus to object function
+	① wireframe, Normal, Depth, lineart, canny, edge, contour, ssao, and gtao shading support.  
+	② shading and default light gui support.  
+	③ center to object and focus to object function  
 2. Update img2mesh 3D Data workflow.
+
+- 2026-01-15 - v2.4.2
+1. Add adv3d_viewer_jk features:  
+	① Reduce GPU usage: Control FPS, control RAF(requestAnimationFrame), control postProcessing.  
+	② More detailed Scene Diagnostics.  
+	③ Support zip format: obj.zip (obj + (mtl) + textures) | fbx.zip (fbx + textues) | glb(gltf).zip (glb(gltf) + bin + textures).  
+	④ Fix bug: recording never stop; GTAO GUI broken.  
+	⑤ Add screenshot btn.  
+	⑥ Add Loading UI.
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  

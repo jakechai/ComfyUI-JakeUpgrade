@@ -30,7 +30,7 @@ class Adv3DViewer_JK:
     FUNCTION = "view_file"
     OUTPUT_NODE = True
     CATEGORY = icons.get("JK/3D")
-    DESCRIPTION = "Advanced 3D Viewer, supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without camera animation, and with custom camera animation and exported as GLB.."
+    DESCRIPTION = "Advanced 3D Viewer, supports GLB, FBX, SMPL bin, OBJ, PLY, OBJ Zip, and FBX Zip formats with/without camera animation, and with custom camera animation and exported as GLB.."
 
     def __init__(self):
         """初始化输出目录"""
@@ -53,19 +53,6 @@ class Adv3DViewer_JK:
         
         return file_path.strip()
 
-    def detect_format(self, file_path: str) -> str:
-        """Detect file format from extension"""
-        ext = Path(file_path).suffix.lower()
-        format_map = {
-            '.bin': 'bin',
-            '.glb': 'glb', 
-            '.gltf': 'glb',
-            '.fbx': 'fbx',
-            '.obj': 'obj',
-            '.ply': 'ply'
-        }
-        return format_map.get(ext, 'bin')  # default to bin
-
     def view_file(
         self,
         file_path: str = "",
@@ -83,8 +70,7 @@ class Adv3DViewer_JK:
                 print(error_msg)
                 return {
                     "ui": {
-                        "file_path": [""],
-                        "format": [""]
+                        "file_path": [""]
                     },
                     "result": (error_msg,)
                 }
@@ -95,8 +81,7 @@ class Adv3DViewer_JK:
                 print(error_msg)
                 return {
                     "ui": {
-                        "file_path": [""],
-                        "format": [""]
+                        "file_path": [""]
                     },
                     "result": (error_msg,)
                 }
@@ -114,18 +99,14 @@ class Adv3DViewer_JK:
             
             print(f"[Adv3DViewer_JK] File copied to: {mesh_filepath}")
             
-            # 检测文件格式
-            format_type = self.detect_format(cleaned_file_path)
-            
             # 返回相对路径，使用新的路由
             relative_path = f"Adv3DViewer_JK_tmp/{mesh_filename}"
             
             return {
                 "ui": {
                     "file_path": [relative_path],
-                    "format": [format_type]
                 },
-                "result": (f"Loaded {format_type.upper()} file: {input_file.name}",)
+                "result": (f"Loaded file: {input_file.name}",)
             }
 
         except Exception as e:
@@ -135,8 +116,7 @@ class Adv3DViewer_JK:
             traceback.print_exc()
             return {
                 "ui": {
-                    "file_path": [""],
-                    "format": [""]
+                    "file_path": [""]
                 },
                 "result": (error_msg,)
             }
