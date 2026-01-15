@@ -235,7 +235,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 		}
 		/* 滑块分类宽度*/
 		.light-slider { width: 48px; }
-		.time-slider { width: 160px; }
+		.time-slider { width: 214px; }
 		.helper-size-slider { width: 59px; }
 		
 		/* 输入框样式*/
@@ -516,8 +516,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					<button id="last-frame" title="Last Frame">⏭️</button>
 					<button id="toggle-camera-anim" title="Switch to Play Mode">🎥</button>
 					<input type="number" id="fps-input" min="1" max="120" value="30" title="Frames Per Second" style="width: 45px;">
-					<button id="screenshot-btn" title="Screenshot">🖨️</button>
-					<button id="record-btn" class="file-btn record-btn" title="Record Video">🎬</button>
 				</div>
 				<div class="separator">|</div>
                 
@@ -539,7 +537,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				<!-- 高级设置 -->
 				<div class="control-group">
-				
+					<button id="screenshot-btn" title="Screenshot">🖨️</button>
+					<button id="record-btn" class="file-btn record-btn" title="Record Video">🎬</button>
+					<button id="threed-data-btn" class="file-btn threed-data-btn" title="Get Scene 3D Data">📦</button>
 				</div>
             </div>
 			
@@ -1090,6 +1090,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						container: null,
 						dirLightFolder: null,
 						ambLightFolder: null
+					},
+					getScene3DData: {
+						isProcessing: false,
+						screenshotQueue: []
 					}
 				};
 				
@@ -1115,6 +1119,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				this.camera = null;
 				this.controls = null;
+				this.materialConversionCache = new Map();
 				
 				this.scene = null;
 				this.JSZip = JSZip;
@@ -1172,9 +1177,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						nextKey: get('next-keyframe'),
 						last: get('last-frame'),
 						toggleCamAnim: get('toggle-camera-anim'),
+						sceneLength: get('scene-length-btn'),
 						screenshot: get('screenshot-btn'),
 						record: get('record-btn'),
-						sceneLength: get('scene-length-btn'),
+						threedDataBtn: get('threed-data-btn'),
 						
 						newCamera: get('new-camera-btn'),
 						centerToObject: get('center-to-object-btn'), 
@@ -1304,8 +1310,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				i.fps.oninput = (e) => this.validateNumericInput(e, 'fps');
 				i.fps.onkeydown = (e) => { if (e.key === 'Enter') this.applyNumericInput(e, 'fps'); };
 				i.fps.onblur = (e) => this.applyNumericInput(e, 'fps');
-				b.screenshot.onclick = () => this.captureScreenshot();
-				b.record.onclick = () => this.startRecording();
 				i.slider.oninput = (e) => this.onTimeSliderInput(e);
 				i.startFrame.oninput = (e) => this.validateNumericInput(e, 'startFrame');
 				i.startFrame.onkeydown = (e) => { if (e.key === 'Enter') this.applyNumericInput(e, 'startFrame'); };
@@ -1314,6 +1318,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				i.endFrame.onkeydown = (e) => { if (e.key === 'Enter') this.applyNumericInput(e, 'endFrame'); };
 				i.endFrame.onblur = (e) => this.applyNumericInput(e, 'endFrame');
 				b.sceneLength.onclick = () => this.applySceneLength();
+				b.screenshot.onclick = () => this.captureScreenshot();
+				b.record.onclick = () => this.startRecording();
+				b.threedDataBtn.onclick = () => this.getScene3DData();
 				
 				i.views.onchange = (e) => this.handleViewChange(e);
 				b.centerToObject.onclick = () => this.centerToObject();
@@ -3093,7 +3100,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 
 			async load3DDataFromBuffer(buffer, filename, format) {
 				this.loadingProgress.start('Processing ' + format.toUpperCase() + ' from buffer...', 50);
-				await this.process3DModelLoading(filename, format, async () => {
+				await this.processModelLoading(filename, format, async () => {
 					await this.loadAndParseFromBuffer(buffer, format);
 				});
 			}
@@ -3136,7 +3143,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			async load3DDataFromComfyUI(filename, format) {
 				if (!filename) throw new Error("No filename provided");
 				this.loadingProgress.start('Processing ' + format.toUpperCase() + ' from ComfyUI...', 50);
-				await this.process3DModelLoading(filename, format, async () => {
+				await this.processModelLoading(filename, format, async () => {
 					await this.loadAndParseFromComfyUI(filename, format);
 				});
 			}
@@ -3278,7 +3285,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				});
 			}
 
-			async process3DModelLoading(filename, format, loadOperation) {
+			async processModelLoading(filename, format, loadOperation) {
 				if (this.state.loading) return;
 				this.state.loading = true; 
 				
@@ -3352,6 +3359,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				this.adjustDefaultDirLightForScene();
+				this.update3DDataButtonState();
 				this.renderInvalidate();
 				
 				if (this.state.currentFileData && this.state.currentFileData.isFromZip) {
@@ -3432,48 +3440,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 
 			processLoadedGLB(gltf) {
 				this.state.currentFormat = 'glb';
-				
-				const cameras = [];
-				gltf.scene.traverse(child => {
-					if (child.isCamera) {
-						cameras.push(child);
-					}
-					
-					if (child.isMesh) {
-						if (!child.material) {
-							child.material = this.createDefaultMaterial();
-							child.userData.autoCreatedMaterial = true;
-						} else {
-							child.userData.autoCreatedMaterial = false;
-							
-							// 修复某些FBX带贴图材质的导出glb再导入时 emissiveIntensity 为1的问题
-							// 修复某些glb(带贴图材质)导入时 metalness 为1的问题
-							const materials = Array.isArray(child.material) ? child.material : [child.material];
-							
-							materials.forEach(mat => {
-								/* if (mat.isMeshStandardMaterial) { */
-									/* if (mat.map && mat.map.isTexture) { */
-										if (!mat.emissiveMap && mat.emissiveIntensity === 1) {
-											mat.emissiveIntensity = 0;
-										}
-										if (!mat.metalnessmap && mat.metalness === 1) {
-											mat.metalness = 0;
-										}
-									/* } */
-								/* } */
-							});
-						}
-						
-						// 根据当前阴影设置启用阴影
-						child.castShadow = this.state.lights.shadowsEnabled;
-						child.receiveShadow = this.state.lights.shadowsEnabled;
-					}
-				});
-				
+				this.processSceneMaterials(gltf.scene);
 				this.scene.add(gltf.scene); 
 				this.state.currentModel = gltf.scene;
-				
-				// 在动画处理之前保存材质和纹理
 				this.saveOriginalMaterials(gltf.scene);
 				
 				if (gltf.animations && gltf.animations.length > 0) {
@@ -3722,32 +3691,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 
 			processLoadedFBX(object) {
 				this.state.currentFormat = 'fbx';
-				
+				this.processSceneMaterials(object);
 				this.scene.add(object); 
 				this.state.currentModel = object;
-				
-				// 先保存原始材质和纹理
 				this.saveOriginalMaterials(object);
-				
-				object.traverse(child => {
-					if (child.isMesh) {
-						if (!child.material) {
-							child.material = this.createDefaultMaterial();
-							child.userData.autoCreatedMaterial = true;
-						} else {
-							child.userData.autoCreatedMaterial = false;
-						}
-						
-						// 确保几何体有法线
-						if (child.geometry && !child.geometry.attributes.normal) {
-							child.geometry.computeVertexNormals();
-						}
-						
-						// 根据当前阴影设置启用阴影
-						child.castShadow = this.state.lights.shadowsEnabled;
-						child.receiveShadow = this.state.lights.shadowsEnabled;
-					}
-				});
 				
 				if (object.animations && object.animations.length > 0) {
 					this.state.currentAnimations = object.animations; 
@@ -3794,77 +3741,262 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			processLoadedOBJ(object) {
+				this.state.currentFormat = 'obj';
+				this.processSceneMaterials(object);
 				this.scene.add(object);
 				this.state.currentModel = object;
-				this.state.currentFormat = 'obj';
-				
-				// 保存材质和纹理
 				this.saveOriginalMaterials(object);
-				
-				// 如果没有材质，创建默认材质
-				let hasMaterials = false;
-				let meshCount = 0;
-				let textureCount = 0;
-				
-				object.traverse(child => {
+				this.state.playback.totalFrames = 1;
+			}
+
+			processSceneMaterials(sceneObject) {
+				sceneObject.traverse(child => {
 					if (child.isMesh) {
-						meshCount++;
-						if (child.material) {
-							hasMaterials = true;
-							
-							// 检查材质是否有纹理
-							const materialsArray = Array.isArray(child.material) ? child.material : [child.material];
-							materialsArray.forEach(mat => {
-								if (mat.map) textureCount++;
-								if (mat.aoMap) textureCount++;
-								if (mat.bumpMap) textureCount++;
-								if (mat.specularMap) textureCount++;
-							});
-						}
-					}
-				});
-				
-				if (!hasMaterials) {
-					// 创建默认材质
-					const defaultMaterial = this.createDefaultMaterial();
-					
-					object.traverse(child => {
-						if (child.isMesh) {
-							child.material = defaultMaterial;
+						if (!child.material) {
+							child.material = this.createDefaultMaterial();
 							child.userData.autoCreatedMaterial = true;
 						} else {
 							child.userData.autoCreatedMaterial = false;
+							const materials = Array.isArray(child.material) ? child.material : [child.material];
+							let needsMaterialUpdate = false;
+							const convertedMaterials = [];
+							
+							// 修复材质属性
+							// 转换standard材质，清除无效贴图链接
+							materials.forEach(mat => {
+								if (!mat.emissiveMap && mat.emissiveIntensity === 1) {
+									mat.emissiveIntensity = 0;
+								}
+								if (!mat.metalnessmap && mat.metalness === 1) {
+									mat.metalness = 0;
+								}
+								
+								this.cleanupMissingTextures(mat);
+								const convertedMat = this.convertPhongMaterialToStandard(mat);
+								
+								if (convertedMat !== mat) {
+									needsMaterialUpdate = true;
+								}
+								
+								convertedMaterials.push(convertedMat);
+							});
+							
+							if (needsMaterialUpdate) {
+								child.material = convertedMaterials.length === 1 ? convertedMaterials[0] : convertedMaterials;
+							}
+						}
+						
+						// 确保几何体有法线
+						if (child.geometry && !child.geometry.attributes.normal) {
+							child.geometry.computeVertexNormals();
 						}
 						
 						// 根据当前阴影设置启用阴影
 						child.castShadow = this.state.lights.shadowsEnabled;
 						child.receiveShadow = this.state.lights.shadowsEnabled;
-					});
-					
-					// 重新保存材质
-					this.saveOriginalMaterials(object);
-				}
-				
-				// 确保几何体有法线
-				object.traverse(child => {
-					if (child.isMesh && child.geometry && !child.geometry.attributes.normal) {
-						child.geometry.computeVertexNormals();
 					}
 				});
+			}
+
+			cleanupMissingTextures(material) {
+				if (!material) return;
 				
-				this.state.playback.totalFrames = 1;
+				// 检查所有可能的贴图属性
+				const textureProperties = [
+					'map', 'lightMap', 'bumpMap', 'normalMap', 'displacementMap', 
+					'alphaMap', 'emissiveMap', 'metalnessMap', 'roughnessMap', 
+					'aoMap', 'envMap', 'specularMap'
+				];
 				
-				// 检查场景中的纹理数量
-				const allTextures = [];
-				this.scene.traverse(child => {
-					if (child.material) {
-						const materialsArray = Array.isArray(child.material) ? child.material : [child.material];
-						materialsArray.forEach(mat => {
-							if (mat.map && mat.map.isTexture) allTextures.push(mat.map);
-							if (mat.aoMap && mat.aoMap.isTexture) allTextures.push(mat.aoMap);
-							if (mat.bumpMap && mat.bumpMap.isTexture) allTextures.push(mat.bumpMap);
-							if (mat.specularMap && mat.specularMap.isTexture) allTextures.push(mat.specularMap);
-						});
+				textureProperties.forEach(prop => {
+					if (material[prop] && material[prop].isTexture) {
+						const texture = material[prop];
+						
+						// 检查贴图是否有效
+						if (!texture.image || 
+							texture.image.width === 0 || 
+							texture.image.height === 0 ||
+							(texture.image.src && texture.image.src.includes('undefined'))) {
+							
+							console.log('移除无效贴图: ' + prop + ' from material ' + material.name || 'unnamed');
+							material[prop] = null;
+							
+							// 如果是alphaMap被移除，确保材质不是透明的
+							if (prop === 'alphaMap' && material.transparent) {
+								material.transparent = false;
+								material.opacity = 1.0;
+							}
+						}
+					}
+				});
+			}
+
+			convertPhongMaterialToStandard(material) {
+				if (!material) return null;
+				
+				const materialId = material.uuid;
+				
+				// 1. 检查缓存
+				if (this.materialConversionCache.has(materialId)) {
+					console.log('使用缓存的转换材质: ' + material.name || materialId);
+					return this.materialConversionCache.get(materialId);
+				}
+				
+				// 2. 检查是否为需要转换的材质
+				const isPhong = material.isMeshPhongMaterial || 
+								material.type === 'MeshPhongMaterial' ||
+								(material.userData && material.userData.isOriginalPhong);
+				
+				if (!isPhong) {
+					// 不是Phong材质，无需转换，返回原材质
+					// 不缓存非Phong材质，因为原材质应该被复用
+					console.log('跳过非Phong材质: ' + material.name || 'unnamed' + ', 类型: ' + material.type);
+					return material;
+				}
+				
+				console.log('开始转换Phong材质: ' + material.name || 'unnamed');
+				console.log('  转换前: type=' + material.type + ', shininess=' + material.shininess + ', specular=(' + material.specular?.r + ', ' + material.specular?.g + ', ' + material.specular?.b + ')');
+				
+				// 记录原始信息
+				const originalInfo = {
+					type: material.type,
+					shininess: material.shininess,
+					specular: material.specular ? material.specular.clone() : null,
+					color: material.color ? material.color.clone() : null,
+					emissive: material.emissive ? material.emissive.clone() : null
+				};
+				
+				// 创建Standard材质
+				const standardMaterial = new THREE.MeshStandardMaterial();
+				
+				// 复制通用属性
+				standardMaterial.name = material.name || 'Converted_' + Math.random().toString(36).substr(2, 9);
+				
+				// 颜色和贴图
+				if (material.color) standardMaterial.color.copy(material.color);
+				if (material.emissive) standardMaterial.emissive.copy(material.emissive);
+				standardMaterial.emissiveIntensity = material.emissiveIntensity || 0;
+				
+				// 复制所有贴图
+				this.copyTexturesToStandardMaterial(material, standardMaterial);
+				
+				// 透明度相关
+				standardMaterial.transparent = material.transparent;
+				standardMaterial.opacity = material.opacity || 1.0;
+				standardMaterial.alphaTest = material.alphaTest;
+				standardMaterial.depthWrite = material.depthWrite !== undefined ? material.depthWrite : true;
+				standardMaterial.side = material.side || THREE.FrontSide;
+				
+				// ============ 智能属性转换 ============
+				
+				// 1. 将shininess转换为roughness
+				if (material.shininess !== undefined) {
+					const shininess = material.shininess;
+					let roughness = 1.0;
+					
+					if (shininess > 0) {
+						// 非线性转换
+						const normalizedShininess = Math.min(shininess / 1000, 1.0);
+						roughness = 1.0 - Math.sqrt(normalizedShininess);
+						
+						// 限制范围
+						roughness = Math.max(0.04, Math.min(roughness, 1.0));
+						
+						// 对于高shininess，进一步降低roughness
+						if (shininess > 500) {
+							roughness = Math.min(roughness, 0.15);
+						}
+					}
+					
+					standardMaterial.roughness = roughness;
+				} else {
+					standardMaterial.roughness = 0.5;
+				}
+				
+				// 2. 根据specular颜色设置metalness
+				if (material.specular) {
+					const specular = material.specular;
+					const specularIntensity = (specular.r + specular.g + specular.b) / 3;
+					
+					if (specularIntensity > 0.9) {
+						// 非常高的specular，很可能是金属
+						standardMaterial.metalness = 0.9;
+						standardMaterial.roughness = Math.min(standardMaterial.roughness, 0.2);
+					} else if (specularIntensity > 0.7) {
+						// 高specular，可能是抛光金属
+						standardMaterial.metalness = 0.7;
+						standardMaterial.roughness = Math.min(standardMaterial.roughness, 0.3);
+					} else if (specularIntensity > 0.4) {
+						// 中等specular
+						standardMaterial.metalness = 0.3;
+					} else if (specularIntensity > 0.1) {
+						// 低specular，非金属但有一定光泽
+						standardMaterial.metalness = 0.0;
+						standardMaterial.roughness = Math.min(standardMaterial.roughness, 0.7);
+					} else {
+						// 非常低的specular，哑光材质
+						standardMaterial.metalness = 0.0;
+						standardMaterial.roughness = Math.max(standardMaterial.roughness, 0.8);
+					}
+					
+					// 保存specular信息
+					standardMaterial.userData = standardMaterial.userData || {};
+					standardMaterial.userData.originalSpecularIntensity = specularIntensity;
+				} else {
+					// 没有specular，默认为非金属
+					standardMaterial.metalness = 0.0;
+				}
+				
+				// 其他属性
+				standardMaterial.wireframe = material.wireframe;
+				standardMaterial.wireframeLinewidth = material.wireframeLinewidth;
+				standardMaterial.flatShading = material.flatShading;
+				
+				// 保存原始Phong信息
+				standardMaterial.userData = standardMaterial.userData || {};
+				standardMaterial.userData.convertedFromPhong = true;
+				standardMaterial.userData.originalShininess = originalInfo.shininess;
+				standardMaterial.userData.originalSpecular = originalInfo.specular;
+				standardMaterial.userData.originalMaterialType = originalInfo.type;
+				
+				console.log('  转换后: type=' + standardMaterial.type + ', roughness=' + standardMaterial.roughness.toFixed(3) + ', metalness=' + standardMaterial.metalness.toFixed(3));
+				console.log('  转换完成: ' + material.name || 'unnamed' + ' -> ' + standardMaterial.name);
+				
+				// 缓存转换后的材质
+				this.materialConversionCache.set(materialId, standardMaterial);
+				
+				return standardMaterial;
+			}
+
+			copyTexturesToStandardMaterial(sourceMaterial, targetMaterial) {
+				const textureProperties = [
+					'map', 'aoMap', 'emissiveMap', 'bumpMap', 'normalMap',
+					'displacementMap', 'roughnessMap', 'metalnessMap',
+					'alphaMap', 'envMap', 'lightMap'
+				];
+				
+				textureProperties.forEach(prop => {
+					if (sourceMaterial[prop] && sourceMaterial[prop].isTexture) {
+						targetMaterial[prop] = sourceMaterial[prop];
+						
+						// 复制贴图参数
+						if (sourceMaterial[prop + 'Intensity'] !== undefined) {
+							targetMaterial[prop + 'Intensity'] = sourceMaterial[prop + 'Intensity'];
+						}
+						
+						if (prop === 'normalMap' && sourceMaterial.normalScale) {
+							targetMaterial.normalScale = sourceMaterial.normalScale.clone();
+						}
+						
+						if (prop === 'bumpMap' && sourceMaterial.bumpScale !== undefined) {
+							targetMaterial.bumpScale = sourceMaterial.bumpScale;
+						}
+						
+						if (prop === 'displacementMap' && sourceMaterial.displacementScale !== undefined) {
+							targetMaterial.displacementScale = sourceMaterial.displacementScale;
+						}
+						
+						console.log('  复制贴图: ' + prop + ' from ' + sourceMaterial.name || 'source' + ' to ' + targetMaterial.name || 'target');
 					}
 				});
 			}
@@ -6145,6 +6277,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 清理材质纹理缓存
 				this.state.originalMaterials.clear();
+				this.materialConversionCache.clear();
 				this.disposeMaterialCache();
 				this.disposeTextureCache();
 				
@@ -6204,6 +6337,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.state.currentFileData = null;
 				
 				this.updateInfoDisplay();
+				this.update3DDataButtonState();
 				this.enableControls();
 				this.renderInvalidate();
 			}
@@ -7424,8 +7558,17 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			// 录像系统
-			captureScreenshot() {
+			captureScreenshot(customFilename = null) {
+				const originalGridVisible = this.dom.toggles.helper.checked;
+				const originalInfoVisible = this.dom.toggles.info.checked;
+				
 				try {
+					this.dom.toggles.helper.checked = false;
+					this.dom.toggles.info.checked = false;
+					
+					this.toggleHelper();
+					this.toggleInfoDisplay();
+					
 					// 确保渲染了当前帧
 					this.renderInvalidate();
 					
@@ -7433,54 +7576,74 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					const canvas = this.renderer.domElement;
 					const dataURL = canvas.toDataURL('image/png');
 					
-					// 创建下载链接
-					const link = document.createElement('a');
-					const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-					
-					// 获取模型名称（如果有的话）
-					let modelName = 'screenshot';
-					if (this.state.currentFileData && this.state.currentFileData.filename) {
-						const fileName = this.state.currentFileData.filename.split('/').pop().split('.')[0];
-						modelName = fileName;
-					}
-					
-					// 添加当前帧信息
-					const frameInfo = this.state.playback.totalFrames > 1 
-						? "_frame" + Math.floor(this.state.playback.currentFrame).toString().padStart(4, '0') 
-						: '';
+					// 如果有自定义文件名，直接返回blob，不下载
+					if (customFilename) {
+						// 将dataURL转换为blob
+						const blob = this.dataURLToBlob(dataURL);
+						return {
+							blob: blob,
+							filename: customFilename,
+							dataURL: dataURL
+						};
+					} else {
+						// 原逻辑：创建下载链接
+						const link = document.createElement('a');
+						const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 						
-					const filename = modelName + frameInfo + "_" + timestamp + ".png";
-					
-					link.href = dataURL;
-					link.download = filename;
-					link.style.display = 'none';
-					
-					// 添加到页面并触发点击
-					document.body.appendChild(link);
-					link.click();
-					document.body.removeChild(link);
-					
-					// 显示成功消息
-					this.showMessage("Sceenshot saved: " + filename, 3000);
-					
-					// 如果开启了网格和信息显示，重新显示它们
-					if (this.state.recording.originalGridVisible !== undefined && 
-						this.state.recording.originalInfoVisible !== undefined) {
-						// 这是为了处理在录制结束后恢复显示的场景
-						setTimeout(() => {
-							this.dom.toggles.helper.checked = this.state.recording.originalGridVisible;
-							this.dom.toggles.info.checked = this.state.recording.originalInfoVisible;
-							this.toggleHelper();
-							this.toggleInfoDisplay();
-						}, 100);
+						// 获取模型名称（如果有的话）
+						let modelName = 'screenshot';
+						if (this.state.currentFileData && this.state.currentFileData.filename) {
+							const fileName = this.state.currentFileData.filename.split('/').pop().split('.')[0];
+							modelName = fileName;
+						}
+						
+						// 添加当前帧信息
+						const frameInfo = this.state.playback.totalFrames > 1 
+							? "_frame" + Math.floor(this.state.playback.currentFrame).toString().padStart(4, '0') 
+							: '';
+							
+						const filename = modelName + frameInfo + "_" + timestamp + ".png";
+						
+						link.href = dataURL;
+						link.download = filename;
+						link.style.display = 'none';
+						
+						// 添加到页面并触发点击
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+						
+						// 显示成功消息
+						this.showMessage("Screenshot saved: " + filename, 3000);
 					}
 					
 				} catch (error) {
 					this.showMessage('Sceenshot Failed: ' + error.message, 5000);
+					return null;
+				} finally {
+					this.dom.toggles.helper.checked = originalGridVisible;
+					this.dom.toggles.info.checked = originalInfoVisible;
+					
+					this.toggleHelper();
+					this.toggleInfoDisplay();
 				}
 			}
 
-			startRecording() {
+			dataURLToBlob(dataURL) {
+				const arr = dataURL.split(',');
+				const mime = arr[0].match(/:(.*?);/)[1];
+				const bstr = atob(arr[1]);
+				let n = bstr.length;
+				const u8arr = new Uint8Array(n);
+				
+				while (n--) {
+					u8arr[n] = bstr.charCodeAt(n);
+				}
+				
+				return new Blob([u8arr], { type: mime });
+			}
+
+			async startRecording() {
 				if (this.state.recording.isRecording) return;
 				
 				this.state.recording.originalGridVisible = this.dom.toggles.helper.checked;
@@ -7491,6 +7654,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				this.toggleHelper();
 				this.toggleInfoDisplay();
+				
+				this.disableControls();
+				await new Promise(resolve => setTimeout(resolve, 50));
 				
 				this.state.recording.isRecording = true;
 				this.dom.btns.record.classList.add('recording');
@@ -7538,6 +7704,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						
 						this.toggleHelper();
 						this.toggleInfoDisplay();
+						this.enableControls();
 						
 						this.state.recording.isRecording = false;
 						this.dom.btns.record.classList.remove('recording');
@@ -7575,6 +7742,398 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					setTimeout(checkRecordingEnd, 100);
 				} catch (e) { 
 					this.showMessage("Recording setup failed: " + e.message, 5000); 
+				}
+			}
+
+			async getScene3DData() {
+				// 0. 检查场景是否为空
+				const bboxData = this.getBBoxForCurrentFrame();
+				if (bboxData.isEmpty) {
+					this.showMessage('Scene is empty. Cannot generate 3D data.', 3000);
+					return;
+				}
+				
+				// 禁用控制面板
+				this.disableControls();
+				
+				// 显示加载状态
+				this.dom.loading.style.display = 'block';
+				this.dom.loadingText.textContent = 'Generating 3D data screenshots...';
+				this.dom.loadingProgressBar.style.width = '0%';
+				this.dom.loadingPercentage.textContent = '0%';
+				this.dom.loadingPercentage.style.display = 'block';
+				
+				try {
+					// 获取场景名称
+					let sceneName = 'scene';
+					if (this.state.currentFileData && this.state.currentFileData.filename) {
+						const fileName = this.state.currentFileData.filename.split('/').pop().split('.')[0];
+						sceneName = fileName;
+					}
+					
+					// 1. 获取所有默认正交相机
+					const orthographicCameras = this.state.cameras.default.filter(camera => 
+						camera.isOrthographicCamera
+					);
+					
+					if (orthographicCameras.length === 0) {
+						this.showMessage('No orthographic cameras found.', 3000);
+						return;
+					}
+					
+					// 保存当前相机状态
+					const originalCamera = this.camera;
+					const originalControlsTarget = this.controls.target.clone();
+					const originalControlsEnabled = this.controls.enabled;
+					const originalCameraType = this.state.cameras.currentType;
+					const originalMaterialMode = this.state.materialMode;
+					const originalFOV = this.camera.fov;
+					const originalNear = this.camera.near;
+					const originalFar = this.camera.far;
+					
+					// 保存当前光照强度
+					const originalDirLightIntensity = this.state.lights.dirIntensity || this.state.lights.dir.intensity;
+					const originalAmbLightIntensity = this.state.lights.ambIntensity || this.state.lights.amb.intensity;
+					const originalUseSceneLight = this.state.useSceneLight;
+					
+					// 保存当前背景颜色
+					const originalBackground = this.scene.background ? this.scene.background.clone() : new THREE.Color(0x111111);
+					
+					// 确保使用默认灯光模式
+					this.state.useSceneLight = false;
+					if (this.dom.toggles.light) {
+						this.dom.toggles.light.checked = false;
+					}
+					
+					// 显示默认灯光
+					if (this.state.lights.dir) {
+						this.state.lights.dir.visible = true;
+					}
+					if (this.state.lights.amb) {
+						this.state.lights.amb.visible = true;
+					}
+					
+					// 设置默认光源强度
+					this.state.lights.dirIntensity = 0;
+					this.state.lights.ambIntensity = 10;
+					
+					if (this.state.lights.dir) {
+						this.state.lights.dir.intensity = 0;
+					}
+					if (this.state.lights.amb) {
+						this.state.lights.amb.intensity = 10;
+					}
+					
+					// 存储截图的数组
+					const screenshots = [];
+					
+					// 每个相机8步（切换+重置+居中+聚焦+4种材质截图）
+					const stepsPerCamera = 8;
+					const totalSteps = orthographicCameras.length * stepsPerCamera;
+					let currentStep = 0;
+					
+					// 遍历每个正交相机
+					for (let i = 0; i < orthographicCameras.length; i++) {
+						const camera = orthographicCameras[i];
+						const cameraName = camera.name || 'ortho_camera_' + i;
+						
+						// 更新进度
+						currentStep++;
+						const progress = Math.round((currentStep / totalSteps) * 100);
+						this.dom.loadingProgressBar.style.width = progress + '%';
+						this.dom.loadingPercentage.textContent = progress + '%';
+						this.dom.loadingText.textContent = 'Setting up ' + cameraName + '...';
+						
+						// a. 切换到该相机
+						this.camera = camera;
+						this.controls.object = camera;
+						this.controls.enabled = true;
+						this.state.cameras.currentType = 'default';
+						
+						// 更新相机UI
+						this.updateCameraUIForMode();
+						await this.waitForNextFrame();
+						
+						// b. 重置相机到默认状态
+						currentStep++;
+						const progressReset = Math.round((currentStep / totalSteps) * 100);
+						this.dom.loadingProgressBar.style.width = progressReset + '%';
+						this.dom.loadingPercentage.textContent = progressReset + '%';
+						this.dom.loadingText.textContent = 'Resetting ' + cameraName + '...';
+						
+						this.resetCamera();
+						await this.waitForNextFrame();
+						
+						// c. 执行centerToObject
+						currentStep++;
+						const progressCenter = Math.round((currentStep / totalSteps) * 100);
+						this.dom.loadingProgressBar.style.width = progressCenter + '%';
+						this.dom.loadingPercentage.textContent = progressCenter + '%';
+						this.dom.loadingText.textContent = 'Centering ' + cameraName + ' to object...';
+						
+						this.centerToObject();
+						await this.waitForNextFrame();
+						
+						// d. 执行focusToObject
+						currentStep++;
+						const progressFocus = Math.round((currentStep / totalSteps) * 100);
+						this.dom.loadingProgressBar.style.width = progressFocus + '%';
+						this.dom.loadingPercentage.textContent = progressFocus + '%';
+						this.dom.loadingText.textContent = 'Focusing ' + cameraName + ' to object...';
+						
+						this.focusToObject();
+						await this.waitForNextFrame();
+						
+						// e. 依次切换到Original, Normal, Depth, Edge材质并截屏
+						const materials = ['Original', 'Normal', 'Depth', 'Edge'];
+						const suffixes = ['O', 'N', 'D', 'E'];
+						
+						for (let j = 0; j < materials.length; j++) {
+							currentStep++;
+							const progress3 = Math.round((currentStep / totalSteps) * 100);
+							this.dom.loadingProgressBar.style.width = progress3 + '%';
+							this.dom.loadingPercentage.textContent = progress3 + '%';
+							this.dom.loadingText.textContent = 'Capturing ' + materials[j] + ' for ' + cameraName + '...';
+							
+							// 切换到材质
+							const materialMode = materials[j].toLowerCase();
+							this.handleMatChange(materialMode);
+							await this.waitForNextFrame();
+							
+							// 对于original材质，设置背景为纯黑色
+							if (materialMode === 'original') {
+								this.scene.background = new THREE.Color(0x000000);
+							}
+							
+							// 截屏文件名格式: {scenename}_{camera}_{suffix}.png
+							const filename = sceneName + '_' + cameraName + '_' + suffixes[j] + '.png';
+							const screenshot = this.captureScreenshot(filename);
+							
+							if (screenshot) {
+								screenshots.push({
+									blob: screenshot.blob,
+									filename: filename,
+									camera: cameraName,
+									material: materials[j],
+									materialFolder: materials[j].toLowerCase()
+								});
+							}
+							
+							await this.waitForNextFrame();
+						}
+						
+						// 恢复原始材质
+						this.handleMatChange(originalMaterialMode);
+						await this.waitForNextFrame();
+					}
+					
+					// 恢复原始相机状态
+					this.camera = originalCamera;
+					this.controls.object = originalCamera;
+					this.controls.target.copy(originalControlsTarget);
+					this.controls.enabled = originalControlsEnabled;
+					this.state.cameras.currentType = originalCameraType;
+					
+					// 恢复相机参数
+					this.camera.fov = originalFOV;
+					this.camera.near = originalNear;
+					this.camera.far = originalFar;
+					this.camera.updateProjectionMatrix();
+					
+					this.updateCameraUIForMode();
+					await this.waitForNextFrame();
+					
+					// 恢复原始光照强度
+					this.state.lights.dirIntensity = originalDirLightIntensity;
+					this.state.lights.ambIntensity = originalAmbLightIntensity;
+					this.state.useSceneLight = originalUseSceneLight;
+					
+					if (this.state.lights.dir) {
+						this.state.lights.dir.intensity = originalDirLightIntensity;
+					}
+					if (this.state.lights.amb) {
+						this.state.lights.amb.intensity = originalAmbLightIntensity;
+					}
+					
+					// 恢复灯光模式UI
+					if (this.dom.toggles.light) {
+						this.dom.toggles.light.checked = originalUseSceneLight;
+					}
+					
+					// 更新灯光可视化
+					this.updateVisualizationVisibility();
+					
+					// 恢复原始背景颜色
+					this.scene.background = originalBackground;
+					
+					// 4. 将所有截屏打包输出并下载
+					if (screenshots.length > 0) {
+						this.showMessage("Starting to package screenshots...", 8000);
+						await this.waitForNextFrame();
+						await this.packageAndDownloadScreenshots(screenshots, sceneName);
+					} else {
+						this.showMessage("No screenshots were captured.", 3000);
+					}
+					
+				} catch (error) {
+					console.error("Error in getScene3DData:", error);
+					this.showMessage("Error generating 3D data: " + error.message, 5000);
+					
+					// 即使出错，也尝试恢复原始光照强度
+					try {
+						const originalDirLightIntensity = this.state.getScene3DData?.originalDirLightIntensity;
+						const originalAmbLightIntensity = this.state.getScene3DData?.originalAmbLightIntensity;
+						const originalUseSceneLight = this.state.getScene3DData?.originalUseSceneLight;
+						if (originalDirLightIntensity !== undefined && this.state.lights.dir) {
+							this.state.lights.dir.intensity = originalDirLightIntensity;
+							this.state.lights.dirIntensity = originalDirLightIntensity;
+						}
+						if (originalAmbLightIntensity !== undefined && this.state.lights.amb) {
+							this.state.lights.amb.intensity = originalAmbLightIntensity;
+							this.state.lights.ambIntensity = originalAmbLightIntensity;
+						}
+						if (originalUseSceneLight !== undefined) {
+							this.state.useSceneLight = originalUseSceneLight;
+						}
+						if (this.dom.toggles.light) {
+							this.dom.toggles.light.checked = originalUseSceneLight;
+						}
+						if (originalBackground !== undefined) {
+							this.scene.background = originalBackground;
+						}
+						this.updateVisualizationVisibility();
+					} catch (recoveryError) {
+						console.error("Error recovering light settings:", recoveryError);
+					}
+					
+				} finally {
+					// 恢复控制面板
+					this.enableControls();
+					
+					// 隐藏加载状态
+					this.dom.loading.style.display = 'none';
+					this.dom.loadingPercentage.style.display = 'none';
+					
+					// 更新界面
+					this.renderInvalidate();
+				}
+			}
+
+			waitForNextFrame() {
+				return new Promise(resolve => {
+					requestAnimationFrame(() => {
+						setTimeout(resolve, 100);
+					});
+				});
+			}
+
+			async packageAndDownloadScreenshots(screenshots, sceneName) {
+				try {
+					// 创建zip文件
+					const zip = new this.JSZip();
+					
+					// 按材质创建子目录
+					const materialFolders = {};
+					
+					// 遍历所有截图，按材质分类
+					screenshots.forEach((screenshot, index) => {
+						const materialFolder = screenshot.materialFolder || screenshot.material.toLowerCase();
+						
+						// 创建材质子目录（如果尚未创建）
+						if (!materialFolders[materialFolder]) {
+							materialFolders[materialFolder] = zip.folder(materialFolder);
+						}
+						
+						// 将截图添加到对应的材质子目录
+						materialFolders[materialFolder].file(screenshot.filename, screenshot.blob);
+					});
+					
+					// 生成zip文件
+					const zipBlob = await zip.generateAsync({ type: "blob" });
+					
+					// 创建下载链接
+					const zipFilename = sceneName + '_3d_data_' + Date.now() + '.zip';
+					const url = URL.createObjectURL(zipBlob);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = zipFilename;
+					a.style.display = 'none';
+					
+					// 添加到页面并触发点击
+					document.body.appendChild(a);
+					a.click();
+					
+					// 清理
+					setTimeout(() => {
+						document.body.removeChild(a);
+						URL.revokeObjectURL(url);
+					}, 100);
+					
+					// 显示成功消息
+					this.showMessage('3D data package (' + screenshots.length + ' screenshots in ' + Object.keys(materialFolders).length + ' folders) downloaded: ' + zipFilename, 5000);
+					
+					// 在控制台输出详细信息
+					console.log("3D Data Generation Complete:");
+					console.log('- Scene: ' + sceneName);
+					console.log('- Total screenshots: ' + screenshots.length);
+					console.log('- Material folders: ' + Object.keys(materialFolders).join(', '));
+					
+					// 按文件夹输出详细信息
+					Object.keys(materialFolders).forEach(folder => {
+						const folderScreenshots = screenshots.filter(s => 
+							(s.materialFolder || s.material.toLowerCase()) === folder
+						);
+						console.log('  - ' + folder + '/ (' + folderScreenshots.length + ' screenshots):');
+						folderScreenshots.forEach(s => {
+							console.log('    - ' + s.filename + ' (' + s.camera + ')');
+						});
+					});
+					
+				} catch (error) {
+					console.error("Error packaging screenshots:", error);
+					this.showMessage("Error creating package: " + error.message, 5000);
+					
+					// 如果打包失败，尝试单独下载每个文件
+					this.downloadScreenshotsIndividually(screenshots);
+				}
+			}
+
+			downloadScreenshotsIndividually(screenshots) {
+				screenshots.forEach((screenshot, index) => {
+					setTimeout(() => {
+						const url = URL.createObjectURL(screenshot.blob);
+						const a = document.createElement('a');
+						a.href = url;
+						a.download = screenshot.filename;
+						a.style.display = 'none';
+						
+						document.body.appendChild(a);
+						a.click();
+						
+						setTimeout(() => {
+							document.body.removeChild(a);
+							URL.revokeObjectURL(url);
+						}, 100);
+					}, index * 100); // 避免同时下载太多文件
+				});
+				
+				this.showMessage('Downloading ' + screenshots.length + ' screenshots individually...', 5000);
+			}
+
+			update3DDataButtonState() {
+				const bboxData = this.getBBoxForCurrentFrame();
+				const hasMesh = !bboxData.isEmpty;
+				
+				if (this.dom.btns.threedDataBtn) {
+					this.dom.btns.threedDataBtn.disabled = !hasMesh;
+					
+					if (!hasMesh) {
+						this.dom.btns.threedDataBtn.title = "No mesh in scene";
+						this.dom.btns.threedDataBtn.classList.add('disabled-control');
+					} else {
+						this.dom.btns.threedDataBtn.title = "Get Scene 3D Data";
+						this.dom.btns.threedDataBtn.classList.remove('disabled-control');
+					}
 				}
 			}
 
@@ -8206,15 +8765,13 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					p.enabled = false;
 				});
 				
-				// ⭐ 可选：彻底释放（GPU 最省）
-				this.composer.dispose();
+				// 会导致再次切换到contour时失效
+				/* this.composer.dispose();
 				this.composer = null;
-				
 				this.normalRenderTarget?.dispose();
 				this.normalRenderTarget = null;
-				
 				this.depthTexture?.dispose();
-				this.depthTexture = null;
+				this.depthTexture = null; */
 			}
 
 			disableAllPostPasses() {
