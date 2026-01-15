@@ -99,6 +99,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			font-family: monospace;
 		}
 		
+		/* 导入界面*/
 		#loading {
 			position: absolute;
 			top: 50%;
@@ -106,17 +107,68 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			transform: translate(-50%, -50%);
 			color: white;
 			font-size: 14px;
-			background: rgba(0,0,0,0.8);
-			padding: 12px 16px;
-			border-radius: 6px;
+			background: rgba(0, 0, 0, 0.9);
+			padding: 20px 30px;
+			border-radius: 10px;
+			border: 2px solid rgba(74, 158, 255, 0.5);
 			z-index: 100;
+			display: none;
+			min-width: 200px;
+			text-align: center;
+			backdrop-filter: blur(10px);
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+		}
+		.loading-progress {
+			width: 100%;
+			height: 4px;
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 2px;
+			margin-top: 10px;
+			overflow: hidden;
+			position: relative;
+		}
+		.loading-progress-bar {
+			width: 0%;
+			height: 100%;
+			background: linear-gradient(90deg, var(--primary-color), #3a8eef);
+			border-radius: 2px;
+			transition: width 0.3s ease;
+		}
+		.loading-spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid rgba(255, 255, 255, 0.1);
+			border-top: 3px solid var(--primary-color);
+			border-radius: 50%;
+			animation: loadingSpin 1s linear infinite;
+			margin: 0 auto 15px auto;
+			display: none;
+		}
+		.loading-percentage {
+			font-family: monospace;
+			font-size: 12px;
+			color: var(--primary-color);
+			margin-top: 5px;
 			display: none;
 		}
 		
 		.disabled-control {
 			opacity: 0.4 !important;
 			cursor: not-allowed !important;
-			pointer-events: none;
+			pointer-events: none !important;
+			user-select: none !important;
+			position: relative;
+		}
+		
+		.controls-disabled::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0, 0, 0, 0.2);
+			z-index: 100;
 		}
 		
 		.enabled-control {
@@ -183,7 +235,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 		}
 		/* 滑块分类宽度*/
 		.light-slider { width: 48px; }
-		.time-slider { width: 187px; }
+		.time-slider { width: 160px; }
 		.helper-size-slider { width: 59px; }
 		
 		/* 输入框样式*/
@@ -269,7 +321,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			flex-shrink: 0;
 		}
 		#material-mode-select {
-			width: 85px;
+			width: 70px;
 			height: 20px;
 			background: var(--bg-input);
 			border: 1px solid var(--border-color);
@@ -280,7 +332,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			flex-shrink: 0;
 		}
 		#side-select {
-			width: 66px;
+			width: 54px;
 			height: 20px;
 			background: var(--bg-input);
 			border: 1px solid var(--border-color);
@@ -298,13 +350,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 		
 		/* 隐藏文件输入*/
 		.hidden-file-input { display: none; }
-		
-		/* 动画*/
-		@keyframes pulse {
-			0% { background-color: #ff4444; }
-			50% { background-color: #ff8888; }
-			100% { background-color: #ff4444; }
-		}
 		
 		/* 灯光GUI容器样式 */
 		.light-gui-container {
@@ -338,12 +383,48 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			backdrop-filter: blur(5px);
 		}
 		
+		.light-gui-disabled, .material-gui-disabled {
+			display: none !important;
+		}
+		
+		/* 动画*/
+		@keyframes pulse {
+			0% { background-color: #ff4444; }
+			50% { background-color: #ff8888; }
+			100% { background-color: #ff4444; }
+		}
+		@keyframes loadingPulse {
+			0% { 
+				background-color: rgba(0, 0, 0, 0.9);
+				box-shadow: 0 0 5px rgba(74, 158, 255, 0.5);
+			}
+			50% { 
+				background-color: rgba(30, 30, 30, 0.95);
+				box-shadow: 0 0 15px rgba(74, 158, 255, 0.8);
+			}
+			100% { 
+				background-color: rgba(0, 0, 0, 0.9);
+				box-shadow: 0 0 5px rgba(74, 158, 255, 0.5);
+			}
+		}
+		@keyframes loadingSpin {
+			0% { transform: translate(-50%, -50%) rotate(0deg); }
+			100% { transform: translate(-50%, -50%) rotate(360deg); }
+		}
+		
 	</style>
 </head>
 <body>
     <div id="container">
         <div id="canvas-container">
-            <div id="loading">Waiting for 3D data...</div>
+			<div id="loading">
+				<div class="loading-spinner" id="loading-spinner"></div>
+				<div id="loading-text">Waiting for 3D data...</div>
+				<div class="loading-progress">
+					<div class="loading-progress-bar" id="loading-progress-bar"></div>
+				</div>
+				<div class="loading-percentage" id="loading-percentage">0%</div>
+			</div>
             <div id="info-display">960x540 | Model Format: None</div>
         </div>
         <div id="controls">
@@ -409,7 +490,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					<input type="checkbox" id="light-mode-toggle" title="Toggle between default light and scene light">
                     <label class="control-label fixed-width-label-shadow" id="shadow-mode-label">Shadow</label>
                     <input type="checkbox" id="shadows-toggle" checked title="Enable Soft Shadow">
-                    <button id="reset-settings" class="compact-btn" title="Reset Settings">🔄</button>
+                    <button id="focus-light" class="compact-btn" title="Focus Default Directional Light to Scene">💢</button>
+					<button id="reset-settings" class="compact-btn" title="Reset Settings">🔄</button>
                 </div>
 				<div class="separator">|</div>
 				
@@ -434,6 +516,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					<button id="last-frame" title="Last Frame">⏭️</button>
 					<button id="toggle-camera-anim" title="Switch to Play Mode">🎥</button>
 					<input type="number" id="fps-input" min="1" max="120" value="30" title="Frames Per Second" style="width: 45px;">
+					<button id="screenshot-btn" title="Screenshot">🖨️</button>
 					<button id="record-btn" class="file-btn record-btn" title="Record Video">🎬</button>
 				</div>
 				<div class="separator">|</div>
@@ -518,13 +601,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
         </div>
     </div>
 	
-    <input type="file" id="import-file-input" class="hidden-file-input" accept=".glb,.fbx,.bin,.obj,.ply">
+    <input type="file" id="import-file-input" class="hidden-file-input" accept=".glb,.gltf,.fbx,.bin,.obj,.ply,.zip">
 	
     <script type="importmap">
     {
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
-			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/",
+			"jszip": "https://esm.sh/jszip@3.10.1"
         }
     }
     </script>
@@ -535,16 +619,240 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 		import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 		import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 		import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+		import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 		import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 		import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
-		import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 		import { TextureLoader } from 'three';
 		import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 		import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 		import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 		import { SSAOPass } from 'three/addons/postprocessing/SSAOPass.js';
 		import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
-		
+		import * as fflate from 'three/addons/libs/fflate.module.js';
+		import JSZip from 'jszip';
+
+		class PathUtils {
+			// 通用清理路径
+			static cleanTextureUrl(url) {
+				if (!url) return '';
+				
+				// 移除Windows盘符
+				let cleaned = url.replace(/^[a-zA-Z]:[\\\\/]/, '');
+				
+				// 统一路径分隔符
+				cleaned = cleaned.replace(/\\\\/g, '/');
+				
+				// 移除前导斜杠
+				if (cleaned.startsWith('/')) {
+					cleaned = cleaned.substring(1);
+				}
+				
+				// 提取文件名（只保留最后一部分）
+				const parts = cleaned.split('/');
+				let fileName = parts[parts.length - 1];
+				
+				// 处理可能包含查询参数或片段的情况
+				fileName = fileName.split('?')[0].split('#')[0];
+				
+				return fileName;
+			}
+
+			static cleanTextureUrlSimple(url) {
+				if (!url) return '';
+				
+				// 提取文件名（只保留最后一部分）
+				const parts = url.split(/[\\\\/]/);
+				let fileName = parts[parts.length - 1];
+				
+				// 处理可能包含查询参数或片段的情况
+				fileName = fileName.split('?')[0].split('#')[0];
+				
+				return fileName;
+			}
+
+			// 清理zip虚拟环境路径
+			static cleanPath(path) {
+				if (!path) return '';
+				
+				// 移除Windows盘符
+				let cleaned = path.replace(/^[a-zA-Z]:[\\\\/]/, '');
+				
+				// 统一路径分隔符
+				cleaned = cleaned.replace(/\\\\/g, '/');
+				
+				// 移除前导斜杠
+				if (cleaned.startsWith('/')) {
+					cleaned = cleaned.substring(1);
+				}
+				
+				// 解析相对路径（简化版）
+				const parts = cleaned.split('/');
+				const result = [];
+				
+				for (const part of parts) {
+					if (part === '..') {
+						if (result.length > 0) {
+							result.pop();
+						}
+					} else if (part !== '.' && part !== '') {
+						result.push(part);
+					}
+				}
+				
+				return result.join('/');
+			}
+
+			// 清理纹理路径（MTL解析器专用）
+			static cleanTexturePath(path) {
+				if (!path) return '';
+				
+				// 移除引号
+				let cleaned = path.replace(/["']/g, '');
+				
+				// 移除尾部空格
+				cleaned = cleaned.trim();
+				
+				// 统一路径分隔符
+				cleaned = cleaned.replace(/\\\\/g, '/');
+				
+				return cleaned;
+			}
+
+			// 从文件路径中提取文件名
+			static getFileName(filePath) {
+				if (!filePath) return '';
+				
+				// 处理各种路径格式
+				const path = filePath.replace(/\\\\/g, '/');
+				const parts = path.split('/');
+				return parts[parts.length - 1];
+			}
+
+			// 连接两个路径
+			static joinPaths(base, relative) {
+				if (!base) return relative;
+				if (!relative) return base;
+				
+				const baseParts = base.split('/').filter(p => p !== '');
+				const relativeParts = relative.split('/').filter(p => p !== '');
+				
+				for (const part of relativeParts) {
+					if (part === '..') {
+						if (baseParts.length > 0) {
+							baseParts.pop();
+						}
+					} else if (part !== '.') {
+						baseParts.push(part);
+					}
+				}
+				
+				return baseParts.join('/');
+			}
+
+			// 获取相对于主文件的路径
+			static getRelativePath(mainFilePath, texturePath) {
+				if (!mainFilePath || !texturePath) return texturePath;
+				
+				const mainDir = mainFilePath.substring(0, mainFilePath.lastIndexOf('/') + 1);
+				return mainDir + texturePath;
+			}
+
+			// 解析路径的各个部分
+			static parsePath(filePath) {
+				if (!filePath) return { dir: '', name: '', ext: '', fullName: '' };
+				
+				const cleanedPath = filePath.replace(/\\\\/g, '/');
+				const lastSlashIndex = cleanedPath.lastIndexOf('/');
+				
+				const dir = lastSlashIndex >= 0 ? cleanedPath.substring(0, lastSlashIndex + 1) : '';
+				const fullName = lastSlashIndex >= 0 ? cleanedPath.substring(lastSlashIndex + 1) : cleanedPath;
+				
+				const lastDotIndex = fullName.lastIndexOf('.');
+				const name = lastDotIndex >= 0 ? fullName.substring(0, lastDotIndex) : fullName;
+				const ext = lastDotIndex >= 0 ? fullName.substring(lastDotIndex + 1).toLowerCase() : '';
+				
+				return {
+					dir,
+					name,
+					ext,
+					fullName,
+					fullPath: cleanedPath
+				};
+			}
+		}
+
+		class LoadingProgressManager {
+			constructor(viewer) {
+				this.viewer = viewer;
+				this.progress = 0;
+				this.message = "";
+				this.interval = null;
+				this.step = 0;
+				this.totalSteps = 10;
+				this.startTime = null;
+			}
+
+			start(message = "Loading...", startProgress = 95) {
+				this.progress = startProgress;
+				this.message = message;
+				this.step = 0;
+				this.startTime = Date.now();
+				
+				// 清除之前的进度间隔
+				this.stop();
+				
+				if (this.viewer && this.viewer.dom && this.viewer.dom.loading) {
+					this.viewer.dom.loading.style.display = 'block';
+				}
+				
+				this.viewer.updateLoadingProgress(this.progress, this.message);
+				
+				// 设置进度更新间隔
+				this.interval = setInterval(() => {
+					this.step++;
+					if (this.step <= this.totalSteps) {
+						const elapsed = Date.now() - this.startTime;
+						// 根据时间动态调整进度速度
+						const timeFactor = Math.min(1, elapsed / 5000);
+						const incrementalProgress = startProgress + (timeFactor * (98 - startProgress) * (this.step / this.totalSteps));
+						
+						this.progress = Math.min(98, incrementalProgress);
+						this.viewer.updateLoadingProgress(this.progress, this.message);
+					} else {
+						this.stop();
+					}
+				}, 300);
+			}
+
+			update(message, progress = null) {
+				if (progress !== null) {
+					this.progress = progress;
+				}
+				if (message) {
+					this.message = message;
+				}
+				this.viewer.updateLoadingProgress(this.progress, this.message);
+			}
+
+			stop(finalMessage = "Processing complete") {
+				if (this.interval) {
+					clearInterval(this.interval);
+					this.interval = null;
+				}
+				this.viewer.updateLoadingProgress(99, finalMessage);
+				
+				// 短暂延迟后显示100%
+				setTimeout(() => {
+					this.viewer.updateLoadingProgress(100, "Load complete");
+				}, 300);
+			}
+
+			error(errorMessage) {
+				this.stop();
+				this.viewer.updateLoadingProgress(100, errorMessage);
+			}
+		}
+
         class Adv3DViewer {
 			// 初始化
 			constructor() {
@@ -557,6 +865,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					currentFileData: null,
 					smplData: null,
 					smplMesh: null,
+					controlsDisabled: false,
 					
 					grid: null,
 					axesHelper: null,
@@ -668,6 +977,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							color: '#4a9eff',
 							roughness: 1.0,
 							metalness: 0.0,
+							emissive: '#000000',
+							emissiveIntensity: 0.0,
 							flatShading: false
 						},
 						wireframe: {
@@ -702,7 +1013,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						},
 						contour: {
 							color: '#ffffff',
-							thickness: 1.5,
+							thickness: 1.0,
 							depthThreshold: 0.015,
 							normalThreshold: 0.4
 						}
@@ -711,7 +1022,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						ssao: {
 							kernelRadius: 16,
 							minDistance: 0.001,
-							maxDistance: 0.05,
+							maxDistance: 0.5,
 							output: SSAOPass.OUTPUT.Blur
 						},
 						gtao: {
@@ -721,6 +1032,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							scale: 1.0,
 							distanceFallOff: 1.0,
 							samples: 16,
+							denoiseRadius: 4.0,
+							lumaPhi: 10.0,
+							depthPhi: 2.0,
+							normalPhi: 3.0,
 							output: GTAOPass.OUTPUT.Denoise
 						}
 					},
@@ -729,14 +1044,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						background: '#111111'
 					},
 					
-					textureLoader: null,
 					useVertexColors: false,
 					textureMapping: true,
 					originalTextures: new Map(),
 					textureCache: new Map(),
 					
 					playback: {
-						isPlaying: false,
+						maxFPS: 90,
+						sPlaying: false,
 						isReversed: false,
 						currentFrame: 0,
 						totalFrames: 0,
@@ -787,17 +1102,25 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				};
 				
 				this._messageTimer = null;
+				this.loadingProgress = new LoadingProgressManager(this);
 				this.renderer = null;
 				this.composer = null;
 				this.contourPass = null;
 				this.normalRenderTarget = null;
 				this.depthTexture = null;
 				this.isContourMode = false;
+				this._rafId = null;
+				this.needsRender = true;
+				this.isLoopRunning = false;
 				
 				this.camera = null;
 				this.controls = null;
 				
 				this.scene = null;
+				this.JSZip = JSZip;
+				this.currentVirtualFS = null;
+				this.currentZipMainFile = null;
+				this.textureLoader = null;
 				this.loaders = {
 					gltf: new GLTFLoader(),
 					fbx: new FBXLoader(),
@@ -813,33 +1136,46 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			cacheDOM() {
 				const get = (id) => document.getElementById(id);
 				return {
-					container: get('canvas-container'), controlsPanel: get('controls'), loading: get('loading'), infoDisplay: get('info-display'),
+					container: get('canvas-container'),
+					controlsPanel: get('controls'),
+					loading: get('loading'),
+					loadingText: get('loading-text'),
+					loadingSpinner: get('loading-spinner'),
+					loadingProgressBar: get('loading-progress-bar'),
+					loadingPercentage: get('loading-percentage'),
+					infoDisplay: get('info-display'),
+					
 					labels: {
-						keyCount: get('keyframe-count'),
-						matLabel: get('material-mode-label'),
 						bgColorLabel: get('bg-color-label'),
 						lightLabel: get('light-mode-label'),
+						
+						keyCount: get('keyframe-count'),
 						ortho: document.querySelector('.fixed-width-label-ortho'),
+						fov: get('fov-label'),
 						clip: document.querySelector('.fixed-width-label-clip'),
-						roll: document.querySelector('.fixed-width-label-roll'),
-						fov: get('fov-label')
+						roll: document.querySelector('.fixed-width-label-roll')
 					},
 					btns: {
-						play: get('play-btn'),
-						reverse: get('reverse-play'),
-						first: get('first-frame'),
-						last: get('last-frame'),
-						prevKey: get('prev-keyframe'),
-						nextKey: get('next-keyframe'),
-						prevFrame: get('prev-frame'),
-						nextFrame: get('next-frame'),
 						import: get('import-btn'),
 						export: get('export-btn'),
+						diagnostic: get('diagnostic-btn'),
 						clear: get('clear-btn'),
-						record: get('record-btn'),
+						focusLight: get('focus-light'),
 						resetSettings: get('reset-settings'),
-						resetCamera: get('reset-camera'),
+						
+						first: get('first-frame'),
+						prevKey: get('prev-keyframe'),
+						prevFrame: get('prev-frame'),
+						reverse: get('reverse-play'),
+						play: get('play-btn'),
+						nextFrame: get('next-frame'),
+						nextKey: get('next-keyframe'),
+						last: get('last-frame'),
+						toggleCamAnim: get('toggle-camera-anim'),
+						screenshot: get('screenshot-btn'),
+						record: get('record-btn'),
 						sceneLength: get('scene-length-btn'),
+						
 						newCamera: get('new-camera-btn'),
 						centerToObject: get('center-to-object-btn'), 
 						focusToObject: get('focus-to-object-btn'),
@@ -848,33 +1184,33 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						delCamKey: get('delete-keyframe'),
 						clearCamKey: get('clear-keyframes'), 
 						deleteCustomCamera: get('delete-custom-camera'),
-						toggleCamAnim: get('toggle-camera-anim'),
-						diagnostic: get('diagnostic-btn'),
+						resetCamera: get('reset-camera'),
 						yup: get('y-up-btn')
 					},
 					inputs: {
-						slider: get('slider'),
-						fps: get('fps-input'),
-						startFrame: get('start-frame'),
-						endFrame: get('end-frame'),
+						file: get('import-file-input'),
+						materialSelect: get('material-mode-select'),
 						bgColorPicker: get('bg-color-picker'),
 						sideSelect: get('side-select'),
-						file: get('import-file-input'),
+						helperSize: get('helper-size-slider'),
+						
+						fps: get('fps-input'),
+						slider: get('slider'),
+						startFrame: get('start-frame'),
+						endFrame: get('end-frame'),
+						
+						views: get('views-select'),
 						fov: get('fov-input'),
 						near: get('near-input'),
 						far: get('far-input'),
-						rollAngle: get('roll-angle'),
-						views: get('views-select'),
-						materialSelect: get('material-mode-select'),
-						helperSize: get('helper-size-slider')
+						rollAngle: get('roll-angle')
 					},
 					toggles: {
-						helper: get('helper-toggle'),
 						info: get('info-display-toggle'),
-						material: get('material-mode-toggle'),
+						helper: get('helper-toggle'),
 						light: get('light-mode-toggle'),
-						ortho: get('orthographic-toggle'),
-						shadows: get('shadows-toggle')
+						shadows: get('shadows-toggle'),
+						ortho: get('orthographic-toggle')
 					},
 					displays: { 
 						frame: get('frame-display')
@@ -894,7 +1230,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.renderer.setSize(w, h);
 				this.renderer.setPixelRatio(window.devicePixelRatio);
 				this.renderer.shadowMap.enabled = this.state.lights.shadowsEnabled;
-				this.renderer.shadowMap.type = THREE.VSMShadowMap;	// BasicShadowMap | PCFSoftShadowMap | VSMShadowMap
+				// BasicShadowMap | PCFSoftShadowMap | VSMShadowMap
+				this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 				this.renderer.shadowMap.autoUpdate = true;
 				this.dom.container.appendChild(this.renderer.domElement);
 				
@@ -915,7 +1252,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				this.setupSceneHelpers();
 				
-				this.state.textureLoader = new THREE.TextureLoader();
 				this.initializeMaterialAndLightModes();
 				
 				this.initMaterialGUI();
@@ -934,8 +1270,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.updateCameraUIForMode();
 				
 				this.bindEvents();
-				this.initPostProcessing();
-				this.animate();
+				this.renderOnce();
 			}
 
 			bindEvents() {
@@ -944,8 +1279,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				b.import.onclick = () => i.file.click();
 				i.file.onchange = (e) => this.handleImportFile(e);
 				b.export.onclick = () => this.exportModel();
+				b.diagnostic.onclick = () => this.sceneDiagnostics();
 				b.clear.onclick = () => this.clearScene();
-				b.record.onclick = () => this.startRecording();
 				t.info.onchange = () => this.toggleInfoDisplay();
 				t.helper.onchange = () => this.toggleHelper();
 				i.materialSelect.onchange = (e) => this.handleMatChange(e);
@@ -953,9 +1288,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				i.sideSelect.onchange = (e) => this.updateMaterialSide(e);
 				t.light.onchange = () => this.toggleLightMode();
 				t.shadows.onchange = () => this.toggleShadows();
+				b.focusLight.onclick= () => this.adjustDefaultDirLightForScene();
 				b.resetSettings.onclick = () => this.resetSettings();
 				i.helperSize.oninput = () => this.updateHelperSize();
-				b.diagnostic.onclick = () => this.ImportDiagnostics();
 				
 				b.play.onclick = () => this.togglePlay();
 				b.reverse.onclick = () => this.toggleReversePlay();
@@ -969,6 +1304,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				i.fps.oninput = (e) => this.validateNumericInput(e, 'fps');
 				i.fps.onkeydown = (e) => { if (e.key === 'Enter') this.applyNumericInput(e, 'fps'); };
 				i.fps.onblur = (e) => this.applyNumericInput(e, 'fps');
+				b.screenshot.onclick = () => this.captureScreenshot();
+				b.record.onclick = () => this.startRecording();
 				i.slider.oninput = (e) => this.onTimeSliderInput(e);
 				i.startFrame.oninput = (e) => this.validateNumericInput(e, 'startFrame');
 				i.startFrame.onkeydown = (e) => { if (e.key === 'Enter') this.applyNumericInput(e, 'startFrame'); };
@@ -991,7 +1328,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				b.resetCamera.onclick = () => this.resetCamera();
 				b.yup.onclick = () => this.resetYup();
 				
-				// FOV/Size 输入事件 - 添加 fromUserInput 参数，并同时保存状态
+				// FOV/Size 输入
 				i.fov.oninput = (e) => {
 					this.validateNumericInput(e, 'fov');
 					if (!this.state.cameraAnim.isEnabled) {
@@ -999,11 +1336,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				};
 				i.fov.onkeydown = (e) => {
-					if (e.key === 'Enter') this.applyNumericInput(e, 'fov', true);
+					if (e.key === 'Enter') {
+						this.applyNumericInput(e, 'fov', true);
+					}
 				};
-				i.fov.onblur = (e) => this.applyNumericInput(e, 'fov', true);
+				i.fov.onblur = (e) => {
+					this.applyNumericInput(e, 'fov', true);
+				}
 				
-				// Near 输入事件
+				// Near 输入
 				i.near.oninput = (e) => {
 					this.validateNumericInput(e, 'near');
 					if (!this.state.cameraAnim.isEnabled) {
@@ -1011,11 +1352,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				};
 				i.near.onkeydown = (e) => {
-					if (e.key === 'Enter') this.applyNumericInput(e, 'near');
+					if (e.key === 'Enter') {
+						this.applyNumericInput(e, 'near');
+					}
 				};
-				i.near.onblur = (e) => this.applyNumericInput(e, 'near');
+				i.near.onblur = (e) => {
+					this.applyNumericInput(e, 'near');
+				}
 				
-				// Far 输入事件
+				// Far 输入
 				i.far.oninput = (e) => {
 					this.validateNumericInput(e, 'far');
 					if (!this.state.cameraAnim.isEnabled) {
@@ -1023,11 +1368,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				};
 				i.far.onkeydown = (e) => {
-					if (e.key === 'Enter') this.applyNumericInput(e, 'far');
+					if (e.key === 'Enter') {
+						this.applyNumericInput(e, 'far');
+					}
 				};
-				i.far.onblur = (e) => this.applyNumericInput(e, 'far');
+				i.far.onblur = (e) => {
+					this.applyNumericInput(e, 'far');
+				}
 				
-				// Roll angle 输入事件 - 添加 fromUserInput 参数，并同时保存状态
+				// Roll angle 输入
 				i.rollAngle.oninput = (e) => {
 					this.validateNumericInput(e, 'roll');
 					if (!this.state.cameraAnim.isEnabled) {
@@ -1035,27 +1384,41 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				};
 				i.rollAngle.onkeydown = (e) => {
-					if (e.key === 'Enter') this.applyNumericInput(e, 'roll', true);
+					if (e.key === 'Enter') {
+						this.applyNumericInput(e, 'roll', true);
+					}
 				};
-				i.rollAngle.onblur = (e) => this.applyNumericInput(e, 'roll', true);
+				i.rollAngle.onblur = (e) => {
+					this.applyNumericInput(e, 'roll', true);
+				}
 				
-				// OrbitControls 事件监听
+				// OrbitControls 事件
 				this.controls.addEventListener('end', () => {
 					if (this.state.autoAddKeyframeEnabled && this.state.cameras.currentType === 'custom') {
 						this.addCameraKeyframe();
 					}
 				});
-				
-				// 相机参数变化时保存相机状态
 				this.controls.addEventListener('change', () => {
 					if (!this.state.cameraAnim.isEnabled) {
 						this.saveCurrentCameraState();
 					}
+					this.renderInvalidate();
+				});
+				this.renderer.domElement.addEventListener('wheel', (e) => {
+					this.handleCameraWheel(e), {
+						passive: false
+					}
 				});
 				
-				this.renderer.domElement.addEventListener('wheel', (e) => this.handleCameraWheel(e), { passive: false });
-				window.addEventListener('resize', this.debounce(() => this.onWindowResize(), 100));
-				window.addEventListener('message', (e) => this.handleMessage(e));
+				// 窗口变化事件
+				window.addEventListener('resize', this.debounce(() => {
+					this.onWindowResize(), 100
+				}));
+				
+				// ComfyUI界面file_path监听
+				window.addEventListener('message', (e) => {
+					this.handleImportMessage(e)
+				});
 			}
 
 			// 核心控制
@@ -1152,27 +1515,98 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						}
 					}
 				}
-			}
-
-			async handleMessage(event) {
-				if (event.data.type === 'loadData') {
-					await this.load3DData(event.data.filename, event.data.format);
-				}
+				
+				this.renderInvalidate();
 			}
 
 			showMessage(message, duration = 3000) {
-				this.dom.loading.textContent = message;
+				this.dom.loadingText.textContent = message;
 				this.dom.loading.style.display = 'block';
 				
 				if (this._messageTimer) {
 					clearTimeout(this._messageTimer);
 				}
 				
-				this._messageTimer = setTimeout(() => {
-					if (!this.state.loading) {
-						this.dom.loading.style.display = 'none';
+				if (duration > 0) {
+					this._messageTimer = setTimeout(() => {
+						if (!this.state.loading) {
+							this.dom.loading.style.display = 'none';
+						}
+					}, duration);
+				}
+			}
+
+			updateLoadingProgress(percentage, message = null) {
+				const clampedPercentage = Math.max(0, Math.min(100, percentage));
+				
+				if (message) {
+					this.dom.loadingText.textContent = message;
+				}
+				
+				this.dom.loadingProgressBar.style.width = clampedPercentage + '%';
+				this.dom.loadingPercentage.textContent = Math.round(clampedPercentage) + '%';
+				
+				// 如果进度达到100%，准备隐藏加载指示器
+				if (clampedPercentage >= 100) {
+					setTimeout(() => {
+						if (!this.state.loading && !this._messageTimer) {
+							this.dom.loading.style.display = 'none';
+						}
+					}, 500);
+				}
+			}
+
+			disableControls() {
+				this.state.controlsDisabled = true;
+				
+				// 禁用控制面板
+				this.dom.controlsPanel.classList.add('controls-disabled');
+				
+				// 禁用所有按钮和输入
+				const allInteractiveElements = this.dom.controlsPanel.querySelectorAll('button, input, select');
+				allInteractiveElements.forEach(el => {
+					el.disabled = true;
+					el.classList.add('disabled-control');
+				});
+				
+				// 隐藏GUI
+				this.hideMaterialGUI();
+				this.hideLightGUI();
+				
+				// 隐藏GUI容器
+				if (this.state.materialGUI.container) {
+					this.state.materialGUI.container.classList.add('material-gui-disabled');
+				}
+				if (this.state.lightGUI.container) {
+					this.state.lightGUI.container.classList.add('light-gui-disabled');
+				}
+			}
+
+			enableControls() {
+				this.state.controlsDisabled = false;
+				
+				// 启用控制面板
+				this.dom.controlsPanel.classList.remove('controls-disabled');
+				
+				// 启用所有按钮和输入（除了本来就禁用的）
+				const allInteractiveElements = this.dom.controlsPanel.querySelectorAll('button, input, select');
+				allInteractiveElements.forEach(el => {
+					// 只启用那些不是固有禁用的元素
+					if (!el.hasAttribute('data-inherently-disabled')) {
+						el.disabled = false;
+						el.classList.remove('disabled-control');
 					}
-				}, duration);
+				});
+				
+				// 恢复GUI容器显示
+				if (this.state.materialGUI.container) {
+					this.state.materialGUI.container.classList.remove('material-gui-disabled');
+				}
+				if (this.state.lightGUI.container) {
+					this.state.lightGUI.container.classList.remove('light-gui-disabled');
+				}
+				
+				this.updateKeyframeButtonsState();
 			}
 
 			updateInfoDisplay() {
@@ -1297,11 +1731,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				info += cameraInfo;
 				
 				// 7. 添加FPS信息（如果有）
-				if (this.fps && this.fps.value > 0) {
+				/* if (this.fps && this.fps.value > 0) {
 					info += ' | ' + this.fps.value + ' FPS';
 				} else {
 					info += ' | 0 FPS';
-				}
+				} */
 				
 				this.dom.infoDisplay.textContent = info;
 			}
@@ -1350,23 +1784,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 			}
 
-			updateHelperSize() {
-				const slider = this.dom.inputs.helperSize;
-				if (!slider) return;
-				
-				const value = parseFloat(slider.value);
-				this.state.helperSize = value;
-				
-				this.updateAllVisualizationSizes();
-			}
-
-			toggleHelper() {
-				const vis = this.dom.toggles.helper.checked;
-				if(this.state.grid) this.state.grid.visible = vis;
-				if(this.state.axesHelper) this.state.axesHelper.visible = vis;
-				this.updateVisualizationVisibility();
-			}
-
 			toggleInfoDisplay() {
 				const isChecked = this.dom.toggles.info.checked;
 				
@@ -1384,6 +1801,25 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					this.hideMaterialGUI();
 					this.hideLightGUI();
 				}
+			}
+
+			toggleHelper() {
+				const vis = this.dom.toggles.helper.checked;
+				if(this.state.grid) this.state.grid.visible = vis;
+				if(this.state.axesHelper) this.state.axesHelper.visible = vis;
+				this.updateVisualizationVisibility();
+				this.renderInvalidate();
+			}
+
+			updateHelperSize() {
+				const slider = this.dom.inputs.helperSize;
+				if (!slider) return;
+				
+				const value = parseFloat(slider.value);
+				this.state.helperSize = value;
+				
+				this.updateAllVisualizationSizes();
+				this.renderInvalidate();
 			}
 
 			// 材质GUI
@@ -1479,7 +1915,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					this.state.materialGUI.gtaoFolder = null;
 					
 				} catch (error) {
-					console.error('Error creating GUI:', error);
+					console.log('Error creating GUI:', error);
 				}
 			}
 
@@ -1569,33 +2005,33 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.materialGUI.defaultFolder) {
 					try {
 						this.state.materialGUI.defaultFolder.destroy();
-					} catch (e) {
-						console.log('Error destroying default folder:', e);
-					}
+					} catch (e) {}
 					this.state.materialGUI.defaultFolder = null;
 				}
 				
 				this.state.materialGUI.defaultFolder = this.state.materialGUI.guiInstance.addFolder('Default Material');
 				
-				this.state.materialGUI.defaultFolder.addColor(this.state.materialParams.default, 'color')
+				const controllers = {};
+				
+				controllers.color = this.state.materialGUI.defaultFolder.addColor(this.state.materialParams.default, 'color')
 					.onChange((value) => {
 						this.state.materialParams.default.color = value;
 						this.updateDefaultMaterial();
 					}).name('Color');
 				
-				this.state.materialGUI.defaultFolder.add(this.state.materialParams.default, 'roughness', 0, 1, 0.01)
+				controllers.roughness = this.state.materialGUI.defaultFolder.add(this.state.materialParams.default, 'roughness', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.default.roughness = value;
 						this.updateDefaultMaterial();
 					}).name('Roughness');
 				
-				this.state.materialGUI.defaultFolder.add(this.state.materialParams.default, 'metalness', 0, 1, 0.01)
+				controllers.metalness = this.state.materialGUI.defaultFolder.add(this.state.materialParams.default, 'metalness', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.default.metalness = value;
 						this.updateDefaultMaterial();
 					}).name('Metalness');
 				
-				this.state.materialGUI.defaultFolder.add(this.state.materialParams.default, 'flatShading')
+				controllers.flatShading = this.state.materialGUI.defaultFolder.add(this.state.materialParams.default, 'flatShading')
 					.onChange((value) => {
 						this.state.materialParams.default.flatShading = value;
 						this.updateDefaultMaterial();
@@ -1605,6 +2041,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetDefaultParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.defaultControllers = controllers;
 				this.state.materialGUI.defaultFolder.open();
 			}
 
@@ -1614,27 +2051,27 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.materialGUI.wireframeFolder) {
 					try {
 						this.state.materialGUI.wireframeFolder.destroy();
-					} catch (e) {
-						console.log('Error destroying wireframe folder:', e);
-					}
+					} catch (e) {}
 					this.state.materialGUI.wireframeFolder = null;
 				}
 				
 				this.state.materialGUI.wireframeFolder = this.state.materialGUI.guiInstance.addFolder('Wireframe Material');
 				
-				this.state.materialGUI.wireframeFolder.addColor(this.state.materialParams.wireframe, 'color')
+				const controllers = {};
+				
+				controllers.color = this.state.materialGUI.wireframeFolder.addColor(this.state.materialParams.wireframe, 'color')
 					.onChange((value) => {
 						this.state.materialParams.wireframe.color = value;
 						this.updateWireframeMaterial();
 					}).name('Wireframe Color');
 				
-				this.state.materialGUI.wireframeFolder.add(this.state.materialParams.wireframe, 'linewidth', 0.1, 5, 0.1)
+				controllers.linewidth = this.state.materialGUI.wireframeFolder.add(this.state.materialParams.wireframe, 'linewidth', 0.1, 5, 0.1)
 					.onChange((value) => {
 						this.state.materialParams.wireframe.linewidth = value;
 						this.updateWireframeMaterial();
 					}).name('Line Width');
 				
-				this.state.materialGUI.wireframeFolder.add(this.state.materialParams.wireframe, 'opacity', 0, 1, 0.01)
+				controllers.opacity = this.state.materialGUI.wireframeFolder.add(this.state.materialParams.wireframe, 'opacity', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.wireframe.opacity = value;
 						this.updateWireframeMaterial();
@@ -1644,6 +2081,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetWireframeParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.wireframeControllers = controllers;
 				this.state.materialGUI.wireframeFolder.open();
 			}
 
@@ -1653,15 +2091,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.materialGUI.normalFolder) {
 					try {
 						this.state.materialGUI.normalFolder.destroy();
-					} catch (e) {
-						console.log('Error destroying normal folder:', e);
-					}
+					} catch (e) {}
 					this.state.materialGUI.normalFolder = null;
 				}
 				
 				this.state.materialGUI.normalFolder = this.state.materialGUI.guiInstance.addFolder('Normal Material');
 				
-				this.state.materialGUI.normalFolder.add(this.state.materialParams.normal, 'flatShading')
+				const controllers = {};
+				
+				controllers.flatShading = this.state.materialGUI.normalFolder.add(this.state.materialParams.normal, 'flatShading')
 					.onChange((value) => {
 						this.state.materialParams.normal.flatShading = value;
 						this.updateNormalMaterial();
@@ -1671,6 +2109,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetNormalParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.normalControllers = controllers;
 				this.state.materialGUI.normalFolder.open();
 			}
 
@@ -1680,39 +2119,39 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.materialGUI.lineartFolder) {
 					try {
 						this.state.materialGUI.lineartFolder.destroy();
-					} catch (e) {
-						console.log('Error destroying lineart folder:', e);
-					}
+					} catch (e) {}
 					this.state.materialGUI.lineartFolder = null;
 				}
 				
 				this.state.materialGUI.lineartFolder = this.state.materialGUI.guiInstance.addFolder('Lineart Material');
 				
-				this.state.materialGUI.lineartFolder.addColor(this.state.materialParams.lineart, 'color')
+				const controllers = {};
+				
+				controllers.color = this.state.materialGUI.lineartFolder.addColor(this.state.materialParams.lineart, 'color')
 					.onChange((value) => {
 						this.state.materialParams.lineart.color = value;
 						this.updateLineartMaterial();
 					}).name('Color');
 				
-				this.state.materialGUI.lineartFolder.add(this.state.materialParams.lineart, 'edgeStart', 0, 1, 0.01)
+				controllers.edgeStart = this.state.materialGUI.lineartFolder.add(this.state.materialParams.lineart, 'edgeStart', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.lineart.edgeStart = value;
 						this.updateLineartMaterial();
 					}).name('Edge Start');
 				
-				this.state.materialGUI.lineartFolder.add(this.state.materialParams.lineart, 'edgeEnd', 0, 1, 0.01)
+				controllers.edgeEnd = this.state.materialGUI.lineartFolder.add(this.state.materialParams.lineart, 'edgeEnd', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.lineart.edgeEnd = value;
 						this.updateLineartMaterial();
 					}).name('Edge End');
 				
-				this.state.materialGUI.lineartFolder.add(this.state.materialParams.lineart, 'curvatureStart', 0, 0.1, 0.01)
+				controllers.curvatureStart = this.state.materialGUI.lineartFolder.add(this.state.materialParams.lineart, 'curvatureStart', 0, 0.1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.lineart.curvatureStart = value;
 						this.updateLineartMaterial();
 					}).name('Curvature Start');
 				
-				this.state.materialGUI.lineartFolder.add(this.state.materialParams.lineart, 'curvatureEnd', 0, 0.1, 0.01)
+				controllers.curvatureEnd = this.state.materialGUI.lineartFolder.add(this.state.materialParams.lineart, 'curvatureEnd', 0, 0.1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.lineart.curvatureEnd = value;
 						this.updateLineartMaterial();
@@ -1722,6 +2161,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetLineartParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.lineartControllers = controllers;
 				this.state.materialGUI.lineartFolder.open();
 			}
 
@@ -1729,37 +2169,40 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (!this.state.materialGUI.guiInstance) return;
 				
 				if (this.state.materialGUI.cannyFolder) {
-					try { this.state.materialGUI.cannyFolder.destroy(); } catch(e) {}
+					try {
+						this.state.materialGUI.cannyFolder.destroy();
+					} catch(e) {}
 					this.state.materialGUI.cannyFolder = null;
 				}
 				
 				this.state.materialGUI.cannyFolder = this.state.materialGUI.guiInstance.addFolder('Canny Material');
+				const controllers = {};
 				
-				this.state.materialGUI.cannyFolder.addColor(this.state.materialParams.canny, 'color')
+				controllers.color = this.state.materialGUI.cannyFolder.addColor(this.state.materialParams.canny, 'color')
 					.onChange((value) => {
 						this.state.materialParams.canny.color = value;
 						this.updateCannyMaterial();
 					}).name('Color');
 				
-				this.state.materialGUI.cannyFolder.add(this.state.materialParams.canny, 'lowThreshold', 0, 1, 0.01)
+				controllers.lowThreshold = this.state.materialGUI.cannyFolder.add(this.state.materialParams.canny, 'lowThreshold', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.canny.lowThreshold = value;
 						this.updateCannyMaterial();
 					}).name('Low Threshold');
 				
-				this.state.materialGUI.cannyFolder.add(this.state.materialParams.canny, 'highThreshold', 0, 1, 0.01)
+				controllers.highThreshold = this.state.materialGUI.cannyFolder.add(this.state.materialParams.canny, 'highThreshold', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.canny.highThreshold = value;
 						this.updateCannyMaterial();
 					}).name('High Threshold');
 				
-				this.state.materialGUI.cannyFolder.add(this.state.materialParams.canny, 'edgeStrength', 0, 5, 0.01)
+				controllers.edgeStrength = this.state.materialGUI.cannyFolder.add(this.state.materialParams.canny, 'edgeStrength', 0, 5, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.canny.edgeStrength = value;
 						this.updateCannyMaterial();
 					}).name('Edge Strength');
 				
-				this.state.materialGUI.cannyFolder.add(this.state.materialParams.canny, 'edgeDetail', 0.1, 0.9, 0.01)
+				controllers.edgeDetail = this.state.materialGUI.cannyFolder.add(this.state.materialParams.canny, 'edgeDetail', 0.1, 0.9, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.canny.edgeDetail = value;
 						this.updateCannyMaterial();
@@ -1769,6 +2212,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetCannyParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.cannyControllers = controllers;
 				this.state.materialGUI.cannyFolder.open();
 			}
 
@@ -1776,43 +2220,47 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (!this.state.materialGUI.guiInstance) return;
 				
 				if (this.state.materialGUI.edgeFolder) {
-					try { this.state.materialGUI.edgeFolder.destroy(); } catch(e) {}
+					try {
+						this.state.materialGUI.edgeFolder.destroy();
+					} catch(e) {}
 					this.state.materialGUI.edgeFolder = null;
 				}
 				
 				this.state.materialGUI.edgeFolder = this.state.materialGUI.guiInstance.addFolder('Edge Material');
 				
-				this.state.materialGUI.edgeFolder.addColor(this.state.materialParams.edge, 'color')
+				const controllers = {};
+				
+				controllers.color = this.state.materialGUI.edgeFolder.addColor(this.state.materialParams.edge, 'color')
 					.onChange((value) => {
 						this.state.materialParams.edge.color = value;
 						this.updateEdgeMaterial();
 					}).name('Color');
 				
-				this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'normalThreshold', 0, 4, 0.01)
+				controllers.normalThreshold = this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'normalThreshold', 0, 10, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.edge.normalThreshold = value;
 						this.updateEdgeMaterial();
 					}).name('Normal Threshold');
 				
-				this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'posThreshold', 0, 4, 0.01)
+				controllers.posThreshold = this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'posThreshold', 0, 10, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.edge.posThreshold = value;
 						this.updateEdgeMaterial();
 					}).name('Position Threshold');
 				
-				this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'edgeStart', 0, 1, 0.01)
+				controllers.edgeStart = this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'edgeStart', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.edge.edgeStart = value;
 						this.updateEdgeMaterial();
 					}).name('Edge Start');
 				
-				this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'edgeEnd', 0, 1, 0.01)
+				controllers.edgeEnd = this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'edgeEnd', 0, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.edge.edgeEnd = value;
 						this.updateEdgeMaterial();
 					}).name('Edge End');
 				
-				this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'contrast', 1, 2, 0.01)
+				controllers.contrast = this.state.materialGUI.edgeFolder.add(this.state.materialParams.edge, 'contrast', 1, 2, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.edge.contrast = value;
 						this.updateEdgeMaterial();
@@ -1822,6 +2270,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetEdgeParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.edgeControllers = controllers;
 				this.state.materialGUI.edgeFolder.open();
 			}
 
@@ -1831,33 +2280,33 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.materialGUI.contourFolder) {
 					try {
 						this.state.materialGUI.contourFolder.destroy();
-					} catch (e) {
-						console.log('Error destroying contour folder:', e);
-					}
+					} catch (e) {}
 					this.state.materialGUI.contourFolder = null;
 				}
 				
 				this.state.materialGUI.contourFolder = this.state.materialGUI.guiInstance.addFolder('Contour Material');
 				
-				this.state.materialGUI.contourFolder.addColor(this.state.materialParams.contour, 'color')
+				const controllers = {};
+				
+				controllers.color = this.state.materialGUI.contourFolder.addColor(this.state.materialParams.contour, 'color')
 					.onChange((value) => {
 						this.state.materialParams.contour.color = value;
 						this.updateContourMaterial();
 					}).name('Color');
 				
-				this.state.materialGUI.contourFolder.add(this.state.materialParams.contour, 'thickness', 0.5, 5, 0.01)
+				controllers.thickness = this.state.materialGUI.contourFolder.add(this.state.materialParams.contour, 'thickness', 0.1, 10, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.contour.thickness = value;
 						this.updateContourMaterial();
 					}).name('Thickness');
 				
-				this.state.materialGUI.contourFolder.add(this.state.materialParams.contour, 'depthThreshold', 0.01, 1, 0.01)
+				controllers.depthThreshold = this.state.materialGUI.contourFolder.add(this.state.materialParams.contour, 'depthThreshold', 0.01, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.contour.depthThreshold = value;
 						this.updateContourMaterial();
 					}).name('Depth Threshold');
 				
-				this.state.materialGUI.contourFolder.add(this.state.materialParams.contour, 'normalThreshold', 0.01, 1, 0.01)
+				controllers.normalThreshold = this.state.materialGUI.contourFolder.add(this.state.materialParams.contour, 'normalThreshold', 0.01, 1, 0.01)
 					.onChange((value) => {
 						this.state.materialParams.contour.normalThreshold = value;
 						this.updateContourMaterial();
@@ -1867,6 +2316,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetContourParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.contourControllers = controllers;
 				this.state.materialGUI.contourFolder.open();
 			}
 
@@ -1876,29 +2326,28 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.materialGUI.ssaoFolder) {
 					try {
 						this.state.materialGUI.ssaoFolder.destroy();
-					} catch (e) {
-						console.log('Error destroying SSAO folder:', e);
-					}
+					} catch (e) {}
 					this.state.materialGUI.ssaoFolder = null;
 				}
 				
 				this.state.materialGUI.ssaoFolder = this.state.materialGUI.guiInstance.addFolder('SSAO Settings');
 				
 				const ssaoParams = this.state.postProcessingParams.ssao;
+				const controllers = {};
 				
-				this.state.materialGUI.ssaoFolder.add(ssaoParams, 'kernelRadius', 0, 32, 0.5)
+				controllers.kernelRadius = this.state.materialGUI.ssaoFolder.add(ssaoParams, 'kernelRadius', 0, 32, 0.5)
 					.onChange((value) => {
 						ssaoParams.kernelRadius = value;
 						this.updateSSAOParameters();
 					}).name('Kernel Radius');
 				
-				this.state.materialGUI.ssaoFolder.add(ssaoParams, 'minDistance', 0.001, 0.02, 0.001)
+				controllers.minDistance = this.state.materialGUI.ssaoFolder.add(ssaoParams, 'minDistance', 0.001, 1, 0.001)
 					.onChange((value) => {
 						ssaoParams.minDistance = value;
 						this.updateSSAOParameters();
 					}).name('Min Distance');
 				
-				this.state.materialGUI.ssaoFolder.add(ssaoParams, 'maxDistance', 0.01, 0.3, 0.01)
+				controllers.maxDistance = this.state.materialGUI.ssaoFolder.add(ssaoParams, 'maxDistance', 0.001, 1, 0.001)
 					.onChange((value) => {
 						ssaoParams.maxDistance = value;
 						this.updateSSAOParameters();
@@ -1908,6 +2357,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetSSAOParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.ssaoControllers = controllers;
 				this.state.materialGUI.ssaoFolder.open();
 			}
 
@@ -1917,56 +2367,80 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.materialGUI.gtaoFolder) {
 					try {
 						this.state.materialGUI.gtaoFolder.destroy();
-					} catch (e) {
-						console.log('Error destroying GTAO folder:', e);
-					}
+					} catch (e) {}
 					this.state.materialGUI.gtaoFolder = null;
 				}
 				
 				this.state.materialGUI.gtaoFolder = this.state.materialGUI.guiInstance.addFolder('GTAO Settings');
 				
 				const gtaoParams = this.state.postProcessingParams.gtao;
+				const controllers = {};
 				
-				this.state.materialGUI.gtaoFolder.add(gtaoParams, 'radius', 0.01, 1, 0.01)
+				controllers.radius = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'radius', 0.01, 1, 0.01)
 					.onChange((value) => {
 						gtaoParams.radius = value;
 						this.UpdateGTAOParameters();
 					}).name('Radius');
 				
-				this.state.materialGUI.gtaoFolder.add(gtaoParams, 'distanceExponent', 1, 4, 0.1)
+				controllers.distanceExponent = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'distanceExponent', 1, 4, 0.1)
 					.onChange((value) => {
 						gtaoParams.distanceExponent = value;
 						this.UpdateGTAOParameters();
 					}).name('Distance Exponent');
 				
-				this.state.materialGUI.gtaoFolder.add(gtaoParams, 'thickness', 0.01, 10, 0.01)
+				controllers.thickness = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'thickness', 0.01, 10, 0.01)
 					.onChange((value) => {
 						gtaoParams.thickness = value;
 						this.UpdateGTAOParameters();
 					}).name('Thickness');
 				
-				this.state.materialGUI.gtaoFolder.add(gtaoParams, 'scale', 0.01, 2.0, 0.01)
+				controllers.scale = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'scale', 0.01, 2.0, 0.01)
 					.onChange((value) => {
 						gtaoParams.scale = value;
 						this.UpdateGTAOParameters();
 					}).name('Scale');
 				
-				this.state.materialGUI.gtaoFolder.add(gtaoParams, 'distanceFallOff', 0, 1, 0.01)
+				controllers.distanceFallOff = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'distanceFallOff', 0, 1, 0.01)
 					.onChange((value) => {
 						gtaoParams.distanceFallOff = value;
 						this.UpdateGTAOParameters();
 					}).name('Distance Falloff');
 				
-				this.state.materialGUI.gtaoFolder.add(gtaoParams, 'samples', 2, 32, 1)
+				controllers.samples = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'samples', 2, 32, 1)
 					.onChange((value) => {
 						gtaoParams.samples = value;
 						this.UpdateGTAOParameters();
 					}).name('Samples');
 				
+				controllers.denoiseRadius = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'denoiseRadius', 1, 8, 0.01)
+					.onChange((value) => {
+						gtaoParams.denoiseRadius = value;
+						this.UpdateGTAOParameters();
+					}).name('Denoise');
+				/* 
+				controllers.lumaPhi = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'lumaPhi', 1, 20, 1)
+					.onChange((value) => {
+						gtaoParams.lumaPhi = value;
+						this.UpdateGTAOParameters();
+					}).name('luma Phi');
+				
+				controllers.depthPhi = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'depthPhi', 0.5, 5, 0.01)
+					.onChange((value) => {
+						gtaoParams.depthPhi = value;
+						this.UpdateGTAOParameters();
+					}).name('depth Phi');
+				
+				controllers.normalPhi = this.state.materialGUI.gtaoFolder.add(gtaoParams, 'normalPhi', 0.5, 5, 0.01)
+					.onChange((value) => {
+						gtaoParams.normalPhi = value;
+						this.UpdateGTAOParameters();
+					}).name('normal Phi');
+				*/
 				this.state.materialGUI.gtaoFolder.add({
 					reset: () => this.resetGTAOParameters()
 				}, 'reset').name('Reset');
 				
+				this.state.materialGUI.gtaoControllers = controllers;
 				this.state.materialGUI.gtaoFolder.open();
 			}
 
@@ -2023,9 +2497,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.lightGUI.guiInstance) {
 					try {
 						this.state.lightGUI.guiInstance.destroy();
-					} catch (e) {
-						console.log('Error destroying old light GUI:', e);
-					}
+					} catch (e) {}
 					this.state.lightGUI.guiInstance = null;
 				}
 				
@@ -2061,9 +2533,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					// 初始状态：根据当前灯光模式设置可见性
 					this.toggleLightGUI();
 					
-				} catch (error) {
-					console.error('Error creating light GUI:', error);
-				}
+				} catch (error) {}
 			}
 
 			showLightGUI() {
@@ -2087,54 +2557,51 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 			}
 
-			createDirLightFolder() {
+			createDirLightFolder(open = false) {
 				if (!this.state.lightGUI.guiInstance) return;
 				
-				// 如果已存在文件夹，先销毁
 				if (this.state.lightGUI.dirLightFolder) {
 					try {
 						this.state.lightGUI.dirLightFolder.destroy();
-					} catch (e) {
-						console.log("Error destroying existing folder:", e);
-					}
+					} catch (e) {}
 					this.state.lightGUI.dirLightFolder = null;
 				}
 				
-				// 方向光文件夹
-				const dirLightFolder = this.state.lightGUI.guiInstance.addFolder('Directional Light');
+				const dirLightFolder = this.state.lightGUI.guiInstance.addFolder('Default Directional Light');
 				
-				// 保存文件夹引用到状态
 				this.state.lightGUI.dirLightFolder = dirLightFolder;
 				
-				dirLightFolder.addColor(this.state.lights, 'dirColor')
+				const colorController = dirLightFolder.addColor(this.state.lights, 'dirColor')
 					.onChange((value) => {
 						this.state.lights.dirColor = value;
 						this.updateDirLightColor();
-					}).name('Dir Color');
+					}).name('Color');
 				
-				dirLightFolder.add(this.state.lights, 'dirIntensity', 0, 5, 0.01)
+				const intensityController = dirLightFolder.add(this.state.lights, 'dirIntensity', 0, 10, 0.01)
 					.onChange((value) => {
 						this.state.lights.dirIntensity = value;
 						this.updateDirLightIntensity();
-					}).name('Dir Intensity');
+					}).name('Intensity');
 				
 				dirLightFolder.add({
 					reset: () => this.resetDirLightParameters('main')
 				}, 'reset').name('Reset');
 				
-				dirLightFolder.add(this.state.lights.dirSpherical, 'azimuth', 0, 360, 0.01)
+				const poseControllers = {};
+				
+				poseControllers.azimuth = dirLightFolder.add(this.state.lights.dirSpherical, 'azimuth', 0, 360, 0.01)
 					.onChange((value) => {
 						this.state.lights.dirSpherical.azimuth = value;
 						this.updateDirLightFromSpherical();
 					}).name('Azimuth');
 				
-				dirLightFolder.add(this.state.lights.dirSpherical, 'elevation', -90, 90, 0.01)
+				poseControllers.elevation = dirLightFolder.add(this.state.lights.dirSpherical, 'elevation', -90, 90, 0.01)
 					.onChange((value) => {
 						this.state.lights.dirSpherical.elevation = value;
 						this.updateDirLightFromSpherical();
 					}).name('Elevation');
 				
-				dirLightFolder.add(this.state.lights.dirSpherical, 'radius', 1, 1000, 0.01)
+				poseControllers.radius = dirLightFolder.add(this.state.lights.dirSpherical, 'radius', 1, 1000, 0.01)
 					.onChange((value) => {
 						this.state.lights.dirSpherical.radius = value;
 						this.updateDirLightFromSpherical();
@@ -2144,8 +2611,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetDirLightParameters('pose')
 				}, 'reset').name('Reset Pose');
 				
+				const shadowControllers = {};
 				/* 
-				dirLightFolder.add(this.state.lights, 'shadowType', {
+				shadowControllers.type = dirLightFolder.add(this.state.lights, 'shadowType', {
 					'Basic': 'basic',
 					'PCF': 'pcf',
 					'PCF Soft': 'pcfsoft',
@@ -2155,67 +2623,67 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					this.updateShadowType();
 				}).name('Shadow Type');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings, 'mapSize', [512, 1024, 2048, 4096])
+				shadowControllers.size = dirLightFolder.add(this.state.lights.shadowSettings, 'mapSize', [512, 1024, 2048, 4096])
 					.onChange((value) => {
 						this.state.lights.shadowSettings.mapSize = value;
 						this.updateShadowSettings();
 					}).name('Shadow Map Size');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings, 'radius', 0, 10, 1)
+				shadowControllers.blur = dirLightFolder.add(this.state.lights.shadowSettings, 'radius', 0, 10, 1)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.radius = value;
 						this.updateShadowSettings();
 					}).name('Shadow Blur Radius');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings, 'samples', 1, 32, 1)
+				shadowControllers.samples = dirLightFolder.add(this.state.lights.shadowSettings, 'samples', 1, 32, 1)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.samples = value;
 						this.updateShadowSettings();
 					}).name('Shadow Blur Samples');
-				 */
-				dirLightFolder.add(this.state.lights.shadowSettings, 'bias', -0.01, 0.01, 0.0001)
+				*/
+				shadowControllers.bias = dirLightFolder.add(this.state.lights.shadowSettings, 'bias', -0.01, 0.01, 0.0001)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.bias = value;
 						this.updateShadowSettings();
 						}).name('Shadow Bias');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings, 'normalBias', 0, 0.1, 0.001)
+				shadowControllers.normalBias = dirLightFolder.add(this.state.lights.shadowSettings, 'normalBias', 0, 0.1, 0.001)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.normalBias = value;
 						this.updateShadowSettings();
 					}).name('Shadow Normal Bias');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings.camera, 'near', 0.01, 100, 0.01)
+				shadowControllers.near = dirLightFolder.add(this.state.lights.shadowSettings.camera, 'near', 0.01, 100, 0.01)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.camera.near = value;
 						this.updateShadowSettings();
 					}).name('Shadow Near');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings.camera, 'far', 10, 2000, 0.01)
+				shadowControllers.far = dirLightFolder.add(this.state.lights.shadowSettings.camera, 'far', 10, 2000, 0.01)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.camera.far = value;
 						this.updateShadowSettings();
 					}).name('Shadow Far');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings.camera, 'left', -1000, 0, 0.01)
+				shadowControllers.left = dirLightFolder.add(this.state.lights.shadowSettings.camera, 'left', -1000, 0, 0.01)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.camera.left = value;
 						this.updateShadowSettings();
 					}).name('Shadow Left');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings.camera, 'right', 0, 1000, 0.01)
+				shadowControllers.right = dirLightFolder.add(this.state.lights.shadowSettings.camera, 'right', 0, 1000, 0.01)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.camera.right = value;
 						this.updateShadowSettings();
 					}).name('Shadow Right');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings.camera, 'top', 0, 1000, 0.01)
+				shadowControllers.top = dirLightFolder.add(this.state.lights.shadowSettings.camera, 'top', 0, 1000, 0.01)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.camera.top = value;
 						this.updateShadowSettings();
 					}).name('Shadow Top');
 				
-				dirLightFolder.add(this.state.lights.shadowSettings.camera, 'bottom', -1000, 0, 0.01)
+				shadowControllers.bottom = dirLightFolder.add(this.state.lights.shadowSettings.camera, 'bottom', -1000, 0, 0.01)
 					.onChange((value) => {
 						this.state.lights.shadowSettings.camera.bottom = value;
 						this.updateShadowSettings();
@@ -2225,44 +2693,60 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					reset: () => this.resetDirLightParameters('shadow')
 				}, 'reset').name('Reset Shadow Map');
 				
-				dirLightFolder.open();
+				this.state.lightGUI.dirLightControllers = {
+					color: colorController,
+					intensity: intensityController,
+					pose: poseControllers,
+					shadow: shadowControllers
+				};
+				
+				if (open) {
+					dirLightFolder.open();
+				} else {
+					dirLightFolder.close();
+				}
 			}
 
-			createAmbLightFolder() {
+			createAmbLightFolder(open = false) {
 				if (!this.state.lightGUI.guiInstance) return;
 				
-				// 如果已存在文件夹，先销毁
 				if (this.state.lightGUI.ambLightFolder) {
 					try {
 						this.state.lightGUI.ambLightFolder.destroy();
-					} catch (e) {
-						console.log("Error destroying existing folder:", e);
-					}
+					} catch (e) {}
 					this.state.lightGUI.ambLightFolder = null;
 				}
 				
-				const ambLightFolder = this.state.lightGUI.guiInstance.addFolder('Ambient Light');
+				const ambLightFolder = this.state.lightGUI.guiInstance.addFolder('Default Ambient Light');
 				
-				// 保存文件夹引用到状态
 				this.state.lightGUI.ambLightFolder = ambLightFolder;
 				
-				ambLightFolder.addColor(this.state.lights, 'ambColor')
+				const colorController = ambLightFolder.addColor(this.state.lights, 'ambColor')
 					.onChange((value) => {
 						this.state.lights.ambColor = value;
 						this.updateAmbLightColor();
-					}).name('Amb Color');
+					}).name('Color');
 				
-				ambLightFolder.add(this.state.lights, 'ambIntensity', 0, 5, 0.01)
+				const intensityController = ambLightFolder.add(this.state.lights, 'ambIntensity', 0, 10, 0.01)
 					.onChange((value) => {
 						this.state.lights.ambIntensity = value;
 						this.updateAmbLightIntensity();
-					}).name('Amb Intensity');
+					}).name('Intensity');
 				
 				ambLightFolder.add({
 					reset: () => this.resetAmbLightParameters()
 				}, 'reset').name('Reset');
 				
-				ambLightFolder.open();
+				this.state.lightGUI.ambLightControllers = {
+					color: colorController,
+					intensity: intensityController
+				};
+				
+				if (open) {
+					ambLightFolder.open();
+				} else {
+					ambLightFolder.close();
+				}
 			}
 
 			// 数值输入控制
@@ -2566,350 +3050,17 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				return [0, 0, 0, 1];
 			}
 
-			// 模型加载与处理
-			ImportDiagnostics() {
-				console.log("=== Scene Diagnostics ===");
-				
-				// Record current scene state
-				const sceneState = {
-					objects: {},
-					cameras: {},
-					lights: [],
-					animationInfo: null
-				};
-				
-				// Collect object overview
-				console.group("Scene Object Overview:");
-				
-				const objectStats = {
-					total: 0,
-					types: {},
-					visible: 0,
-					groups: 0,
-					meshes: 0,
-					lines: 0,
-					points: 0
-				};
-				
-				this.scene.traverse(function(child) {
-					objectStats.total++;
-					
-					// Count by type
-					const type = child.type || "Unknown";
-					objectStats.types[type] = (objectStats.types[type] || 0) + 1;
-					
-					// Count specific categories
-					if (child.isGroup) objectStats.groups++;
-					if (child.isMesh) objectStats.meshes++;
-					if (child.isLine) objectStats.lines++;
-					if (child.isPoints) objectStats.points++;
-					if (child.visible) objectStats.visible++;
-					
-					// Store object information
-					sceneState.objects[child.name || "unnamed_" + objectStats.total] = {
-						type: type,
-						visible: child.visible,
-						position: child.position ? child.position.toArray().map(function(v) { return v.toFixed(2); }) : null,
-						userDataKeys: child.userData ? Object.keys(child.userData) : []
-					};
-				});
-				
-				console.log("Total objects: " + objectStats.total);
-				console.log("Visible objects: " + objectStats.visible);
-				console.log("Groups: " + objectStats.groups);
-				console.log("Meshes: " + objectStats.meshes);
-				console.log("Lines: " + objectStats.lines);
-				console.log("Points: " + objectStats.points);
-				
-				// Display type distribution
-				console.group("Object type distribution:");
-				for (var type in objectStats.types) {
-					if (objectStats.types.hasOwnProperty(type)) {
-						console.log(type + ": " + objectStats.types[type]);
-					}
-				}
-				console.groupEnd();
-				
-				console.groupEnd(); // Scene Object Overview group
-				
-				// Camera State group
-				const cameraCounts = {
-					default: this.state.cameras.default ? this.state.cameras.default.length : 0,
-					custom: this.state.cameras.custom ? this.state.cameras.custom.length : 0,
-					scene: this.state.cameras.scene ? this.state.cameras.scene.length : 0
-				};
-				
-				const totalCameras = cameraCounts.default + cameraCounts.custom + cameraCounts.scene;
-				console.group("Camera State (" + totalCameras + " cameras):");
-				
-				// Collect all cameras from all categories
-				const allCameras = [];
-				if (this.state.cameras.default) allCameras.push.apply(allCameras, this.state.cameras.default);
-				if (this.state.cameras.custom) allCameras.push.apply(allCameras, this.state.cameras.custom);
-				if (this.state.cameras.scene) allCameras.push.apply(allCameras, this.state.cameras.scene);
-				
-				// Analyze default cameras
-				console.group("Default Cameras (" + cameraCounts.default + " cameras):");
-				if (cameraCounts.default > 0 && this.state.cameras.default) {
-					this.state.cameras.default.forEach(function(cam) {
-						console.group("Camera: " + cam.name);
-						console.log("Type: " + (cam.userData.cameraType || "default"));
-						console.log("Position: [" + cam.position.x.toFixed(2) + ", " + cam.position.y.toFixed(2) + ", " + cam.position.z.toFixed(2) + "]");
-						console.log("Rotation(degrees): [" + (cam.rotation.x * 180/Math.PI).toFixed(2) + ", " + (cam.rotation.y * 180/Math.PI).toFixed(2) + ", " + (cam.rotation.z * 180/Math.PI).toFixed(2) + "]");
-						console.log("Projection type: " + (cam.isOrthographicCamera ? "Orthographic" : "Perspective"));
-						if (cam.userData.targetPosition) {
-							console.log("Target position: [" + cam.userData.targetPosition.x.toFixed(2) + ", " + cam.userData.targetPosition.y.toFixed(2) + ", " + cam.userData.targetPosition.z.toFixed(2) + "]");
-						}
-						console.groupEnd();
-					}.bind(this));
-				} else {
-					console.log("No default cameras");
-				}
-				console.groupEnd(); // Default Cameras group
-				
-				// Analyze custom cameras
-				console.group("Custom Cameras (" + cameraCounts.custom + " cameras):");
-				if (cameraCounts.custom > 0 && this.state.cameras.custom) {
-					this.state.cameras.custom.forEach(function(cam) {
-						console.group("Camera: " + cam.name);
-						console.log("Type: " + (cam.userData.cameraType || "custom"));
-						console.log("Position: [" + cam.position.x.toFixed(2) + ", " + cam.position.y.toFixed(2) + ", " + cam.position.z.toFixed(2) + "]");
-						console.log("Rotation(degrees): [" + (cam.rotation.x * 180/Math.PI).toFixed(2) + ", " + (cam.rotation.y * 180/Math.PI).toFixed(2) + ", " + (cam.rotation.z * 180/Math.PI).toFixed(2) + "]");
-						console.log("Projection type: " + (cam.isOrthographicCamera ? "Orthographic" : "Perspective"));
-						if (cam.userData.targetPosition) {
-							console.log("Target position: [" + cam.userData.targetPosition.x.toFixed(2) + ", " + cam.userData.targetPosition.y.toFixed(2) + ", " + cam.userData.targetPosition.z.toFixed(2) + "]");
-						}
-						if (cam.userData.animationKeyframes && cam.userData.animationKeyframes.length > 0) {
-							console.log("Animation keyframes (" + cam.userData.animationKeyframes.length + " frames):");
-						} else {
-							console.log("Animation keyframes: None");
-						}
-						console.groupEnd();
-					}.bind(this));
-				} else {
-					console.log("No custom cameras");
-				}
-				console.groupEnd(); // Custom Cameras group
-				
-				// Analyze scene cameras
-				console.group("Scene Cameras (" + cameraCounts.scene + " cameras):");
-				if (cameraCounts.scene > 0 && this.state.cameras.scene) {
-					this.state.cameras.scene.forEach(function(cam) {
-						console.group("Camera: " + cam.name);
-						console.log("Type: " + (cam.userData.cameraType || "scene"));
-						console.log("Position: [" + cam.position.x.toFixed(2) + ", " + cam.position.y.toFixed(2) + ", " + cam.position.z.toFixed(2) + "]");
-						console.log("Rotation(degrees): [" + (cam.rotation.x * 180/Math.PI).toFixed(2) + ", " + (cam.rotation.y * 180/Math.PI).toFixed(2) + ", " + (cam.rotation.z * 180/Math.PI).toFixed(2) + "]");
-						console.log("Projection type: " + (cam.isOrthographicCamera ? "Orthographic" : "Perspective"));
-						if (cam.userData.targetPosition) {
-							console.log("Target position: [" + cam.userData.targetPosition.x.toFixed(2) + ", " + cam.userData.targetPosition.y.toFixed(2) + ", " + cam.userData.targetPosition.z.toFixed(2) + "]");
-						}
-						if (cam.userData.animationKeyframes && cam.userData.animationKeyframes.length > 0) {
-							console.log("Animation keyframes (" + cam.userData.animationKeyframes.length + " frames):");
-						} else {
-							console.log("Animation keyframes: None");
-						}
-						console.groupEnd();
-					}.bind(this));
-				} else {
-					console.log("No scene cameras");
-				}
-				console.groupEnd(); // Scene Cameras group
-				
-				console.groupEnd(); // Camera State group
-				
-				// Light State group
-				console.group("Light State:");
-				
-				// Get all lights in scene
-				const allLights = [];
-				this.scene.traverse(function(child) {
-					if (child.isLight) {
-						allLights.push(child);
-					}
-				});
-				
-				// Check if we have default and scene lights in state
-				const hasLightClassification = this.state.lights && this.state.lights.default && this.state.lights.scene;
-				
-				// Analyze default lights
-				if (hasLightClassification) {
-					console.group("Default Lights (" + this.state.lights.default.length + " lights):");
-					this.state.lights.default.forEach(function(light, index) {
-						console.group("Light " + index + ": " + light.name);
-						console.log("Type: " + light.type);
-						console.log("Position: [" + light.position.x.toFixed(2) + ", " + light.position.y.toFixed(2) + ", " + light.position.z.toFixed(2) + "]");
-						console.log("Color: " + light.color.getHexString());
-						console.log("Intensity: " + light.intensity.toFixed(2));
-						console.groupEnd();
-					});
-					console.groupEnd(); // Default Lights group
-				}
-				
-				// Analyze scene lights
-				console.group("Scene Lights (" + (hasLightClassification ? this.state.lights.scene.length : allLights.length) + " lights):");
-				if (hasLightClassification) {
-					this.state.lights.scene.forEach(function(light, index) {
-						console.group("Light " + index + ": " + light.name);
-						console.log("Type: " + light.type);
-						console.log("Position: [" + light.position.x.toFixed(2) + ", " + light.position.y.toFixed(2) + ", " + light.position.z.toFixed(2) + "]");
-						console.log("Color: " + light.color.getHexString());
-						console.log("Intensity: " + light.intensity.toFixed(2));
-						console.groupEnd();
-					});
-				} else {
-					allLights.forEach(function(light, index) {
-						console.group("Light " + index + ": " + light.name);
-						console.log("Type: " + light.type);
-						console.log("Position: [" + light.position.x.toFixed(2) + ", " + light.position.y.toFixed(2) + ", " + light.position.z.toFixed(2) + "]");
-						console.log("Color: " + light.color.getHexString());
-						console.log("Intensity: " + light.intensity.toFixed(2));
-						console.groupEnd();
-					});
-					console.log("Note: All lights are treated as Scene Lights (no classification in state).");
-				}
-				console.groupEnd(); // Scene Lights group
-				
-				console.log("Total light count: " + (hasLightClassification ? (this.state.lights.default.length + this.state.lights.scene.length) : allLights.length));
-				console.groupEnd(); // Light State group
-				
-				// Animation information
-				console.group("Animation Information:");
-				
-				let animationClipCount = 0;
-				let animationSummary = { hasAnimations: false, clips: [] };
-				
-				if (this.state.currentAnimations && this.state.currentAnimations.length > 0) {
-					animationClipCount = this.state.currentAnimations.length;
-					console.log("Animation clip count: " + animationClipCount);
-					
-					this.state.currentAnimations.forEach(function(anim, index) {
-						console.group("Animation clip " + index + ": " + anim.name);
-						console.log("Duration: " + anim.duration.toFixed(2) + " seconds");
-						console.log("Track count: " + anim.tracks.length);
-						console.log("FPS: " + this.state.playback.fps);
-						console.log("Total frames: " + this.state.playback.totalFrames);
-						console.groupEnd();
-						
-						// Add to animation summary
-						animationSummary.clips.push({
-							name: anim.name,
-							duration: anim.duration,
-							tracks: anim.tracks.length
-						});
-					}.bind(this));
-					
-					animationSummary.hasAnimations = true;
-				} else {
-					console.log("Animation clips: None");
-				}
-				
-				console.groupEnd(); // Animation Information group
-				
-				// Show summary message
-				console.log("=== Scene Summary ===");
-				console.log("Objects: " + objectStats.total + " (Visible: " + objectStats.visible + ")");
-				console.log("Cameras: " + totalCameras + " (Default: " + cameraCounts.default + ", Custom: " + cameraCounts.custom + ", Scene: " + cameraCounts.scene + ")");
-				console.log("Lights: " + (hasLightClassification ? (this.state.lights.default.length + this.state.lights.scene.length) : allLights.length) + (hasLightClassification ? " (Default: " + this.state.lights.default.length + ", Scene: " + this.state.lights.scene.length + ")" : ""));
-				console.log("Animations: " + animationClipCount + " clip(s)");
-				this.showMessage("Please check the console for detailed diagnostics.");
-				
-				// Output JSON state (simplified version)
-				console.log("=== Scene State JSON (Simplified) ===");
-				
-				// Create simplified JSON state
-				const simplifiedState = {
-					timestamp: new Date().toISOString(),
-					objectSummary: {
-						total: objectStats.total,
-						visible: objectStats.visible,
-						byType: objectStats.types,
-						byCategory: {
-							groups: objectStats.groups,
-							meshes: objectStats.meshes,
-							lines: objectStats.lines,
-							points: objectStats.points
-						}
-					},
-					cameras: {},
-					lights: {
-						default: [],
-						scene: []
-					},
-					animation: {
-						hasAnimations: animationSummary.hasAnimations,
-						clipCount: animationClipCount,
-						clips: animationSummary.clips,
-						currentFrame: this.state.playback ? Math.floor(this.state.playback.currentFrame) : 0,
-						totalFrames: this.state.playback ? this.state.playback.totalFrames : 0,
-						fps: this.state.playback ? this.state.playback.fps : 0
-					},
-					cameraSummary: {
-						currentType: this.state.cameras.currentType,
-						activeCamera: this.camera ? this.camera.name : null,
-						counts: cameraCounts
-					}
-				};
-				
-				// Record key information for each camera
-				allCameras.forEach(function(cam) {
-					simplifiedState.cameras[cam.name] = {
-						type: cam.userData.cameraType || "unknown",
-						position: cam.position.toArray().map(function(v) { return v.toFixed(2); }),
-						rotation: cam.rotation.toArray().map(function(v) { return (v * 180/Math.PI).toFixed(2); }),
-						hasAnimation: cam.userData.animationKeyframes && cam.userData.animationKeyframes.length > 0,
-						animationFrames: cam.userData.animationKeyframes ? cam.userData.animationKeyframes.length : 0
-					};
-				});
-				
-				// Record key information for each light
-				if (hasLightClassification) {
-					// Record default lights
-					this.state.lights.default.forEach(function(light, index) {
-						simplifiedState.lights.default.push({
-							name: light.name || "default_light_" + index,
-							type: light.type,
-							position: [light.position.x.toFixed(2), light.position.y.toFixed(2), light.position.z.toFixed(2)],
-							color: light.color.getHexString(),
-							intensity: light.intensity.toFixed(2)
-						});
-					});
-					
-					// Record scene lights
-					this.state.lights.scene.forEach(function(light, index) {
-						simplifiedState.lights.scene.push({
-							name: light.name || "scene_light_" + index,
-							type: light.type,
-							position: [light.position.x.toFixed(2), light.position.y.toFixed(2), light.position.z.toFixed(2)],
-							color: light.color.getHexString(),
-							intensity: light.intensity.toFixed(2)
-						});
-					});
-				} else {
-					// Record all lights as scene lights
-					allLights.forEach(function(light, index) {
-						simplifiedState.lights.scene.push({
-							name: light.name || "light_" + index,
-							type: light.type,
-							position: [light.position.x.toFixed(2), light.position.y.toFixed(2), light.position.z.toFixed(2)],
-							color: light.color.getHexString(),
-							intensity: light.intensity.toFixed(2)
-						});
-					});
-				}
-				
-				console.log(JSON.stringify(simplifiedState, null, 2));
-				
-				console.log("=== Export/Reimport Diagnostics Complete ===");
-			}
-
+			// 模型导入
 			handleImportFile(event) {
 				const file = event.target.files[0];
 				if (file) {
-					const fileName = file.name; const format = this.detectFormat(fileName);
-					
+					const fileName = file.name;
+					const format = this.detectFormat(fileName);
 					const reader = new FileReader();
+					
 					reader.onload = (e) => this.load3DDataFromBuffer(e.target.result, fileName, format);
-					if (['bin', 'fbx', 'glb', 'ply'].includes(format)) {
+					
+					if (['zip', 'bin', 'fbx', 'glb', 'ply'].includes(format)) {
 						reader.readAsArrayBuffer(file);
 					} else {
 						reader.readAsText(file);
@@ -2918,86 +3069,270 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				event.target.value = '';
 			}
 
-			async load3DDataFromBuffer(buffer, filename, format) {
-				await this.process3DModelLoading(filename, format, async () => {
-					if (format === 'bin') this.parseSMPL(buffer);
-					else if (format === 'glb') await this.loadGLBFromBuffer(buffer);
-					else if (format === 'fbx') await this.loadFBXFromBuffer(buffer);
-					else if (format === 'obj') await this.loadOBJFromText(buffer);
-					else if (format === 'ply') await this.loadPLYFromBuffer(buffer);
-					else throw new Error("Unsupported format: " + format);
-				});
-			}
-
-			async load3DData(filename, formatHint = 'auto') {
-				if (!filename) throw new Error("No filename provided");
-				const format = formatHint === 'auto' ? this.detectFormat(filename) : formatHint;
-				
-				await this.process3DModelLoading(filename, format, async () => {
-					if (format === 'bin') await this.loadSMPLBin(filename);
-					else if (format === 'glb') await this.loadGLB(filename);
-					else if (format === 'fbx') await this.loadFBX(filename);
-					else if (format === 'obj') await this.loadOBJ(filename);
-					else if (format === 'ply') await this.loadPLY(filename);
-					else throw new Error("Unsupported format: " + format);
-				});
+			async handleImportMessage(event) {
+				if (event.data.type === 'loadData') {
+					const filename = event.data.filename;
+					const format = this.detectFormat(filename);
+					await this.load3DDataFromComfyUI(filename, format);
+				}
 			}
 
 			detectFormat(filename) { 
 				const ext = filename.split('.').pop().toLowerCase(); 
 				const map = { 
 					'glb': 'glb', 
+					'gltf': 'glb', 
 					'fbx': 'fbx', 
 					'obj': 'obj', 
 					'ply': 'ply', 
-					'bin': 'bin'
+					'bin': 'bin',
+					'zip': 'zip'
 				}; 
 				return map[ext] || 'glb'; 
+			}
+
+			async load3DDataFromBuffer(buffer, filename, format) {
+				this.loadingProgress.start('Processing ' + format.toUpperCase() + ' from buffer...', 50);
+				await this.process3DModelLoading(filename, format, async () => {
+					await this.loadAndParseFromBuffer(buffer, format);
+				});
+			}
+
+			async loadAndParseFromBuffer(buffer, format) {
+				try {
+					this.loadingProgress.update('Parsing ' + format.toUpperCase() + ' data...', 70);
+					
+					switch(format) {
+						case 'bin':
+							await this.loadSMPLBinFromBuffer(buffer);
+							break;
+						case 'glb':
+							await this.loadGLBFromBuffer(buffer);
+							break;
+						case 'fbx':
+							await this.loadFBXFromBuffer(buffer);
+							break;
+						case 'obj':
+							await this.loadOBJFromBuffer(buffer);
+							break;
+						case 'ply':
+							await this.loadPLYFromBuffer(buffer);
+							break;
+						case 'zip':
+							await this.loadZipDataFromBuffer(buffer);
+							break;
+						default:
+							throw new Error("Unsupported format: " + format);
+					}
+					
+					this.loadingProgress.update(format.toUpperCase() + ' processing complete', 98);
+					
+				} catch (error) {
+					this.loadingProgress.error('Failed to parse ' + format + ': ' + error.message);
+					throw error;
+				}
+			}
+
+			async load3DDataFromComfyUI(filename, format) {
+				if (!filename) throw new Error("No filename provided");
+				this.loadingProgress.start('Processing ' + format.toUpperCase() + ' from ComfyUI...', 50);
+				await this.process3DModelLoading(filename, format, async () => {
+					await this.loadAndParseFromComfyUI(filename, format);
+				});
+			}
+
+			async loadAndParseFromComfyUI(filename, format) {
+				const formatConfig = {
+					'bin': {
+						responseType: 'arraybuffer',
+						label: 'SMPL',
+						progressMessage: (percent, loaded, total) => 'Downloading SMPL: ' + percent + '%'
+					},
+					'glb': {
+						responseType: 'arraybuffer',
+						label: 'GLB',
+						progressMessage: (percent, loaded, total) => 'Downloading GLB: ' + percent + '%'
+					},
+					'fbx': {
+						responseType: 'arraybuffer',
+						label: 'FBX',
+						progressMessage: (percent, loaded, total) => 'Downloading FBX: ' + percent + '%'
+					},
+					'obj': {
+						responseType: 'text',
+						label: 'OBJ',
+						progressMessage: (percent, loaded, total) => 'Downloading OBJ: ' + percent + '%'
+					},
+					'ply': {
+						responseType: 'arraybuffer',
+						label: 'PLY',
+						progressMessage: (percent, loaded, total) => 'Downloading PLY: ' + percent + '%'
+					},
+					'zip': {
+						responseType: 'arraybuffer',
+						label: 'ZIP',
+						progressMessage: (percent, loaded, total) => 'Downloading ZIP: ' + percent + '%'
+					}
+				};
+				
+				const config = formatConfig[format];
+				if (!config) {
+					throw new Error('Unsupported format: ' + format);
+				}
+				
+				try {
+					// 1: 下载文件
+					const result = await this.downloadFileWithProgress(filename, {
+						responseType: config.responseType,
+						startProgress: 30,
+						endProgress: 80,
+						label: config.label,
+						onProgress: config.progressMessage
+					});
+					
+					// 2: 解析文件
+					this.loadingProgress.update('Parsing ' + config.label + ' data...', 85);
+					
+					switch(format) {
+						case 'bin':
+							await this.loadSMPLBinFromBuffer(result.data);
+							break;
+						case 'glb':
+							await this.loadGLBFromBuffer(result.data);
+							break;
+						case 'fbx':
+							await this.loadFBXFromBuffer(result.data);
+							break;
+						case 'obj':
+							await this.loadOBJFromBuffer(result.data);
+							break;
+						case 'ply':
+							await this.loadPLYFromBuffer(result.data);
+							break;
+						case 'zip':
+							await this.loadZipDataFromBuffer(result.data);
+							break;
+					}
+					
+					this.loadingProgress.update(config.label + ' processing complete', 98);
+					
+				} catch (error) {
+					this.loadingProgress.error('Failed to load ' + config.label + ': ' + error.message);
+					throw error;
+				}
+			}
+
+			async downloadFileWithProgress(filename, options = {}) {
+				const {
+					responseType = 'arraybuffer',
+					startProgress = 30,
+					endProgress = 80,
+					label = 'Downloading',
+					onProgress = null
+				} = options;
+				
+				return new Promise((resolve, reject) => {
+					this.loadingProgress.update(label + '...', startProgress);
+					
+					const xhr = new XMLHttpRequest();
+					xhr.open('GET', '/adv3dviewer_jk?filename=' + encodeURIComponent(filename), true);
+					xhr.responseType = responseType;
+					
+					let lastPercent = 0;
+					xhr.onprogress = (event) => {
+						if (event.lengthComputable) {
+							const percentComplete = startProgress + (event.loaded / event.total) * (endProgress - startProgress);
+							if (percentComplete - lastPercent >= 1) {
+								lastPercent = percentComplete;
+								const downloadPercent = Math.round(((percentComplete - startProgress) / (endProgress - startProgress)) * 100);
+								const message = onProgress ? onProgress(downloadPercent, event.loaded, event.total) 
+														   : label + ': ' + downloadPercent + '%';
+								this.loadingProgress.update(message, percentComplete);
+							}
+						} else {
+							const loadedMB = event.loaded / (1024 * 1024);
+							const percentComplete = startProgress + Math.min(endProgress - startProgress, loadedMB * 10);
+							const message = onProgress ? onProgress(null, event.loaded, null) 
+													   : label + ': ' + loadedMB.toFixed(1) + 'MB';
+							this.loadingProgress.update(message, percentComplete);
+						}
+					};
+					
+					xhr.onload = () => {
+						if (xhr.status === 200) {
+							resolve({
+								data: xhr.response,
+								status: xhr.status,
+								size: xhr.response.byteLength || xhr.response.length
+							});
+						} else {
+							reject(new Error('Failed to download file: ' + xhr.statusText));
+						}
+					};
+					
+					xhr.onerror = () => {
+						reject(new Error('Network error while downloading file'));
+					};
+					
+					xhr.send();
+				});
 			}
 
 			async process3DModelLoading(filename, format, loadOperation) {
 				if (this.state.loading) return;
 				this.state.loading = true; 
-				this.showMessage("Loading 3D data...", -1);
 				
-				this.pause();
-				this.state.playback.currentFrame = 0;
+				this.disableControls();
+				await new Promise(resolve => setTimeout(resolve, 50));
+				
+				this.loadingProgress.start('Loading ' + filename + '...', 0);
+				
+				if (this.state.playback.isPlaying) this.pause();
 				this.state.playback.totalFrames = 0;
 				
 				try {
 					this.state.currentFormat = format;
 					this.state.currentFileData = { filename, format };
 					
+					this.loadingProgress.update("Cleaning up previous model...", 10);
 					await this.cleanupPreviousModel();
+					
+					this.loadingProgress.update("Starting model loading...", 20);
 					await loadOperation();
 					
+					this.loadingProgress.update("Finalizing model...", 95);
 					this.postModelLoading();
 					
+					this.loadingProgress.stop("Model loaded successfully");
+					
 				} catch (e) { 
-					this.showMessage("Error: " + e.message, 5000); 
+					this.loadingProgress.error('Error: ' + e.message);
 					throw e;
 				} finally { 
 					this.state.loading = false; 
-					if (!this._messageTimer) {
-						this.dom.loading.style.display = 'none'; 
-					}
+					
+					setTimeout(() => {
+						if (!this.state.loading && !this._messageTimer) {
+							this.dom.loading.style.display = 'none';
+						}
+					}, 500);
+					
+					this.enableControls();
 				}
 			}
 
 			postModelLoading() {
 				this.applyMaterialMode();
-				this.updateVisuals(0);
-				this.updateTimeSleder();
+				this.updateVisuals(this.state.playback.currentFrame);
 				this.updateInfoDisplay();
 				
-				if (!this.camera.userData.rollAngle || !this.camera.userData.upVector) {
-					this.camera.up.set(0, 1, 0);
-				} else {
-					this.camera.up.copy(this.camera.userData.upVector);
-				}
+				// 检查是否有导入的动画包围盒数据
+				const hasImportedBBoxData = this.state.animationBBoxData.isInitialized;
 				
-				// 初始化动画包围盒数据系统
-				this.initAnimationBBoxData();
+				if (!hasImportedBBoxData) {
+					// 初始化动画包围盒数据系统
+					this.initAnimationBBoxData();
+				}
 				
 				// 从 animationBBoxData 中获取第0帧数据来设置原有变量
 				if (this.state.animationBBoxData.isInitialized) {
@@ -3017,25 +3352,18 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				this.adjustDefaultDirLightForScene();
+				this.renderInvalidate();
 				
-				this.showMessage("Model loaded successfully", 1000);
-				
-				setTimeout(() => {
-					if (typeof lil !== 'undefined' && lil.GUI) {
-						this.createMaterialGUI();
-					}
-				}, 200);
-				
-				setTimeout(() => this.onWindowResize(), 100);
+				if (this.state.currentFileData && this.state.currentFileData.isFromZip) {
+					this.showMessage("ZIP file imported successfully. Textures have been loaded.", 2000);
+				} else {
+					this.showMessage("Model loaded successfully", 2000);
+				}
 			}
 
-			async loadSMPLBin(filename) {
-				const res = await fetch('/adv3dviewer_jk?filename=' + filename);
-				const buf = await res.arrayBuffer();
-				this.parseSMPL(buf);
-			}
-
-			parseSMPL(buffer) {
+			// load smpl
+			async loadSMPLBinFromBuffer(buffer) {
+				this.loadingProgress.update("Reading SMPL header...", 86);
 				const dv = new DataView(buffer);
 				let offset = 4;
 				
@@ -3048,6 +3376,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.state.playback.fps = dv.getFloat32(offset, true);
 				offset += 4;
 				
+				this.loadingProgress.update("Extracting vertex data...", 90);
 				const verts = new Float32Array(buffer, offset, numFrames * numVerts * 3);
 				offset += numFrames * numVerts * 3 * 4;
 				
@@ -3059,6 +3388,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					numFrames, numVerts
 				};
 				
+				this.loadingProgress.update("Creating mesh geometry...", 93);
 				const geo = new THREE.BufferGeometry();
 				geo.setAttribute('position', new THREE.BufferAttribute(verts.subarray(0, numVerts*3), 3));
 				geo.setIndex(new THREE.BufferAttribute(faces, 1));
@@ -3066,41 +3396,37 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				const mat = this.createDefaultMaterial();
 				this.state.smplMesh = new THREE.Mesh(geo, mat);
-				
-				// 根据当前阴影设置启用阴影
 				this.state.smplMesh.castShadow = this.state.lights.shadowsEnabled;
 				this.state.smplMesh.receiveShadow = this.state.lights.shadowsEnabled;
 				
 				this.scene.add(this.state.smplMesh);
 				this.state.currentModel = this.state.smplMesh;
 				this.state.playback.totalFrames = numFrames;
+				
+				this.loadingProgress.update("SMPL mesh created", 96);
 			}
 
-			async loadGLB(filename) {
-				return new Promise((resolve, reject) => {
-					this.loaders.gltf.load('/adv3dviewer_jk?filename=' + filename, (gltf) => {
-						this.processLoadedGLB(gltf);
-						resolve();
-					}, 
-					// 添加进度回调以处理纹理加载
-					(xhr) => {
-						if (xhr.lengthComputable) {
-							const percentComplete = (xhr.loaded / xhr.total) * 100;
-							if (percentComplete < 100) {
-								this.showMessage("Loading model: " + percentComplete.toFixed(2) + "%", -1);
-							}
-						}
-					}, 
-					reject);
-				});
-			}
-
+			// load glb
 			async loadGLBFromBuffer(buffer) {
+				this.loadingProgress.start("Parsing GLB data...", 95);
+				
 				return new Promise((resolve, reject) => {
 					this.loaders.gltf.parse(buffer, '', (gltf) => {
-						this.processLoadedGLB(gltf);
-						resolve();
-					}, reject);
+						this.loadingProgress.update("Processing GLB model...", 98);
+						
+						try {
+							this.processLoadedGLB(gltf);
+							this.loadingProgress.stop("GLB loaded successfully");
+							resolve();
+						} catch (error) {
+							this.loadingProgress.error("GLB processing failed");
+							reject(error);
+						}
+						
+					}, (error) => {
+						this.loadingProgress.error("GLB parsing failed");
+						reject(error);
+					});
 				});
 			}
 
@@ -3119,6 +3445,23 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							child.userData.autoCreatedMaterial = true;
 						} else {
 							child.userData.autoCreatedMaterial = false;
+							
+							// 修复某些FBX带贴图材质的导出glb再导入时 emissiveIntensity 为1的问题
+							// 修复某些glb(带贴图材质)导入时 metalness 为1的问题
+							const materials = Array.isArray(child.material) ? child.material : [child.material];
+							
+							materials.forEach(mat => {
+								/* if (mat.isMeshStandardMaterial) { */
+									/* if (mat.map && mat.map.isTexture) { */
+										if (!mat.emissiveMap && mat.emissiveIntensity === 1) {
+											mat.emissiveIntensity = 0;
+										}
+										if (!mat.metalnessmap && mat.metalness === 1) {
+											mat.metalness = 0;
+										}
+									/* } */
+								/* } */
+							});
 						}
 						
 						// 根据当前阴影设置启用阴影
@@ -3147,6 +3490,26 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					
 				} else { 
 					this.state.playback.totalFrames = 1; 
+				}
+				
+				// ============== 恢复动画包围盒数据 ==============
+				if (gltf.scene.userData && gltf.scene.userData.animationBBoxData) {
+					const bboxData = this.deserializeAnimationBBoxData(gltf.scene.userData.animationBBoxData);
+					this.state.animationBBoxData = bboxData;
+					
+					// 如果已有动画包围盒数据，直接使用
+					this.state.animationBBoxData.isInitialized = true;
+				}
+				
+				// 检查场景信息
+				if (gltf.scene.userData && gltf.scene.userData.sceneInfo) {
+					const sceneInfo = gltf.scene.userData.sceneInfo;
+					
+					// 设置播放器信息
+					if (sceneInfo.hasAnimation) {
+						this.state.playback.totalFrames = sceneInfo.totalFrames;
+						this.state.playback.fps = sceneInfo.fps || 30;
+					}
 				}
 				
 				// 检查是否为已导出的文件，并跳过预处理
@@ -3326,20 +3689,28 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 			}
 
-			async loadFBX(filename) {
-			  const res = await fetch('/adv3dviewer_jk?filename=' + filename);
-			  if (!res.ok) throw new Error('Network response error');
-			  const buf = await res.arrayBuffer();
-			  await this.loadFBXFromBuffer(buf);
-			}
-
+			// load fbx
 			async loadFBXFromBuffer(buffer) {
 				return new Promise((resolve, reject) => {
+					this.loadingProgress.update("Starting FBX parsing...", 86);
+					
 					try {
+						this.loadingProgress.update("Parsing FBX binary data...", 90);
 						const object = this.loaders.fbx.parse(buffer, '');
+						
+						this.loadingProgress.update("Processing FBX model...", 93);
 						this.processLoadedFBX(object);
+						
+						this.loadingProgress.update("FBX loaded successfully", 96);
 						resolve();
+						
 					} catch (error) {
+						const errorMsg = error.message && (error.message.includes('curveNodesMap') || error.message.includes('curves')) 
+							? "FBX import failed: Three.js FBXLoader does not support camera/light property animations; remove property keyframes and re-export."
+							: error.message;
+						
+						this.loadingProgress.error('FBX parsing failed: ' + errorMsg);
+						
 						if (error.message && (error.message.includes('curveNodesMap') || error.message.includes('curves'))) {
 							reject(new Error("FBX import failed: Three.js FBXLoader does not support camera/light property animations; remove property keyframes and re-export."));
 						} else {
@@ -3398,80 +3769,31 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.processSceneLights(object);
 			}
 
-			async loadOBJ(filename) {
-				return new Promise(async (resolve, reject) => {
-					try {
-						const baseName = filename.replace(/\.obj$/i, '');
-						const objUrl = '/adv3dviewer_jk?filename=' + filename;
-						
-						// 先尝试获取MTL文件
-						let mtlData = null;
-						let materials = null;
-						
-						try {
-							const mtlUrl = '/adv3dviewer_jk?filename=' + baseName + '.mtl';
-							const mtlResponse = await fetch(mtlUrl);
-							if (mtlResponse.ok) {
-								const mtlText = await mtlResponse.text();
-							  
-								// 解析MTL文件，获取纹理路径
-								const mtlLoader = new MTLLoader();
-							  
-								// 设置纹理路径为相对路径
-								mtlLoader.setTexturePath('/adv3dviewer_jk/');
-							  
-								// 解析MTL文本
-								materials = mtlLoader.parse(mtlText, '');
-							  
-								if (materials) {
-									materials.preload();
-									console.log("MTL materials loaded successfully");
-								}
-							}
-						} catch (mtlError) {
-							console.log("No MTL file found or error loading MTL, using default materials");
-						}
-						
-						// 加载OBJ文件
-						const objResponse = await fetch(objUrl);
-						if (!objResponse.ok) {
-							throw new Error("Failed to load OBJ file: " + objResponse.status);
-						}
-						
-						const objText = await objResponse.text();
-						
-						// 使用合适的加载器
-						const objLoader = new OBJLoader();
-						if (materials) {
-							objLoader.setMaterials(materials);
-						}
-						
-						const object = objLoader.parse(objText);
-						
-						// 处理加载的OBJ对象
-						this.processLoadedOBJ(object, materials, filename);
-						resolve();
-						
-					} catch (error) {
-						console.log("Error loading OBJ: " + error.message);
-					  reject(error);
-					}
-				});
-			}
-
-			async loadOBJFromText(text) {
+			// load obj
+			async loadOBJFromBuffer(text) {
 				return new Promise((resolve, reject) => {
+					this.loadingProgress.update("Parsing OBJ text data...", 87);
+					
 					try {
-						const object = this.loaders.obj.parse(text);
-						this.processLoadedOBJ(object, null, "imported.obj");
-						resolve();
+						setTimeout(() => {
+							this.loadingProgress.update("Creating 3D object...", 90);
+							const object = this.loaders.obj.parse(text);
+							
+							this.loadingProgress.update("Processing OBJ model...", 93);
+							this.processLoadedOBJ(object);
+							
+							this.loadingProgress.update("Setting up materials...", 96);
+							resolve();
+						}, 50);
+						
 					} catch (error) {
+						this.loadingProgress.error('OBJ parsing failed: ' + error.message);
 						reject(error);
 					}
 				});
 			}
 
-			processLoadedOBJ(object, materials, filename) {
+			processLoadedOBJ(object) {
 				this.scene.add(object);
 				this.state.currentModel = object;
 				this.state.currentFormat = 'obj';
@@ -3481,9 +3803,24 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 如果没有材质，创建默认材质
 				let hasMaterials = false;
+				let meshCount = 0;
+				let textureCount = 0;
+				
 				object.traverse(child => {
-					if (child.isMesh && child.material) {
-						hasMaterials = true;
+					if (child.isMesh) {
+						meshCount++;
+						if (child.material) {
+							hasMaterials = true;
+							
+							// 检查材质是否有纹理
+							const materialsArray = Array.isArray(child.material) ? child.material : [child.material];
+							materialsArray.forEach(mat => {
+								if (mat.map) textureCount++;
+								if (mat.aoMap) textureCount++;
+								if (mat.bumpMap) textureCount++;
+								if (mat.specularMap) textureCount++;
+							});
+						}
 					}
 				});
 				
@@ -3517,102 +3854,2116 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				this.state.playback.totalFrames = 1;
 				
-				// 输出加载信息
-				console.log("OBJ loaded: " + filename);
-				if (materials) {
-					console.log("MTL materials applied");
-				}
-				if (this.state.originalTextures.size > 0) {
-					console.log("Found " + this.state.originalTextures.size + " textures in OBJ");
-				}
+				// 检查场景中的纹理数量
+				const allTextures = [];
+				this.scene.traverse(child => {
+					if (child.material) {
+						const materialsArray = Array.isArray(child.material) ? child.material : [child.material];
+						materialsArray.forEach(mat => {
+							if (mat.map && mat.map.isTexture) allTextures.push(mat.map);
+							if (mat.aoMap && mat.aoMap.isTexture) allTextures.push(mat.aoMap);
+							if (mat.bumpMap && mat.bumpMap.isTexture) allTextures.push(mat.bumpMap);
+							if (mat.specularMap && mat.specularMap.isTexture) allTextures.push(mat.specularMap);
+						});
+					}
+				});
 			}
 
-			async loadPLY(filename) {
-				const res = await fetch('/adv3dviewer_jk?filename=' + filename);
-				if(!res.ok) throw new Error('Network error');
-				const buf = await res.arrayBuffer();
-				await this.loadPLYFromBuffer(buf);
-			}
-
+			// load ply
 			async loadPLYFromBuffer(buffer) {
 				return new Promise((resolve, reject) => {
 					try { 
-						const geometry = this.loaders.ply.parse(buffer);
+						this.loadingProgress.update("Parsing PLY binary data...", 87);
 						
-						// 检查顶点颜色属性
-						const hasVertexColors = geometry.attributes.color !== undefined;
-						const hasNormals = geometry.attributes.normal !== undefined;
-						
-						// 如果没有法线，计算顶点法线（对于网格）
-						if (!hasNormals) {
-							geometry.computeVertexNormals();
-						}
-						
-						// 检查几何体类型（点云或网格）
-						let isPointCloud = false;
-						if (geometry.getIndex() === null || geometry.getIndex().count === 0) {
-							// 没有索引，可能是点云
-							isPointCloud = true;
-						}
-						
-						let material;
-						let mesh;
-						
-						if (isPointCloud) {
-							// 点云渲染
-							const pointMaterial = hasVertexColors
-								? new THREE.PointsMaterial({
-									size: 0.005,
-									vertexColors: true,
-									sizeAttenuation: true
-								})
-								: new THREE.PointsMaterial({
-									size: 0.005,
-									color: 0xcccccc,
-									sizeAttenuation: true
-								});
+						setTimeout(() => {
+							this.updateLoadingProgress(97, "Parsing PLY data...");
+							const geometry = this.loaders.ply.parse(buffer);
 							
-							mesh = new THREE.Points(geometry, pointMaterial);
-							this.state.useVertexColors = hasVertexColors;
-						
-						} else {
-							// 网格渲染
-							if (hasVertexColors) {
-								material = new THREE.MeshStandardMaterial({
-									vertexColors: true,
-									roughness: 1,
-									metalness: 0,
-									side: THREE.DoubleSide,
-									flatShading: false
-								});
-								this.state.useVertexColors = true;
-							} else {
-								material = this.createDefaultMaterial();
-								this.state.useVertexColors = false;
+							// 检查顶点颜色属性
+							this.loadingProgress.update("Checking vertex attributes...", 90);
+							const hasVertexColors = geometry.attributes.color !== undefined;
+							const hasNormals = geometry.attributes.normal !== undefined;
+							
+							// 如果没有法线，计算顶点法线（对于网格）
+							if (!hasNormals) {
+								geometry.computeVertexNormals();
 							}
 							
-							mesh = new THREE.Mesh(geometry, material);
-						}
+							// 检查几何体类型（点云或网格）
+							this.loadingProgress.update("Creating mesh...", 93);
+							let isPointCloud = false;
+							if (geometry.getIndex() === null || geometry.getIndex().count === 0) {
+								// 没有索引，可能是点云
+								isPointCloud = true;
+							}
+							
+							let material;
+							let mesh;
+							
+							if (isPointCloud) {
+								// 点云渲染
+								const pointMaterial = hasVertexColors
+									? new THREE.PointsMaterial({
+										size: 0.005,
+										vertexColors: true,
+										sizeAttenuation: true
+									})
+									: new THREE.PointsMaterial({
+										size: 0.005,
+										color: 0xcccccc,
+										sizeAttenuation: true
+									});
+								
+								mesh = new THREE.Points(geometry, pointMaterial);
+								this.state.useVertexColors = hasVertexColors;
+							
+							} else {
+								// 网格渲染
+								if (hasVertexColors) {
+									material = new THREE.MeshStandardMaterial({
+										vertexColors: true,
+										roughness: 1,
+										metalness: 0,
+										side: THREE.DoubleSide,
+										flatShading: false
+									});
+									this.state.useVertexColors = true;
+								} else {
+									material = this.createDefaultMaterial();
+									this.state.useVertexColors = false;
+								}
+								
+								mesh = new THREE.Mesh(geometry, material);
+							}
+							
+							// 保存材质
+							this.state.originalMaterials.set(mesh, mesh.material);
+							this.scene.add(mesh);
+							this.state.currentModel = mesh;
+							this.state.currentFormat = 'ply';
+							this.state.playback.totalFrames = 1;
+							
+							this.loadingProgress.update("PLY mesh created", 96);
+							resolve();
+							
+						}, 50);
 						
-						// 保存材质
-						this.state.originalMaterials.set(mesh, mesh.material);
-						
-						this.scene.add(mesh);
-						this.state.currentModel = mesh;
-						this.state.currentFormat = 'ply';
-						this.state.playback.totalFrames = 1;
-						
-						// 输出PLY信息
-						console.log("PLY loaded: " + (isPointCloud ? "Point Cloud" : "Mesh"));
-						console.log("Vertex colors: " + (hasVertexColors ? "Yes" : "No"));
-						console.log("Normals: " + (hasNormals ? "Original" : "Computed"));
-						
-						resolve();
 					} catch (error) {
-						console.log("Error loading PLY: " + error.message);
-					  reject(error);
+						this.loadingProgress.error('PLY parsing failed: ' + error.message);
+						reject(error);
 					}
 				});
+			}
+
+			// load zip
+			async loadZipDataFromBuffer(buffer) {
+				let virtualFS = null;
+				
+				try {
+					this.loadingProgress.update("Loading ZIP data...", 86);
+					const zip = await this.JSZip.loadAsync(buffer);
+					
+					// 记录ZIP内容
+					this.loadingProgress.update("Analyzing ZIP contents...", 88);
+					this.logZipContents(zip);
+					
+					// 分析ZIP内容，确定格式
+					const format = this.detectZipFormat(zip);
+					
+					if (!format) {
+						throw new Error('ZIP包中未找到支持的3D格式文件');
+					}
+					
+					console.log('检测到格式: ' + format.type + ', 主文件: ' + format.mainFile);
+					this.loadingProgress.update('Detected format: ' + format.type.toUpperCase() + ', main file: ' + format.mainFile, 90);
+					
+					// 创建临时虚拟文件系统
+					this.loadingProgress.update("Creating virtual file system...", 92);
+					virtualFS = new ZipVirtualFileSystem(zip);
+					
+					// 设置当前活动的虚拟文件系统
+					this.currentVirtualFS = virtualFS;
+					this.currentZipMainFile = format.mainFile;
+					
+					// 根据格式调用相应的加载器
+					this.loadingProgress.update('Loading ' + format.type.toUpperCase() + ' from ZIP...', 94);
+					switch(format.type) {
+						case 'glb':
+							await this.loadGLBFromZip(zip, format.mainFile, virtualFS);
+							break;
+						case 'fbx':
+							await this.loadFBXFromZip(zip, format.mainFile, virtualFS);
+							break;
+						case 'obj':
+							await this.loadOBJFromZip(zip, format.mainFile, virtualFS);
+							break;
+						default:
+							throw new Error('不支持的格式: ' + format.type);
+					}
+					
+					this.loadingProgress.update("ZIP processing complete", 98);
+					
+				} catch (error) {
+					console.log('ZIP解析错误:', error);
+					this.loadingProgress.error('ZIP parsing error: ' + error.message);
+					throw error;
+				} finally {
+					// 清理：恢复全局纹理加载并清理虚拟文件系统
+					this.currentVirtualFS = null;
+					this.currentZipMainFile = null;
+					
+					if (virtualFS) {
+						virtualFS.dispose();
+					}
+				}
+			}
+
+			logZipContents(zip) {
+				console.log("ZIP内容分析:");
+				const files = Object.keys(zip.files);
+				const categories = {
+					models: [],
+					textures: [],
+					materials: [],
+					others: []
+				};
+				
+				files.forEach(file => {
+					const ext = file.split('.').pop().toLowerCase();
+					if (['obj', 'fbx', 'glb', 'ply'].includes(ext)) {
+						categories.models.push(file);
+					} else if (['png', 'jpg', 'jpeg', 'tga', 'bmp', 'tiff', 'webm'].includes(ext)) {
+						categories.textures.push(file);
+					} else if (['mtl'].includes(ext)) {
+						categories.materials.push(file);
+					} else {
+						categories.others.push(file);
+					}
+				});
+				
+				console.log("  模型文件: " + categories.models.length);
+				categories.models.forEach(f => console.log("    " + f));
+				
+				console.log("  纹理文件: " + categories.textures.length);
+				categories.textures.forEach(f => console.log("    " + f));
+				
+				console.log("  材质文件: " + categories.materials.length);
+				categories.materials.forEach(f => console.log("    " + f));
+				
+				console.log("  其他文件: " + categories.others.length);
+				categories.others.forEach(f => console.log("    " + f));
+			}
+
+			detectZipFormat(zip) {
+				const files = Object.keys(zip.files);
+				
+				const formatPriority = [
+					{ ext: 'glb', type: 'glb' },
+					{ ext: 'gltf', type: 'glb' },
+					{ ext: 'fbx', type: 'fbx' },
+					{ ext: 'obj', type: 'obj' }
+				];
+				
+				for (const format of formatPriority) {
+					const found = files.find(file => 
+						file.toLowerCase().endsWith('.' + format.ext)
+					);
+					
+					if (found) {
+						if (format.ext === 'obj') {
+							const baseName = found.replace(/\.obj$/i, '');
+							
+							const possibleMtlNames = [
+								baseName + '.mtl',
+								baseName.replace(/[_-].*$/, '') + '.mtl',
+								'material.mtl',
+								'model.mtl'
+							];
+							
+							let mtlFile = null;
+							for (const mtlName of possibleMtlNames) {
+								if (files.find(f => f.toLowerCase() === mtlName.toLowerCase())) {
+									mtlFile = mtlName;
+									break;
+								}
+							}
+							
+							return {
+								type: format.type,
+								mainFile: found,
+								mtlFile: mtlFile
+							};
+						}
+						
+						return {
+							type: format.type,
+							mainFile: found
+						};
+					}
+				}
+				
+				return null;
+			}
+
+			// load glb zip
+			async loadGLBFromZip(zip, mainFilePath, virtualFS) {
+				try {
+					this.loadingProgress.start("Loading GLB/GLTF from ZIP...", 95);
+					
+					// 检查文件扩展名
+					const ext = mainFilePath.toLowerCase().split('.').pop();
+					const isGLTF = ext === 'gltf';
+					
+					let gltf;
+					
+					if (isGLTF) {
+						console.log('处理分离式 GLTF 文件: ' + mainFilePath);
+						
+						// 1. 读取 GLTF JSON 文件
+						this.loadingProgress.update("Reading GLTF JSON file...", 96);
+						const gltfText = await virtualFS.getText(mainFilePath);
+						const gltfJson = JSON.parse(gltfText);
+						
+						// 2. 处理分离式 GLTF 资源
+						this.loadingProgress.update("Processing external resources...", 97);
+						await this.processSeparatedGLTFResources(gltfJson, mainFilePath, virtualFS);
+						
+						// 3. 使用 GLTFLoader 解析处理后的 JSON
+						this.loadingProgress.update("Parsing GLTF data...", 98);
+						gltf = await this.parseGLTFJsonWithLoader(gltfJson, mainFilePath, virtualFS);
+						
+					} else {
+						console.log('处理 GLB 文件（假设为分离式）: ' + mainFilePath);
+						
+						// GLB文件也需要当作分离式处理
+						this.loadingProgress.update("Reading GLB data...", 96);
+						const arrayBuffer = await virtualFS.getArrayBuffer(mainFilePath);
+						
+						// 将 GLB 转换为 GLTF JSON 进行处理
+						this.loadingProgress.update("Converting GLB to GLTF...", 97);
+						const gltfJson = await this.extractGLTFJsonFromGLB(arrayBuffer);
+						
+						// 处理分离式 GLTF 资源
+						this.loadingProgress.update("Processing external resources...", 98);
+						await this.processSeparatedGLTFResources(gltfJson, mainFilePath, virtualFS);
+						
+						// 使用 GLTFLoader 解析
+						gltf = await this.parseGLTFJsonWithLoader(gltfJson, mainFilePath, virtualFS);
+					}
+					
+					// 使用现有的处理函数
+					this.loadingProgress.update("Finalizing model...", 99);
+					this.processLoadedGLB(gltf);
+					
+					// 更新状态
+					this.state.currentFormat = isGLTF ? 'gltf' : 'glb';
+					this.state.currentFileData = { 
+						filename: mainFilePath, 
+						format: isGLTF ? 'gltf' : 'glb',
+						isFromZip: true
+					};
+					
+					this.loadingProgress.stop((isGLTF ? "GLTF" : "GLB") + " from ZIP loaded successfully", 100);
+					
+				} catch (error) {
+					console.log('加载ZIP中的GLB/GLTF失败:', error);
+					this.loadingProgress.error("Failed to load from ZIP: " + error.message);
+					throw error;
+				} finally {
+					// 清理虚拟文件系统
+					if (virtualFS) {
+						virtualFS.dispose();
+					}
+				}
+			}
+
+			async extractGLTFJsonFromGLB(arrayBuffer) {
+				console.log('从 GLB 中提取 JSON 数据');
+				
+				// GLB 格式解析
+				const dataView = new DataView(arrayBuffer);
+				
+				// 检查魔数
+				const magic = dataView.getUint32(0, true);
+				if (magic !== 0x46546C67) { // "glTF" 的 ASCII
+					throw new Error('Invalid GLB file: wrong magic number');
+				}
+				
+				// 获取版本
+				const version = dataView.getUint32(4, true);
+				console.log('GLB 版本: ' + version);
+				
+				// 获取长度
+				const length = dataView.getUint32(8, true);
+				console.log('GLB 总长度: ' + length + ' bytes');
+				
+				// 解析第一个 Chunk（应该是 JSON）
+				const chunkLength = dataView.getUint32(12, true);
+				const chunkType = dataView.getUint32(16, true);
+				
+				if (chunkType !== 0x4E4F534A) { // "JSON" 的 ASCII
+					throw new Error('Invalid GLB file: first chunk is not JSON');
+				}
+				
+				// 提取 JSON 数据
+				const jsonStart = 20;
+				const jsonEnd = jsonStart + chunkLength;
+				const jsonBytes = new Uint8Array(arrayBuffer, jsonStart, chunkLength);
+				const jsonText = new TextDecoder().decode(jsonBytes);
+				const gltfJson = JSON.parse(jsonText);
+				
+				console.log('成功从 GLB 提取 JSON，包含 ' + Object.keys(gltfJson).length + ' 个属性');
+				
+				return gltfJson;
+			}
+
+			async processSeparatedGLTFResources(gltfJson, mainFilePath, virtualFS) {
+				console.log('处理分离式 GLTF 资源');
+				
+				const baseDir = mainFilePath.substring(0, mainFilePath.lastIndexOf('/') + 1);
+				
+				// 1. 处理 buffers (BIN 文件)
+				if (gltfJson.buffers && Array.isArray(gltfJson.buffers)) {
+					console.log('处理 ' + gltfJson.buffers.length + ' 个缓冲区');
+					
+					for (let i = 0; i < gltfJson.buffers.length; i++) {
+						const buffer = gltfJson.buffers[i];
+						
+						if (buffer.uri && !buffer.uri.startsWith('data:')) {
+							try {
+								// 构建完整路径
+								const bufferPath = PathUtils.cleanPath(buffer.uri);
+								const fullBufferPath = PathUtils.joinPaths(baseDir, bufferPath);
+								
+								// 从ZIP中读取BIN文件
+								const arrayBuffer = await virtualFS.getArrayBuffer(fullBufferPath);
+								
+								// 转换为base64 Data URI
+								const base64 = this.arrayBufferToBase64(arrayBuffer);
+								buffer.uri = 'data:application/octet-stream;base64,' + base64;
+								
+								console.log('处理BIN文件: ' + bufferPath + ' -> data URI (size: ' + arrayBuffer.byteLength + ' bytes)');
+							} catch (error) {
+								console.log('无法加载BIN文件: ' + buffer.uri, error);
+								throw new Error('Failed to load buffer: ' + buffer.uri);
+							}
+						}
+					}
+				}
+				
+				// 2. 处理 images (纹理)
+				if (gltfJson.images && Array.isArray(gltfJson.images)) {
+					console.log('处理 ' + gltfJson.images.length + ' 个图像');
+					
+					const texturePromises = [];
+					
+					for (let i = 0; i < gltfJson.images.length; i++) {
+						const image = gltfJson.images[i];
+						
+						if (image.uri && !image.uri.startsWith('data:') && !image.uri.startsWith('blob:')) {
+							const texturePromise = (async () => {
+								try {
+									// 构建完整路径
+									const imagePath = PathUtils.cleanTexturePath(image.uri);
+									const fullImagePath = PathUtils.joinPaths(baseDir, imagePath);
+									
+									// 从ZIP中获取纹理的Blob URL
+									const blobUrl = await virtualFS.getBlobUrl(fullImagePath, mainFilePath);
+									
+									// 更新图像URI为Blob URL
+									image.uri = blobUrl;
+									
+									console.log('处理纹理: ' + imagePath + ' -> blob URL');
+								} catch (error) {
+									console.log('无法加载纹理: ' + image.uri, error);
+									// 如果纹理加载失败，尝试其他可能的位置
+									const fileName = PathUtils.getFileName(image.uri);
+									try {
+										const blobUrl = await virtualFS.getBlobUrl(fileName, mainFilePath);
+										image.uri = blobUrl;
+										console.log('使用文件名找到纹理: ' + fileName);
+									} catch (e) {
+										console.log('纹理完全加载失败: ' + image.uri);
+										// 可以在这里设置一个默认纹理或抛出错
+									}
+								}
+							})();
+							
+							texturePromises.push(texturePromise);
+						}
+					}
+					
+					// 等待所有纹理处理完成
+					await Promise.all(texturePromises);
+				}
+				
+				console.log('分离式 GLTF 资源处理完成');
+			}
+
+			parseGLTFJsonWithLoader(gltfJson, mainFilePath, virtualFS) {
+				return new Promise((resolve, reject) => {
+					try {
+						console.log('使用 GLTFLoader 解析 GLTF JSON');
+						
+						// 创建 GLTFLoader
+						const gltfLoader = new GLTFLoader();
+						
+						// 设置自定义文件加载器（如果需要）
+						// 注意：有些Three.js版本可能没有setResourceLoader方法
+						// 所以我们可以通过重写FileLoader来实现
+						
+						// 方法1：使用现有的 THREE.FileLoader
+						const fileLoader = new THREE.FileLoader();
+						fileLoader.setResponseType('arraybuffer');
+						
+						// 方法2：如果GLTFLoader支持设置manager，我们可以自定义LoadingManager
+						const loadingManager = new THREE.LoadingManager();
+						
+						// 设置URL修改器，将相对路径转换为blob URL
+						loadingManager.setURLModifier((url) => {
+							// 如果是data URI或blob URL，直接返回
+							if (url.startsWith('data:') || url.startsWith('blob:')) {
+								return url;
+							}
+							
+							// 构建完整路径
+							const baseDir = mainFilePath.substring(0, mainFilePath.lastIndexOf('/') + 1);
+							const fullPath = PathUtils.joinPaths(baseDir, url);
+							
+							// 尝试从虚拟文件系统获取Blob URL
+							return virtualFS.getBlobUrl(fullPath, mainFilePath).catch(() => {
+								console.log('无法获取Blob URL: ' + url);
+								return url; // 返回原始URL，让加载器处理错误
+							});
+						});
+						
+						// 创建使用自定义manager的GLTFLoader
+						const gltfLoaderWithManager = new GLTFLoader(loadingManager);
+						
+						// 将GLTF JSON转换为字符串
+						const gltfJsonString = JSON.stringify(gltfJson);
+						
+						// 使用parse方法解析GLTF JSON
+						gltfLoaderWithManager.parse(gltfJsonString, '', (gltf) => {
+							console.log('GLTF 解析成功');
+							resolve(gltf);
+						}, (error) => {
+							console.log('GLTF 解析失败:', error);
+							
+							// 如果带manager的加载器失败，尝试普通加载器
+							console.log('尝试使用普通 GLTFLoader');
+							gltfLoader.parse(gltfJsonString, '', (gltf) => {
+								console.log('普通 GLTFLoader 解析成功');
+								resolve(gltf);
+							}, (secondError) => {
+								console.log('普通 GLTFLoader 也失败:', secondError);
+								reject(secondError);
+							});
+						});
+						
+					} catch (error) {
+						console.log('GLTF 解析过程出错:', error);
+						reject(error);
+					}
+				});
+			}
+
+			arrayBufferToBase64(buffer) {
+				let binary = '';
+				const bytes = new Uint8Array(buffer);
+				const len = bytes.byteLength;
+				for (let i = 0; i < len; i++) {
+					binary += String.fromCharCode(bytes[i]);
+				}
+				return window.btoa(binary);
+			}
+
+			// load fbx zip
+			async loadFBXFromZip(zip, mainFilePath, virtualFS) {
+				try {
+					console.log('开始加载ZIP中的FBX: ' + mainFilePath);
+					
+					this.loadingProgress.start("Extracting FBX from ZIP...", 95);
+					
+					// 1. 获取FBX文件的ArrayBuffer
+					this.loadingProgress.update("Reading FBX data...", 96);
+					const arrayBuffer = await virtualFS.getArrayBuffer(mainFilePath);
+					
+					// 2. 使用映射提取器获取材质-贴图对应关系
+					this.loadingProgress.update("Extracting texture mappings...", 97);
+					const mappingExtractor = new FBXMappingExtractor();
+					const materialTextureMap = mappingExtractor.extractFromBuffer(arrayBuffer);
+					
+					console.log('提取的材质-贴图映射:', materialTextureMap);
+					
+					// 3. 使用官方FBXLoader加载FBX
+					this.loadingProgress.update("Parsing FBX model...", 98);
+					const object = this.loaders.fbx.parse(arrayBuffer, '');
+					
+					// 4. 保存映射关系到状态中
+					this.state.fbxTextureMapping = materialTextureMap;
+					
+					if (materialTextureMap.size > 0) {
+						// 5. 使用映射关系处理纹理
+						this.loadingProgress.update("Processing textures with mapping...");
+						await this.processFBXTexturesWithMapping(object, mainFilePath, virtualFS, materialTextureMap);
+					} else {
+						// 6. 如果没有映射关系，使用默认处理
+						console.log('没有提取到映射关系，使用默认纹理处理');
+						this.loadingProgress.update("Processing textures (fallback)...");
+						await this.processFBXTexturesFallback(object, mainFilePath, virtualFS);
+					}
+					
+					// 7. 使用现有的处理函数
+					this.loadingProgress.update("Finalizing model...");
+					this.processLoadedFBX(object);
+					
+					// 更新状态
+					this.state.currentFormat = 'fbx';
+					this.state.currentFileData = { 
+						filename: mainFilePath, 
+						format: 'fbx',
+						isFromZip: true
+					};
+					
+					console.log('ZIP中的FBX加载完成');
+					this.loadingProgress.stop("FBX from ZIP loaded successfully");
+					
+				} catch (error) {
+					console.log('加载ZIP中的FBX失败:', error);
+					this.loadingProgress.error("Failed to load FBX from ZIP");
+					throw error;
+				}
+			}
+
+			async processFBXTexturesWithMapping(object, mainFilePath, virtualFS, materialTextureMap) {
+				console.log('使用映射关系处理FBX纹理...');
+				
+				if (!materialTextureMap || materialTextureMap.size === 0) {
+					console.log('没有找到材质-贴图映射关系，使用默认处理');
+					return this.processFBXTexturesFallback(object, mainFilePath, virtualFS);
+				}
+				
+				// 创建纹理加载器
+				this.loadingProgress.update("Setting up texture loader...");
+				const textureLoader = new TextureLoaderFromZip(virtualFS);
+				
+				// 收集所有材质
+				const materials = new Map();
+				
+				object.traverse(child => {
+					if (child.isMesh && child.material) {
+						const materialArray = Array.isArray(child.material) ? child.material : [child.material];
+						materialArray.forEach(mat => {
+							if (mat && mat.name) {
+								materials.set(mat.name, mat);
+							}
+						});
+					}
+				});
+				
+				console.log('场景中的材质:', Array.from(materials.keys()));
+				console.log('映射表中的材质:', Array.from(materialTextureMap.keys()));
+				
+				// 为每个材质应用贴图
+				const texturePromises = [];
+				const totalTextures = Array.from(materialTextureMap.values()).reduce((sum, mappings) => sum + mappings.size, 0);
+				
+				this.loadingProgress.update('Processing ' + totalTextures + ' textures...');
+				
+				for (const [materialName, textureMappings] of materialTextureMap.entries()) {
+					const material = materials.get(materialName);
+					
+					if (!material) {
+						console.log('找不到材质: ' + materialName);
+						continue;
+					}
+					
+					console.log('为材质 ' + materialName + ' 应用贴图...');
+					
+					// 为每个纹理类型加载并应用贴图
+					for (const [threeJsProp, textureInfo] of textureMappings.entries()) {
+						try {
+							// 获取贴图文件名
+							let textureFileName = textureInfo.imageFilename;
+							if (!textureFileName) {
+								console.log('材质 ' + materialName + ' 的 ' + threeJsProp + ' 通道没有贴图路径');
+								continue;
+							}
+							
+							console.log('  加载贴图: ' + textureFileName + ' -> ' + threeJsProp);
+							
+							// 从ZIP中加载贴图
+							const promise = textureLoader.loadTexture(textureFileName, {
+								basePath: mainFilePath,
+								textureType: threeJsProp
+							}).then(texture => {
+								if (texture) {
+									// 应用贴图到材质
+									material[threeJsProp] = texture;
+									
+									// 设置材质属性
+									this.setMaterialPropertiesForTexture(material, threeJsProp);
+									
+									material.needsUpdate = true;
+									
+									console.log('    贴图应用成功');
+								} else {
+									console.log('    贴图加载失败: ' + textureFileName);
+								}
+							}).catch(error => {
+								console.log('处理材质 ' + materialName + ' 的 ' + threeJsProp + ' 通道时出错:', error);
+							});
+							
+							texturePromises.push(promise);
+							
+						} catch (error) {
+							console.log('处理材质 ' + materialName + ' 的 ' + threeJsProp + ' 通道时出错:', error);
+						}
+					}
+				}
+				
+				// 等待所有纹理加载完成
+				if (texturePromises.length > 0) {
+					await Promise.allSettled(texturePromises);
+					console.log('使用映射关系处理FBX纹理完成，处理了', texturePromises.length, '个贴图');
+					this.loadingProgress.update(texturePromises.length + ' textures loaded...');
+				} else {
+					console.log('没有找到需要加载的贴图');
+				}
+			}
+
+			async processFBXTexturesFallback(object, mainFilePath, virtualFS) {
+				console.log('使用回退方法处理FBX纹理...');
+				
+				// 创建纹理加载器
+				const textureLoader = new TextureLoaderFromZip(virtualFS);
+				
+				// 收集所有需要处理的纹理
+				const texturePromises = [];
+				
+				object.traverse(child => {
+					if (child.isMesh && child.material) {
+						const materials = Array.isArray(child.material) ? child.material : [child.material];
+						
+						materials.forEach((material, matIndex) => {
+							if (!material) return;
+							
+							// 检查各种可能的纹理属性
+							const textureProps = [
+								'map', 'normalMap', 'roughnessMap', 'metalnessMap',
+								'emissiveMap', 'alphaMap', 'aoMap', 'displacementMap',
+								'specularMap', 'bumpMap'
+							];
+							
+							textureProps.forEach(prop => {
+								const texture = material[prop];
+								if (texture && texture.image && texture.image.src) {
+									const src = texture.image.src;
+									
+									// 如果是外部纹理，尝试从ZIP加载
+									if (!src.startsWith('data:') && !src.startsWith('blob:')) {
+										const fileName = PathUtils.cleanTextureUrl(src);
+										
+										if (fileName) {
+											const promise = textureLoader.loadTexture(fileName, {
+												basePath: mainFilePath,
+												textureType: prop
+											}).then(newTexture => {
+												if (newTexture) {
+													material[prop] = newTexture;
+													material.needsUpdate = true;
+													console.log('成功加载纹理:', fileName, '->', prop);
+												}
+											}).catch(error => {
+												console.log('加载纹理失败:', fileName, error);
+											});
+											
+											texturePromises.push(promise);
+										}
+									}
+								}
+							});
+						});
+					}
+				});
+				
+				// 等待所有纹理加载完成
+				if (texturePromises.length > 0) {
+					await Promise.allSettled(texturePromises);
+					console.log('回退纹理处理完成，加载了', texturePromises.length, '个纹理');
+				} else {
+					console.log('没有找到需要处理的纹理');
+				}
+			}
+
+			setMaterialPropertiesForTexture(material, textureType) {
+				switch(textureType) {
+					case 'map':
+						// 基础贴图，不需要额外设置
+						break;
+					case 'normalMap':
+						material.normalScale = new THREE.Vector2(1, 1);
+						break;
+					case 'roughnessMap':
+						material.roughness = material.roughness || 1.0;
+						break;
+					case 'metalnessMap':
+						material.metalness = material.metalness || 0.0;
+						break;
+					case 'emissiveMap':
+						material.emissiveIntensity = material.emissiveIntensity || 1.0;
+						break;
+					case 'alphaMap':
+						material.transparent = true;
+						break;
+					case 'aoMap':
+						material.aoMapIntensity = material.aoMapIntensity || 1.0;
+						break;
+					case 'bumpMap':
+						material.bumpScale = material.bumpScale || 1.0;
+						break;
+				}
+			}
+
+			// load obj zip
+			async loadOBJFromZip(zip, mainFilePath, virtualFS) {
+				try {
+					const formatInfo = this.detectZipFormat(zip);
+					
+					console.log('开始加载ZIP中的OBJ: ' + mainFilePath);
+					console.log('MTL文件: ' + (formatInfo.mtlFile || '无'));
+					this.loadingProgress.start("Extracting OBJ from ZIP...", 95);
+					
+					// 加载OBJ文件
+					this.loadingProgress.update("Reading OBJ file...", 96);
+					const objText = await virtualFS.getText(mainFilePath);
+					
+					// 如果有MTL文件，加载它
+					let materialsDict = null;
+					if (formatInfo.mtlFile) {
+						console.log('加载MTL文件: ' + formatInfo.mtlFile);
+						try {
+							this.loadingProgress.update("Loading MTL materials...", 97);
+							const mtlText = await virtualFS.getText(formatInfo.mtlFile);
+							materialsDict = await this.loadMTLFromZip(mtlText, formatInfo.mtlFile, virtualFS);
+							
+							if (materialsDict) {
+								console.log('MTL材质加载成功，包含 ' + Object.keys(materialsDict).length + ' 个材质');
+							} else {
+								console.log('MTL材质加载失败，将使用默认材质');
+							}
+						} catch (mtlError) {
+							console.log('MTL文件加载失败: ', mtlError);
+							materialsDict = null;
+						}
+					}
+					
+					// 分析OBJ文件，判断是否全部是单材质物体
+					this.loadingProgress.update("Analyzing OBJ structure...", 98);
+					const allSingleMaterial = this.isAllObjSingleMaterial(objText);
+					
+					let object;
+					if (allSingleMaterial) {
+						console.log('全部是单材质物体，使用OBJLoader快速加载');
+						this.loadingProgress.update("Parsing OBJ (single material)...");
+						object = await this.loadSingleMaterialOBJ(objText, materialsDict);
+					} else {
+						console.log('包含多材质物体，使用手动解析');
+						this.loadingProgress.update("Parsing OBJ (multi-material)...");
+						object = await this.parseOBJManually(objText, mainFilePath, virtualFS, materialsDict);
+					}
+					
+					// 使用现有的处理函数
+					this.loadingProgress.update("Finalizing OBJ model...");
+					this.processLoadedOBJ(object, materialsDict, mainFilePath);
+					
+					// 更新状态
+					this.state.currentFormat = 'obj';
+					this.state.currentFileData = { 
+						filename: mainFilePath, 
+						format: 'obj',
+						isFromZip: true
+					};
+					
+					this.loadingProgress.stop("OBJ from ZIP loaded successfully");
+					return object;
+					
+				} catch (error) {
+					console.log('加载ZIP中的OBJ失败:', error);
+					this.loadingProgress.error("Failed to load OBJ from ZIP");
+					throw error;
+				}
+			}
+
+			isAllObjSingleMaterial(objText) {
+				const lines = objText.split('\\n');
+				let currentMaterials = new Set();
+				let hasMultiMaterialObject = false;
+				let inObject = false;
+				
+				for (let i = 0; i < lines.length; i++) {
+					const line = lines[i].trim();
+					if (!line || line.startsWith('#')) continue;
+					
+					const parts = line.split(/\\s+/);
+					const keyword = parts[0];
+					
+					if (keyword === 'o' || keyword === 'g') {
+						// 新物体开始，检查前一个物体的材质数量
+						if (inObject && currentMaterials.size > 1) {
+							hasMultiMaterialObject = true;
+							break;
+						}
+						currentMaterials.clear();
+						inObject = true;
+					} else if (keyword === 'usemtl') {
+						if (parts.length > 1) {
+							currentMaterials.add(parts[1]);
+							if (currentMaterials.size > 1) {
+								hasMultiMaterialObject = true;
+								break;
+							}
+						}
+					}
+				}
+				
+				// 检查最后一个物体
+				if (!hasMultiMaterialObject && inObject && currentMaterials.size > 1) {
+					hasMultiMaterialObject = true;
+				}
+				
+				return !hasMultiMaterialObject;
+			}
+
+			async loadSingleMaterialOBJ(objText, materialsDict) {
+				console.log('使用OBJLoader加载整个OBJ文件');
+				
+				// 与obj-singlemat.js完全相同的方法
+				const objLoader = new OBJLoader();
+				console.log('解析OBJ数据...');
+				const object = objLoader.parse(objText);
+				console.log('OBJ解析完成，对象类型: ' + object.type + ', 子对象数量: ' + object.children.length);
+				
+				// 关键：手动应用材质到网格
+				if (materialsDict) {
+					this.applyMaterialsToOBJ(object, materialsDict);
+				}
+				
+				return object;
+			}
+
+			applyMaterialsToOBJ(object, materialsDict) {
+				object.traverse(function(child) {
+					if (child.isMesh && child.material) {
+						// 获取材质名称
+						let materialName = null;
+						
+						// 尝试从不同地方获取材质名称
+						if (child.material.name && child.material.name !== '') {
+							materialName = child.material.name;
+						} else if (child.userData && child.userData.materialName) {
+							materialName = child.userData.materialName;
+						} else {
+							// 如果没有材质名，使用默认
+							materialName = 'defaultMat';
+						}
+						
+						console.log('为网格应用材质: ' + materialName);
+						
+						// 从材质字典中获取对应的Three.js材质
+						if (materialsDict[materialName]) {
+							child.material = materialsDict[materialName];
+							console.log('成功应用材质: ' + materialName);
+						} else {
+							// 如果没有找到对应材质，使用第一个可用材质
+							const firstMaterialName = Object.keys(materialsDict)[0];
+							if (firstMaterialName) {
+								child.material = materialsDict[firstMaterialName];
+								console.log('使用第一个可用材质: ' + firstMaterialName);
+							}
+						}
+					}
+				}.bind(this));
+			}
+
+			async parseOBJManually(objText, mainFilePath, virtualFS, materialsDict) {
+				console.log("开始手动解析OBJ文件（准确算法版-修复）");
+				
+				try {
+					const startTime = performance.now();
+					
+					this.loadingProgress.update("Starting OBJ parsing...", 98);
+					
+					// ============== 官方OBJLoader的核心算法复制 ==============
+					
+					// 复制官方OBJLoader使用的常量和辅助函数
+					const _object_pattern = /^[og]\\s*(.+)?/;
+					const _material_library_pattern = /^mtllib /;
+					const _material_use_pattern = /^usemtl /;
+					const _face_vertex_data_separator_pattern = /\\s+/;
+					
+					// 解析状态类（完全复制官方OBJLoader的ParserState逻辑）
+					class ParserState {
+						constructor() {
+							this.objects = [];
+							this.object = {};
+							this.vertices = [];
+							this.normals = [];
+							this.colors = [];
+							this.uvs = [];
+							this.materials = {};
+							this.materialLibraries = [];
+							
+							// 启动第一个对象
+							this.startObject("", false);
+						}
+						
+						startObject(name, fromDeclaration = false) {
+							// 如果当前对象不是来自声明，则使用它
+							if (this.object && this.object.fromDeclaration === false) {
+								this.object.name = name;
+								this.object.fromDeclaration = (fromDeclaration !== false);
+								return;
+							}
+							
+							const previousMaterial = (this.object && this.object.currentMaterial ? this.object.currentMaterial() : undefined);
+							
+							if (this.object && this.object._finalize) {
+								this.object._finalize(true);
+							}
+							
+							const newObject = {
+								name: name || "",
+								fromDeclaration: (fromDeclaration !== false),
+								geometry: {
+									vertices: [],
+									normals: [],
+									colors: [],
+									uvs: [],
+									hasUVIndices: false
+								},
+								materials: [],
+								smooth: true,
+								
+								startMaterial: function(name, libraries) {
+									const previous = this._finalize(false);
+									
+									// 新的usemtl声明覆盖继承的材质
+									if (previous && (previous.inherited || previous.groupCount <= 0)) {
+										this.materials.splice(previous.index, 1);
+									}
+									
+									const material = {
+										index: this.materials.length,
+										name: name || "",
+										mtllib: (Array.isArray(libraries) && libraries.length > 0 ? libraries[libraries.length - 1] : ""),
+										smooth: (previous !== undefined ? previous.smooth : this.smooth),
+										groupStart: (previous !== undefined ? previous.groupEnd : 0),
+										groupEnd: -1,
+										groupCount: -1,
+										inherited: false
+									};
+									
+									this.materials.push(material);
+									return material;
+								},
+								
+								currentMaterial: function() {
+									if (this.materials.length > 0) {
+										return this.materials[this.materials.length - 1];
+									}
+									return undefined;
+								},
+								
+								_finalize: function(end) {
+									const lastMultiMaterial = this.currentMaterial();
+									if (lastMultiMaterial && lastMultiMaterial.groupEnd === -1) {
+										lastMultiMaterial.groupEnd = this.geometry.vertices.length / 3;
+										lastMultiMaterial.groupCount = lastMultiMaterial.groupEnd - lastMultiMaterial.groupStart;
+										lastMultiMaterial.inherited = false;
+									}
+									
+									// 忽略尾部没有面的材质
+									if (end && this.materials.length > 1) {
+										for (let mi = this.materials.length - 1; mi >= 0; mi--) {
+											if (this.materials[mi].groupCount <= 0) {
+												this.materials.splice(mi, 1);
+											}
+										}
+									}
+									
+									// 确保至少有一个空材质
+									if (end && this.materials.length === 0) {
+										this.materials.push({
+											name: "",
+											smooth: this.smooth
+										});
+									}
+									
+									return lastMultiMaterial;
+								}
+							};
+							
+							// 继承前一个对象的材质
+							if (previousMaterial && previousMaterial.name) {
+								const declared = {
+									index: 0,
+									name: previousMaterial.name,
+									mtllib: previousMaterial.mtllib,
+									smooth: previousMaterial.smooth,
+									groupStart: 0,
+									groupEnd: -1,
+									groupCount: -1,
+									inherited: true
+								};
+								newObject.materials.push(declared);
+							}
+							
+							this.object = newObject;
+							this.objects.push(this.object);
+						}
+						
+						finalize() {
+							if (this.object && this.object._finalize) {
+								this.object._finalize(true);
+							}
+						}
+						
+						parseVertexIndex(value, len) {
+							const index = parseInt(value, 10);
+							return (index >= 0 ? index - 1 : index + len / 3) * 3;
+						}
+						
+						parseNormalIndex(value, len) {
+							const index = parseInt(value, 10);
+							return (index >= 0 ? index - 1 : index + len / 3) * 3;
+						}
+						
+						parseUVIndex(value, len) {
+							const index = parseInt(value, 10);
+							return (index >= 0 ? index - 1 : index + len / 2) * 2;
+						}
+						
+						addVertex(a, b, c) {
+							const src = this.vertices;
+							const dst = this.object.geometry.vertices;
+							dst.push(src[a], src[a + 1], src[a + 2]);
+							dst.push(src[b], src[b + 1], src[b + 2]);
+							dst.push(src[c], src[c + 1], src[c + 2]);
+						}
+						
+						addNormal(a, b, c) {
+							const src = this.normals;
+							const dst = this.object.geometry.normals;
+							dst.push(src[a], src[a + 1], src[a + 2]);
+							dst.push(src[b], src[b + 1], src[b + 2]);
+							dst.push(src[c], src[c + 1], src[c + 2]);
+						}
+						
+						addUV(a, b, c) {
+							const src = this.uvs;
+							const dst = this.object.geometry.uvs;
+							dst.push(src[a], src[a + 1]);
+							dst.push(src[b], src[b + 1]);
+							dst.push(src[c], src[c + 1]);
+						}
+						
+						addDefaultUV() {
+							const dst = this.object.geometry.uvs;
+							dst.push(0, 0);
+							dst.push(0, 0);
+							dst.push(0, 0);
+						}
+						
+						addFace(a, b, c, ua, ub, uc, na, nb, nc) {
+							const vLen = this.vertices.length;
+							let ia = this.parseVertexIndex(a, vLen);
+							let ib = this.parseVertexIndex(b, vLen);
+							let ic = this.parseVertexIndex(c, vLen);
+							
+							this.addVertex(ia, ib, ic);
+							
+							// 法线
+							if (na !== undefined && na !== "") {
+								const nLen = this.normals.length;
+								ia = this.parseNormalIndex(na, nLen);
+								ib = this.parseNormalIndex(nb, nLen);
+								ic = this.parseNormalIndex(nc, nLen);
+								this.addNormal(ia, ib, ic);
+							} else {
+								// 计算面法线
+								this.addFaceNormal(ia, ib, ic);
+							}
+							
+							// UV
+							if (ua !== undefined && ua !== "") {
+								const uvLen = this.uvs.length;
+								ia = this.parseUVIndex(ua, uvLen);
+								ib = this.parseUVIndex(ub, uvLen);
+								ic = this.parseUVIndex(uc, uvLen);
+								this.addUV(ia, ib, ic);
+								this.object.geometry.hasUVIndices = true;
+							} else {
+								this.addDefaultUV();
+							}
+						}
+						
+						addFaceNormal(a, b, c) {
+							const src = this.vertices;
+							const dst = this.object.geometry.normals;
+							
+							// 计算面法线
+							const x0 = src[a];
+							const y0 = src[a + 1];
+							const z0 = src[a + 2];
+							
+							const x1 = src[b];
+							const y1 = src[b + 1];
+							const z1 = src[b + 2];
+							
+							const x2 = src[c];
+							const y2 = src[c + 1];
+							const z2 = src[c + 2];
+							
+							const pA = {x: x0, y: y0, z: z0};
+							const pB = {x: x1, y: y1, z: z1};
+							const pC = {x: x2, y: y2, z: z2};
+							
+							const cb = {
+								x: pC.x - pB.x,
+								y: pC.y - pB.y,
+								z: pC.z - pB.z
+							};
+							
+							const ab = {
+								x: pA.x - pB.x,
+								y: pA.y - pB.y,
+								z: pA.z - pB.z
+							};
+							
+							const normal = {
+								x: cb.y * ab.z - cb.z * ab.y,
+								y: cb.z * ab.x - cb.x * ab.z,
+								z: cb.x * ab.y - cb.y * ab.x
+							};
+							
+							const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
+							if (length > 0) {
+								normal.x /= length;
+								normal.y /= length;
+								normal.z /= length;
+							}
+							
+							dst.push(normal.x, normal.y, normal.z);
+							dst.push(normal.x, normal.y, normal.z);
+							dst.push(normal.x, normal.y, normal.z);
+						}
+					}
+					
+					// ============== 解析主流程 ==============
+					console.log("解析OBJ数据...");
+					
+					setTimeout(() => {
+						this.loadingProgress.update("Processing vertices and faces...", 98.5);
+					}, 500);
+					
+					// 预处理文本
+					if (objText.indexOf("\\r\\n") !== -1) {
+						objText = objText.replace(/\\r\\n/g, "\\n");
+					}
+					
+					const lines = objText.split("\\n");
+					const state = new ParserState();
+					
+					// 解析每一行
+					for (let i = 0, l = lines.length; i < l; i++) {
+						const line = lines[i].trimStart();
+						if (line.length === 0) continue;
+						
+						const lineFirstChar = line.charAt(0);
+						
+						if (lineFirstChar === "#") continue;
+						
+						if (lineFirstChar === "v") {
+							const data = line.split(_face_vertex_data_separator_pattern);
+							switch (data[0]) {
+								case "v":
+									state.vertices.push(
+										parseFloat(data[1]),
+										parseFloat(data[2]),
+										parseFloat(data[3])
+									);
+									if (data.length >= 7) {
+										// 处理顶点颜色（如果存在）
+										const color = new THREE.Color();
+										color.setRGB(parseFloat(data[4]), parseFloat(data[5]), parseFloat(data[6]));
+										state.colors.push(color.r, color.g, color.b);
+									}
+									break;
+								case "vn":
+									state.normals.push(
+										parseFloat(data[1]),
+										parseFloat(data[2]),
+										parseFloat(data[3])
+									);
+									break;
+								case "vt":
+									state.uvs.push(
+										parseFloat(data[1]),
+										parseFloat(data[2])
+									);
+									break;
+							}
+						} else if (lineFirstChar === "f") {
+							const lineData = line.slice(1).trim();
+							const vertexData = lineData.split(_face_vertex_data_separator_pattern);
+							const faceVertices = [];
+							
+							// 解析面的顶点数据
+							for (let j = 0, jl = vertexData.length; j < jl; j++) {
+								const vertex = vertexData[j];
+								if (vertex.length > 0) {
+									const vertexParts = vertex.split("/");
+									faceVertices.push(vertexParts);
+								}
+							}
+							
+							// 将多边形三角化（使用官方OBJLoader的三角化方法）
+							if (faceVertices.length >= 3) {
+								const v1 = faceVertices[0];
+								for (let j = 1, jl = faceVertices.length - 1; j < jl; j++) {
+									const v2 = faceVertices[j];
+									const v3 = faceVertices[j + 1];
+									
+									state.addFace(
+										v1[0] || "", v2[0] || "", v3[0] || "",
+										v1[1] || "", v2[1] || "", v3[1] || "",
+										v1[2] || "", v2[2] || "", v3[2] || ""
+									);
+								}
+							}
+						} else {
+							let result = _object_pattern.exec(line);
+							if (result !== null) {
+								// o object_name 或 g group_name
+								const name = (" " + result[0].slice(1).trim()).slice(1);
+								state.startObject(name);
+							} else if (_material_use_pattern.test(line)) {
+								// usemtl
+								state.object.startMaterial(line.substring(7).trim(), state.materialLibraries);
+							} else if (_material_library_pattern.test(line)) {
+								// mtllib
+								state.materialLibraries.push(line.substring(7).trim());
+							} else if (lineFirstChar === "s") {
+								const result = line.split(" ");
+								// 平滑组
+								if (result.length > 1) {
+									const value = result[1].trim().toLowerCase();
+									state.object.smooth = (value !== "0" && value !== "off");
+								} else {
+									state.object.smooth = true;
+								}
+								const material = state.object.currentMaterial();
+								if (material) material.smooth = state.object.smooth;
+							}
+						}
+					}
+					
+					state.finalize();
+					
+					console.log("解析完成，对象数量: " + state.objects.length);
+					
+					// ============== 创建Three.js对象 ==============
+					console.log("创建Three.js对象...");
+					
+					const container = new THREE.Group();
+					const hasPrimitives = !(state.objects.length === 1 && state.objects[0].geometry.vertices.length === 0);
+					
+					if (hasPrimitives) {
+						for (let i = 0, l = state.objects.length; i < l; i++) {
+							const object = state.objects[i];
+							const geometry = object.geometry;
+							const materials = object.materials;
+							
+							if (geometry.vertices.length === 0) continue;
+							
+							const buffergeometry = new THREE.BufferGeometry();
+							buffergeometry.setAttribute(
+								"position", 
+								new THREE.Float32BufferAttribute(geometry.vertices, 3)
+							);
+							
+							if (geometry.normals.length > 0) {
+								buffergeometry.setAttribute(
+									"normal", 
+									new THREE.Float32BufferAttribute(geometry.normals, 3)
+								);
+							}
+							
+							if (geometry.uvs.length > 0) {
+								buffergeometry.setAttribute(
+									"uv", 
+									new THREE.Float32BufferAttribute(geometry.uvs, 2)
+								);
+							}
+							
+							// 创建材质
+							const createdMaterials = [];
+							for (let mi = 0, miLen = materials.length; mi < miLen; mi++) {
+								const sourceMaterial = materials[mi];
+								
+								let material;
+								if (materialsDict && materialsDict[sourceMaterial.name]) {
+									material = materialsDict[sourceMaterial.name];
+									console.log("使用解析的材质: " + sourceMaterial.name);
+								} else {
+									material = this.createDefaultMaterial();
+									material.name = sourceMaterial.name || "default";
+									console.log("创建默认材质: " + material.name);
+								}
+								
+								createdMaterials.push(material);
+							}
+							
+							// 创建网格
+							let mesh;
+							if (createdMaterials.length > 1) {
+								// 为每个材质添加组
+								for (let mi = 0, miLen = materials.length; mi < miLen; mi++) {
+									const sourceMaterial = materials[mi];
+									if (sourceMaterial.groupCount > 0) {
+										buffergeometry.addGroup(sourceMaterial.groupStart, sourceMaterial.groupCount, mi);
+									}
+								}
+								mesh = new THREE.Mesh(buffergeometry, createdMaterials);
+							} else {
+								mesh = new THREE.Mesh(buffergeometry, createdMaterials[0]);
+							}
+							
+							mesh.name = object.name || "obj_mesh";
+							
+							// 根据当前阴影设置启用阴影
+							mesh.castShadow = this.state.lights.shadowsEnabled;
+							mesh.receiveShadow = this.state.lights.shadowsEnabled;
+							
+							container.add(mesh);
+						}
+					} else {
+						// 如果只有点数据，创建点云
+						if (state.vertices.length > 0) {
+							const material = new THREE.PointsMaterial({ size: 0.1, color: 0xffffff });
+							const geometry = new THREE.BufferGeometry();
+							geometry.setAttribute("position", new THREE.Float32BufferAttribute(state.vertices, 3));
+							const points = new THREE.Points(geometry, material);
+							container.add(points);
+						}
+					}
+					
+					// 性能统计
+					const endTime = performance.now();
+					console.log("准确算法版解析完成统计:");
+					console.log("  处理时间: " + ((endTime - startTime) / 1000).toFixed(2) + "秒");
+					console.log("  对象数量: " + state.objects.length);
+					console.log("  总顶点数: " + (state.vertices.length / 3));
+					console.log("  创建的网格数量: " + container.children.length);
+					
+					this.loadingProgress.update("Creating 3D objects...", 99.5);
+					return container;
+					
+				} catch (error) {
+					console.log("parseOBJManually函数错误: ", error);
+					throw error;
+				}
+			}
+
+			// load mtl zip
+			async loadMTLFromZip(mtlText, mainFilePath, virtualFS, options = {}) {
+				return new Promise((resolve, reject) => {
+					try {
+						console.log('开始解析MTL文件: ' + mainFilePath);
+						
+						// 创建统一的纹理加载器
+						this.loadingProgress.update("Parsing MTL file...", 97.5);
+						const textureLoader = new TextureLoaderFromZip(virtualFS);
+						
+						// 使用改进的解析器
+						const parser = new MTLParser();
+						const materialsInfo = parser.parseMTLText(mtlText);
+						
+						console.log('解析出 ' + Object.keys(materialsInfo).length + ' 个材质信息');
+						
+						if (Object.keys(materialsInfo).length === 0) {
+							console.log('MTL文件中没有发现材质信息');
+							resolve({});
+							return;
+						}
+						
+						// 合并选项
+						const defaultOptions = {
+							materialPreset: 'standard',
+							normalizeRGB: false,
+							ignoreZeroRGBs: false,
+							invertTrProperty: false
+						};
+						
+						const mergedOptions = { ...defaultOptions, ...options };
+						
+						// 创建材质字典
+						const materialsDict = {};
+						
+						// 收集所有需要加载的纹理信息
+						const textureInfos = [];
+						const textureToMaterials = new Map();
+						
+						this.loadingProgress.update("Creating materials...", 98);
+						
+						for (const materialName in materialsInfo) {
+							const materialInfo = materialsInfo[materialName];
+							
+							// 根据预设创建材质
+							const threeMaterial = this.createMaterialFromMTLInfo(materialInfo);
+							
+							// 应用材质选项
+							if (mergedOptions.normalizeRGB || mergedOptions.ignoreZeroRGBs || mergedOptions.invertTrProperty) {
+								threeMaterial.userData = threeMaterial.userData || {};
+								threeMaterial.userData.mtlOptions = {
+									normalizeRGB: mergedOptions.normalizeRGB,
+									ignoreZeroRGBs: mergedOptions.ignoreZeroRGBs,
+									invertTrProperty: mergedOptions.invertTrProperty
+								};
+							}
+							
+							materialsDict[materialName] = threeMaterial;
+							console.log('创建材质: ' + materialName + ' (预设: ' + mergedOptions.materialPreset + ')');
+							
+							// 收集纹理信息
+							const textures = parser.getTexturesForMaterial(materialInfo);
+							for (const textureInfo of textures) {
+								textureInfos.push({
+									materialName: materialName,
+									textureType: textureInfo.type,
+									path: textureInfo.path,
+									params: textureInfo.params
+								});
+								
+								if (!textureToMaterials.has(textureInfo.path)) {
+									textureToMaterials.set(textureInfo.path, []);
+								}
+								textureToMaterials.get(textureInfo.path).push({
+									materialName: materialName,
+									textureType: textureInfo.type,
+									params: textureInfo.params
+								});
+							}
+						}
+						
+						console.log('需要加载的纹理数量:', textureInfos.length);
+						
+						if (textureInfos.length === 0) {
+							// 没有纹理，直接返回材质
+							this.loadingProgress.update("Finalizing materials...", 98.5);
+							this.finalizeMaterials(materialsDict, materialsInfo);
+							textureLoader.dispose();
+							resolve(materialsDict);
+							return;
+						}
+						
+						this.loadingProgress.update('Loading ' + textureInfos.length + ' textures...', 98.2);
+						
+						// 批量加载纹理
+						textureLoader.loadTextures(
+							textureInfos.map(info => ({ path: info.path })),
+							mainFilePath
+						).then(textureResults => {
+							// 应用纹理到材质
+							for (let i = 0; i < textureInfos.length; i++) {
+								const info = textureInfos[i];
+								const result = textureResults[i];
+								
+								if (result && result.texture) {
+									const material = materialsDict[info.materialName];
+									if (material) {
+										this.applyTextureWithParams(material, result.texture, info, result.path);
+									}
+								}
+							}
+							
+							// 最终材质调整
+							this.loadingProgress.update("Finalizing materials...", 98.8);
+							this.finalizeMaterials(materialsDict, materialsInfo);
+							
+							// 验证加载结果
+							this.logMaterialTextureInfo(materialsDict);
+							
+							// 清理纹理加载器
+							textureLoader.dispose();
+							
+							resolve(materialsDict);
+							
+						}).catch(error => {
+							console.log('纹理加载失败，但材质已创建:', error);
+							
+							// 即使纹理失败，也尝试最终调整
+							this.finalizeMaterials(materialsDict, materialsInfo);
+							
+							// 清理纹理加载器
+							textureLoader.dispose();
+							
+							resolve(materialsDict);
+						});
+						
+					} catch (error) {
+						console.log('MTL解析失败:', error);
+						reject(error);
+					}
+				});
+			}
+
+			finalizeMaterials(materialsDict, materialsInfo) {
+				console.log('进行最终材质调整...');
+				
+				for (const materialName in materialsDict) {
+					const material = materialsDict[materialName];
+					const mtlInfo = materialsInfo[materialName];
+					
+					if (!mtlInfo) continue;
+					
+					// 确保透明度设置正确
+					if (material.transparent && material.opacity === undefined) {
+						material.opacity = 0.9;
+					}
+					
+					// 确保双面材质正确设置
+					if (material.side === undefined) {
+						material.side = THREE.FrontSide;
+					}
+					
+					// 更新材质
+					material.needsUpdate = true;
+					
+					// 记录原始MTL信息
+					material.userData = material.userData || {};
+					material.userData.mtlInfo = {
+						name: mtlInfo.name,
+						hasTextures: !!(mtlInfo.map_Kd || mtlInfo.map_Ks || mtlInfo.map_Ke || 
+									   mtlInfo.map_bump || mtlInfo.bump || mtlInfo.norm),
+						originalIllum: mtlInfo.illum
+					};
+				}
+			}
+
+			createMaterialFromMTLInfo(mtlInfo, options = {}) {
+				console.log('为材质 ' + mtlInfo.name + ' 创建Three.js材质');
+				
+				const defaults = {
+					materialType: 'standard', // 'standard' 或 'phong'
+					convertPhongToStandard: true,
+					normalizeRGB: false,
+					ignoreZeroRGBs: false,
+					invertTrProperty: false
+				};
+				
+				const settings = { ...defaults, ...options };
+				
+				// 如果指定使用Phong材质，则直接创建MeshPhongMaterial
+				if (settings.materialType === 'phong') {
+					return this.createPhongMaterialFromMTLInfo(mtlInfo, settings);
+				}
+				
+				// 否则，使用智能转换创建MeshStandardMaterial
+				return this.createStandardMaterialFromMTLInfo(mtlInfo, settings);
+			}
+
+			createPhongMaterialFromMTLInfo(mtlInfo, options = {}) {
+				console.log('为材质 ' + mtlInfo.name + ' 创建Three.js Phong材质');
+				
+				// 默认选项（与官方MTLLoader一致）
+				const defaults = {
+					side: THREE.FrontSide,
+					wrap: THREE.RepeatWrapping,
+					normalizeRGB: false,
+					ignoreZeroRGBs: false,
+					invertTrProperty: false
+				};
+				
+				const settings = { ...defaults, ...options };
+				
+				// 创建材质参数对象（与官方MTLLoader完全一致）
+				const params = {
+					name: mtlInfo.name,
+					side: settings.side
+				};
+				
+				// =============== 处理颜色属性（与官方MTLLoader完全一致） ===============
+				
+				// 处理漫反射颜色 Kd
+				if (mtlInfo.Kd) {
+					let kdValue = mtlInfo.Kd;
+					if (settings.normalizeRGB) {
+						kdValue = kdValue.map(val => val / 255.0);
+					}
+					if (!settings.ignoreZeroRGBs || !(kdValue[0] === 0 && kdValue[1] === 0 && kdValue[2] === 0)) {
+						params.color = new THREE.Color().fromArray(kdValue).convertSRGBToLinear();
+					}
+				}
+				
+				// 处理高光颜色 Ks
+				if (mtlInfo.Ks) {
+					let ksValue = mtlInfo.Ks;
+					if (settings.normalizeRGB) {
+						ksValue = ksValue.map(val => val / 255.0);
+					}
+					if (!settings.ignoreZeroRGBs || !(ksValue[0] === 0 && ksValue[1] === 0 && ksValue[2] === 0)) {
+						params.specular = new THREE.Color().fromArray(ksValue).convertSRGBToLinear();
+					}
+				}
+				
+				// 处理自发光 Ke
+				if (mtlInfo.Ke) {
+					let keValue = mtlInfo.Ke;
+					if (settings.normalizeRGB) {
+						keValue = keValue.map(val => val / 255.0);
+					}
+					if (!settings.ignoreZeroRGBs || !(keValue[0] === 0 && keValue[1] === 0 && keValue[2] === 0)) {
+						params.emissive = new THREE.Color().fromArray(keValue).convertSRGBToLinear();
+					}
+				}
+				
+				// =============== 处理标量属性（与官方MTLLoader完全一致） ===============
+				
+				// 处理高光指数 Ns
+				if (mtlInfo.Ns !== undefined) {
+					params.shininess = mtlInfo.Ns;
+				}
+				
+				// =============== 透明度处理（与官方MTLLoader完全一致） ===============
+				
+				let opacity = 1.0;
+				let transparent = false;
+				
+				// 处理 d（不透明度）
+				if (mtlInfo.d !== undefined) {
+					const dValue = mtlInfo.d;
+					if (dValue < 1.0) {
+						opacity = dValue;
+						transparent = true;
+					}
+				}
+				
+				// 处理 Tr（透光度）
+				if (mtlInfo.Tr !== undefined) {
+					let trValue = mtlInfo.Tr;
+					if (settings.invertTrProperty) {
+						trValue = 1.0 - trValue;
+					}
+					if (trValue > 0) {
+						opacity = 1.0 - trValue;
+						transparent = true;
+					}
+				}
+				
+				// 如果有透明度贴图，也必须设置transparent
+				if (mtlInfo.map_d) {
+					transparent = true;
+				}
+				
+				params.opacity = opacity;
+				params.transparent = transparent;
+				
+				// =============== 创建材质 ===============
+				
+				const material = new THREE.MeshPhongMaterial(params);
+				
+				// 应用纹理包装设置
+				if (settings.wrap !== undefined) {
+					material.userData = material.userData || {};
+					material.userData.wrap = settings.wrap;
+				}
+				
+				// 记录原始MTL信息
+				material.userData = material.userData || {};
+				material.userData.mtlInfo = {
+					name: mtlInfo.name,
+					Kd: mtlInfo.Kd,
+					Ks: mtlInfo.Ks,
+					Ke: mtlInfo.Ke,
+					Ns: mtlInfo.Ns,
+					d: mtlInfo.d,
+					Tr: mtlInfo.Tr,
+					Ni: mtlInfo.Ni,
+					illum: mtlInfo.illum
+				};
+				
+				// 调试输出
+				console.log('创建的Phong材质 ' + mtlInfo.name + ' 参数:');
+				console.log('  color:', params.color ? '(' + params.color.r.toFixed(3) + ', ' + params.color.g.toFixed(3) + ', ' + params.color.b.toFixed(3) + ')' : 'null');
+				console.log('  specular:', params.specular ? '(' + params.specular.r.toFixed(3) + ', ' + params.specular.g.toFixed(3) + ', ' + params.specular.b.toFixed(3) + ')' : 'null');
+				console.log('  emissive:', params.emissive ? '(' + params.emissive.r.toFixed(3) + ', ' + params.emissive.g.toFixed(3) + ', ' + params.emissive.b.toFixed(3) + ')' : 'null');
+				console.log('  shininess:', params.shininess !== undefined ? params.shininess : '默认');
+				console.log('  opacity:', params.opacity !== undefined ? params.opacity.toFixed(3) : '1.000');
+				console.log('  transparent:', params.transparent);
+				console.log('  d值:', mtlInfo.d !== undefined ? mtlInfo.d : '未定义');
+				console.log('  Tr值:', mtlInfo.Tr !== undefined ? mtlInfo.Tr : '未定义');
+				
+				return material;
+			}
+
+			createStandardMaterialFromMTLInfo(mtlInfo, options = {}) {
+				console.log('为材质 ' + mtlInfo.name + ' 创建Three.js Standard材质');
+				
+				// 默认选项
+				const defaults = {
+					side: THREE.FrontSide,
+					wrap: THREE.RepeatWrapping,
+					normalizeRGB: false,
+					ignoreZeroRGBs: false,
+					invertTrProperty: false
+				};
+				
+				const settings = { ...defaults, ...options };
+				
+				// 创建材质参数对象
+				const params = {
+					name: mtlInfo.name,
+					side: settings.side
+				};
+				
+				// =============== 处理颜色属性 ===============
+				
+				// 处理漫反射颜色 Kd
+				if (mtlInfo.Kd) {
+					let kdValue = mtlInfo.Kd;
+					if (settings.normalizeRGB) {
+						kdValue = kdValue.map(val => val / 255.0);
+					}
+					if (!settings.ignoreZeroRGBs || !(kdValue[0] === 0 && kdValue[1] === 0 && kdValue[2] === 0)) {
+						params.color = new THREE.Color().fromArray(kdValue).convertSRGBToLinear();
+					}
+				}
+				
+				// 处理高光颜色 Ks
+				if (mtlInfo.Ks) {
+					let ksValue = mtlInfo.Ks;
+					if (settings.normalizeRGB) {
+						ksValue = ksValue.map(val => val / 255.0);
+					}
+					
+					if (!settings.ignoreZeroRGBs || !(ksValue[0] === 0 && ksValue[1] === 0 && ksValue[2] === 0)) {
+						const ksBrightness = (ksValue[0] + ksValue[1] + ksValue[2]) / 3;
+						
+						if (ksBrightness > 0.9) {
+							params.metalness = 0.8;
+							params.roughness = 0.1;
+						} else if (ksBrightness > 0.3) {
+							params.metalness = 0.0;
+							params.roughness = 0.4;
+						} else {
+							params.metalness = 0.0;
+							params.roughness = 0.8;
+						}
+					}
+				}
+				
+				// 处理自发光 Ke
+				if (mtlInfo.Ke) {
+					let keValue = mtlInfo.Ke;
+					if (settings.normalizeRGB) {
+						keValue = keValue.map(val => val / 255.0);
+					}
+					
+					if (!settings.ignoreZeroRGBs || !(keValue[0] === 0 && keValue[1] === 0 && keValue[2] === 0)) {
+						params.emissive = new THREE.Color().fromArray(keValue).convertSRGBToLinear();
+						const keBrightness = (keValue[0] + keValue[1] + keValue[2]) / 3;
+						params.emissiveIntensity = keBrightness;
+					}
+				}
+				
+				// =============== 处理标量属性 ===============
+				
+				// 处理高光指数 Ns -> 粗糙度
+				if (mtlInfo.Ns !== undefined) {
+					const nsValue = mtlInfo.Ns;
+					
+					if (nsValue <= 0) {
+						params.roughness = 1.0;
+					} else if (nsValue >= 1000) {
+						params.roughness = 0.04;
+					} else {
+						const normalizedNs = nsValue / 1000;
+						params.roughness = 1.0 - Math.sqrt(normalizedNs);
+						params.roughness = Math.max(0.04, Math.min(params.roughness, 1.0));
+					}
+				}
+				
+				// =============== 透明度处理（严格按照官方逻辑） ===============
+				
+				let opacity = 1.0;
+				let transparent = false;
+				
+				// 处理 d（不透明度） - 严格按官方逻辑
+				if (mtlInfo.d !== undefined) {
+					const dValue = mtlInfo.d;
+					if (dValue < 1.0) {
+						opacity = dValue;
+						transparent = true;
+						console.log('  根据d值设置透明: d=' + dValue + ', opacity=' + opacity);
+					} else {
+						opacity = 1.0;
+						transparent = false;
+						console.log('  d=1.0，不透明');
+					}
+				}
+				
+				// 处理 Tr（透光度） - 严格按官方逻辑，且只在有Tr属性时才处理
+				if (mtlInfo.Tr !== undefined) {
+					let trValue = mtlInfo.Tr;
+					if (settings.invertTrProperty) {
+						trValue = 1.0 - trValue;
+					}
+					if (trValue > 0) {
+						opacity = 1.0 - trValue;
+						transparent = true;
+						console.log('  根据Tr值设置透明: Tr=' + mtlInfo.Tr + ', 处理后=' + trValue + ', opacity=' + opacity);
+					} else {
+						console.log('  Tr=' + mtlInfo.Tr + '，不透明');
+					}
+				}
+				
+				// 如果有透明度贴图，必须设置透明
+				if (mtlInfo.map_d) {
+					transparent = true;
+					console.log('  有透明度贴图，设置透明');
+				}
+				
+				params.opacity = opacity;
+				params.transparent = transparent;
+				
+				// =============== 其他属性处理 ===============
+				
+				// 折射率 Ni
+				if (mtlInfo.Ni !== undefined && mtlInfo.Ni !== 1.0) {
+					params.userData = params.userData || {};
+					params.userData.ior = mtlInfo.Ni;
+				}
+				
+				// 光照模型 illum - 仅记录
+				if (mtlInfo.illum !== undefined) {
+					params.userData = params.userData || {};
+					params.userData.illumModel = mtlInfo.illum;
+				}
+				
+				// =============== 创建材质 ===============
+				
+				const material = new THREE.MeshStandardMaterial(params);
+				
+				// 记录原始MTL信息
+				material.userData = material.userData || {};
+				material.userData.mtlInfo = {
+					name: mtlInfo.name,
+					hasD: mtlInfo.d !== undefined,
+					dValue: mtlInfo.d,
+					hasTr: mtlInfo.Tr !== undefined,
+					trValue: mtlInfo.Tr,
+					hasMapD: mtlInfo.map_d !== null
+				};
+				
+				// 调试输出
+				console.log('创建的Standard材质 ' + mtlInfo.name + ' 参数:');
+				console.log('  color:', params.color ? '(' + params.color.r.toFixed(3) + ', ' + params.color.g.toFixed(3) + ', ' + params.color.b.toFixed(3) + ')' : 'null');
+				console.log('  metalness:', params.metalness !== undefined ? params.metalness.toFixed(3) : '默认');
+				console.log('  roughness:', params.roughness !== undefined ? params.roughness.toFixed(3) : '默认');
+				console.log('  emissive:', params.emissive ? '(' + params.emissive.r.toFixed(3) + ', ' + params.emissive.g.toFixed(3) + ', ' + params.emissive.b.toFixed(3) + ')' : 'null');
+				console.log('  opacity:', params.opacity !== undefined ? params.opacity.toFixed(3) : '1.000');
+				console.log('  transparent:', params.transparent);
+				
+				return material;
+			}
+
+			applyTextureWithParams(material, texture, textureInfo, texturePath) {
+				const params = textureInfo.params;
+				
+				// 更全面的纹理类型映射
+				const propertyMap = {
+					'map_Ka': 'aoMap',
+					'map_Kd': 'map',
+					'map_Ks': { 
+						property: 'metalnessMap',
+						conversion: function(texture) {
+							texture.colorSpace = THREE.LinearSRGBColorSpace;
+							return texture;
+						}
+					},
+					'map_Ke': 'emissiveMap',
+					'map_Ns': 'roughnessMap',
+					'map_d': 'alphaMap',
+					'map_bump': 'bumpMap',
+					'bump': 'bumpMap',
+					'norm': 'normalMap',
+					'map_refl': 'envMap'
+				};
+				
+				// FBX纹理类型映射
+				const fbxPropertyMap = {
+					'map': 'map',
+					'normalMap': 'normalMap',
+					'roughnessMap': 'roughnessMap',
+					'metalnessMap': 'metalnessMap',
+					'emissiveMap': 'emissiveMap',
+					'alphaMap': 'alphaMap',
+					'aoMap': 'aoMap',
+					'bumpMap': 'bumpMap',
+					'specularMap': 'specularMap'
+				};
+				
+				let propertyName = textureInfo.textureType;
+				let textureConverter = null;
+				
+				// 如果是MTL纹理类型，需要映射
+				if (propertyMap[propertyName]) {
+					const propInfo = propertyMap[propertyName];
+					if (typeof propInfo === 'string') {
+						propertyName = propInfo;
+					} else if (propInfo && typeof propInfo === 'object') {
+						propertyName = propInfo.property;
+						textureConverter = propInfo.conversion;
+					}
+				}
+				// 如果是FBX纹理类型，直接使用
+				else if (!fbxPropertyMap[propertyName]) {
+					console.log('未知的纹理类型: ' + propertyName + '，跳过');
+					return;
+				}
+				
+				// 如果需要转换，应用转换
+				let finalTexture = texture;
+				if (textureConverter) {
+					finalTexture = textureConverter(texture.clone());
+				}
+				
+				// 设置纹理
+				material[propertyName] = finalTexture;
+				console.log('为材质 ' + (material.name || 'unnamed') + ' 设置 ' + propertyName + ' (类型: ' + textureInfo.textureType + ')');
+				
+				// 应用纹理参数（仅适用于MTL）
+				if (params) {
+					// 缩放
+					if (params.scale && (params.scale.x !== 1 || params.scale.y !== 1)) {
+						finalTexture.repeat.set(params.scale.x, params.scale.y);
+						console.log('  纹理缩放: ' + params.scale.x + ', ' + params.scale.y);
+					}
+					
+					// 偏移
+					if (params.offset && (params.offset.x !== 0 || params.offset.y !== 0)) {
+						finalTexture.offset.set(params.offset.x, params.offset.y);
+						console.log('  纹理偏移: ' + params.offset.x + ', ' + params.offset.y);
+					}
+					
+					// bump缩放
+					if ((textureInfo.textureType === 'map_bump' || textureInfo.textureType === 'bump') && params.bumpScale !== 1) {
+						material.bumpScale = params.bumpScale;
+						console.log('  bump缩放: ' + params.bumpScale);
+					}
+					
+					// 钳制
+					if (params.clamp) {
+						finalTexture.wrapS = THREE.ClampToEdgeWrapping;
+						finalTexture.wrapT = THREE.ClampToEdgeWrapping;
+						console.log('  纹理钳制: 启用');
+					} else {
+						finalTexture.wrapS = THREE.RepeatWrapping;
+						finalTexture.wrapT = THREE.RepeatWrapping;
+					}
+					
+					// 色彩空间处理
+					switch(textureInfo.textureType) {
+						case 'map_Kd':
+						case 'map_Ke':
+							finalTexture.colorSpace = THREE.SRGBColorSpace;
+							break;
+						case 'map_Ns':
+						case 'map_bump':
+						case 'bump':
+						case 'norm':
+							finalTexture.colorSpace = THREE.LinearSRGBColorSpace;
+							break;
+						default:
+							finalTexture.colorSpace = THREE.LinearSRGBColorSpace;
+					}
+				}
+				
+				// 根据纹理类型设置材质属性
+				switch(propertyName) {
+					case 'aoMap':
+						material.aoMapIntensity = 1.0;
+						break;
+					case 'bumpMap':
+						material.bumpScale = params && params.bumpScale !== undefined ? params.bumpScale : 1;
+						break;
+					case 'normalMap':
+						material.normalScale = new THREE.Vector2(1, 1);
+						break;
+					case 'roughnessMap':
+						material.roughness = material.roughness || 1.0;
+						break;
+					case 'metalnessMap':
+						material.metalness = material.metalness || 1.0;
+						break;
+				}
+				
+				material.needsUpdate = true;
+			}
+
+			logMaterialTextureInfo(materialsDict) {
+				console.log('=== 详细材质信息 ===');
+				for (const materialName in materialsDict) {
+					const material = materialsDict[materialName];
+					console.log('材质: ' + materialName);
+					console.log('  类型: ' + material.type);
+					
+					if (material.color) {
+						console.log('  基础颜色: (' + 
+							material.color.r.toFixed(2) + ', ' +
+							material.color.g.toFixed(2) + ', ' +
+							material.color.b.toFixed(2) + ')');
+					}
+					
+					if (material.emissive) {
+						const e = material.emissive;
+						console.log('  自发光: (' + 
+							e.r.toFixed(2) + ', ' + e.g.toFixed(2) + ', ' + e.b.toFixed(2) + 
+							') 强度: ' + (material.emissiveIntensity || 0).toFixed(2));
+					}
+					
+					if (material.metalness !== undefined) {
+						console.log('  金属度: ' + material.metalness.toFixed(2));
+					}
+					
+					if (material.roughness !== undefined) {
+						console.log('  粗糙度: ' + material.roughness.toFixed(2));
+					}
+					
+					if (material.opacity !== undefined && material.opacity < 1.0) {
+						console.log('  透明度: ' + material.opacity.toFixed(2));
+					}
+					
+					const textureProps = ['map', 'aoMap', 'specularMap', 'emissiveMap', 
+										 'roughnessMap', 'metalnessMap', 'alphaMap', 
+										 'bumpMap', 'normalMap'];
+					
+					let hasTextures = false;
+					for (const prop of textureProps) {
+						if (material[prop]) {
+							console.log('  - ' + prop + ': 有');
+							hasTextures = true;
+						}
+					}
+					
+					if (!hasTextures) {
+						console.log('  - 纹理: 无');
+					}
+				}
+				console.log('===================');
 			}
 
 			// 场景清理
@@ -3801,7 +6152,27 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.state.useVertexColors = false;
 				this.state.textureMapping = true;
 				
-				// 6. 重置核心状态
+				// 6. 重置包围盒缓存
+				this.state.sceneBBox = null;
+				this.state.sceneCenter = new THREE.Vector3();
+				
+				// 清理动画包围盒数据
+				this.state.animationBBoxData = {
+					sampledFrames: new Map(),
+					aggregated: {
+						overallMin: null,
+						overallMax: null,
+						averageCenter: null,
+						overallSize: null
+					},
+					cachedFrames: new Map(),
+					sampleFrameNumbers: [],
+					samplingInterval: 25,
+					isInitialized: false,
+					hasAnimation: false
+				};
+				
+				// 7. 重置核心状态
 				this.state.cameras.currentType = 'default';
 				this.state.cameras.activeScene = null;
 				this.state.cameraAnim.keyframes = [];
@@ -3821,43 +6192,20 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 
 			async clearScene() {
 				if (this.state.playback.isPlaying) this.pause();
+				this.state.playback.totalFrames = 0;
 				
 				// 清理场景内容（包括场景相机及其状态）
 				await this.cleanupPreviousModel();
 				
-				// 重置包围盒缓存
-				this.state.sceneBBox = null;
-				this.state.sceneCenter = new THREE.Vector3();
 				this.resetSettings();
-				
-				// 清理动画包围盒数据
-				this.state.animationBBoxData = {
-					sampledFrames: new Map(),
-					aggregated: {
-						overallMin: null,
-						overallMax: null,
-						averageCenter: null,
-						overallSize: null
-					},
-					cachedFrames: new Map(),
-					sampleFrameNumbers: [],
-					samplingInterval: 25,
-					isInitialized: false,
-					hasAnimation: false
-				};
 				
 				// 重置场景数据
 				this.state.currentFormat = null;
 				this.state.currentFileData = null;
-				this.state.playback.totalFrames = 0;
-				
-				// 更新UI
-				/* this.updateTimeSleder();
-				this.updateKeyframeCount();
-				this.updateKeyframeButtonsState();
-				this.updateCameraUIForMode(); */
 				
 				this.updateInfoDisplay();
+				this.enableControls();
+				this.renderInvalidate();
 			}
 
 			clearCameraAnimationData(camera) {
@@ -3914,13 +6262,17 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						if (texture && texture.dispose) {
 							texture.dispose();
 						}
+						// 如果是Blob URL，释放它
+						if (url.startsWith('blob:')) {
+							URL.revokeObjectURL(url);
+						}
 					} catch (error) {
 						console.log("Error disposing texture: " + url);
 					}
 				});
 				this.state.textureCache.clear();
 			  
-				// 2. 清理原始纹理引用（不清除原始纹理本身，因为它们属于材质）
+				// 2. 清理原始纹理引用
 				this.state.originalTextures.clear();
 			}
 
@@ -4198,6 +6550,21 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					exportScene.userData.targetNodes = targetNodesData;
 				}
 				
+				// ============== 动画包围盒数据导出 ==============
+				if (this.state.animationBBoxData.isInitialized) {
+					const serializedBBoxData = this.serializeAnimationBBoxData();
+					exportScene.userData.animationBBoxData = serializedBBoxData;
+				}
+				
+				// ============== 场景信息 ==============
+				exportScene.userData.sceneInfo = {
+					format: this.state.currentFormat,
+					hasAnimation: this.state.playback.totalFrames > 1,
+					totalFrames: this.state.playback.totalFrames,
+					fps: this.state.playback.fps,
+					originalModelName: this.state.currentFileData?.filename || 'unknown'
+				};
+				
 				// 设置导出选项
 				const options = { 
 					binary: true, 
@@ -4206,6 +6573,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					truncateDrawRange: false,
 					animations: allAnimations,
 					includeCustomExtensions: true,
+					includeUserData: true,
+					embedImages: true,
 					includeUserData: true
 				};
 				
@@ -4339,6 +6708,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					visibilityKeyframes: []
 				};
 				
+				// 创建一个共享的材质
+				const sharedMaterial = this.createDefaultMaterial();
+				
+				// 确保材质和纹理可以被导出器正确处理
+				if (sharedMaterial.map) {
+					sharedMaterial.map.needsUpdate = true;
+				}
+				
 				// 创建所有网格
 				const meshes = [];
 				for (let frame = 0; frame < numFrames; frame++) {
@@ -4358,8 +6735,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					
 					geometry.computeVertexNormals();
 					
-					// 创建材质
-					const material = this.createDefaultMaterial();
+					// 使用共享的材质
+					const material = sharedMaterial;
 					
 					// 创建网格并命名
 					const meshName = "SMPL_Frame_" + frame.toString().padStart(4, '0');
@@ -4515,7 +6892,101 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				return clip;
 			}
 
-			// 动画播放录像系统
+			// 动画播放系统
+			performRendering() {
+				const mode = this.state.materialMode;
+				
+				if (mode === 'default' || mode === 'original') {
+					this.renderer.render(this.scene, this.camera);
+					return;
+				}
+				
+				// Contour 特殊处理
+				if (mode === 'contour' && this.needsRender) {
+					this.renderNormalTexture();
+				}
+				
+				if (!this.composer) {
+					this.renderer.render(this.scene, this.camera);
+				} else {
+					this.composer.render();
+				}
+			}
+
+			renderOnce() {
+			  this.performRendering();
+			  this.needsRender = false;
+			}
+
+			renderStartLoop() {
+				if (this.isLoopRunning) return;
+				this.isLoopRunning = true;
+				
+				const frameInterval = 1000 / this.state.playback.maxFPS;
+				let lastTime = 0;
+				
+				const loop = (time) => {
+					if (!this.isLoopRunning) return;
+					
+					if (time - lastTime < frameInterval) {
+						this._rafId = requestAnimationFrame(loop);
+						return;
+					}
+					lastTime = time;
+					
+					const pb = this.state.playback;
+					const delta = pb.clock.getDelta();
+					
+					if (pb.isPlaying && delta > 0) {
+						const step = delta * pb.fps * (pb.isReversed ? -1 : 1);
+						let newFrame = pb.currentFrame + step;
+						
+						// 录制模式下不要循环播放
+						if (this.state.recording.isRecording) {
+							if (newFrame > pb.endFrame) {
+								newFrame = pb.endFrame;
+								pb.isPlaying = false;
+								this.dom.btns.play.textContent = "▶️";
+								this.dom.btns.reverse.textContent = "◀️";
+							} else if (newFrame < pb.startFrame) {
+								newFrame = pb.startFrame;
+							}
+						} else {
+							// 非录制时正常循环
+							if (newFrame > pb.endFrame) newFrame = pb.startFrame;
+							if (newFrame < pb.startFrame) newFrame = pb.endFrame;
+						}
+						
+						pb.currentFrame = newFrame;
+						
+						this.seek(pb.currentFrame);
+						this.needsRender = true;
+					}
+					
+					if (this.needsRender) this.renderOnce();
+					
+					this._rafId = requestAnimationFrame(loop);
+				};
+				
+				this._rafId = requestAnimationFrame(loop);
+			}
+
+			renderStopLoop() {
+				this.isLoopRunning = false;
+				
+				if (this._rafId) {
+					cancelAnimationFrame(this._rafId);
+					this._rafId = null;
+				}
+				
+				this.state.playback.clock.stop();
+			}
+
+			renderInvalidate() {
+				this.needsRender = true;
+				this.renderOnce();
+			}
+
 			updateVisuals(frame) {
 				let displayFrame = frame;
 				const { currentFormat, smplData, smplMesh, currentMixer, currentAnimations, playback } = this.state;
@@ -4596,7 +7067,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				/* this.controls.update(); */
 				this.updateVisualizationPoses();
 				
-				this.updateFPSInfo(frame);
+				/* this.updateFPSInfo(frame); */
 				
 				// 渲染路径选择
 				this.performRendering();
@@ -4674,135 +7145,26 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 			}
 
-			updateFPS() {
-				const input = this.dom.inputs.fps;
-				let newFPS = parseInt(input.value);
+			play() {
+				this.state.playback.isPlaying = true;
 				
-				if (newFPS < 1) {
-					newFPS = 1;
-				} else if (newFPS > 120) {
-					newFPS = 120;
+				if (this.state.currentMixer && this.state.currentMixer._actions && this.state.currentMixer._actions.length > 0) {
+					const action = this.state.currentMixer._actions[0];
+					if (!action.isRunning()) action.play();
 				}
 				
-				// 确保是整数
-				newFPS = Math.floor(newFPS);
-				input.value = newFPS.toString();
-				this.state.playback.fps = newFPS;
-			}
-
-			applyFrameRange() {
-				const startInput = this.dom.inputs.startFrame;
-				const endInput = this.dom.inputs.endFrame;
+				const b = this.dom.btns;
 				
-				// 清除状态
-				startInput.classList.remove('pending', 'invalid');
-				startInput.style.borderColor = '';
-				endInput.classList.remove('pending', 'invalid');
-				endInput.style.borderColor = '';
-				
-				// 获取并限制范围
-				let newStart = parseInt(startInput.value);
-				let newEnd = parseInt(endInput.value);
-				
-				if (newStart < -9999) newStart = -9999;
-				else if (newStart > 9999) newStart = 9999;
-				
-				if (isNaN(newEnd)) {
-					newEnd = this.state.playback.endFrame;
-				}
-				
-				if (newEnd < newStart) newEnd = newStart;
-				else if (newEnd > 9999) newEnd = 9999;
-				
-				// 更新输入框为边界值
-				startInput.value = newStart;
-				endInput.value = newEnd;
-				
-				// 应用范围
-				if (newStart <= newEnd) {
-					this.state.playback.startFrame = newStart;
-					this.state.playback.endFrame = newEnd;
-					this.dom.inputs.slider.min = newStart;
-					this.dom.inputs.slider.max = newEnd;
-					
-					if (this.state.playback.currentFrame < newStart) {
-						this.seek(newStart);
-					} else if (this.state.playback.currentFrame > newEnd) {
-						this.seek(newEnd);
-					}
-					
-					this.updateTimeSleder();
-					this.onWindowResize();
-				}
-			}
-
-			applySceneLength() {
-				const pb = this.state.playback;
-				const hasAnimation = pb.totalFrames > 1;
-				
-				if (hasAnimation) {
-					// 有场景动画：按实际动画长度设置
-					pb.endFrame = pb.totalFrames - 1;
+				if (this.state.playback.isReversed) {
+					b.reverse.textContent = "⏸️";
+					b.play.textContent = "▶️";
 				} else {
-					// 没有场景动画，检查自定义相机的动画
-					let customCameraMaxFrames = 0;
-					let hasCustomCameraAnimation = false;
-					
-					// 检查所有自定义相机的关键帧
-					this.state.cameras.custom.forEach(camera => {
-						if (camera.userData.keyframes && camera.userData.keyframes.length >= 2) {
-							hasCustomCameraAnimation = true;
-							
-							// 找出最小帧和最大帧
-							let minFrame = Infinity;
-							let maxFrame = -Infinity;
-							
-							camera.userData.keyframes.forEach(k => {
-								if (k.frame < minFrame) minFrame = k.frame;
-								if (k.frame > maxFrame) maxFrame = k.frame;
-							});
-							
-							// 只有当最小帧和最大帧不同，表示有动画范围
-							if (minFrame < maxFrame) {
-								const frameRange = maxFrame - minFrame + 1;
-								customCameraMaxFrames = Math.max(customCameraMaxFrames, frameRange);
-							}
-						}
-					});
-					
-					if (hasCustomCameraAnimation && customCameraMaxFrames > 0) {
-						// 有自定义相机动画：使用自定义相机动画的最大帧范围
-						pb.endFrame = customCameraMaxFrames - 1;
-					} else {
-						// 无动画但有模型，或空场景：恢复默认帧范围
-						pb.endFrame = this.state.defaultSettings.endFrame; // 149
-					}
+					b.play.textContent = "⏸️";
+					b.reverse.textContent = "◀️";
 				}
 				
-				this.dom.inputs.slider.min = this.state.defaultSettings.startFrame; // 0
-				this.dom.inputs.slider.max = pb.endFrame;
-				pb.startFrame = this.state.defaultSettings.startFrame; // 0
-				
-				if (pb.currentFrame > pb.endFrame) {
-					this.seek(pb.endFrame);
-				}
-				
-				// 更新输入框显示
-				this.dom.inputs.startFrame.value = pb.startFrame.toString();
-				this.dom.inputs.endFrame.value = pb.endFrame.toString();
-				
-				this.updateTimeSleder();
-				this.updateInfoDisplay();
-			}
-
-			updateTimeSleder() {
-				this.dom.inputs.slider.value = Math.floor(this.state.playback.currentFrame);
-				this.dom.displays.frame.textContent = Math.floor(this.state.playback.currentFrame) + ' / ' + this.state.playback.endFrame;
-			}
-
-			updateKeyframeCount() {
-				const count = this.camera.userData.keyframes ? this.camera.userData.keyframes.length : 0;
-				this.dom.labels.keyCount.textContent = count + " 🔑";
+				this.state.playback.clock.start();
+				this.renderStartLoop();
 			}
 
 			togglePlay() {
@@ -4827,31 +7189,13 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 			}
 
-			play() {
-				this.state.playback.isPlaying = true;
-				
-				if (this.state.currentMixer && this.state.currentMixer._actions && this.state.currentMixer._actions.length > 0) {
-					const action = this.state.currentMixer._actions[0];
-					if (!action.isRunning()) action.play();
-				}
-				
-				const b = this.dom.btns;
-				
-				if (this.state.playback.isReversed) {
-					b.reverse.textContent = "⏸️";
-					b.play.textContent = "▶️";
-				} else {
-					b.play.textContent = "⏸️";
-					b.reverse.textContent = "◀️";
-				}
-				
-				this.state.playback.clock.start();
-			}
-
 			pause() {
 				this.state.playback.isPlaying = false;
 				this.dom.btns.play.textContent = "▶️";
 				this.dom.btns.reverse.textContent = "◀️";
+				
+				this.renderStopLoop();
+				this.renderInvalidate();
 			}
 
 			seek(frame) {
@@ -4860,35 +7204,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.updateTimeSleder();
 				
 				this.updateVisuals(Math.floor(pb.currentFrame));
-			}
-
-			animate() {
-				requestAnimationFrame(() => this.animate());
-				const pb = this.state.playback;
 				
-				if (pb.isPlaying) {
-					const delta = pb.clock.getDelta();
-					
-					if (delta > 0) {
-						if (pb.isReversed) {
-							pb.currentFrame -= delta * pb.fps;
-							if (pb.currentFrame < pb.startFrame) pb.currentFrame = pb.endFrame;
-						} else {
-							pb.currentFrame += delta * pb.fps;
-							if (pb.currentFrame > pb.endFrame) {
-								pb.currentFrame = pb.startFrame;
-								if (this.state.recording.isRecording) {
-									this.pause();
-									if (this.state.recording.mediaRecorder?.state === 'recording') {
-										this.state.recording.mediaRecorder.stop();
-									}
-								}
-							}
-						}
-					}
-				}
-				
-				this.seek(pb.currentFrame);
+				if (!pb.isPlaying) this.renderInvalidate();
 			}
 
 			goToFirstFrame() { 
@@ -4975,7 +7292,194 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.seek(targetFrame);
 			}
 
+			updateFPS() {
+				const input = this.dom.inputs.fps;
+				let newFPS = parseInt(input.value);
+				
+				if (newFPS < 1) {
+					newFPS = 1;
+				} else if (newFPS > 120) {
+					newFPS = 120;
+				}
+				
+				// 确保是整数
+				newFPS = Math.floor(newFPS);
+				input.value = newFPS.toString();
+				this.state.playback.fps = newFPS;
+			}
+
+			applyFrameRange() {
+				const startInput = this.dom.inputs.startFrame;
+				const endInput = this.dom.inputs.endFrame;
+				
+				// 清除状态
+				startInput.classList.remove('pending', 'invalid');
+				startInput.style.borderColor = '';
+				endInput.classList.remove('pending', 'invalid');
+				endInput.style.borderColor = '';
+				
+				// 获取并限制范围
+				let newStart = parseInt(startInput.value);
+				let newEnd = parseInt(endInput.value);
+				
+				if (newStart < -9999) newStart = -9999;
+				else if (newStart > 9999) newStart = 9999;
+				
+				if (isNaN(newEnd)) {
+					newEnd = this.state.playback.endFrame;
+				}
+				
+				if (newEnd < newStart) newEnd = newStart;
+				else if (newEnd > 9999) newEnd = 9999;
+				
+				// 更新输入框为边界值
+				startInput.value = newStart;
+				endInput.value = newEnd;
+				
+				// 应用范围
+				if (newStart <= newEnd) {
+					this.state.playback.startFrame = newStart;
+					this.state.playback.endFrame = newEnd;
+					this.dom.inputs.slider.min = newStart;
+					this.dom.inputs.slider.max = newEnd;
+					
+					if (this.state.playback.currentFrame < newStart) {
+						this.seek(newStart);
+					} else if (this.state.playback.currentFrame > newEnd) {
+						this.seek(newEnd);
+					}
+					
+					this.updateTimeSleder();
+					this.renderInvalidate();
+				}
+			}
+
+			applySceneLength() {
+				const pb = this.state.playback;
+				const hasAnimation = pb.totalFrames > 1;
+				
+				if (hasAnimation) {
+					// 有场景动画：按实际动画长度设置
+					pb.endFrame = pb.totalFrames - 1;
+				} else {
+					// 没有场景动画，检查自定义相机的动画
+					let customCameraMaxFrames = 0;
+					let hasCustomCameraAnimation = false;
+					
+					// 检查所有自定义相机的关键帧
+					this.state.cameras.custom.forEach(camera => {
+						if (camera.userData.keyframes && camera.userData.keyframes.length >= 2) {
+							hasCustomCameraAnimation = true;
+							
+							// 找出最小帧和最大帧
+							let minFrame = Infinity;
+							let maxFrame = -Infinity;
+							
+							camera.userData.keyframes.forEach(k => {
+								if (k.frame < minFrame) minFrame = k.frame;
+								if (k.frame > maxFrame) maxFrame = k.frame;
+							});
+							
+							// 只有当最小帧和最大帧不同，表示有动画范围
+							if (minFrame < maxFrame) {
+								const frameRange = maxFrame - minFrame + 1;
+								customCameraMaxFrames = Math.max(customCameraMaxFrames, frameRange);
+							}
+						}
+					});
+					
+					if (hasCustomCameraAnimation && customCameraMaxFrames > 0) {
+						// 有自定义相机动画：使用自定义相机动画的最大帧范围
+						pb.endFrame = customCameraMaxFrames - 1;
+					} else {
+						// 无动画但有模型，或空场景：恢复默认帧范围
+						pb.endFrame = this.state.defaultSettings.endFrame; // 149
+					}
+				}
+				
+				this.dom.inputs.slider.min = this.state.defaultSettings.startFrame; // 0
+				this.dom.inputs.slider.max = pb.endFrame;
+				pb.startFrame = this.state.defaultSettings.startFrame; // 0
+				
+				if (pb.currentFrame > pb.endFrame) {
+					this.seek(pb.endFrame);
+				}
+				
+				// 更新输入框显示
+				this.dom.inputs.startFrame.value = pb.startFrame.toString();
+				this.dom.inputs.endFrame.value = pb.endFrame.toString();
+				
+				this.updateTimeSleder();
+				this.updateInfoDisplay();
+			}
+
+			updateTimeSleder() {
+				this.dom.inputs.slider.value = Math.floor(this.state.playback.currentFrame);
+				this.dom.displays.frame.textContent = Math.floor(this.state.playback.currentFrame) + ' / ' + this.state.playback.endFrame;
+			}
+
+			updateKeyframeCount() {
+				const count = this.camera.userData.keyframes ? this.camera.userData.keyframes.length : 0;
+				this.dom.labels.keyCount.textContent = count + " 🔑";
+			}
+
 			// 录像系统
+			captureScreenshot() {
+				try {
+					// 确保渲染了当前帧
+					this.renderInvalidate();
+					
+					// 从渲染器的canvas获取数据URL
+					const canvas = this.renderer.domElement;
+					const dataURL = canvas.toDataURL('image/png');
+					
+					// 创建下载链接
+					const link = document.createElement('a');
+					const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+					
+					// 获取模型名称（如果有的话）
+					let modelName = 'screenshot';
+					if (this.state.currentFileData && this.state.currentFileData.filename) {
+						const fileName = this.state.currentFileData.filename.split('/').pop().split('.')[0];
+						modelName = fileName;
+					}
+					
+					// 添加当前帧信息
+					const frameInfo = this.state.playback.totalFrames > 1 
+						? "_frame" + Math.floor(this.state.playback.currentFrame).toString().padStart(4, '0') 
+						: '';
+						
+					const filename = modelName + frameInfo + "_" + timestamp + ".png";
+					
+					link.href = dataURL;
+					link.download = filename;
+					link.style.display = 'none';
+					
+					// 添加到页面并触发点击
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+					
+					// 显示成功消息
+					this.showMessage("Sceenshot saved: " + filename, 3000);
+					
+					// 如果开启了网格和信息显示，重新显示它们
+					if (this.state.recording.originalGridVisible !== undefined && 
+						this.state.recording.originalInfoVisible !== undefined) {
+						// 这是为了处理在录制结束后恢复显示的场景
+						setTimeout(() => {
+							this.dom.toggles.helper.checked = this.state.recording.originalGridVisible;
+							this.dom.toggles.info.checked = this.state.recording.originalInfoVisible;
+							this.toggleHelper();
+							this.toggleInfoDisplay();
+						}, 100);
+					}
+					
+				} catch (error) {
+					this.showMessage('Sceenshot Failed: ' + error.message, 5000);
+				}
+			}
+
 			startRecording() {
 				if (this.state.recording.isRecording) return;
 				
@@ -5048,18 +7552,27 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					this.state.playback.isReversed = false;
 					this.play();
 					
-					const checkEnd = () => {
-						if (this.state.recording.isRecording && this.state.playback.currentFrame >= this.state.playback.endFrame) {
+					// 添加定期检查器，在录制状态下检查是否到达最后一帧
+					const checkRecordingEnd = () => {
+						if (!this.state.recording.isRecording) return;
+						
+						const pb = this.state.playback;
+						const isAtEnd = Math.floor(pb.currentFrame) >= pb.endFrame;
+						
+						if (isAtEnd && this.state.recording.mediaRecorder && 
+							this.state.recording.mediaRecorder.state === 'recording') {
+							
+							// 停止录制
+							this.state.recording.mediaRecorder.stop();
 							this.pause();
-							if (this.state.recording.mediaRecorder && this.state.recording.mediaRecorder.state === 'recording') {
-								this.state.recording.mediaRecorder.stop();
-							}
 						} else if (this.state.recording.isRecording) {
-							setTimeout(checkEnd, 1000 / this.state.playback.fps);
+							// 继续检查
+							setTimeout(checkRecordingEnd, 50); // 每50ms检查一次
 						}
 					};
 					
-					checkEnd();
+					// 开始检查
+					setTimeout(checkRecordingEnd, 100);
 				} catch (e) { 
 					this.showMessage("Recording setup failed: " + e.message, 5000); 
 				}
@@ -5121,6 +7634,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						color: new THREE.Color(params.color),
 						roughness: params.roughness,
 						metalness: params.metalness,
+						emissive: new THREE.Color(params.emissive),
+						emissiveIntensity: params.emissiveIntensity,
 						flatShading: params.flatShading,
 						side: this.getSideValue(this.state.commonParams.side),
 					});
@@ -5344,6 +7859,231 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				return this.state.materials.canny;
 			}
 
+			updateDefaultMaterial() {
+				const material = this.state.materials.default;
+				const params = this.state.materialParams.default;
+				
+				if (material) {
+					material.color.set(params.color);
+					material.roughness = params.roughness;
+					material.metalness = params.metalness;
+					material.emissive.set(params.emissive),
+					material.emissiveIntensity = params.emissiveIntensity;
+					material.side = this.getSideValue(this.state.commonParams.side);
+					material.flatShading = params.flatShading;
+					material.needsUpdate = true;
+				}
+				
+				this.renderInvalidate();
+			}
+
+			updateWireframeMaterial() {
+				const material = this.state.materials.wireframe;
+				const params = this.state.materialParams.wireframe;
+				
+				if (material) {
+					material.color.set(params.color);
+					material.linewidth = params.linewidth;
+					material.opacity = params.opacity;
+					material.transparent = params.opacity < 1.0;
+					material.side = this.getSideValue(this.state.commonParams.side);
+					material.needsUpdate = true;
+				}
+				
+				this.renderInvalidate();
+			}
+
+			updateNormalMaterial() {
+				const material = this.state.materials.normal;
+				const params = this.state.materialParams.normal;
+				
+				if (material) {
+					material.flatShading = params.flatShading;
+					material.needsUpdate = true;
+				}
+				
+				this.renderInvalidate();
+			}
+
+			updateLineartMaterial() {
+				const material = this.state.materials.lineart;
+				const params = this.state.materialParams.lineart;
+				
+				if (material && material.uniforms) {
+					material.uniforms.color.value.set(params.color);
+					material.uniforms.edgeStart.value = params.edgeStart;
+					material.uniforms.edgeEnd.value = params.edgeEnd;
+					material.uniforms.curvatureStart.value = params.curvatureStart;
+					material.uniforms.curvatureEnd.value = params.curvatureEnd;
+					material.needsUpdate = true;
+				}
+				
+				this.renderInvalidate();
+			}
+
+			updateCannyMaterial() {
+				const material = this.state.materials.canny;
+				const params = this.state.materialParams.canny;
+				
+				if (material && material.uniforms) {
+					material.uniforms.color.value.set(params.color);
+					material.uniforms.lowThreshold.value = params.lowThreshold;
+					material.uniforms.highThreshold.value = params.highThreshold;
+					material.uniforms.edgeStrength.value = params.edgeStrength;
+					material.uniforms.edgeDetail.value = params.edgeDetail;
+					material.needsUpdate = true;
+				}
+				
+				this.renderInvalidate();
+			}
+
+			updateEdgeMaterial() {
+				const material = this.state.materials.edge;
+				const params = this.state.materialParams.edge;
+				
+				if (material && material.uniforms) {
+					material.uniforms.color.value.set(params.color);
+					material.uniforms.normalThreshold.value = params.normalThreshold;
+					material.uniforms.posThreshold.value = params.posThreshold;
+					material.uniforms.edgeStart.value = params.edgeStart;
+					material.uniforms.edgeEnd.value = params.edgeEnd;
+					material.uniforms.contrast.value = params.contrast;
+					material.needsUpdate = true;
+				}
+				
+				this.renderInvalidate();
+			}
+
+			resetDefaultParameters() {
+				const defaultMaterialParams = {
+					color: '#4a9eff',
+					roughness: 1.0,
+					metalness: 0.0,
+					emissive: '#000000',
+					emissiveIntensity: 0.0,
+					flatShading: false
+				};
+				
+				Object.assign(this.state.materialParams.default, defaultMaterialParams);
+				this.updateDefaultMaterial();
+				
+				const controllers = this.state.materialGUI.defaultControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
+				}
+			}
+
+			resetWireframeParameters() {
+				const wireframeMaterialParams = {
+					color: '#888888',
+					linewidth: 1,
+					opacity: 1.0,
+					transparent: false
+				};
+				
+				Object.assign(this.state.materialParams.wireframe, wireframeMaterialParams);
+				this.updateWireframeMaterial();
+				
+				const controllers = this.state.materialGUI.wireframeControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
+				}
+			}
+
+			resetNormalParameters() {
+				const defaultNormalParams = {
+					flatShading: false
+				};
+				
+				Object.assign(this.state.materialParams.normal, defaultNormalParams);
+				this.updateNormalMaterial();
+				
+				const controllers = this.state.materialGUI.normalControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
+				}
+			}
+
+			resetLineartParameters(forceReset = false) {
+				const defaultLineartParams = {
+					color: '#ffffff',
+					edgeStart: 0.6,
+					edgeEnd: 0.9,
+					curvatureStart: 0.01,
+					curvatureEnd: 0.05
+				};
+				
+				Object.assign(this.state.materialParams.lineart, defaultLineartParams);
+				this.updateLineartMaterial();
+				
+				const controllers = this.state.materialGUI.lineartControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
+				}
+			}
+
+			resetCannyParameters(forceReset = false) {
+				const defaultCannyParams = {
+					color: '#ffffff',
+					lowThreshold: 0.1,
+					highThreshold: 0.3,
+					edgeStrength: 1.0,
+					edgeDetail: 0.1
+				};
+				
+				Object.assign(this.state.materialParams.canny, defaultCannyParams);
+				this.updateCannyMaterial();
+				
+				const controllers = this.state.materialGUI.cannyControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
+				}
+			}
+
+			resetEdgeParameters(forceReset = false) {
+				const defaultEdgeParams = {
+					color: '#ffffff',
+					normalThreshold: 1.0,
+					posThreshold: 1.0,
+					edgeStart: 0.1,
+					edgeEnd: 0.2,
+					contrast: 2.0
+				};
+				
+				Object.assign(this.state.materialParams.edge, defaultEdgeParams);
+				this.updateEdgeMaterial();
+				
+				const controllers = this.state.materialGUI.edgeControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
+				}
+			}
+
+			// 后处理系统
 			initPostProcessing() {
 				if (!this.renderer || !this.scene || !this.camera) return;
 				
@@ -5446,6 +8186,127 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						this.renderer.domElement.height
 					);
 				}
+			}
+
+			ensurePostProcessing() {
+				if (this.composer) return;
+				
+				this.composer = new EffectComposer(this.renderer);
+				
+				const renderPass = new RenderPass(this.scene, this.camera);
+				this.composer.addPass(renderPass);
+				
+				this._renderPass = renderPass;
+			}
+
+			disablePostProcessing() {
+				if (!this.composer) return;
+				
+				this.composer.passes.forEach(p => {
+					p.enabled = false;
+				});
+				
+				// ⭐ 可选：彻底释放（GPU 最省）
+				this.composer.dispose();
+				this.composer = null;
+				
+				this.normalRenderTarget?.dispose();
+				this.normalRenderTarget = null;
+				
+				this.depthTexture?.dispose();
+				this.depthTexture = null;
+			}
+
+			disableAllPostPasses() {
+				if (!this.composer) return;
+				this.composer.passes.forEach(p => p.enabled = false);
+			}
+
+			resizePostProcessing() {
+				if (!this.composer) return;
+				
+				const size = this.renderer.getSize(new THREE.Vector2());
+				this.composer.setSize(size.x, size.y);
+				
+				this.ssaoPass?.setSize?.(size.x, size.y);
+				this.gtaoPass?.setSize?.(size.x, size.y);
+				
+				if (this.contourPass) {
+					this.contourPass.uniforms.resolution.value.set(size.x, size.y);
+				}
+			}
+
+			reorderPass(pass) {
+				const passes = this.composer.passes;
+				const i = passes.indexOf(pass);
+				if (i !== -1 && i !== passes.length - 1) {
+					passes.splice(i, 1);
+					passes.push(pass);
+				}
+			}
+
+			enableContour() {
+				this.ensurePostProcessing();
+				
+				// 1. Pass
+				if (!this.contourPass) this.createContourPass();
+				
+				// 2. Normal RT
+				this.renderNormalTexture();
+				
+				// 3. 禁用其他 Pass
+				this.disableAllPostPasses();
+				
+				// 4. 启用
+				this.contourPass.enabled = true;
+				this.contourPass.renderToScreen = true;
+				
+				// 5. 静态 uniform 绑定（一次）
+				this.contourPass.uniforms.tNormal.value =
+					this.normalRenderTarget.texture;
+				
+				if (this.depthTexture) {
+					this.contourPass.uniforms.tDepth.value = this.depthTexture;
+				}
+				
+				this.resizePostProcessing();
+				this.renderInvalidate();
+			}
+
+			enableSSAO() {
+				this.ensurePostProcessing();
+				
+				// 1. Pass
+				if (!this.ssaoPass) this.createSSAOPass();
+				
+				// 2. 禁用其他 Pass
+				this.disableAllPostPasses();
+				
+				// 3. 启用
+				this.ssaoPass.enabled = true;
+				this.ssaoPass.renderToScreen = true;
+				this.reorderPass(this.ssaoPass);
+				
+				this.resizePostProcessing();
+				this.renderInvalidate();
+			}
+
+			enableGTAO() {
+				this.ensurePostProcessing();
+				
+				// 1. Pass
+				if (!this.gtaoPass) this.createGTAOPass();
+				
+				// 2. 禁用其他 Pass
+				this.disableAllPostPasses();
+				
+				// 3. 启用
+				this.gtaoPass.enabled = true;
+				this.gtaoPass.renderToScreen = true;
+				this.reorderPass(this.gtaoPass);
+				
+				this.resizePostProcessing();
+				this.renderInvalidate();
 			}
 
 			renderNormalTexture() {
@@ -5627,6 +8488,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.gtaoPass.scale = gtaoParams.scale;							// 比例 (0.01-2.0)
 				this.gtaoPass.distanceFallOff = gtaoParams.distanceFallOff;		// 距离衰减 (0-1)
 				this.gtaoPass.samples = gtaoParams.samples;						// 采样数 (2-32)
+				this.gtaoPass.denoiseRadius = gtaoParams.denoiseRadius,			// 降噪半径（1-8）
+				this.gtaoPass.lumaPhi = gtaoParams.lumaPhi,						// 亮度阀值（1-20）
+				this.gtaoPass.depthPhi = gtaoParams.depthPhi,					// 深度阀值(0.5-5)
 				this.gtaoPass.output = gtaoParams.output;						// 启用去噪输出
 				
 				// 默认禁用
@@ -5636,232 +8500,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 添加到合成器
 				if (this.composer) {
 					this.composer.addPass(this.gtaoPass);
-				}
-			}
-
-			performRendering() {
-				// 根据材质模式选择渲染路径
-				switch (this.state.materialMode) {
-					case 'contour':
-						this.renderContourMode();
-						break;
-					case 'ssao':
-						this.renderSSAOMode();
-						break;
-					case 'gtao':
-						this.renderGTAOMode();
-						break;
-					default:
-						this.renderCommonMode();
-						break;
-				}
-			}
-
-			renderCommonMode() {
-				// 普通渲染模式，禁用所有后处理通道
-				if (this.contourPass) this.contourPass.enabled = false;
-				if (this.ssaoPass) this.ssaoPass.enabled = false;
-				if (this.gtaoPass) this.gtaoPass.enabled = false;
-				
-				this.renderer.render(this.scene, this.camera);
-			}
-
-			renderContourMode() {
-				// 轮廓模式
-				if (!this.composer || !this.normalRenderTarget) {
-					this.renderCommonMode();
-					return;
-				}
-				
-				// 禁用其他AO通道
-				if (this.ssaoPass) this.ssaoPass.enabled = false;
-				if (this.gtaoPass) this.gtaoPass.enabled = false;
-				
-				// 动态生成法线纹理
-				this.renderNormalTexture();
-				
-				// 更新轮廓着色器参数
-				if (this.contourPass) {
-					this.contourPass.uniforms.tNormal.value = this.normalRenderTarget.texture;
-					
-					if (this.depthTexture) {
-						this.contourPass.uniforms.tDepth.value = this.depthTexture;
-					}
-					
-					const size = this.renderer.getSize(new THREE.Vector2());
-					this.contourPass.uniforms.resolution.value.copy(size);
-					
-					this.contourPass.enabled = true;
-					this.contourPass.renderToScreen = true;
-					
-					this.composer.render();
-				} else {
-					this.renderCommonMode();
-				}
-			}
-
-			renderSSAOMode() {
-				// SSAO模式
-				if (!this.composer || !this.ssaoPass) {
-					this.renderCommonMode();
-					return;
-				}
-				
-				// 禁用其他通道
-				if (this.contourPass) this.contourPass.enabled = false;
-				if (this.gtaoPass) this.gtaoPass.enabled = false;
-				
-				// 启用SSAO通道
-				this.ssaoPass.enabled = true;
-				this.ssaoPass.renderToScreen = true;
-				
-				// 确保SSAO通道在合成器中的位置正确
-				// 查找SSAO通道在合成器中的索引
-				let ssaoIndex = -1;
-				for (let i = 0; i < this.composer.passes.length; i++) {
-					if (this.composer.passes[i] === this.ssaoPass) {
-						ssaoIndex = i;
-						break;
-					}
-				}
-				
-				// 确保SSAO通道是最后一个通道（这样才能渲染到屏幕）
-				if (ssaoIndex >= 0 && ssaoIndex < this.composer.passes.length - 1) {
-					// 将SSAO通道移到最后一个位置
-					const ssaoPass = this.composer.passes.splice(ssaoIndex, 1)[0];
-					this.composer.passes.push(ssaoPass);
-				}
-				
-				// 更新SSAO通道尺寸（如果窗口大小改变）
-				const size = this.renderer.getSize(new THREE.Vector2());
-				if (this.ssaoPass.setSize) {
-					this.ssaoPass.setSize(size.x, size.y);
-				}
-				
-				// 使用合成器渲染
-				this.composer.render();
-			}
-
-			renderGTAOMode() {
-				// GTAO模式
-				if (!this.composer || !this.gtaoPass) {
-					this.renderCommonMode();
-					return;
-				}
-				
-				// 禁用其他通道
-				if (this.contourPass) this.contourPass.enabled = false;
-				if (this.ssaoPass) this.ssaoPass.enabled = false;
-				
-				// 启用GTAO通道
-				this.gtaoPass.enabled = true;
-				this.gtaoPass.renderToScreen = true;
-				
-				// 确保GTAO通道在合成器中的位置正确
-				// 查找GTAO通道在合成器中的索引
-				let gtaoIndex = -1;
-				for (let i = 0; i < this.composer.passes.length; i++) {
-					if (this.composer.passes[i] === this.gtaoPass) {
-						gtaoIndex = i;
-						break;
-					}
-				}
-				
-				// 确保GTAO通道是最后一个通道（这样才能渲染到屏幕）
-				if (gtaoIndex >= 0 && gtaoIndex < this.composer.passes.length - 1) {
-					// 将GTAO通道移到最后一个位置
-					const gtaoPass = this.composer.passes.splice(gtaoIndex, 1)[0];
-					this.composer.passes.push(gtaoPass);
-				}
-				
-				// 更新GTAO通道尺寸（如果窗口大小改变）
-				const size = this.renderer.getSize(new THREE.Vector2());
-				if (this.gtaoPass.setSize) {
-					this.gtaoPass.setSize(size.x, size.y);
-				}
-				
-				// 使用合成器渲染
-				this.composer.render();
-			}
-
-			updateDefaultMaterial() {
-				const material = this.state.materials.default;
-				const params = this.state.materialParams.default;
-				
-				if (material) {
-					material.color.set(params.color);
-					material.roughness = params.roughness;
-					material.metalness = params.metalness;
-					material.side = this.getSideValue(this.state.commonParams.side);
-					material.flatShading = params.flatShading;
-					material.needsUpdate = true;
-				}
-			}
-
-			updateWireframeMaterial() {
-				const material = this.state.materials.wireframe;
-				const params = this.state.materialParams.wireframe;
-				
-				if (material) {
-					material.color.set(params.color);
-					material.linewidth = params.linewidth;
-					material.opacity = params.opacity;
-					material.transparent = params.opacity < 1.0;
-					material.side = this.getSideValue(this.state.commonParams.side);
-					material.needsUpdate = true;
-				}
-			}
-
-			updateNormalMaterial() {
-				const material = this.state.materials.normal;
-				const params = this.state.materialParams.wireframe;
-				
-				if (material) {
-					material.flatShading = params.flatShading;
-					material.needsUpdate = true;
-				}
-			}
-
-			updateLineartMaterial() {
-				const material = this.state.materials.lineart;
-				const params = this.state.materialParams.lineart;
-				
-				if (material && material.uniforms) {
-					material.uniforms.color.value.set(params.color);
-					material.uniforms.edgeStart.value = params.edgeStart;
-					material.uniforms.edgeEnd.value = params.edgeEnd;
-					material.uniforms.curvatureStart.value = params.curvatureStart;
-					material.uniforms.curvatureEnd.value = params.curvatureEnd;
-					material.needsUpdate = true;
-				}
-			}
-
-			updateCannyMaterial() {
-				const material = this.state.materials.canny;
-				const params = this.state.materialParams.canny;
-				
-				if (material && material.uniforms) {
-					material.uniforms.color.value.set(params.color);
-					material.uniforms.lowThreshold.value = params.lowThreshold;
-					material.uniforms.highThreshold.value = params.highThreshold;
-					material.uniforms.edgeStrength.value = params.edgeStrength;
-					material.uniforms.edgeDetail.value = params.edgeDetail;
-					material.needsUpdate = true;
-				}
-			}
-
-			updateEdgeMaterial() {
-				const material = this.state.materials.edge;
-				const params = this.state.materialParams.edge;
-				
-				if (material && material.uniforms) {
-					material.uniforms.color.value.set(params.color);
-					material.uniforms.normalThreshold.value = params.normalThreshold;
-					material.uniforms.posThreshold.value = params.posThreshold;
-					material.uniforms.edgeStart.value = params.edgeStart;
-					material.uniforms.edgeEnd.value = params.edgeEnd;
-					material.uniforms.contrast.value = params.contrast;
-					material.needsUpdate = true;
 				}
 			}
 
@@ -5875,6 +8513,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					pass.uniforms.depthThreshold.value = params.depthThreshold;
 					pass.uniforms.normalThreshold.value = params.normalThreshold;
 				}
+				
+				this.renderInvalidate();
 			}
 
 			updateSSAOParameters() {
@@ -5885,6 +8525,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.ssaoPass.kernelRadius = ssaoParams.kernelRadius;
 				this.ssaoPass.minDistance = ssaoParams.minDistance;
 				this.ssaoPass.maxDistance = ssaoParams.maxDistance;
+				
+				this.renderInvalidate();
 			}
 
 			UpdateGTAOParameters() {
@@ -5898,127 +8540,37 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.gtaoPass.scale = gtaoParams.scale;
 				this.gtaoPass.distanceFallOff = gtaoParams.distanceFallOff;
 				this.gtaoPass.samples = gtaoParams.samples;
-			}
-
-			resetDefaultParameters() {
-				const defaultMaterialParams = {
-					color: '#4a9eff',
-					roughness: 1.0,
-					metalness: 0.0,
-					flatShading: false
-				};
+				this.gtaoPass.denoiseRadius = gtaoParams.denoiseRadius;
+				this.gtaoPass.lumaPhi = gtaoParams.lumaPhi;
+				this.gtaoPass.depthPhi = gtaoParams.depthPhi;
 				
-				Object.assign(this.state.materialParams.default, defaultMaterialParams);
-				this.updateDefaultMaterial();
-				
-				if (this.state.materialMode === 'default' && this.state.materialGUI.defaultFolder) {
-					try {
-						this.state.materialGUI.defaultFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.defaultFolder = null;
-					this.createDefaultMaterialFolder();
+				if (this.gtaoPass.updateGtaoMaterial) {
+					const aoParameters = {
+						radius: this.gtaoPass.radius,
+						distanceExponent: this.gtaoPass.distanceExponent,
+						thickness: this.gtaoPass.thickness,
+						scale: this.gtaoPass.scale,
+						distanceFallOff: this.gtaoPass.distanceFallOff,
+						samples: this.gtaoPass.samples,
+						screenSpaceRadius: false
+					};
+					this.gtaoPass.updateGtaoMaterial(aoParameters);
 				}
-			}
-
-			resetWireframeParameters() {
-				const wireframeMaterialParams = {
-					color: '#888888',
-					linewidth: 1,
-					opacity: 1.0,
-					transparent: false
-				};
 				
-				Object.assign(this.state.materialParams.wireframe, wireframeMaterialParams);
-				this.updateWireframeMaterial();
-				
-				if (this.state.materialMode === 'wireframe' && this.state.materialGUI.wireframeFolder) {
-					try {
-						this.state.materialGUI.wireframeFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.wireframeFolder = null;
-					this.createWireframeMaterialFolder();
+				if (this.gtaoPass.updatePdMaterial) {
+					const pdParameters = {
+						lumaPhi: this.gtaoPass.lumaPhi || 10.0,
+						depthPhi: this.gtaoPass.depthPhi || 2.0,
+						normalPhi: 3.0,
+						radius: this.gtaoPass.denoiseRadius || 4.0,
+						radiusExponent: 1.0,
+						rings: 2.0,
+						samples: 16
+					};
+					this.gtaoPass.updatePdMaterial(pdParameters);
 				}
-			}
-
-			resetNormalParameters() {
-				const defaultNormalParams = {
-					flatShading: false
-				};
 				
-				Object.assign(this.state.materialParams.normal, defaultNormalParams);
-				this.updateNormalMaterial();
-				
-				if (this.state.materialMode === 'normal' && this.state.materialGUI.normalFolder) {
-					try {
-						this.state.materialGUI.normalFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.normalFolder = null;
-					this.createNormalMaterialFolder();
-				}
-			}
-
-			resetLineartParameters(forceReset = false) {
-				const defaultLineartParams = {
-					color: '#ffffff',
-					edgeStart: 0.6,
-					edgeEnd: 0.9,
-					curvatureStart: 0.01,
-					curvatureEnd: 0.05
-				};
-				
-				Object.assign(this.state.materialParams.lineart, defaultLineartParams);
-				this.updateLineartMaterial();
-				
-				if (this.state.materialMode === 'lineart' && this.state.materialGUI.lineartFolder) {
-					try {
-						this.state.materialGUI.lineartFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.lineartFolder = null;
-					this.createLineartMaterialFolder();
-				}
-			}
-
-			resetCannyParameters(forceReset = false) {
-				const defaultCannyParams = {
-					color: '#ffffff',
-					lowThreshold: 0.1,
-					highThreshold: 0.3,
-					edgeStrength: 1.0,
-					edgeDetail: 0.1
-				};
-				
-				Object.assign(this.state.materialParams.canny, defaultCannyParams);
-				this.updateCannyMaterial();
-				
-				if (this.state.materialMode === 'canny' && this.state.materialGUI.cannyFolder) {
-					try {
-						this.state.materialGUI.cannyFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.cannyFolder = null;
-					this.createCannyMaterialFolder();
-				}
-			}
-
-			resetEdgeParameters(forceReset = false) {
-				const defaultEdgeParams = {
-					color: '#ffffff',
-					normalThreshold: 1.0,
-					posThreshold: 1.0,
-					edgeStart: 0.1,
-					edgeEnd: 0.2,
-					contrast: 2.0
-				};
-				
-				Object.assign(this.state.materialParams.edge, defaultEdgeParams);
-				this.updateEdgeMaterial();
-				
-				if (this.state.materialMode === 'edge' && this.state.materialGUI.edgeFolder) {
-					try {
-						this.state.materialGUI.edgeFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.edgeFolder = null;
-					this.createEdgeMaterialFolder();
-				}
+				this.renderInvalidate();
 			}
 
 			resetContourParameters(forceReset = false) {
@@ -6032,12 +8584,13 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				Object.assign(this.state.materialParams.contour, defaultContourParams);
 				this.updateContourMaterial();
 				
-				if (this.state.materialMode === 'contour' && this.state.materialGUI.contourFolder) {
-					try {
-						this.state.materialGUI.contourFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.contourFolder = null;
-					this.createContourMaterialFolder();
+				const controllers = this.state.materialGUI.contourControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
 				}
 			}
 
@@ -6050,21 +8603,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				};
 				
 				Object.assign(this.state.postProcessingParams.ssao, defaultSSAOParams);
+				this.updateSSAOParameters();
 				
-				if (this.ssaoPass) {
-					this.ssaoPass.kernelRadius = defaultSSAOParams.kernelRadius;
-					this.ssaoPass.minDistance = defaultSSAOParams.minDistance;
-					this.ssaoPass.maxDistance = defaultSSAOParams.maxDistance;
-					
-					this.updateSSAOParameters();
-				}
-				
-				if (this.state.materialMode === 'ssao' && this.state.materialGUI.ssaoFolder) {
-					try {
-						this.state.materialGUI.ssaoFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.ssaoFolder = null;
-					this.createSSAOGUIFolder();
+				const controllers = this.state.materialGUI.ssaoControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
 				}
 			}
 
@@ -6076,31 +8623,27 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					scale: 1.0,
 					distanceFallOff: 1.0,
 					samples: 16,
+					denoiseRadius: 4.0,
+					lumaPhi: 10.0,
+					depthPhi: 2.0,
+					normalPhi: 3.0,
 					output: GTAOPass.OUTPUT.Denoise
 				};
 				
 				Object.assign(this.state.postProcessingParams.gtao, defaultGTAOParams);
+				this.UpdateGTAOParameters();
 				
-				if (this.gtaoPass) {
-					this.gtaoPass.radius = defaultGTAOParams.radius;
-					this.gtaoPass.distanceExponent = defaultGTAOParams.distanceExponent;
-					this.gtaoPass.thickness = defaultGTAOParams.thickness;
-					this.gtaoPass.scale = defaultGTAOParams.scale;
-					this.gtaoPass.distanceFallOff = defaultGTAOParams.distanceFallOff;
-					this.gtaoPass.samples = defaultGTAOParams.samples;
-					
-					this.UpdateGTAOParameters();
-				}
-				
-				if (this.state.materialMode === 'gtao' && this.state.materialGUI.gtaoFolder) {
-					try {
-						this.state.materialGUI.gtaoFolder.destroy();
-					} catch (e) {}
-					this.state.materialGUI.gtaoFolder = null;
-					this.createGTAOGUIFolder();
+				const controllers = this.state.materialGUI.gtaoControllers;
+				if (controllers) {
+					Object.values(controllers).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
 				}
 			}
 
+			// 材质切换
 			handleMatChange(eOrMode) {
 				const mode = typeof eOrMode === 'string' 
 					? eOrMode 
@@ -6108,9 +8651,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				this.state.materialMode = mode;
 				
-				// 确保后处理基础设施存在
 				if (!this.composer && (mode === 'contour' || mode === 'ssao' || mode === 'gtao')) {
 					this.initPostProcessing();
+				}
+				
+				switch (mode) {
+					case 'ssao':    this.enableSSAO(); break;
+					case 'gtao':    this.enableGTAO(); break;
+					case 'contour': this.enableContour(); break;
+					default:        this.disablePostProcessing(); break;
 				}
 				
 				// 在非original、default和wireframe模式下关闭helper
@@ -6128,7 +8677,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				if (mode === 'contour') {
-					// 启用轮廓模式
 					this.isContourMode = true;
 					
 					// 确保轮廓通道启用
@@ -6136,7 +8684,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						this.contourPass.enabled = true;
 					}
 				} else {
-					// 关闭轮廓模式
 					this.isContourMode = false;
 					
 					// 禁用轮廓通道
@@ -6145,17 +8692,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				}
 				
-				// 确保后处理通道已初始化
-				if (!this.ssaoPass && mode === 'ssao') {
-					this.createSSAOPass();
-				}
-				if (!this.gtaoPass && mode === 'gtao') {
-					this.createGTAOPass();
-				}
-				
-				// 根据材质模式显示对应的GUI文件夹
 				this.showMaterialFolder(mode);
-				
 				this.applyMaterialMode();
 				this.updateBgColorPickerState(mode);
 				this.toggleLightGUI();
@@ -6265,6 +8802,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						this.state.materials.canny.side = side;
 						break;
 				}
+				
+				this.renderInvalidate();
 			}
 
 			applyOriginalMaterials() {
@@ -6497,30 +9036,47 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						this.state.commonParams.background = colorValue;
 					}
 				}
-			}
-
-			updateCommonSide() {
-				const side = this.getSideValue(this.state.commonParams.side);
 				
-				// 更新所有材质的默认side值
-				if (this.state.materialParams.default.side === 'Common') {
-					this.state.materialParams.default.side = this.state.commonParams.side;
-					if (this.state.materialGUI.defaultFolder) {
-						this.updateDefaultMaterial();
-					}
-				}
+				this.renderInvalidate();
 			}
 
-			saveOriginalMaterials(sceneObject) {
-				sceneObject.traverse(child => {
-					if (child.isMesh && !this.state.originalMaterials.has(child)) {
-						// 保存材质
+			saveOriginalMaterials(object) {
+				if (!object) return;
+				
+				object.traverse(child => {
+					if (child.isMesh && child.material) {
+						// 保存原始材质
 						this.state.originalMaterials.set(child, child.material);
 						
-						// 收集材质的纹理
-						if (child.material) {
-							this.collectTexturesFromMaterial(child.material, this.state.originalTextures, child);
-						}
+						// 检查并保存纹理
+						const materials = Array.isArray(child.material) ? child.material : [child.material];
+						
+						materials.forEach((material, index) => {
+							if (material) {
+								// 检查所有可能的纹理类型
+								const textureTypes = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap', 'aoMap'];
+								
+								textureTypes.forEach(type => {
+									if (material[type] && material[type].isTexture) {
+										const texture = material[type];
+										// 确保纹理被正确标记以便导出
+										if (texture.image) {
+											// 如果纹理有外部URL，确保导出器可以处理
+											if (texture.image.src && texture.image.src.startsWith('data:')) {
+												// Data URL 可以直接嵌入
+												texture.userData.isDataURL = true;
+											} else if (texture.image.src) {
+												// 外部URL，确保在导出时嵌入
+												texture.userData.originalURL = texture.image.src;
+											}
+										}
+										
+										// 保存纹理引用
+										this.state.originalTextures.set(child.uuid + "_" + type + "_" + index, texture);
+									}
+								});
+							}
+						});
 					}
 				});
 			}
@@ -6636,6 +9192,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 启用场景灯光
 				this.state.lights.scene.forEach(light => {
 					light.visible = true;
+					light.castShadow = this.state.lights.shadowsEnabled;
+					light.shadow.needsUpdate = true;
+					
 					// 根据阴影设置启用或禁用阴影
 					if (this.state.lights.shadowsEnabled) {
 						this.configureLightShadows(light);
@@ -6670,7 +9229,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					
 					// 根据阴影设置配置阴影
 					if (this.state.lights.shadowsEnabled && !this.state.useSceneLight) {
-						this.state.lights.dir.castShadow = true;
 						this.configureLightShadows(this.state.lights.dir);
 					} else {
 						this.state.lights.dir.castShadow = false;
@@ -6804,24 +9362,22 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 4. 调整近远裁剪面
 				const nearClip = Math.max(0.1, maxDimension * 0.01);
-				const farClip = maxDimension * 3;
+				const farClip = parseFloat((maxDimension * 3).toFixed(2));
 				this.state.lights.shadowSettings.camera.near = nearClip;
 				this.state.lights.shadowSettings.camera.far = farClip;
 				
 				// 5. 更新球面坐标显示
-				this.updateSphericalFromDirLight();
+				this.updateDirLightSphericalGUI();
 				
 				// 6. 灯光设置
 				dirLight.castShadow = this.state.lights.shadowsEnabled;
 				this.updateShadowSettings();
+				this.updateDirLightGUI('shadow');
 				
 				// 7. 更新灯光可视化位置
 				if (dirLight.userData.sphereVisualization) {
 					dirLight.userData.sphereVisualization.position.copy(dirLight.position);
 				}
-				
-				// 8. 更新GUI控件的值
-				this.createLightGUI();
 			}
 
 			configureLightShadows(light) {
@@ -6835,7 +9391,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					light.shadow.radius = this.state.lights.shadowSettings.radius;
 					light.shadow.blurSamples = this.state.lights.shadowSettings.samples;
 					light.shadow.bias = this.state.lights.shadowSettings.bias;
-					/* light.shadow.normalBias = this.state.lights.shadowSettings.normalBias; */
+					light.shadow.normalBias = this.state.lights.shadowSettings.normalBias;
 					light.shadow.camera.near = this.state.lights.shadowSettings.camera.near;
 					light.shadow.camera.far = this.state.lights.shadowSettings.camera.far;
 					light.shadow.camera.left = this.state.lights.shadowSettings.camera.left;
@@ -6853,7 +9409,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					light.shadow.radius = this.state.lights.shadowSettings.radius;
 					light.shadow.blurSamples = this.state.lights.shadowSettings.samples;
 					light.shadow.bias = this.state.lights.shadowSettings.bias;
-					/* light.shadow.normalBias = this.state.lights.shadowSettings.normalBias; */
+					light.shadow.normalBias = this.state.lights.shadowSettings.normalBias;
 					
 				} else if (light.isPointLight) {
 					light.castShadow = true;
@@ -6929,6 +9485,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.state.materialMode = 'original';
 				if (this.dom.inputs.materialSelect) {
 					this.dom.inputs.materialSelect.value = 'original';
+				}
+				
+				this.state.commonParams.side = 'front';
+				if (this.dom.inputs.sideSelect) {
+					this.dom.inputs.sideSelect.value = 'Front';
 				}
 				
 				this.resetDefaultParameters();
@@ -7063,6 +9624,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				lightToggle.classList.add('enabled-control');
 				
 				this.toggleLightGUI();
+				this.renderInvalidate();
 			}
 
 			toggleShadows() {
@@ -7124,6 +9686,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 更新按钮状态
 				this.updateShadowsButtonState();
+				this.renderInvalidate();
 			}
 
 			updateShadowsButtonState() {
@@ -7138,24 +9701,28 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.lights.dir) {
 					this.state.lights.dir.color.set(this.state.lights.dirColor);
 				}
+				this.renderInvalidate();
 			}
 
 			updateAmbLightColor() {
 				if (this.state.lights.amb) {
 					this.state.lights.amb.color.set(this.state.lights.ambColor);
 				}
+				this.renderInvalidate();
 			}
 
 			updateDirLightIntensity() {
 				if (!this.state.useSceneLight && this.state.lights.dir) {
 					this.state.lights.dir.intensity = this.state.lights.dirIntensity;
 				}
+				this.renderInvalidate();
 			}
 
 			updateAmbLightIntensity() {
 				if (!this.state.useSceneLight && this.state.lights.amb) {
 					this.state.lights.amb.intensity = this.state.lights.ambIntensity;
 				}
+				this.renderInvalidate();
 			}
 
 			updateDirLightFromSpherical() {
@@ -7187,30 +9754,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.lights.dir.userData.sphereVisualization) {
 					this.state.lights.dir.userData.sphereVisualization.position.copy(this.state.lights.dir.position);
 				}
-			}
-
-			updateSphericalFromDirLight() {
-				if (!this.state.lights.dir || !this.state.sceneCenter) return;
-				
-				const targetPos = this.state.sceneCenter || new THREE.Vector3(0, 0, 0);
-				const lightPos = this.state.lights.dir.position;
-				
-				// 计算相对位置
-				const relative = new THREE.Vector3().subVectors(lightPos, targetPos);
-				
-				// 转换为球面坐标
-				const spherical = new THREE.Spherical();
-				spherical.setFromVector3(relative);
-				
-				// 转换为角度
-				this.state.lights.dirSpherical.radius = parseFloat((spherical.radius).toFixed(2));
-				this.state.lights.dirSpherical.azimuth = parseFloat((THREE.MathUtils.radToDeg(spherical.theta)).toFixed(2));
-				this.state.lights.dirSpherical.elevation = parseFloat((90 - THREE.MathUtils.radToDeg(spherical.phi)).toFixed(2));
-				
-				// 确保方位角在0-360度范围内
-				if (this.state.lights.dirSpherical.azimuth < 0) {
-					this.state.lights.dirSpherical.azimuth += 360;
-				}
+				this.renderInvalidate();
 			}
 
 			updateShadowType() {
@@ -7218,6 +9762,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (shadowType && this.renderer) {
 					this.renderer.shadowMap.type = shadowType;
 				}
+				this.renderInvalidate();
 			}
 
 			updateShadowSettings() {
@@ -7251,11 +9796,90 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				shadowCam.updateProjectionMatrix();
 				
 				// 同时更新场景灯光的阴影设置
-				this.state.lights.scene.forEach(light => {
+				/* this.state.lights.scene.forEach(light => {
 					if (light.castShadow) {
 						this.configureLightShadows(light);
 					}
+				}); */
+				this.renderInvalidate();
+			}
+
+			updateDirLightGUI(updateType = 'all') {
+				const controllers = this.state.lightGUI.dirLightControllers;
+				const updateTypes = updateType.toLowerCase().split(',').map(t => t.trim());
+				
+				updateTypes.forEach(type => {
+					
+					switch(type) {
+						case 'main':
+							// 重置颜色和强度
+							if (controllers) {
+								if (controllers.color) controllers.color.updateDisplay();
+								if (controllers.intensity) controllers.intensity.updateDisplay();
+							}
+							break;
+							
+						case 'pose':
+							// 重置球面坐标
+							if (controllers && controllers.pose) {
+								Object.values(controllers.pose).forEach(controller => {
+									if (controller) {
+										controller.updateDisplay();
+									}
+								});
+							}
+							break;
+							
+						case 'shadow':
+							// 重置阴影设置
+							if (controllers && controllers.shadow) {
+								Object.values(controllers.shadow).forEach(controller => {
+									if (controller) {
+										controller.updateDisplay();
+									}
+								});
+							}
+							break;
+							
+						case 'all':
+							// 重置所有
+							this.updateDirLightGUI('main,pose,shadow');
+							break;
+					}
 				});
+			}
+
+			updateDirLightSphericalGUI() {
+				if (!this.state.lights.dir || !this.state.sceneCenter) return;
+				
+				const targetPos = this.state.sceneCenter || new THREE.Vector3(0, 0, 0);
+				const lightPos = this.state.lights.dir.position;
+				
+				// 计算相对位置
+				const relative = new THREE.Vector3().subVectors(lightPos, targetPos);
+				
+				// 转换为球面坐标
+				const spherical = new THREE.Spherical();
+				spherical.setFromVector3(relative);
+				
+				// 转换为角度
+				this.state.lights.dirSpherical.radius = parseFloat((spherical.radius).toFixed(2));
+				this.state.lights.dirSpherical.azimuth = parseFloat((THREE.MathUtils.radToDeg(spherical.theta)).toFixed(2));
+				this.state.lights.dirSpherical.elevation = parseFloat((90 - THREE.MathUtils.radToDeg(spherical.phi)).toFixed(2));
+				
+				// 确保方位角在0-360度范围内
+				if (this.state.lights.dirSpherical.azimuth < 0) {
+					this.state.lights.dirSpherical.azimuth += 360;
+				}
+				
+				const controllers = this.state.lightGUI.dirLightControllers;
+				if (controllers && controllers.pose) {
+					Object.values(controllers.pose).forEach(controller => {
+						if (controller) {
+							controller.updateDisplay();
+						}
+					});
+				}
 			}
 
 			resetDirLightParameters(resetType = 'all') {
@@ -7289,10 +9913,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				};
 				
-				// 根据参数类型重置
+				const controllers = this.state.lightGUI.dirLightControllers;
 				const resetTypes = resetType.toLowerCase().split(',').map(t => t.trim());
 				
 				resetTypes.forEach(type => {
+					
 					switch(type) {
 						case 'main':
 							// 重置颜色和强度
@@ -7300,19 +9925,24 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							this.state.lights.dirIntensity = defaultMainParams.dirIntensity;
 							this.updateDirLightColor();
 							this.updateDirLightIntensity();
+							this.updateDirLightGUI('main');
 							break;
 							
 						case 'pose':
 							// 重置球面坐标
 							Object.assign(this.state.lights.dirSpherical, defaultPoseParams.dirSpherical);
 							this.updateDirLightFromSpherical();
+							this.updateDirLightGUI('pose');
 							break;
 							
 						case 'shadow':
 							// 重置阴影设置
-							Object.assign(this.state.lights.shadowSettings, defaultShadowParams);
+							const { camera, ...otherShadowSettings } = defaultShadowParams;
+							Object.assign(this.state.lights.shadowSettings, otherShadowSettings);
+							Object.assign(this.state.lights.shadowSettings.camera, camera);
 							this.updateShadowType();
 							this.updateShadowSettings();
+							this.updateDirLightGUI('shadow');
 							break;
 							
 						case 'all':
@@ -7321,18 +9951,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							break;
 					}
 				});
-				
-				// 重建GUI文件夹
-				if (this.state.lightGUI.dirLightFolder && this.state.lightGUI.ambLightFolder) {
-					try {
-						this.state.lightGUI.dirLightFolder.destroy();
-						this.state.lightGUI.ambLightFolder.destroy();
-					} catch(e) {}
-					this.state.lightGUI.dirLightFolder = null;
-					this.state.lightGUI.ambLightFolder = null;
-					this.createDirLightFolder();
-					this.createAmbLightFolder();
-				}
 			}
 
 			resetAmbLightParameters() {
@@ -7349,338 +9967,23 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.updateAmbLightColor();
 				this.updateAmbLightIntensity();
 				
-				// 重建GUI文件夹
-				if (this.state.lightGUI.dirLightFolder && this.state.lightGUI.ambLightFolder) {
-					try {
-						this.state.lightGUI.dirLightFolder.destroy();
-						this.state.lightGUI.ambLightFolder.destroy();
-					} catch(e) {}
-					this.state.lightGUI.dirLightFolder = null;
-					this.state.lightGUI.ambLightFolder = null;
-					this.createDirLightFolder();
-					this.createAmbLightFolder();
+				if (this.state.lightGUI.ambLightControllers) {
+					this.state.lightGUI.ambLightControllers.color.updateDisplay();
+					this.state.lightGUI.ambLightControllers.intensity.updateDisplay();
 				}
-			}
-
-			// 相机系统
-			applyRotationCorrection(object, objectType = 'camera') {
-				const objectName = object.name;
-				const rotationBefore = object.rotation.clone();
-				const quaternionBefore = object.quaternion.clone();
-				
-				const correctionQuaternion = new THREE.Quaternion();
-				correctionQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI/2);
-				object.quaternion.multiply(correctionQuaternion);
-				object.rotation.setFromQuaternion(object.quaternion);
-				
-				const rotationAfter = object.rotation.clone();
-				
-				object.userData.fbxCorrectionQuaternion = correctionQuaternion.clone();
-				object.userData.appliedRotationCorrection = true;
-				return object;
-			}
-
-			applyLookAt(object, targetPosition, objectType = 'camera', options = {}) {
-				const { updateMatrixWorld = true, onlyCalculate = false } = options;
-				const objectName = object.name;
-				const rotationBefore = object.rotation.clone();
-				const direction = new THREE.Vector3().subVectors(targetPosition, object.position).normalize();
-				
-				// 根据对象类型创建临时对象来计算旋转
-				let tempObject;
-				
-				if (objectType === 'camera') {
-					tempObject = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-				} else if (objectType === 'light') {
-					// 对于灯光，使用Object3D来计算旋转
-					tempObject = new THREE.Object3D();
-				} else {
-					tempObject = new THREE.Object3D();
-				}
-				
-				// 复制位置和上方向
-				tempObject.position.copy(object.position);
-				tempObject.up.set(0, 1, 0);
-				
-				// 应用lookAt
-				tempObject.lookAt(targetPosition);
-				
-				// 记录应用后的旋转
-				const rotationAfter = tempObject.rotation.clone();
-				
-				// 如果不是只计算，则应用到原对象
-				if (!onlyCalculate) {
-					object.quaternion.copy(tempObject.quaternion);
-					object.rotation.copy(rotationAfter);
-					
-					// 对于灯光，如果是聚光灯或平行光，设置target属性
-					if (objectType === 'light' && (object.isSpotLight || object.isDirectionalLight)) {
-						if (!object.target) {
-							object.target = new THREE.Object3D();
-							if (object.parent) {
-								object.parent.add(object.target);
-							}
-						}
-						object.target.position.copy(targetPosition);
-					}
-					
-					// 根据需要更新矩阵
-					if (updateMatrixWorld) {
-						object.updateMatrix();
-						object.updateMatrixWorld(true);
-					}
-				}
-				
-				// 清理临时对象
-				tempObject.geometry?.dispose();
-				tempObject.material?.dispose();
-				
-				return {
-					direction: direction,
-					rotation: rotationAfter,
-					quaternion: tempObject.quaternion.clone(),
-					targetPosition: targetPosition.clone()
-				};
-			}
-
-			applyRollAngle() {
-				// 只对默认相机和自定义相机有效
-				if (this.state.cameras.currentType !== 'default' && this.state.cameras.currentType !== 'custom') {
-					return;
-				}
-				
-				const input = this.dom.inputs.rollAngle;
-				if (!input) return;
-				
-				const value = parseFloat(input.value);
-				
-				if (value < -180 || value > 180) {
-					const clampedValue = Math.max(-180, Math.min(180, value));
-					input.value = clampedValue.toFixed(2);
-					return;
-				}
-				
-				this.applyRollAngleToCamera(this.camera, value, true);
-				this.controls.update();
-				this.saveCurrentCameraState();
-			}
-
-			applyRollAngleToCamera(camera, targetRollDegrees, forceApply) {
-				if (!camera) return;
-				
-				// 确保是默认相机或自定义相机
-				if (this.state.cameras.currentType !== 'default' && this.state.cameras.currentType !== 'custom') {
-					return;
-				}
-				
-				// roll角度变化过小，不需要更新，避免orbit control异常
-				const currentRoll = camera.userData.rollAngle || 0;
-				if (!forceApply && Math.abs(currentRoll - targetRollDegrees) < 0.01) {
-					return;
-				}
-				
-				// 保存目标 roll 角度到相机 userData
-				camera.userData.rollAngle = targetRollDegrees;
-				
-				// 获取当前相机的方向（从相机指向目标点）
-				const direction = new THREE.Vector3();
-				direction.subVectors(this.controls.target, camera.position).normalize();
-				
-				// 计算一个与方向垂直的参考 up 向量（初始 up）
-				// 如果方向接近垂直（与 (0,1,0) 点积接近 1 或 -1），则使用 (0,0,1) 作为参考
-				let referenceUp = new THREE.Vector3(0, 1, 0);
-				const dot = Math.abs(direction.dot(referenceUp));
-				if (dot > 0.99) {
-					referenceUp = new THREE.Vector3(0, 0, 1);
-				}
-				
-				// 计算参考右向量（与方向和参考 up 垂直）
-				const referenceRight = new THREE.Vector3();
-				referenceRight.crossVectors(direction, referenceUp).normalize();
-				
-				// 重新计算垂直的参考 up 向量
-				const verticalUp = new THREE.Vector3();
-				verticalUp.crossVectors(referenceRight, direction).normalize();
-				
-				// 计算 roll 弧度
-				const rollRadians = targetRollDegrees * Math.PI / 180;
-				
-				// 创建 roll 旋转四元数（绕方向轴旋转）
-				const rollQuaternion = new THREE.Quaternion();
-				rollQuaternion.setFromAxisAngle(direction, rollRadians);
-				
-				// 应用 roll 旋转到垂直的 up 向量，得到目标 up 向量
-				const targetUp = verticalUp.clone();
-				targetUp.applyQuaternion(rollQuaternion);
-				targetUp.normalize();
-				
-				// 设置新的 up 向量
-				camera.up.copy(targetUp);
-				camera.userData.upVector = targetUp.clone();
-				
-				// 确保相机仍然看向目标点
-				camera.lookAt(this.controls.target);
-			}
-
-			calculateCameraRollAngle(camera, targetPosition = null, fixYup = true) {
-				if (!camera) return { roll: 0, upVector: new THREE.Vector3(0, 1, 0) };
-				
-				try {
-					// 获取相机的当前旋转四元数
-					const quaternion = camera.quaternion.clone();
-					
-					// 计算相机的局部坐标轴
-					const localZ = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion).normalize();
-					const localY = new THREE.Vector3(0, 1, 0).applyQuaternion(quaternion).normalize();
-					// const localX = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion).normalize();
-					
-					// 确定相机的朝向向量
-					let lookDirection;
-					if (targetPosition) {
-						// 目标相机：朝向目标点，look dir不一定是local -z
-						lookDirection = new THREE.Vector3().subVectors(targetPosition, camera.position).normalize();
-					} else {
-						// 自由相机：使用局部-Z轴
-						lookDirection = localZ.clone().negate();
-					}
-					
-					// 选择参考上向量：优先世界+Y，如果接近平行则使用世界+X或+Z
-					let referenceUp = this.getPerpendicularUpVector(lookDirection, 0.99);
-					
-					// 确保参考上向量与朝向垂直
-					const proj = referenceUp.dot(lookDirection);
-					referenceUp.sub(lookDirection.clone().multiplyScalar(proj)).normalize();
-					
-					// 计算当前上向量在垂直于朝向的平面上的投影
-					// 对于自由相机，直接使用 localY；对于目标相机，投影到垂直平面
-					let currentUpProjection;
-					if (!targetPosition) {
-						// 自由相机：直接使用 localY
-						currentUpProjection = localY.clone();
-					} else {
-						// 目标相机：需要投影
-						currentUpProjection = localY.clone();
-						const upDotLook = currentUpProjection.dot(lookDirection);
-						// 只有不垂直时才需要投影
-						if (Math.abs(upDotLook) > 0.001) {
-							currentUpProjection.sub(lookDirection.clone().multiplyScalar(upDotLook));
-						}
-						currentUpProjection.normalize();
-					}
-					
-					// 安全检查
-					if (currentUpProjection.length() < 0.001 || referenceUp.length() < 0.001) {
-						const upVector = fixYup ? new THREE.Vector3(0, 1, 0) : localY.clone();
-						return { roll: 0, upVector };
-					}
-					
-					// 计算两个投影向量的夹角
-					const dot = Math.max(-1.0, Math.min(1.0, currentUpProjection.dot(referenceUp)));
-					let angle = Math.acos(dot);
-					
-					// 确定角度方向（正负）
-					const cross = new THREE.Vector3().crossVectors(referenceUp, currentUpProjection);
-					if (cross.dot(lookDirection) < 0) {
-						angle = -angle;
-					}
-					
-					// 转换为角度并规范化
-					const rollAngle = THREE.MathUtils.radToDeg(angle);
-					const normalizedRoll = ((rollAngle + 180) % 360) - 180;
-					
-					// 根据 fixYup 参数决定返回哪个 upVector
-					let resultUpVector;
-					if (fixYup && Math.abs(normalizedRoll) < 0.001) {
-						// 如果 roll 为 0 且 fixYup 为 true，返回世界 +Y
-						resultUpVector = new THREE.Vector3(0, 1, 0);
-					} else {
-						// 否则返回相机的局部 Y 轴
-						resultUpVector = localY.clone();
-					}
-					
-					return {
-						roll: normalizedRoll,
-						upVector: currentUpProjection.clone()
-					};
-				} catch (error) {
-					return { roll: 0, upVector: new THREE.Vector3(0, 1, 0) };
-				}
-			}
-
-			calculateViewHeightFromFov(fovDegrees, distance) {
-				const fovRadians = THREE.MathUtils.degToRad(fovDegrees);
-				// 计算：2 * 距离 * tan(fov/2)
-				const viewHeight = 2 * distance * Math.tan(fovRadians / 2);
-				return Math.max(0.01, viewHeight);
-			}
-
-			calculateFovFromViewHeight(viewHeight, distance) {
-				if (distance <= 0) return 4;
-				
-				// 计算：2 * arctan(viewHeight / (2 * distance))
-				const fovRadians = 2 * Math.atan2(viewHeight / 2, distance);
-				const fovDegrees = THREE.MathUtils.radToDeg(fovRadians);
-				return Math.max(0.01, Math.min(179.99, fovDegrees));
-			}
-
-			getPerpendicularUpVector(lookDirection, threshold = 0.999, axesPriority = null) {
-				const normalizedLook = lookDirection.clone().normalize();
-				
-				// 默认y->x->z
-				const defaultAxes = [
-					new THREE.Vector3(0, 1, 0),
-					new THREE.Vector3(1, 0, 0),
-					new THREE.Vector3(0, 0, 1)
-				];
-				
-				const axes = axesPriority || defaultAxes;
-				
-				for (const axis of axes) {
-					const dotValue = Math.abs(normalizedLook.dot(axis));
-					if (dotValue <= threshold) {
-						return axis.clone();
-					}
-				}
-				
-				return new THREE.Vector3(0, 1, 0);
-			}
-
-			alignVectorToAxis(vector, threshold = 0.999, axesPriority = null) {
-				// 默认y->x->z
-				const defaultAxes = [
-					new THREE.Vector3(0, 1, 0),
-					new THREE.Vector3(1, 0, 0),
-					new THREE.Vector3(0, 0, 1)
-				];
-				
-				const axes = axesPriority || defaultAxes;
-				
-				if (vector.lengthSq() < 0.0001) {
-					return axes[0].clone();
-				}
-				
-				const normalizedVector = vector.clone().normalize();
-				
-				for (const axis of axes) {
-					const dotValue = Math.abs(normalizedVector.dot(axis));
-					if (dotValue > threshold) {
-						return axis.clone();
-					}
-				}
-				
-				return normalizedVector;
-			}
-
-			resetYup() {
-				this.camera.up.set(0,1,0);
-				this.dom.inputs.rollAngle.value = "0.00";
-				this.controls.update();
 			}
 
 			// BBox & Center & Focus
 			initAnimationBBoxData() {
 				const totalFrames = this.state.playback.totalFrames;
 				const animationBBoxData = this.state.animationBBoxData;
+				
+				// 如果已经初始化且有导入数据，跳过
+				if (animationBBoxData.isInitialized && 
+					animationBBoxData.sampledFrames && 
+					animationBBoxData.sampledFrames.size > 0) {
+					return;
+				}
 				
 				// 重置数据
 				animationBBoxData.sampledFrames.clear();
@@ -7715,7 +10018,12 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 如果系统未初始化，先初始化
 				if (!animationBBoxData.isInitialized) {
-					this.initAnimationBBoxData();
+					// 如果已经有导入的数据，使用它
+					if (animationBBoxData.sampledFrames && animationBBoxData.sampledFrames.size > 0) {
+						animationBBoxData.isInitialized = true;
+					} else {
+						this.initAnimationBBoxData();
+					}
 				}
 				
 				return animationBBoxData.aggregated;
@@ -7775,6 +10083,100 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				this.state.animationBBoxData.isInitialized = true;
 				this.state.animationBBoxData.sampledFrames = sampledFrames;
+			}
+
+			serializeAnimationBBoxData() {
+				const data = this.state.animationBBoxData;
+				
+				const serialized = {
+					sampledFrames: {},
+					sampleFrameNumbers: [...data.sampleFrameNumbers],
+					samplingInterval: data.samplingInterval,
+					isInitialized: data.isInitialized,
+					hasAnimation: data.hasAnimation,
+					aggregated: {
+						overallMin: data.aggregated.overallMin ? data.aggregated.overallMin.toArray() : null,
+						overallMax: data.aggregated.overallMax ? data.aggregated.overallMax.toArray() : null,
+						averageCenter: data.aggregated.averageCenter ? data.aggregated.averageCenter.toArray() : null,
+						overallSize: data.aggregated.overallSize ? data.aggregated.overallSize.toArray() : null
+					}
+				};
+				
+				// 序列化采样帧数据
+				data.sampledFrames.forEach((frameData, frame) => {
+					serialized.sampledFrames[frame] = {
+						min: frameData.min ? frameData.min.toArray() : null,
+						max: frameData.max ? frameData.max.toArray() : null,
+						center: frameData.center ? frameData.center.toArray() : null,
+						size: frameData.size ? frameData.size.toArray() : null,
+						isEmpty: frameData.isEmpty
+					};
+				});
+				
+				// 序列化缓存帧数据
+				serialized.cachedFrames = {};
+				data.cachedFrames.forEach((frameData, frame) => {
+					serialized.cachedFrames[frame] = {
+						min: frameData.min ? frameData.min.toArray() : null,
+						max: frameData.max ? frameData.max.toArray() : null,
+						center: frameData.center ? frameData.center.toArray() : null,
+						size: frameData.size ? frameData.size.toArray() : null,
+						isEmpty: frameData.isEmpty
+					};
+				});
+				
+				return serialized;
+			}
+
+			deserializeAnimationBBoxData(serializedData) {
+				const bboxData = {
+					sampledFrames: new Map(),
+					aggregated: {
+						overallMin: serializedData.aggregated.overallMin ? 
+							new THREE.Vector3().fromArray(serializedData.aggregated.overallMin) : null,
+						overallMax: serializedData.aggregated.overallMax ? 
+							new THREE.Vector3().fromArray(serializedData.aggregated.overallMax) : null,
+						averageCenter: serializedData.aggregated.averageCenter ? 
+							new THREE.Vector3().fromArray(serializedData.aggregated.averageCenter) : null,
+						overallSize: serializedData.aggregated.overallSize ? 
+							new THREE.Vector3().fromArray(serializedData.aggregated.overallSize) : null
+					},
+					cachedFrames: new Map(),
+					sampleFrameNumbers: serializedData.sampleFrameNumbers || [],
+					samplingInterval: serializedData.samplingInterval || 25,
+					isInitialized: serializedData.isInitialized || false,
+					hasAnimation: serializedData.hasAnimation || false
+				};
+				
+				// 恢复采样帧数据
+				if (serializedData.sampledFrames) {
+					Object.keys(serializedData.sampledFrames).forEach(frame => {
+						const frameData = serializedData.sampledFrames[frame];
+						bboxData.sampledFrames.set(parseInt(frame), {
+							min: frameData.min ? new THREE.Vector3().fromArray(frameData.min) : null,
+							max: frameData.max ? new THREE.Vector3().fromArray(frameData.max) : null,
+							center: frameData.center ? new THREE.Vector3().fromArray(frameData.center) : null,
+							size: frameData.size ? new THREE.Vector3().fromArray(frameData.size) : null,
+							isEmpty: frameData.isEmpty || false
+						});
+					});
+				}
+				
+				// 恢复缓存帧数据
+				if (serializedData.cachedFrames) {
+					Object.keys(serializedData.cachedFrames).forEach(frame => {
+						const frameData = serializedData.cachedFrames[frame];
+						bboxData.cachedFrames.set(parseInt(frame), {
+							min: frameData.min ? new THREE.Vector3().fromArray(frameData.min) : null,
+							max: frameData.max ? new THREE.Vector3().fromArray(frameData.max) : null,
+							center: frameData.center ? new THREE.Vector3().fromArray(frameData.center) : null,
+							size: frameData.size ? new THREE.Vector3().fromArray(frameData.size) : null,
+							isEmpty: frameData.isEmpty || false
+						});
+					});
+				}
+				
+				return bboxData;
 			}
 
 			getBBoxForFrame(targetFrame) {
@@ -8072,7 +10474,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 10. 更新UI
 				this.updateCameraUIForMode();
-				this.onWindowResize();
+				this.renderInvalidate();
 			}
 
 			adjustOrthoCamPosForBBox(center, boxSize, aspect, maxDimension) {
@@ -8243,6 +10645,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 9. 更新UI（特别是near/far输入框）
 				this.updateCameraUIForMode();
+				
+				this.renderInvalidate();
 			}
 
 			adjustOrthoCamClipForBBox(center, boxSize, maxDimension) {
@@ -8394,6 +10798,323 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				return false;
+			}
+
+			// 相机系统
+			applyRotationCorrection(object, objectType = 'camera') {
+				const objectName = object.name;
+				const rotationBefore = object.rotation.clone();
+				const quaternionBefore = object.quaternion.clone();
+				
+				const correctionQuaternion = new THREE.Quaternion();
+				correctionQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI/2);
+				object.quaternion.multiply(correctionQuaternion);
+				object.rotation.setFromQuaternion(object.quaternion);
+				
+				const rotationAfter = object.rotation.clone();
+				
+				object.userData.fbxCorrectionQuaternion = correctionQuaternion.clone();
+				object.userData.appliedRotationCorrection = true;
+				return object;
+			}
+
+			applyLookAt(object, targetPosition, objectType = 'camera', options = {}) {
+				const { updateMatrixWorld = true, onlyCalculate = false } = options;
+				const objectName = object.name;
+				const rotationBefore = object.rotation.clone();
+				const direction = new THREE.Vector3().subVectors(targetPosition, object.position).normalize();
+				
+				// 根据对象类型创建临时对象来计算旋转
+				let tempObject;
+				
+				if (objectType === 'camera') {
+					tempObject = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+				} else if (objectType === 'light') {
+					// 对于灯光，使用Object3D来计算旋转
+					tempObject = new THREE.Object3D();
+				} else {
+					tempObject = new THREE.Object3D();
+				}
+				
+				// 复制位置和上方向
+				tempObject.position.copy(object.position);
+				tempObject.up.set(0, 1, 0);
+				
+				// 应用lookAt
+				tempObject.lookAt(targetPosition);
+				
+				// 记录应用后的旋转
+				const rotationAfter = tempObject.rotation.clone();
+				
+				// 如果不是只计算，则应用到原对象
+				if (!onlyCalculate) {
+					object.quaternion.copy(tempObject.quaternion);
+					object.rotation.copy(rotationAfter);
+					
+					// 对于灯光，如果是聚光灯或平行光，设置target属性
+					if (objectType === 'light' && (object.isSpotLight || object.isDirectionalLight)) {
+						if (!object.target) {
+							object.target = new THREE.Object3D();
+							if (object.parent) {
+								object.parent.add(object.target);
+							}
+						}
+						object.target.position.copy(targetPosition);
+					}
+					
+					// 根据需要更新矩阵
+					if (updateMatrixWorld) {
+						object.updateMatrix();
+						object.updateMatrixWorld(true);
+					}
+				}
+				
+				// 清理临时对象
+				tempObject.geometry?.dispose();
+				tempObject.material?.dispose();
+				
+				return {
+					direction: direction,
+					rotation: rotationAfter,
+					quaternion: tempObject.quaternion.clone(),
+					targetPosition: targetPosition.clone()
+				};
+			}
+
+			applyRollAngle() {
+				// 只对默认相机和自定义相机有效
+				if (this.state.cameras.currentType !== 'default' && this.state.cameras.currentType !== 'custom') {
+					return;
+				}
+				
+				const input = this.dom.inputs.rollAngle;
+				if (!input) return;
+				
+				const value = parseFloat(input.value);
+				
+				if (value < -180 || value > 180) {
+					const clampedValue = Math.max(-180, Math.min(180, value));
+					input.value = clampedValue.toFixed(2);
+					return;
+				}
+				
+				this.applyRollAngleToCamera(this.camera, value, true);
+				this.controls.update();
+				this.saveCurrentCameraState();
+				this.renderInvalidate();
+			}
+
+			applyRollAngleToCamera(camera, targetRollDegrees, forceApply) {
+				if (!camera) return;
+				
+				// 确保是默认相机或自定义相机
+				if (this.state.cameras.currentType !== 'default' && this.state.cameras.currentType !== 'custom') {
+					return;
+				}
+				
+				// roll角度变化过小，不需要更新，避免orbit control异常
+				const currentRoll = camera.userData.rollAngle || 0;
+				if (!forceApply && Math.abs(currentRoll - targetRollDegrees) < 0.01) {
+					return;
+				}
+				
+				// 保存目标 roll 角度到相机 userData
+				camera.userData.rollAngle = targetRollDegrees;
+				
+				// 获取当前相机的方向（从相机指向目标点）
+				const direction = new THREE.Vector3();
+				direction.subVectors(this.controls.target, camera.position).normalize();
+				
+				// 计算一个与方向垂直的参考 up 向量（初始 up）
+				// 如果方向接近垂直（与 (0,1,0) 点积接近 1 或 -1），则使用 (0,0,1) 作为参考
+				let referenceUp = new THREE.Vector3(0, 1, 0);
+				const dot = Math.abs(direction.dot(referenceUp));
+				if (dot > 0.99) {
+					referenceUp = new THREE.Vector3(0, 0, 1);
+				}
+				
+				// 计算参考右向量（与方向和参考 up 垂直）
+				const referenceRight = new THREE.Vector3();
+				referenceRight.crossVectors(direction, referenceUp).normalize();
+				
+				// 重新计算垂直的参考 up 向量
+				const verticalUp = new THREE.Vector3();
+				verticalUp.crossVectors(referenceRight, direction).normalize();
+				
+				// 计算 roll 弧度
+				const rollRadians = targetRollDegrees * Math.PI / 180;
+				
+				// 创建 roll 旋转四元数（绕方向轴旋转）
+				const rollQuaternion = new THREE.Quaternion();
+				rollQuaternion.setFromAxisAngle(direction, rollRadians);
+				
+				// 应用 roll 旋转到垂直的 up 向量，得到目标 up 向量
+				const targetUp = verticalUp.clone();
+				targetUp.applyQuaternion(rollQuaternion);
+				targetUp.normalize();
+				
+				// 设置新的 up 向量
+				camera.up.copy(targetUp);
+				camera.userData.upVector = targetUp.clone();
+				
+				// 确保相机仍然看向目标点
+				camera.lookAt(this.controls.target);
+			}
+
+			calculateCameraRollAngle(camera, targetPosition = null, fixYup = true) {
+				if (!camera) return { roll: 0, upVector: new THREE.Vector3(0, 1, 0) };
+				
+				try {
+					// 获取相机的当前旋转四元数
+					const quaternion = camera.quaternion.clone();
+					
+					// 计算相机的局部坐标轴
+					const localZ = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion).normalize();
+					const localY = new THREE.Vector3(0, 1, 0).applyQuaternion(quaternion).normalize();
+					// const localX = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion).normalize();
+					
+					// 确定相机的朝向向量
+					let lookDirection;
+					if (targetPosition) {
+						// 目标相机：朝向目标点，look dir不一定是local -z
+						lookDirection = new THREE.Vector3().subVectors(targetPosition, camera.position).normalize();
+					} else {
+						// 自由相机：使用局部-Z轴
+						lookDirection = localZ.clone().negate();
+					}
+					
+					// 选择参考上向量：优先世界+Y，如果接近平行则使用世界+X或+Z
+					let referenceUp = this.getPerpendicularUpVector(lookDirection, 0.99);
+					
+					// 确保参考上向量与朝向垂直
+					const proj = referenceUp.dot(lookDirection);
+					referenceUp.sub(lookDirection.clone().multiplyScalar(proj)).normalize();
+					
+					// 计算当前上向量在垂直于朝向的平面上的投影
+					// 对于自由相机，直接使用 localY；对于目标相机，投影到垂直平面
+					let currentUpProjection;
+					if (!targetPosition) {
+						// 自由相机：直接使用 localY
+						currentUpProjection = localY.clone();
+					} else {
+						// 目标相机：需要投影
+						currentUpProjection = localY.clone();
+						const upDotLook = currentUpProjection.dot(lookDirection);
+						// 只有不垂直时才需要投影
+						if (Math.abs(upDotLook) > 0.001) {
+							currentUpProjection.sub(lookDirection.clone().multiplyScalar(upDotLook));
+						}
+						currentUpProjection.normalize();
+					}
+					
+					// 安全检查
+					if (currentUpProjection.length() < 0.001 || referenceUp.length() < 0.001) {
+						const upVector = fixYup ? new THREE.Vector3(0, 1, 0) : localY.clone();
+						return { roll: 0, upVector };
+					}
+					
+					// 计算两个投影向量的夹角
+					const dot = Math.max(-1.0, Math.min(1.0, currentUpProjection.dot(referenceUp)));
+					let angle = Math.acos(dot);
+					
+					// 确定角度方向（正负）
+					const cross = new THREE.Vector3().crossVectors(referenceUp, currentUpProjection);
+					if (cross.dot(lookDirection) < 0) {
+						angle = -angle;
+					}
+					
+					// 转换为角度并规范化
+					const rollAngle = THREE.MathUtils.radToDeg(angle);
+					const normalizedRoll = ((rollAngle + 180) % 360) - 180;
+					
+					// 根据 fixYup 参数决定返回哪个 upVector
+					let resultUpVector;
+					if (fixYup && Math.abs(normalizedRoll) < 0.001) {
+						// 如果 roll 为 0 且 fixYup 为 true，返回世界 +Y
+						resultUpVector = new THREE.Vector3(0, 1, 0);
+					} else {
+						// 否则返回相机的局部 Y 轴
+						resultUpVector = localY.clone();
+					}
+					
+					return {
+						roll: normalizedRoll,
+						upVector: currentUpProjection.clone()
+					};
+				} catch (error) {
+					return { roll: 0, upVector: new THREE.Vector3(0, 1, 0) };
+				}
+			}
+
+			calculateViewHeightFromFov(fovDegrees, distance) {
+				const fovRadians = THREE.MathUtils.degToRad(fovDegrees);
+				// 计算：2 * 距离 * tan(fov/2)
+				const viewHeight = 2 * distance * Math.tan(fovRadians / 2);
+				return Math.max(0.01, viewHeight);
+			}
+
+			calculateFovFromViewHeight(viewHeight, distance) {
+				if (distance <= 0) return 4;
+				
+				// 计算：2 * arctan(viewHeight / (2 * distance))
+				const fovRadians = 2 * Math.atan2(viewHeight / 2, distance);
+				const fovDegrees = THREE.MathUtils.radToDeg(fovRadians);
+				return Math.max(0.01, Math.min(179.99, fovDegrees));
+			}
+
+			getPerpendicularUpVector(lookDirection, threshold = 0.999, axesPriority = null) {
+				const normalizedLook = lookDirection.clone().normalize();
+				
+				// 默认y->x->z
+				const defaultAxes = [
+					new THREE.Vector3(0, 1, 0),
+					new THREE.Vector3(1, 0, 0),
+					new THREE.Vector3(0, 0, 1)
+				];
+				
+				const axes = axesPriority || defaultAxes;
+				
+				for (const axis of axes) {
+					const dotValue = Math.abs(normalizedLook.dot(axis));
+					if (dotValue <= threshold) {
+						return axis.clone();
+					}
+				}
+				
+				return new THREE.Vector3(0, 1, 0);
+			}
+
+			alignVectorToAxis(vector, threshold = 0.999, axesPriority = null) {
+				// 默认y->x->z
+				const defaultAxes = [
+					new THREE.Vector3(0, 1, 0),
+					new THREE.Vector3(1, 0, 0),
+					new THREE.Vector3(0, 0, 1)
+				];
+				
+				const axes = axesPriority || defaultAxes;
+				
+				if (vector.lengthSq() < 0.0001) {
+					return axes[0].clone();
+				}
+				
+				const normalizedVector = vector.clone().normalize();
+				
+				for (const axis of axes) {
+					const dotValue = Math.abs(normalizedVector.dot(axis));
+					if (dotValue > threshold) {
+						return axis.clone();
+					}
+				}
+				
+				return normalizedVector;
+			}
+
+			resetYup() {
+				this.camera.up.set(0,1,0);
+				this.dom.inputs.rollAngle.value = "0.00";
+				this.controls.update();
+				this.renderInvalidate();
 			}
 
 			// 相机管理
@@ -8765,16 +11486,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					this.controls.enableRotate = !isFixedView;
 				}
 				
-				// 更新其他UI
-				this.updateOrthoToggleState();
-				this.updateCameraUIForMode();
-				this.updateKeyframeButtonsState();
-				this.updateAutoAddKeyframeButtonState();
-				this.updateVisualizationVisibility();
-				this.updateKeyframeCount();
-				this.updatePostProcessing();
-				this.onWindowResize();
-				
 				// 更新select元素的颜色
 				if (this.dom.inputs.views) {
 					this.dom.inputs.views.value = targetCamera.name;
@@ -8787,6 +11498,19 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (!isSceneCamera && !isCustomWithAnimation) {
 					this.controls.update();
 				}
+				
+				// 更新其他UI
+				this.updateOrthoToggleState();
+				this.updateCameraUIForMode();
+				this.updateKeyframeButtonsState();
+				this.updateAutoAddKeyframeButtonState();
+				this.updateVisualizationVisibility();
+				this.updateKeyframeCount();
+				this.updatePostProcessing();
+				
+				// 保证切换到正交相机时获得正确aspect ratio
+				// 其中包含了 renderInvalidate
+				this.onWindowResize();
 			}
 
 			resetCamera() {
@@ -9007,7 +11731,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				this.updateCameraUIForMode();
-				this.onWindowResize();
+				this.renderInvalidate();
 				
 				this.saveCurrentCameraState();
 			}
@@ -9069,7 +11793,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.updateKeyframeButtonsState();
 				this.updateOrthoToggleState();
 				this.updateCameraControlsState();
-				this.onWindowResize();
+				this.renderInvalidate();
 			}
 
 			ControlTargetPosCorrection() {
@@ -9434,7 +12158,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				setTimeout(() => {
 					this.updateCameraUIForMode();
-					this.onWindowResize();
+					this.renderInvalidate();
 					this.controls.update();
 				}, 0);
 				
@@ -9687,6 +12411,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				this.camera.updateProjectionMatrix();
 				this.saveCurrentCameraState();
+				this.renderInvalidate();
 			}
 
 			updateCameraNear() {
@@ -9714,6 +12439,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					farInput.value = minFar.toFixed(2);
 					this.applyNumericInput({ target: farInput }, 'far');
 				}
+				this.renderInvalidate();
 			}
 
 			updateCameraFar() {
@@ -9733,6 +12459,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.camera.far = value;
 				this.camera.updateProjectionMatrix();
 				this.saveCurrentCameraState();
+				this.renderInvalidate();
 			}
 
 			updateCameraUIForMode() {
@@ -10014,7 +12741,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				this.saveCurrentCameraState();
-				this.onWindowResize();
+				this.renderInvalidate();
 			}
 
 			// 相机动画姿态
@@ -12570,7 +15297,4079 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.state.lights.default.forEach(updateLightSphere);
 			}
 
+			// 场景诊断
+			sceneDiagnostics() {
+				console.log("=== Scene Diagnostics Start ===");
+				
+				// ============== 收集所有信息 ==============
+				const objectInfo = this.collectObjectInfo();
+				const materialTextureInfo = this.collectMaterialAndTextureInfo();
+				const lightInfo = this.collectLightInfo();
+				const cameraInfo = this.collectCameraInfo();
+				const animationInfo = this.collectAnimationInfo();
+				
+				// 计算材质汇总
+				const materialSummary = this.calculateMaterialSummary(
+					materialTextureInfo.materials, 
+					materialTextureInfo.textures
+				);
+				
+				// ============== 汇总数据 ==============
+				this.printSceneSummary(objectInfo, materialTextureInfo, lightInfo, cameraInfo, animationInfo);
+				
+				// ============== 场景物体分析 ==============
+				this.printObjectAnalysis(objectInfo);
+				
+				// ============== 几何体分析 ==============
+				this.printGeometryAnalysis(objectInfo.geometryInfo);
+				
+				// ============== 材质分析 ==============
+				this.printMaterialAnalysis(materialTextureInfo, materialSummary);
+				
+				// ============== 纹理分析 ==============
+				this.printTextureAnalysis(materialTextureInfo, materialSummary);
+				
+				// ============== 灯光分析 ==============
+				this.printLightAnalysis(lightInfo);
+				
+				// ============== 相机分析 ==============
+				this.printCameraAnalysis(cameraInfo);
+				
+				// ============== 动画信息 ==============
+				this.printAnimationAnalysis(animationInfo);
+				
+				console.log("=== Scene Diagnostics Complete ===");
+				this.showMessage("Please check the console for detailed diagnostics.", 5000);
+			}
+
+			printSceneSummary(objectInfo, materialTextureInfo, lightInfo, cameraInfo, animationInfo) {
+				console.group("Scene Summary");
+				console.log("Objects: " + objectInfo.objectStats.total + " (Visible: " + objectInfo.objectStats.visible + ")");
+				console.log("Geometry: " + objectInfo.geometryInfo.vertices.toLocaleString() + " vertices, " + 
+					objectInfo.geometryInfo.triangles.toLocaleString() + " triangles");
+				console.log("Materials: " + materialTextureInfo.materialMap.size + ", Textures: " + materialTextureInfo.textureMap.size);
+				console.log("Lights: " + lightInfo.totalLights + " (With shadows: " + lightInfo.shadowEnabledLights + ")");
+				console.log("Cameras: " + cameraInfo.totalCameras + 
+					" (Default: " + cameraInfo.defaultCameras.length + 
+					", Custom: " + cameraInfo.customCameras.length + 
+					", Scene: " + cameraInfo.sceneCameras.length + 
+					", Animated: " + cameraInfo.cameras.filter(cam => cam.hasAnimation).length + ")");
+				console.log("Animations: " + animationInfo.totalClips + " clip(s)");
+				console.groupEnd();
+			}
+
+			printObjectAnalysis(objectInfo) {
+				console.groupCollapsed("Scene Object Overview:");
+				console.log("Total objects: " + objectInfo.objectStats.total);
+				console.log("Visible objects: " + objectInfo.objectStats.visible);
+				console.log("Groups: " + objectInfo.objectStats.groups);
+				console.log("Meshes: " + objectInfo.objectStats.meshes);
+				console.log("Lines: " + objectInfo.objectStats.lines);
+				console.log("Points: " + objectInfo.objectStats.points);
+				
+				// 类型分析
+				console.groupCollapsed("Object type distribution:");
+				for (var type in objectInfo.objectStats.types) {
+					if (objectInfo.objectStats.types.hasOwnProperty(type)) {
+						console.log(type + ": " + objectInfo.objectStats.types[type]);
+					}
+				}
+				console.groupEnd();
+				
+				// 物体详细信息
+				console.groupCollapsed("Detailed Object Information:");
+				for (const objName in objectInfo.objects) {
+					const obj = objectInfo.objects[objName];
+					console.groupCollapsed("Object: " + objName);
+					this.printObjectDetails(obj);
+					console.groupEnd();
+				}
+				console.groupEnd();
+				
+				console.groupEnd(); // Scene Object Overview group
+			}
+
+			printGeometryAnalysis(geometryInfo) {
+				console.groupCollapsed("Geometry Statistics:");
+				console.log("Total vertices: " + geometryInfo.vertices.toLocaleString());
+				console.log("Total faces: " + geometryInfo.faces.toLocaleString());
+				console.log("Total triangles: " + geometryInfo.triangles.toLocaleString());
+				
+				// 按对象类型显示几何体信息
+				console.groupCollapsed("Geometry by object type:");
+				const geometryByType = {
+					Meshes: { vertices: 0, faces: 0, triangles: 0, count: 0 },
+					Lines: { vertices: 0, segments: 0, count: 0 },
+					Points: { vertices: 0, count: 0 }
+				};
+				
+				for (const objName in geometryInfo.byObject) {
+					const objInfo = geometryInfo.byObject[objName];
+					
+					if (objInfo.type === "Mesh") {
+						geometryByType.Meshes.vertices += objInfo.vertices;
+						geometryByType.Meshes.faces += objInfo.faces;
+						geometryByType.Meshes.triangles += objInfo.triangles;
+						geometryByType.Meshes.count++;
+					} else if (objInfo.type === "Line") {
+						geometryByType.Lines.vertices += objInfo.vertices;
+						geometryByType.Lines.segments += (objInfo.segments || 0);
+						geometryByType.Lines.count++;
+					} else if (objInfo.type === "Points") {
+						geometryByType.Points.vertices += objInfo.vertices;
+						geometryByType.Points.count++;
+					}
+				}
+				
+				console.groupCollapsed("Meshes: " + geometryByType.Meshes.count);
+				console.log("Vertices: " + geometryByType.Meshes.vertices.toLocaleString());
+				console.log("Faces: " + geometryByType.Meshes.faces.toLocaleString());
+				console.log("Triangles: " + geometryByType.Meshes.triangles.toLocaleString());
+				console.log("Average vertices per mesh: " + 
+					(geometryByType.Meshes.count > 0 ? 
+						Math.round(geometryByType.Meshes.vertices / geometryByType.Meshes.count) : 0));
+				console.groupEnd();
+				
+				if (geometryByType.Lines.count > 0) {
+					console.groupCollapsed("Lines: " + geometryByType.Lines.count);
+					console.log("Vertices: " + geometryByType.Lines.vertices.toLocaleString());
+					console.log("Segments: " + geometryByType.Lines.segments.toLocaleString());
+					console.groupEnd();
+				}
+				
+				if (geometryByType.Points.count > 0) {
+					console.groupCollapsed("Points: " + geometryByType.Points.count);
+					console.log("Vertices: " + geometryByType.Points.vertices.toLocaleString());
+					console.groupEnd();
+				}
+				
+				console.groupEnd(); // Geometry by object type
+				console.groupEnd(); // Geometry Statistics group
+			}
+
+			printMaterialAnalysis(materialTextureInfo, materialSummary) {
+				console.groupCollapsed("Material Statistics:");
+				console.log("Total unique materials: " + materialTextureInfo.materialMap.size);
+				console.log("Material types: " + JSON.stringify(materialSummary.materialsByType, null, 2));
+				
+				// 按材质名称分组，显示同名材质数量
+				const materialsByName = new Map();
+				materialTextureInfo.materialMap.forEach((matInfo, materialId) => {
+					const matName = matInfo.name;
+					if (!materialsByName.has(matName)) {
+						materialsByName.set(matName, {
+							count: 0,
+							materials: []
+						});
+					}
+					const group = materialsByName.get(matName);
+					group.count++;
+					group.materials.push(matInfo);
+				});
+				
+				// 显示材质名称分组统计
+				console.groupCollapsed("Materials by name:");
+				materialsByName.forEach((group, matName) => {
+					if (group.count > 1) {
+						console.log(matName + ": " + group.count + " instances (shared material)");
+					} else {
+						console.log(matName + ": " + group.count + " instance");
+					}
+				});
+				console.groupEnd();
+				
+				// 显示每个材质的详细信息
+				let materialIndex = 1;
+				
+				// 按材质名称排序，使同名材质相邻显示
+				const sortedMaterials = Array.from(materialTextureInfo.materialMap.values())
+					.sort((a, b) => a.name.localeCompare(b.name));
+				
+				sortedMaterials.forEach((matInfo) => {
+					// 显示材质实例数量信息
+					let title = "Material " + materialIndex + ": " + matInfo.name;
+					const group = materialsByName.get(matInfo.name);
+					if (group && group.count > 1) {
+						title += " (shared, " + group.count + " instances)";
+					}
+					
+					console.groupCollapsed(title);
+					this.printMaterialDetails(matInfo, materialTextureInfo);
+					console.groupEnd();
+					materialIndex++;
+				});
+				console.groupEnd(); // Materials group
+			}
+
+			printTextureAnalysis(materialTextureInfo, materialSummary) {
+				console.groupCollapsed("Texture Statistics:");
+				console.log("Unique textures: " + materialTextureInfo.textureMap.size);
+				console.log("Total texture references: " + materialSummary.textureReuseStats.totalTextureReferences);
+				console.log("Average reuse: " + materialSummary.textureReuseStats.averageReuse + " references per texture");
+				console.log("Texture usage by channel: " + JSON.stringify(materialSummary.texturesByType, null, 2));
+				
+				// 显示每个纹理的详细信息
+				let textureIndex = 1;
+				materialTextureInfo.textureMap.forEach((texInfo, textureId) => {
+					console.groupCollapsed("Texture " + textureIndex + ": " + texInfo.channels.join(", "));
+					this.printTextureDetails(texInfo, materialTextureInfo);
+					console.groupEnd();
+					textureIndex++;
+				});
+				console.groupEnd(); // Texture Statistics group
+			}
+
+			printLightAnalysis(lightInfo) {
+				console.groupCollapsed("Light Statistics:");
+				console.log("Total lights: " + lightInfo.totalLights);
+				console.log("Shadow enabled globally: " + lightInfo.shadowSettings.enabled);
+				console.log("Shadow map type: " + this.getShadowMapTypeName(lightInfo.shadowSettings.shadowMapType));
+				console.log("Shadow map auto-update: " + lightInfo.shadowSettings.shadowMapAutoUpdate);
+				
+				// 灯光类型分布
+				console.groupCollapsed("Light type distribution:");
+				for (const type in lightInfo.lightsByType) {
+					console.log(type + ": " + lightInfo.lightsByType[type]);
+				}
+				console.groupEnd();	// Light type group
+				
+				// 阴影统计
+				console.groupCollapsed("Shadow Statistics:");
+				console.log("Lights with shadows: " + lightInfo.shadowEnabledLights + " / " + lightInfo.totalLights);
+				console.log("Shadow map type: " + this.getShadowMapTypeName(this.renderer.shadowMap.type));
+				
+				// 修复：检查this.state.lights是否存在
+				if (this.state.lights) {
+					console.log("Default shadow settings:");
+					console.log("  Map size: " + this.state.lights.shadowSettings.mapSize + "x" + this.state.lights.shadowSettings.mapSize);
+					console.log("  Bias: " + this.state.lights.shadowSettings.bias);
+					console.log("  Normal bias: " + this.state.lights.shadowSettings.normalBias);
+					console.log("  Radius: " + this.state.lights.shadowSettings.radius);
+				} else {
+					console.log("Default shadow settings: Not available");
+				}
+				console.groupEnd();	// shadow group
+				
+				// 详细灯光信息
+				console.groupCollapsed("Detailed Light Information:");
+				lightInfo.lights.forEach(light => {
+					console.groupCollapsed("Light " + light.id + ": " + light.name);
+					this.printLightDetails(light);
+					console.groupEnd(); // Light group
+				});
+				console.groupEnd(); // Detailed Light Information
+				console.groupEnd(); // Light Statistics group
+			}
+
+			printCameraAnalysis(cameraInfo) {
+				console.groupCollapsed("Camera Statistics:");
+				console.log("Total cameras: " + cameraInfo.totalCameras);
+				console.log("Current camera type: " + cameraInfo.currentCameraType);
+				console.log("Active camera: " + (cameraInfo.activeCamera ? cameraInfo.activeCamera.name : 'None'));
+				
+				console.groupCollapsed("Camera distribution:");
+				console.log("Default cameras: " + cameraInfo.defaultCameras.length);
+				console.log("Custom cameras: " + cameraInfo.customCameras.length);
+				console.log("Scene cameras: " + cameraInfo.sceneCameras.length);
+				console.log("Projection types:");
+				console.log("  Perspective: " + (cameraInfo.camerasByType.perspective || 0));
+				console.log("  Orthographic: " + (cameraInfo.camerasByType.orthographic || 0));
+				console.groupEnd();	// camera distribution group
+				
+				if (cameraInfo.activeCamera) {
+					console.groupCollapsed("Active Camera Details:");
+					this.printCameraDetails(cameraInfo.activeCamera, true);
+					console.groupEnd();	// active camera group
+				}
+				
+				const animatedCameras = cameraInfo.cameras.filter(cam => cam.hasAnimation);
+				console.groupCollapsed("Camera Animation Statistics:");
+				console.log("Animated cameras: " + animatedCameras.length + " / " + cameraInfo.totalCameras);
+				animatedCameras.forEach(cam => {
+					console.log("  " + cam.name + ": " + cam.keyframeCount + " keyframes");
+				});
+				console.groupEnd();	// camera animation group
+				
+				if (cameraInfo.orbitControlsInfo) {
+					console.groupCollapsed("Orbit Controls Settings:");
+					const controls = cameraInfo.orbitControlsInfo;
+					this.printOrbitControlsDetails(controls);
+					console.groupEnd();	// orbit control group
+				}
+				
+				console.groupCollapsed("Detailed Camera Information:");
+				cameraInfo.cameras.forEach((cam, index) => {
+					console.groupCollapsed("Camera " + (index + 1) + ": " + cam.name + " (" + cam.category + ")");
+					this.printCameraDetails(cam, false);
+					console.groupEnd();	// detail camera group
+				});
+				console.groupEnd();	// detail cameras group
+				console.groupEnd(); // Camera Statistics group
+			}
+
+			printAnimationAnalysis(animationInfo) {
+				console.groupCollapsed("Animation Statistics:");
+				
+				if (animationInfo.totalClips > 0) {
+					console.log("Animation clips: " + animationInfo.totalClips);
+					console.log("Total tracks: " + animationInfo.totalTracks);
+					console.log("Total keyframes: " + animationInfo.totalKeyframes);
+					console.log("Animated objects: " + animationInfo.animatedObjects.length);
+					
+					// 播放信息
+					console.groupCollapsed("Playback Info:");
+					console.log("FPS: " + animationInfo.playbackInfo.fps);
+					console.log("Total frames: " + animationInfo.playbackInfo.totalFrames);
+					console.log("Current frame: " + animationInfo.playbackInfo.currentFrame);
+					console.log("Is playing: " + animationInfo.playbackInfo.isPlaying);
+					console.log("Loop mode: " + animationInfo.playbackInfo.loopMode);
+					console.log("Speed: " + animationInfo.playbackInfo.speed);
+					console.log("Time scale: " + animationInfo.playbackInfo.timeScale);
+					console.groupEnd();
+					
+					// 混合器信息（如果有）
+					if (animationInfo.mixerInfo) {
+						console.groupCollapsed("Animation Mixer:");
+						console.log("Mixer time: " + animationInfo.mixerInfo.time.toFixed(2));
+						console.log("Time scale: " + animationInfo.mixerInfo.timeScale);
+						console.log("Active actions: " + animationInfo.mixerInfo.activeActionsCount);
+						console.log("Total roots: " + animationInfo.mixerInfo.totalRoots);
+						
+						// 检查是否有统计信息
+						if (animationInfo.mixerInfo.statistics) {
+							console.log("Total duration: " + animationInfo.mixerInfo.statistics.totalDuration.toFixed(2) + "s");
+							console.log("Average duration: " + animationInfo.mixerInfo.statistics.averageDuration.toFixed(2) + "s");
+							console.log("Max duration: " + animationInfo.mixerInfo.statistics.maxDuration.toFixed(2) + "s");
+						}
+						console.groupEnd();
+					}
+					
+					// 动画统计
+					console.groupCollapsed("Animation Statistics:");
+					console.log("Total duration: " + animationInfo.statistics.totalDuration.toFixed(2) + "s");
+					console.log("Average duration: " + animationInfo.statistics.averageDuration.toFixed(2) + "s");
+					console.log("Max duration: " + animationInfo.statistics.maxDuration.toFixed(2) + "s");
+					
+					console.log("By duration:");
+					console.log("  Short (<2s): " + animationInfo.clipStatistics.byDuration.short);
+					console.log("  Medium (2-10s): " + animationInfo.clipStatistics.byDuration.medium);
+					console.log("  Long (>10s): " + animationInfo.clipStatistics.byDuration.long);
+					
+					console.log("By track count:");
+					console.log("  Simple (<5 tracks): " + animationInfo.clipStatistics.byTrackCount.simple);
+					console.log("  Medium (5-20 tracks): " + animationInfo.clipStatistics.byTrackCount.medium);
+					console.log("  Complex (>20 tracks): " + animationInfo.clipStatistics.byTrackCount.complex);
+					
+					console.log("By property type:");
+					for (const propType in animationInfo.clipStatistics.byPropertyType) {
+						if (animationInfo.clipStatistics.byPropertyType[propType] > 0) {
+							console.log("  " + propType + ": " + animationInfo.clipStatistics.byPropertyType[propType]);
+						}
+					}
+					console.groupEnd();
+					
+					// 动画剪辑详细信息
+					console.groupCollapsed("Animation Clip Details:");
+					animationInfo.clips.forEach((clip, index) => {
+						console.groupCollapsed("Clip " + (index + 1) + ": " + clip.name);
+						this.printAnimationClipDetails(clip);
+						console.groupEnd(); // 单个剪辑
+					});
+					console.groupEnd(); // 动画剪辑详细信息
+					
+					// 被动画控制的对象详情
+					if (animationInfo.animatedObjects.length > 0) {
+						console.groupCollapsed("Animated Objects Details:");
+						animationInfo.animatedObjects.forEach((obj, index) => {
+							console.groupCollapsed("Object " + (index + 1) + ": " + obj.name);
+							this.printAnimatedObjectDetails(obj);
+							console.groupEnd();
+						});
+						console.groupEnd();
+					}
+				} else {
+					console.log("Animation clips: None");
+				}
+				
+				console.groupEnd(); // Animation Information group
+			}
+
+			printObjectDetails(obj) {
+				console.log("Type: " + obj.type);
+				console.log("Visible: " + obj.visible);
+				console.log("Position: [" + obj.position.join(", ") + "]");
+				console.log("Has animation: " + (obj.hasAnimation ? "Yes" : "No"));
+				if (obj.animationInfo) {
+					console.log("Animation frames: " + obj.animationInfo.keyframeCount);
+					console.log("Animation duration: " + obj.animationInfo.duration.toFixed(2) + "s");
+				}
+				if (obj.userDataKeys && obj.userDataKeys.length > 0) {
+					console.log("User data keys: " + obj.userDataKeys.join(", "));
+				}
+			}
+
+			printMaterialDetails(matInfo, materialTextureInfo) {
+				console.log("Type: " + matInfo.type);
+				console.log("UUID: " + matInfo.uuid);
+				console.log("Used by " + matInfo.objectCount + " object(s):");
+				
+				// 显示使用此材质的物体名称
+				if (matInfo.objectNames && matInfo.objectNames.length > 0) {
+					console.groupCollapsed("Objects using this material:");
+					matInfo.objectNames.forEach((objName, index) => {
+						console.log((index + 1) + ". " + objName);
+					});
+					console.groupEnd();
+				}
+				
+				console.log("Textures: " + matInfo.textureCount);
+				
+				if (matInfo.textureCount > 0) {
+					console.groupCollapsed("Textures (" + matInfo.textureCount + "):");
+					for (const texType in matInfo.textures) {
+						const texData = matInfo.textures[texType];
+						console.log(texType + ":");
+						console.log("  UUID: " + texData.uuid);
+						console.log("  Source: " + texData.source);
+						
+						// 检查这个纹理是否被其他通道复用
+						const texInfo = materialTextureInfo.textureMap.get(texData.uuid);
+						if (texInfo && texInfo.channels.length > 1) {
+							const otherChannels = texInfo.channels.filter(ch => ch !== texType);
+							if (otherChannels.length > 0) {
+								console.log("  Also used as: " + otherChannels.join(", "));
+							}
+						}
+					}
+					console.groupEnd();
+				}
+				
+				console.groupCollapsed("Properties:");
+				console.log("  Color: #" + matInfo.properties.color);
+				console.log("  Roughness: " + matInfo.properties.roughness);
+				console.log("  Metalness: " + matInfo.properties.metalness);
+				console.log("  Emissive: #" + matInfo.properties.emissive);
+				console.log("  Emissive Intensity: " + matInfo.properties.emissiveIntensity);
+				console.log("  Opacity: " + matInfo.properties.opacity);
+				console.log("  Transparent: " + matInfo.properties.transparent);
+				console.log("  Bump Scale: " + matInfo.properties.bumpScale);
+				console.log("  Normal Scale: X=" + matInfo.properties.normalScale.x + ", Y=" + matInfo.properties.normalScale.y);
+				console.log("  Displacement Scale: " + matInfo.properties.displacementScale);
+				console.log("  Displacement Bias: " + matInfo.properties.displacementBias);
+				console.log("  AO Map Intensity: " + matInfo.properties.aoMapIntensity);
+				console.log("  Side: " + matInfo.properties.side);
+				console.log("  Wireframe: " + matInfo.properties.wireframe);
+				console.log("  Flat Shading: " + matInfo.properties.flatShading);
+				
+				// 其他材质属性
+				if (matInfo.properties.specular !== 'N/A') {
+					console.log("  Specular: #" + matInfo.properties.specular);
+				}
+				if (matInfo.properties.shininess !== 30.0) {
+					console.log("  Shininess: " + matInfo.properties.shininess);
+				}
+				if (matInfo.properties.refractionRatio !== 0.98) {
+					console.log("  Refraction Ratio: " + matInfo.properties.refractionRatio);
+				}
+				if (matInfo.properties.reflectivity !== 1.0) {
+					console.log("  Reflectivity: " + matInfo.properties.reflectivity);
+				}
+				
+				// 透明和渲染属性
+				if (matInfo.properties.alphaTest > 0) {
+					console.log("  Alpha Test: " + matInfo.properties.alphaTest);
+				}
+				if (!matInfo.properties.depthTest) {
+					console.log("  Depth Test: " + matInfo.properties.depthTest);
+				}
+				if (!matInfo.properties.depthWrite) {
+					console.log("  Depth Write: " + matInfo.properties.depthWrite);
+				}
+				if (matInfo.properties.polygonOffset) {
+					console.log("  Polygon Offset: Factor=" + matInfo.properties.polygonOffsetFactor + 
+								", Units=" + matInfo.properties.polygonOffsetUnits);
+				}
+				console.groupEnd();	// Properties group
+			}
+
+			printTextureDetails(texInfo, materialTextureInfo) {
+				console.log("UUID: " + texInfo.uuid);
+				console.log("Source: " + texInfo.source);
+				console.log("Size: " + texInfo.size);
+				console.log("Format: " + texInfo.format);
+				console.log("Wrap S/T: " + texInfo.wrapS + "/" + texInfo.wrapT);
+				console.log("Encoding: " + this.getTextureEncodingName(texInfo.encoding));
+				
+				// 显示UV变换属性
+				if (texInfo.repeat && (texInfo.repeat.x !== 1 || texInfo.repeat.y !== 1)) {
+					console.log("Repeat: X=" + texInfo.repeat.x + ", Y=" + texInfo.repeat.y);
+				}
+				if (texInfo.offset && (texInfo.offset.x !== 0 || texInfo.offset.y !== 0)) {
+					console.log("Offset: X=" + texInfo.offset.x + ", Y=" + texInfo.offset.y);
+				}
+				if (texInfo.rotation !== 0) {
+					console.log("Rotation: " + texInfo.rotation + " radians");
+				}
+				if (texInfo.anisotropy !== 1) {
+					console.log("Anisotropy: " + texInfo.anisotropy);
+				}
+				
+				console.log("Used by " + texInfo.usedByMaterials.length + " material(s):");
+				
+				texInfo.usedByMaterials.forEach(usage => {
+					const matInfo = materialTextureInfo.materialMap.get(usage.materialId);
+					const matName = matInfo ? matInfo.name : usage.materialId;
+					console.log("  - " + matName + " (" + usage.channels.join(", ") + ")");
+				});
+			}
+
+			printLightDetails(light) {
+				console.log("Type: " + light.type);
+				console.log("UUID: " + light.uuid);
+				console.log("Position: [" + light.position.join(", ") + "]");
+				console.log("Color: #" + light.color);
+				console.log("Intensity: " + light.intensity);
+				console.log("Visible: " + light.visible);
+				console.log("Casts shadow: " + light.castShadow);
+				console.log("Has animation: " + (light.hasAnimation ? "Yes" : "No"));
+				if (light.animationInfo) {
+					console.log("Animation frames: " + light.animationInfo.keyframeCount);
+				}
+				
+				// 特定灯光属性
+				if (Object.keys(light.specificProperties).length > 0) {
+					console.groupCollapsed("Specific properties:");
+					for (const prop in light.specificProperties) {
+						if (Array.isArray(light.specificProperties[prop])) {
+							console.log(prop + ": [" + light.specificProperties[prop].join(", ") + "]");
+						} else {
+							console.log(prop + ": " + light.specificProperties[prop]);
+						}
+					}
+					console.groupEnd();	// specific prop group
+				}
+				
+				// 阴影信息 - 修复：检查shadowInfo是否存在
+				console.groupCollapsed("Shadow settings:");
+				if (light.shadowInfo) {
+					console.log("Enabled: " + light.shadowInfo.enabled);
+					
+					if (light.shadowInfo.enabled && light.castShadow) {
+						console.log("Map size: " + light.shadowInfo.mapSize.width + "x" + light.shadowInfo.mapSize.height);
+						console.log("Bias: " + light.shadowInfo.bias);
+						console.log("Normal bias: " + light.shadowInfo.normalBias);
+						console.log("Radius: " + light.shadowInfo.radius);
+						console.log("Blur samples: " + light.shadowInfo.blurSamples);
+						
+						if (light.shadowInfo.camera) {
+							console.groupCollapsed("Shadow camera:");
+							console.log("Type: " + light.shadowInfo.camera.type);
+							console.log("Near: " + light.shadowInfo.camera.near);
+							console.log("Far: " + light.shadowInfo.camera.far);
+							
+							if (light.shadowInfo.camera.left !== undefined) {
+								console.log("Left: " + light.shadowInfo.camera.left);
+								console.log("Right: " + light.shadowInfo.camera.right);
+								console.log("Top: " + light.shadowInfo.camera.top);
+								console.log("Bottom: " + light.shadowInfo.camera.bottom);
+								console.log("Zoom: " + light.shadowInfo.camera.zoom);
+							}
+							
+							if (light.shadowInfo.camera.fov !== undefined) {
+								console.log("FOV: " + light.shadowInfo.camera.fov + "°");
+								console.log("Aspect: " + light.shadowInfo.camera.aspect);
+							}
+							console.groupEnd();	// shadow camera group
+						}
+					}
+				} else {
+					console.log("Enabled: false");
+				}
+				console.groupEnd(); // Shadow settings group
+			}
+
+			printOrbitControlsDetails(controls) {
+				console.log("Enabled: " + controls.enabled);
+				console.log("Target: [" + controls.target.join(", ") + "]");
+				console.log("Distance limits: " + controls.minDistance + " - " + controls.maxDistance);
+				console.log("Polar angle limits: " + 
+					(controls.minPolarAngle * 180 / Math.PI).toFixed(2) + "° - " + 
+					(controls.maxPolarAngle * 180 / Math.PI).toFixed(2) + "°");
+				console.log("Azimuth angle limits: " + 
+					(controls.minAzimuthAngle * 180 / Math.PI).toFixed(2) + "° - " + 
+					(controls.maxAzimuthAngle * 180 / Math.PI).toFixed(2) + "°");
+				
+				console.groupCollapsed("Interaction settings:");
+				console.log("  Damping: " + controls.enableDamping + " (factor: " + controls.dampingFactor + ")");
+				console.log("  Zoom: " + controls.enableZoom + " (speed: " + controls.zoomSpeed + ")");
+				console.log("  Rotate: " + controls.enableRotate + " (speed: " + controls.rotateSpeed + ")");
+				console.log("  Pan: " + controls.enablePan + " (speed: " + controls.panSpeed + ")");
+				console.log("  Screen space panning: " + controls.screenSpacePanning);
+				
+				if (controls.autoRotate) {
+					console.log("  Auto-rotate: " + controls.autoRotate + " (speed: " + controls.autoRotateSpeed + ")");
+				}
+				
+				console.groupEnd();	// interaction settings group
+			}
+
+			printCameraDetails(cam, isActive) {
+				if (isActive) {
+					console.log("*** ACTIVE CAMERA ***");
+				}
+				
+				console.log("Name: " + cam.name);
+				console.log("UUID: " + cam.uuid);
+				console.log("Category: " + cam.category);
+				console.log("Camera type: " + cam.cameraType);
+				console.log("Projection: " + cam.projectionType);
+				console.log("Visible: " + cam.visible);
+				console.log("Matrix auto-update: " + cam.matrixAutoUpdate);
+				console.log("Layer mask: " + cam.layers);
+				
+				// 位置和旋转
+				console.log("Position: [" + cam.position.join(", ") + "]");
+				console.log("Rotation: [" + cam.rotation.join(", ") + "]°");
+				if (cam.quaternion) {
+					console.log("Quaternion: [" + cam.quaternion.join(", ") + "]");
+				}
+				
+				// 投影参数
+				console.groupCollapsed("Projection parameters:");
+				console.log("Near: " + cam.near);
+				console.log("Far: " + cam.far);
+				console.log("Zoom: " + cam.zoom);
+				
+				if (cam.projectionType === 'perspective' && cam.perspective) {
+					console.log("FOV: " + cam.perspective.fov + "°");
+					console.log("Aspect ratio: " + cam.perspective.aspect.toFixed(4));
+					console.log("Film gauge: " + cam.perspective.filmGauge + "mm");
+					console.log("Film offset: " + cam.perspective.filmOffset);
+				} else if (cam.projectionType === 'orthographic' && cam.orthographic) {
+					console.log("Left: " + cam.orthographic.left);
+					console.log("Right: " + cam.orthographic.right);
+					console.log("Top: " + cam.orthographic.top);
+					console.log("Bottom: " + cam.orthographic.bottom);
+					
+					if (cam.orthographic.view.enabled) {
+						console.log("Viewport: " + 
+							cam.orthographic.view.width + "x" + cam.orthographic.view.height + 
+							" at (" + cam.orthographic.view.offsetX + ", " + cam.orthographic.view.offsetY + ")" +
+							" of " + cam.orthographic.view.fullWidth + "x" + cam.orthographic.view.fullHeight);
+					}
+				}
+				console.groupEnd();
+				
+				// 用户数据 - 修复循环引用问题
+				if (cam.userData && Object.keys(cam.userData).length > 0) {
+					console.groupCollapsed("User data:");
+					
+					if (cam.controlsTarget) {
+						console.log("Controls target: [" + cam.controlsTarget.join(", ") + "]");
+					}
+					
+					if (cam.rollAngle !== undefined) {
+						console.log("Roll angle: " + cam.rollAngle + "°");
+					}
+					
+					if (cam.upVector) {
+						console.log("Up vector: [" + cam.upVector.join(", ") + "]");
+					}
+					
+					// 排除已经显示的属性
+					const excludeKeys = ['controlsTarget', 'rollAngle', 'upVector', 'keyframes', 'animationKeyframes'];
+					
+					// 使用安全的 JSON.stringify 方法处理循环引用
+					const safeStringify = (obj, space = 2) => {
+						const seen = new WeakSet();
+						return JSON.stringify(obj, (key, value) => {
+							// 处理循环引用
+							if (typeof value === 'object' && value !== null) {
+								if (seen.has(value)) {
+									return '[Circular Reference]';
+								}
+								seen.add(value);
+							}
+							
+							// 处理 THREE.js 特定对象
+							if (value && value.isEuler) {
+								return {
+									type: 'Euler',
+									_x: value._x,
+									_y: value._y,
+									_z: value._z,
+									_order: value._order
+								};
+							}
+							
+							if (value && value.isVector3) {
+								return {
+									type: 'Vector3',
+									x: value.x,
+									y: value.y,
+									z: value.z
+								};
+							}
+							
+							if (value && value.isQuaternion) {
+								return {
+									type: 'Quaternion',
+									x: value.x,
+									y: value.y,
+									z: value.z,
+									w: value.w
+								};
+							}
+							
+							if (value && value.isMatrix4) {
+								return {
+									type: 'Matrix4',
+									elements: value.elements
+								};
+							}
+							
+							return value;
+						}, space);
+					};
+					
+					for (const key in cam.userData) {
+						if (!excludeKeys.includes(key)) {
+							const value = cam.userData[key];
+							
+							// 特殊处理 THREE.js 对象
+							if (value && (value.isEuler || value.isVector3 || value.isQuaternion || value.isMatrix4)) {
+								console.groupCollapsed(key + ":");
+								
+								if (value.isEuler) {
+									console.log("Type: Euler");
+									console.log("X: " + value._x + ", Y: " + value._y + ", Z: " + value._z);
+									console.log("Order: " + value._order);
+								} else if (value.isVector3) {
+									console.log("Type: Vector3");
+									console.log("X: " + value.x + ", Y: " + value.y + ", Z: " + value.z);
+								} else if (value.isQuaternion) {
+									console.log("Type: Quaternion");
+									console.log("X: " + value.x + ", Y: " + value.y + ", Z: " + value.z + ", W: " + value.w);
+								} else if (value.isMatrix4) {
+									console.log("Type: Matrix4");
+									console.log("Elements:");
+									for (let i = 0; i < 4; i++) {
+										console.log("  " + value.elements[i*4].toFixed(4) + " " + value.elements[i*4+1].toFixed(4) + " " + value.elements[i*4+2].toFixed(4) + " " + value.elements[i*4+3].toFixed(4));
+									}
+								}
+								
+								console.groupEnd();
+							} else if (typeof value === 'object' && value !== null) {
+								try {
+									console.log(key + ": " + safeStringify(value));
+								} catch (error) {
+									console.log(key + ": [Object - cannot stringify due to circular structure]");
+									console.groupCollapsed("View object details:");
+									console.dir(value);
+									console.groupEnd();
+								}
+							} else {
+								console.log(key + ": " + value);
+							}
+						}
+					}
+					console.groupEnd();
+				}
+				
+				// 动画信息
+				if (cam.hasAnimation) {
+					console.groupCollapsed("Animation info:");
+					console.log("Keyframes: " + cam.keyframeCount);
+					console.log("Duration: " + cam.animationInfo.duration.toFixed(2) + "s");
+					console.log("Animates position: " + cam.animationInfo.hasPositionAnimation);
+					console.log("Animates rotation: " + cam.animationInfo.hasRotationAnimation);
+					console.log("Animates FOV: " + cam.animationInfo.hasFovAnimation);
+					console.log("Animates roll: " + cam.animationInfo.hasRollAnimation);
+					
+					if (cam.animationInfo.frames.length > 0) {
+						console.log("Frame range: " + Math.min(...cam.animationInfo.frames) + 
+								   " - " + Math.max(...cam.animationInfo.frames));
+					}
+					console.groupEnd();
+				}
+				
+				// 矩阵信息
+				console.groupCollapsed("Matrix info:");
+				console.log("Projection matrix determinant: " + cam.projectionMatrix.determinant);
+				console.log("World matrix determinant: " + cam.matrixWorld.determinant);
+				console.groupEnd();
+			}
+
+			printAnimationClipDetails(clip) {
+				console.log("UUID: " + clip.uuid);
+				console.log("Duration: " + clip.duration.toFixed(2) + "s (" + clip.frameCount + " frames)");
+				console.log("Tracks: " + clip.tracks);
+				console.log("Keyframes: " + clip.totalKeyframes);
+				console.log("Loop mode: " + clip.loopMode);
+				console.log("Blend mode: " + clip.blendMode);
+				
+				// 动画属性
+				console.groupCollapsed("Animated properties:");
+				for (const prop in clip.properties) {
+					if (clip.properties[prop]) {
+						console.log(prop + ": Yes");
+					}
+				}
+				console.groupEnd();
+				
+				// 轨道分析
+				if (clip.trackAnalysis) {
+					console.groupCollapsed("Track analysis:");
+					console.log("Object references: " + clip.trackAnalysis.objectReferences.size);
+					
+					console.log("Property types:");
+					for (const propType in clip.trackAnalysis.propertyTypes) {
+						if (clip.trackAnalysis.propertyTypes[propType] > 0) {
+							console.log("  " + propType + ": " + clip.trackAnalysis.propertyTypes[propType]);
+						}
+					}
+					
+					console.log("Interpolation types:");
+					for (const interpType in clip.trackAnalysis.interpolationTypes) {
+						if (clip.trackAnalysis.interpolationTypes[interpType] > 0) {
+							console.log("  " + interpType + ": " + clip.trackAnalysis.interpolationTypes[interpType]);
+						}
+					}
+					
+					console.log("Keyframe density: " + clip.trackAnalysis.keyframeDensity.averagePerSecond.toFixed(1) + " per second");
+					console.groupEnd();
+				}
+				
+				// 被动画控制的对象
+				if (clip.animatedObjects && clip.animatedObjects.length > 0) {
+					console.groupCollapsed("Animated objects (" + clip.animatedObjects.length + "):");
+					clip.animatedObjects.forEach(objPath => {
+						console.log("  " + objPath);
+					});
+					console.groupEnd();
+				}
+				
+				// 动作状态
+				if (clip.actionInfo) {
+					console.groupCollapsed("Action state:");
+					console.log("Is playing: " + clip.actionInfo.isPlaying);
+					console.log("Is scheduled: " + clip.actionInfo.isScheduled);
+					console.log("Time: " + clip.actionInfo.time.toFixed(2));
+					console.log("Time scale: " + clip.actionInfo.timeScale);
+					console.log("Weight: " + clip.actionInfo.weight);
+					console.log("Loop: " + clip.actionInfo.loop);
+					console.log("Enabled: " + clip.actionInfo.enabled);
+					console.groupEnd();
+				}
+				
+				// 用户数据
+				if (Object.keys(clip.userData).length > 0) {
+					console.groupCollapsed("User data:");
+					for (const key in clip.userData) {
+						const value = clip.userData[key];
+						if (typeof value === 'object') {
+							console.log(key + ": " + JSON.stringify(value, null, 2));
+						} else {
+							console.log(key + ": " + value);
+						}
+					}
+					console.groupEnd();
+				}
+			}
+
+			printAnimatedObjectDetails(obj) {
+				console.log("Path: " + obj.path);
+				
+				if (obj.object) {
+					console.log("Type: " + obj.type);
+					console.log("Visible: " + obj.visible);
+				}
+				
+				console.log("Clips: " + obj.clipCount + " (" + obj.clips.join(', ') + ")");
+				console.log("Tracks: " + obj.trackCount);
+				console.log("Property types: " + obj.propertyTypes.join(', '));
+			}
+
+			collectObjectInfo() {
+				const objectStats = {
+					total: 0,
+					types: {},
+					visible: 0,
+					groups: 0,
+					meshes: 0,
+					lines: 0,
+					points: 0
+				};
+				
+				const objects = {};
+				const geometryInfo = {
+					faces: 0,
+					vertices: 0,
+					triangles: 0,
+					byObject: {}
+				};
+				
+				let totalFaces = 0;
+				let totalVertices = 0;
+				let totalTriangles = 0;
+				
+				// 获取动画信息以检查物体是否有动画
+				const animationInfo = this.collectAnimationInfo();
+				const animatedObjectsMap = new Map();
+				
+				if (animationInfo.animatedObjects.length > 0) {
+					animationInfo.animatedObjects.forEach(obj => {
+						animatedObjectsMap.set(obj.path, obj);
+					});
+				}
+				
+				this.scene.traverse(function(child) {
+					objectStats.total++;
+					
+					// Count by type
+					const type = child.type || "Unknown";
+					objectStats.types[type] = (objectStats.types[type] || 0) + 1;
+					
+					// Count specific categories
+					if (child.isGroup) objectStats.groups++;
+					if (child.isMesh) objectStats.meshes++;
+					if (child.isLine) objectStats.lines++;
+					if (child.isPoints) objectStats.points++;
+					if (child.visible) objectStats.visible++;
+					
+					// 检查物体是否有动画
+					let hasAnimation = false;
+					let animationInfo = null;
+					
+					// 检查用户数据中的关键帧
+					if (child.userData) {
+						const keyframes = child.userData.keyframes || child.userData.animationKeyframes;
+						if (keyframes && keyframes.length > 0) {
+							hasAnimation = true;
+							animationInfo = {
+								keyframeCount: keyframes.length,
+								duration: Math.max(...keyframes.map(kf => kf.frame || 0)) / this.state.playback.fps,
+								hasPositionAnimation: keyframes.some(kf => kf.position),
+								hasRotationAnimation: keyframes.some(kf => kf.rotation || kf.quaternion),
+								hasScaleAnimation: keyframes.some(kf => kf.scale)
+							};
+						}
+					}
+					
+					// 检查是否在动画剪辑中被引用
+					if (!hasAnimation && animatedObjectsMap.has(child.name)) {
+						hasAnimation = true;
+						const animObj = animatedObjectsMap.get(child.name);
+						animationInfo = {
+							keyframeCount: animObj.trackCount,
+							duration: 0, // 需要从剪辑中计算
+							hasAnimation: true
+						};
+					}
+					
+					// 收集几何体信息 - 修复部分
+					if (child.isMesh && child.geometry) {
+						const geometry = child.geometry;
+						
+						// 计算面数和顶点数
+						let faces = 0;
+						let vertices = 0;
+						let triangles = 0;
+						
+						if (geometry.isBufferGeometry) {
+							// BufferGeometry
+							if (geometry.attributes.position) {
+								vertices = geometry.attributes.position.count;
+							}
+							
+							// 计算三角形数
+							if (geometry.index) {
+								triangles = geometry.index.count / 3;
+							} else {
+								// 没有索引，假设为三角形列表
+								triangles = vertices / 3;
+							}
+							
+							faces = triangles; // 对于三角形网格，面数=三角形数
+						} else if (geometry.isGeometry) {
+							// Legacy Geometry
+							faces = geometry.faces.length;
+							vertices = geometry.vertices.length;
+							triangles = faces; // Geometry使用三角面
+						}
+						
+						// 更新总计数
+						totalFaces += faces;
+						totalVertices += vertices;
+						totalTriangles += triangles;
+						
+						// 存储对象级别的几何体信息
+						geometryInfo.byObject[child.name || "unnamed_" + objectStats.total] = {
+							type: "Mesh",
+							vertices: vertices,
+							faces: faces,
+							triangles: triangles,
+							hasNormals: !!geometry.attributes.normal,
+							hasUVs: !!geometry.attributes.uv,
+							hasColors: !!geometry.attributes.color
+						};
+					} else if (child.isLine && child.geometry) {
+						// 线对象
+						const geometry = child.geometry;
+						let vertices = 0;
+						
+						if (geometry.attributes.position) {
+							vertices = geometry.attributes.position.count;
+						}
+						
+						totalVertices += vertices;
+						
+						geometryInfo.byObject[child.name || "unnamed_" + objectStats.total] = {
+							type: "Line",
+							vertices: vertices,
+							segments: Math.max(0, vertices - 1)
+						};
+					} else if (child.isPoints && child.geometry) {
+						// 点对象
+						const geometry = child.geometry;
+						let vertices = 0;
+						
+						if (geometry.attributes.position) {
+							vertices = geometry.attributes.position.count;
+						}
+						
+						totalVertices += vertices;
+						
+						geometryInfo.byObject[child.name || "unnamed_" + objectStats.total] = {
+							type: "Points",
+							vertices: vertices
+						};
+					}
+					
+					// Store object information
+					objects[child.name || "unnamed_" + objectStats.total] = {
+						type: type,
+						visible: child.visible,
+						position: child.position ? child.position.toArray().map(function(v) { return v.toFixed(2); }) : null,
+						userDataKeys: child.userData ? Object.keys(child.userData) : [],
+						hasAnimation: hasAnimation,
+						animationInfo: animationInfo
+					};
+				}.bind(this));
+				
+				// 更新几何体汇总信息
+				geometryInfo.faces = totalFaces;
+				geometryInfo.vertices = totalVertices;
+				geometryInfo.triangles = totalTriangles;
+				
+				return {
+					objectStats: objectStats,
+					objects: objects,
+					geometryInfo: geometryInfo
+				};
+			}
+
+			collectMaterialAndTextureInfo() {
+				const materialMap = new Map();
+				const textureMap = new Map();
+				
+				this.scene.traverse(function(child) {
+					// 收集材质和纹理
+					if ((child.isMesh || child.isLine || child.isPoints) && child.material) {
+						const materials = Array.isArray(child.material) ? child.material : [child.material];
+						
+						materials.forEach((material, index) => {
+							if (material) {
+								const materialId = material.uuid;
+								const objectName = child.name || "unnamed_" + child.id;
+								
+								// 收集材质信息
+								if (!materialMap.has(materialId)) {
+									// 获取平面着色属性
+									let flatShading = false;
+									if (material.flatShading !== undefined) {
+										flatShading = material.flatShading;
+									} else if (material.shading !== undefined) {
+										// 旧版本的Three.js使用shading属性
+										flatShading = (material.shading === THREE.FlatShading);
+									}
+									
+									const matInfo = {
+										type: material.type || "Unknown",
+										uuid: material.uuid,
+										name: material.name || "Material_" + (materialMap.size + 1),
+										objectCount: 0,
+										objectNames: [], // 存储使用此材质的物体名称
+										textureCount: 0,
+										textures: {},
+										properties: {
+											// 基础属性
+											color: material.color ? material.color.getHexString() : 'N/A',
+											transparent: material.transparent || false,
+											opacity: material.opacity || 1.0,
+											side: material.side ? material.side.toString() : 'FrontSide',
+											wireframe: material.wireframe || false,
+											flatShading: flatShading,
+											
+											// PBR属性
+											roughness: material.roughness !== undefined ? material.roughness : 1.0,
+											metalness: material.metalness !== undefined ? material.metalness : 0.0,
+											
+											// 自发光属性
+											emissive: material.emissive ? material.emissive.getHexString() : '000000',
+											emissiveIntensity: material.emissiveIntensity !== undefined ? material.emissiveIntensity : 0.0,
+											
+											// 贴图强度属性
+											bumpScale: material.bumpScale !== undefined ? material.bumpScale : 1.0,
+											normalScale: material.normalScale ? {
+												x: material.normalScale.x,
+												y: material.normalScale.y
+											} : { x: 1, y: 1 },
+											displacementScale: material.displacementScale !== undefined ? material.displacementScale : 1.0,
+											displacementBias: material.displacementBias !== undefined ? material.displacementBias : 0.0,
+											aoMapIntensity: material.aoMapIntensity !== undefined ? material.aoMapIntensity : 1.0,
+											
+											// 其他材质属性
+											specular: material.specular ? material.specular.getHexString() : 'N/A',
+											shininess: material.shininess !== undefined ? material.shininess : 30.0,
+											refractionRatio: material.refractionRatio !== undefined ? material.refractionRatio : 0.98,
+											reflectivity: material.reflectivity !== undefined ? material.reflectivity : 1.0,
+											
+											// 透明属性
+											alphaTest: material.alphaTest !== undefined ? material.alphaTest : 0.0,
+											depthTest: material.depthTest !== undefined ? material.depthTest : true,
+											depthWrite: material.depthWrite !== undefined ? material.depthWrite : true,
+											polygonOffset: material.polygonOffset || false,
+											polygonOffsetFactor: material.polygonOffsetFactor || 0,
+											polygonOffsetUnits: material.polygonOffsetUnits || 0
+										}
+									};
+									
+									// 检查所有可能的纹理类型
+									const textureTypes = [
+										'map', 'normalMap', 'roughnessMap', 'metalnessMap',
+										'emissiveMap', 'aoMap', 'specularMap', 'alphaMap',
+										'bumpMap', 'displacementMap', 'lightMap', 'envMap'
+									];
+									
+									textureTypes.forEach(texType => {
+										if (material[texType] && material[texType].isTexture) {
+											const texture = material[texType];
+											
+											// 统计材质使用了多少张不同的纹理
+											matInfo.textureCount++;
+											
+											// 保存贴图的完整信息
+											matInfo.textures[texType] = {
+												uuid: texture.uuid,
+												source: this.getTextureSourceInfo(texture),
+												size: texture.image ? 
+													texture.image.width + "x" + texture.image.height : 'Unknown',
+												format: texture.format !== undefined ? texture.format.toString() : 'RGBA',
+												// 针对特定贴图类型添加额外属性
+												repeat: texture.repeat ? { 
+													x: texture.repeat.x, 
+													y: texture.repeat.y 
+												} : { x: 1, y: 1 },
+												offset: texture.offset ? { 
+													x: texture.offset.x, 
+													y: texture.offset.y 
+												} : { x: 0, y: 0 },
+												rotation: texture.rotation || 0,
+												center: texture.center ? { 
+													x: texture.center.x, 
+													y: texture.center.y 
+												} : { x: 0.5, y: 0.5 }
+											};
+											
+											// 收集纹理信息（详细数据）
+											const textureId = texture.uuid;
+											
+											if (!textureMap.has(textureId)) {
+												// 首次遇到这个纹理
+												textureMap.set(textureId, {
+													uuid: texture.uuid,
+													channels: [texType], // 记录使用这个纹理的所有通道
+													source: this.getTextureSourceInfo(texture),
+													size: texture.image ? 
+														texture.image.width + "x" + texture.image.height : 'Unknown',
+													format: texture.format !== undefined ? texture.format.toString() : 'RGBA',
+													wrapS: texture.wrapS,
+													wrapT: texture.wrapT,
+													repeat: texture.repeat ? { 
+														x: texture.repeat.x, 
+														y: texture.repeat.y 
+													} : { x: 1, y: 1 },
+													offset: texture.offset ? { 
+														x: texture.offset.x, 
+														y: texture.offset.y 
+													} : { x: 0, y: 0 },
+													rotation: texture.rotation || 0,
+													anisotropy: texture.anisotropy || 1,
+													encoding: texture.encoding || 3000, // THREE.LinearEncoding
+													usedByMaterials: [{
+														materialId: materialId,
+														channels: [texType]
+													}]
+												});
+											} else {
+												// 纹理已存在，更新信息
+												const texInfo = textureMap.get(textureId);
+												
+												// 检查这个材质是否已经记录过
+												const materialUsage = texInfo.usedByMaterials.find(usage => 
+													usage.materialId === materialId
+												);
+												
+												if (materialUsage) {
+													// 材质已记录，添加新的通道
+													if (!materialUsage.channels.includes(texType)) {
+														materialUsage.channels.push(texType);
+													}
+												} else {
+													// 材质未记录，添加新的材质使用记录
+													texInfo.usedByMaterials.push({
+														materialId: materialId,
+														channels: [texType]
+													});
+												}
+												
+												// 添加通道到纹理的通道列表
+												if (!texInfo.channels.includes(texType)) {
+													texInfo.channels.push(texType);
+												}
+											}
+										}
+									});
+									
+									materialMap.set(materialId, matInfo);
+								}
+								
+								// 更新材质使用计数和物体名称列表
+								const matInfo = materialMap.get(materialId);
+								matInfo.objectCount++;
+								
+								// 添加物体名称到列表（去重）
+								if (!matInfo.objectNames.includes(objectName)) {
+									matInfo.objectNames.push(objectName);
+								}
+							}
+						});
+					}
+				}.bind(this));
+				
+				// 将Map转换为普通对象以便返回
+				const materials = {};
+				const textures = {};
+				
+				materialMap.forEach((value, key) => {
+					materials[key] = value;
+				});
+				
+				textureMap.forEach((value, key) => {
+					textures[key] = value;
+				});
+				
+				return {
+					materialMap: materialMap,
+					textureMap: textureMap,
+					materials: materials,
+					textures: textures
+				};
+			}
+
+			calculateMaterialSummary(materials, textures) {
+				const summary = {
+					totalMaterials: Object.keys(materials).length,
+					totalTextures: Object.keys(textures).length,
+					materialsByType: {},
+					texturesByType: {},
+					textureReuseStats: {
+						uniqueTextures: Object.keys(textures).length,
+						totalTextureReferences: 0,
+						averageReuse: 0
+					},
+					materialStats: {
+						withFlatShading: 0,
+						withTransparency: 0,
+						withWireframe: 0,
+						withBumpMapping: 0,
+						withNormalMapping: 0,
+						withDisplacement: 0
+					}
+				};
+				
+				// 统计材质信息
+				Object.values(materials).forEach(matInfo => {
+					const type = matInfo.type;
+					summary.materialsByType[type] = (summary.materialsByType[type] || 0) + 1;
+					
+					// 统计材质属性
+					if (matInfo.properties.flatShading) {
+						summary.materialStats.withFlatShading++;
+					}
+					if (matInfo.properties.transparent) {
+						summary.materialStats.withTransparency++;
+					}
+					if (matInfo.properties.wireframe) {
+						summary.materialStats.withWireframe++;
+					}
+					
+					// 检查是否有特定贴图
+					if (matInfo.textures.bumpMap) {
+						summary.materialStats.withBumpMapping++;
+					}
+					if (matInfo.textures.normalMap) {
+						summary.materialStats.withNormalMapping++;
+					}
+					if (matInfo.textures.displacementMap) {
+						summary.materialStats.withDisplacement++;
+					}
+					
+					// 统计纹理引用次数
+					summary.textureReuseStats.totalTextureReferences += Object.keys(matInfo.textures).length;
+				});
+				
+				// 计算纹理复用统计
+				if (summary.textureReuseStats.uniqueTextures > 0) {
+					summary.textureReuseStats.averageReuse = 
+						(summary.textureReuseStats.totalTextureReferences / summary.textureReuseStats.uniqueTextures).toFixed(2);
+				}
+				
+				// 按通道类型统计纹理
+				Object.values(textures).forEach(texInfo => {
+					texInfo.channels.forEach(channel => {
+						summary.texturesByType[channel] = (summary.texturesByType[channel] || 0) + 1;
+					});
+				});
+				
+				return summary;
+			}
+
+			getTextureSourceInfo(texture) {
+				if (!texture || !texture.isTexture) return "No texture";
+				
+				if (!texture.image) {
+					return "No image data";
+				}
+				
+				if (texture.image.src) {
+					const src = texture.image.src;
+					if (src.startsWith('blob:')) {
+						return "Blob URL: " + src.substring(0, 30) + "...";
+					} else if (src.startsWith('data:')) {
+						return "Data URL: " + src.substring(0, 30) + "...";
+					} else {
+						return "URL: " + (src.length > 50 ? src.substring(0, 50) + "..." : src);
+					}
+				} else if (texture.image.data) {
+					return "ImageData: " + texture.image.width + "x" + texture.image.height;
+				} else if (texture.image.canvas) {
+					return "Canvas";
+				} else if (texture.image.video) {
+					return "Video";
+				} else if (texture.image instanceof ImageBitmap) {
+					return "ImageBitmap: " + texture.image.width + "x" + texture.image.height;
+				}
+				
+				return "Unknown source type";
+			}
+
+			getTextureEncodingName(encoding) {
+				if (encoding === undefined || encoding === null) return "Unknown";
+				
+				// Three.js 中的编码常量
+				const encodingNames = {
+					3000: "Linear",
+					3001: "sRGB",
+					3002: "Gamma",
+					3003: "RGBE",
+					3004: "LogLuv",
+					3005: "RGBM7",
+					3006: "RGBM16",
+					3007: "RGBD",
+					3008: "BasicDepth",
+					3009: "RGBA"
+				};
+				
+				return encodingNames[encoding] || "Unknown (" + encoding + ")";
+			}
+
+			collectLightInfo() {
+				const lightInfo = {
+					totalLights: 0,
+					lightsByType: {},
+					lights: [],
+					shadowEnabledLights: 0,
+					shadowSettings: {
+						enabled: this.state.lights ? this.state.lights.shadowsEnabled : false,
+						shadowMapType: this.renderer.shadowMap ? this.renderer.shadowMap.type : 0,
+						shadowMapAutoUpdate: this.renderer.shadowMap ? this.renderer.shadowMap.autoUpdate : true,
+						shadowMapNeedsUpdate: this.renderer.shadowMap ? this.renderer.shadowMap.needsUpdate : false
+					}
+				};
+				
+				// 获取动画信息以检查灯光是否有动画
+				const animationInfo = this.collectAnimationInfo();
+				const animatedObjectsMap = new Map();
+				
+				if (animationInfo.animatedObjects.length > 0) {
+					animationInfo.animatedObjects.forEach(obj => {
+						animatedObjectsMap.set(obj.path, obj);
+					});
+				}
+				
+				// 收集所有灯光
+				const allLights = [];
+				this.scene.traverse(child => {
+					if (child.isLight) {
+						allLights.push(child);
+					}
+				});
+				
+				lightInfo.totalLights = allLights.length;
+				
+				// 分析每个灯光
+				allLights.forEach((light, index) => {
+					// 检查灯光是否有动画
+					let hasAnimation = false;
+					let animationInfo = null;
+					
+					// 检查用户数据中的关键帧
+					if (light.userData) {
+						const keyframes = light.userData.keyframes || light.userData.animationKeyframes;
+						if (keyframes && keyframes.length > 0) {
+							hasAnimation = true;
+							animationInfo = {
+								keyframeCount: keyframes.length,
+								duration: Math.max(...keyframes.map(kf => kf.frame || 0)) / (this.state.playback ? this.state.playback.fps : 30),
+								hasPositionAnimation: keyframes.some(kf => kf.position),
+								hasIntensityAnimation: keyframes.some(kf => kf.intensity !== undefined),
+								hasColorAnimation: keyframes.some(kf => kf.color)
+							};
+						}
+					}
+					
+					// 检查是否在动画剪辑中被引用
+					if (!hasAnimation && animatedObjectsMap.has(light.name)) {
+						hasAnimation = true;
+						const animObj = animatedObjectsMap.get(light.name);
+						animationInfo = {
+							keyframeCount: animObj.trackCount,
+							duration: 0,
+							hasAnimation: true
+						};
+					}
+					
+					const lightData = {
+						id: index + 1,
+						name: light.name || "Light_" + (index + 1),
+						type: light.type,
+						uuid: light.uuid,
+						position: light.position ? light.position.toArray().map(v => v.toFixed(2)) : [0, 0, 0],
+						color: light.color ? light.color.getHexString() : 'ffffff',
+						intensity: light.intensity || 1.0,
+						visible: light.visible,
+						castShadow: light.castShadow || false,
+						hasAnimation: hasAnimation,
+						animationInfo: animationInfo,
+						shadowInfo: {
+							enabled: false
+						},
+						specificProperties: {}
+					};
+					
+					// 根据灯光类型收集特定属性
+					switch (light.type) {
+						case 'DirectionalLight':
+							lightData.specificProperties = {
+								target: light.target ? light.target.position.toArray().map(v => v.toFixed(2)) : [0, 0, 0]
+							};
+							break;
+							
+						case 'SpotLight':
+							lightData.specificProperties = {
+								angle: light.angle ? (light.angle * (180 / Math.PI)).toFixed(2) + '°' : '45°',
+								penumbra: light.penumbra || 0.0,
+								distance: light.distance || 0.0,
+								decay: light.decay || 2.0,
+								target: light.target ? light.target.position.toArray().map(v => v.toFixed(2)) : [0, 0, 0]
+							};
+							break;
+							
+						case 'PointLight':
+							lightData.specificProperties = {
+								distance: light.distance || 0.0,
+								decay: light.decay || 2.0
+							};
+							break;
+							
+						case 'HemisphereLight':
+							lightData.specificProperties = {
+								groundColor: light.groundColor ? light.groundColor.getHexString() : 'ffffff'
+							};
+							break;
+							
+						case 'RectAreaLight':
+							lightData.specificProperties = {
+								width: light.width || 10,
+								height: light.height || 10
+							};
+							break;
+							
+						case 'AmbientLight':
+							// 环境光没有额外属性
+							break;
+					}
+					
+					// 收集阴影信息
+					if (light.castShadow && light.shadow) {
+						const shadow = light.shadow;
+						const shadowCamera = shadow.camera;
+						
+						lightData.shadowInfo = {
+							enabled: true,
+							mapSize: {
+								width: shadow.mapSize ? shadow.mapSize.width : 512,
+								height: shadow.mapSize ? shadow.mapSize.height : 512
+							},
+							bias: shadow.bias || 0,
+							normalBias: shadow.normalBias || 0,
+							radius: shadow.radius || 1,
+							blurSamples: shadow.blurSamples || 8,
+							camera: {
+								type: shadowCamera.type,
+								near: shadowCamera.near || 0.1,
+								far: shadowCamera.far || 1000
+							}
+						};
+						
+						// 根据相机类型收集特定参数
+						if (shadowCamera.isOrthographicCamera) {
+							lightData.shadowInfo.camera.left = shadowCamera.left || -5;
+							lightData.shadowInfo.camera.right = shadowCamera.right || 5;
+							lightData.shadowInfo.camera.top = shadowCamera.top || 5;
+							lightData.shadowInfo.camera.bottom = shadowCamera.bottom || -5;
+							lightData.shadowInfo.camera.zoom = shadowCamera.zoom || 1;
+						} else if (shadowCamera.isPerspectiveCamera) {
+							lightData.shadowInfo.camera.fov = shadowCamera.fov || 50;
+							lightData.shadowInfo.camera.aspect = shadowCamera.aspect || 1;
+						}
+						
+						lightInfo.shadowEnabledLights++;
+					} else {
+						// 确保shadowInfo有默认值
+						lightData.shadowInfo = {
+							enabled: false
+						};
+					}
+					
+					lightInfo.lights.push(lightData);
+					
+					// 统计灯光类型
+					lightInfo.lightsByType[light.type] = (lightInfo.lightsByType[light.type] || 0) + 1;
+				});
+				
+				return lightInfo;
+			}
+
+			getShadowMapTypeName(type) {
+				const shadowTypes = {
+					0: 'BasicShadowMap',
+					1: 'PCFShadowMap',
+					2: 'PCFSoftShadowMap',
+					3: 'VSMShadowMap'
+				};
+				
+				return shadowTypes[type] || "Unknown (" + type + ")";
+			}
+
+			collectCameraInfo() {
+				const cameraInfo = {
+					totalCameras: 0,
+					camerasByType: {},
+					cameras: [],
+					activeCamera: null,
+					defaultCameras: [],
+					customCameras: [],
+					sceneCameras: [],
+					currentCameraType: this.state.cameras.currentType,
+					orbitControlsInfo: null
+				};
+				
+				// 收集所有默认相机
+				cameraInfo.defaultCameras = this.state.cameras.default.map(camera => 
+					this.analyzeCamera(camera, 'default')
+				);
+				
+				// 收集所有自定义相机
+				cameraInfo.customCameras = this.state.cameras.custom.map(camera => 
+					this.analyzeCamera(camera, 'custom')
+				);
+				
+				// 收集所有场景相机
+				cameraInfo.sceneCameras = this.state.cameras.scene.map(camera => 
+					this.analyzeCamera(camera, 'scene')
+				);
+				
+				// 合并所有相机
+				cameraInfo.cameras = [
+					...cameraInfo.defaultCameras,
+					...cameraInfo.customCameras,
+					...cameraInfo.sceneCameras
+				];
+				
+				cameraInfo.totalCameras = cameraInfo.cameras.length;
+				
+				// 统计相机类型分布
+				cameraInfo.cameras.forEach(cam => {
+					const cameraType = cam.cameraType || 'unknown';
+					cameraInfo.camerasByType[cameraType] = (cameraInfo.camerasByType[cameraType] || 0) + 1;
+					
+					const projectionType = cam.projectionType;
+					cameraInfo.camerasByType[projectionType] = (cameraInfo.camerasByType[projectionType] || 0) + 1;
+				});
+				
+				// 当前激活相机
+				if (this.camera) {
+					cameraInfo.activeCamera = this.analyzeCamera(this.camera, 'active');
+					cameraInfo.activeCamera.userData = this.camera.userData;
+				}
+				
+				// OrbitControls信息
+				if (this.controls) {
+					cameraInfo.orbitControlsInfo = this.analyzeOrbitControls();
+				}
+				
+				return cameraInfo;
+			}
+
+			analyzeCamera(camera, category) {
+				const camInfo = {
+					name: camera.name || "Unnamed_" + camera.uuid.substring(0, 8),
+					uuid: camera.uuid,
+					category: category,
+					cameraType: camera.userData ? camera.userData.cameraType || 'free' : 'free',
+					projectionType: camera.isPerspectiveCamera ? 'perspective' : 
+								   camera.isOrthographicCamera ? 'orthographic' : 'unknown',
+					position: camera.position.toArray().map(v => v.toFixed(2)),
+					rotation: camera.rotation.toArray().map(v => (v * 180 / Math.PI).toFixed(2)),
+					quaternion: camera.quaternion ? camera.quaternion.toArray().map(v => v.toFixed(4)) : null,
+					
+					// 通用属性
+					near: camera.near,
+					far: camera.far,
+					zoom: camera.zoom || 1,
+					viewport: camera.viewport || { x: 0, y: 0, width: 1, height: 1 },
+					layers: camera.layers.mask,
+					visible: camera.visible,
+					matrixAutoUpdate: camera.matrixAutoUpdate,
+					
+					// 投影特定属性
+					perspective: null,
+					orthographic: null,
+					
+					// 用户数据
+					userData: camera.userData || {},
+					
+					// 动画信息
+					hasAnimation: false,
+					keyframeCount: 0,
+					animationInfo: null
+				};
+				
+				// 透视相机属性
+				if (camera.isPerspectiveCamera) {
+					camInfo.perspective = {
+						fov: camera.fov,
+						aspect: camera.aspect,
+						filmGauge: camera.filmGauge || 35,
+						filmOffset: camera.filmOffset || 0
+					};
+				}
+				
+				// 正交相机属性
+				if (camera.isOrthographicCamera) {
+					camInfo.orthographic = {
+						left: camera.left,
+						right: camera.right,
+						top: camera.top,
+						bottom: camera.bottom,
+						view: {
+							enabled: camera.view ? true : false,
+							fullWidth: camera.view ? camera.view.fullWidth : 0,
+							fullHeight: camera.view ? camera.view.fullHeight : 0,
+							offsetX: camera.view ? camera.view.offsetX : 0,
+							offsetY: camera.view ? camera.view.offsetY : 0,
+							width: camera.view ? camera.view.width : 0,
+							height: camera.view ? camera.view.height : 0
+						}
+					};
+				}
+				
+				// 检查动画信息
+				if (camera.userData) {
+					// 检查关键帧
+					const keyframes = camera.userData.keyframes || camera.userData.animationKeyframes;
+					if (keyframes && keyframes.length > 0) {
+						camInfo.hasAnimation = true;
+						camInfo.keyframeCount = keyframes.length;
+						camInfo.animationInfo = {
+							frames: keyframes.map(kf => kf.frame || 0),
+							duration: Math.max(...keyframes.map(kf => kf.frame || 0)) / this.state.playback.fps,
+							hasPositionAnimation: keyframes.some(kf => kf.position),
+							hasRotationAnimation: keyframes.some(kf => kf.rotation || kf.quaternion),
+							hasFovAnimation: keyframes.some(kf => kf.fov !== undefined),
+							hasRollAnimation: keyframes.some(kf => kf.roll !== undefined)
+						};
+					}
+					
+					// 检查控制目标
+					if (camera.userData.controlsTarget) {
+						camInfo.controlsTarget = camera.userData.controlsTarget.toArray().map(v => v.toFixed(2));
+					}
+					
+					// 检查roll角度
+					if (camera.userData.rollAngle !== undefined) {
+						camInfo.rollAngle = camera.userData.rollAngle;
+					}
+					
+					// 检查up向量
+					if (camera.userData.upVector) {
+						camInfo.upVector = camera.userData.upVector.toArray().map(v => v.toFixed(4));
+					}
+				}
+				
+				// 计算投影矩阵参数
+				camInfo.projectionMatrix = {
+					elements: camera.projectionMatrix.elements.map(v => v.toFixed(4)),
+					determinant: camera.projectionMatrix.determinant().toFixed(4)
+				};
+				
+				// 计算视图矩阵参数
+				camera.updateMatrixWorld();
+				camInfo.matrixWorld = {
+					elements: camera.matrixWorld.elements.map(v => v.toFixed(4)),
+					determinant: camera.matrixWorld.determinant().toFixed(4)
+				};
+				
+				return camInfo;
+			}
+
+			analyzeOrbitControls() {
+				if (!this.controls) return null;
+				
+				return {
+					enabled: this.controls.enabled,
+					target: this.controls.target.toArray().map(v => v.toFixed(2)),
+					minDistance: this.controls.minDistance,
+					maxDistance: this.controls.maxDistance,
+					minPolarAngle: this.controls.minPolarAngle,
+					maxPolarAngle: this.controls.maxPolarAngle,
+					minAzimuthAngle: this.controls.minAzimuthAngle,
+					maxAzimuthAngle: this.controls.maxAzimuthAngle,
+					enableDamping: this.controls.enableDamping,
+					dampingFactor: this.controls.dampingFactor,
+					enableZoom: this.controls.enableZoom,
+					zoomSpeed: this.controls.zoomSpeed,
+					enableRotate: this.controls.enableRotate,
+					rotateSpeed: this.controls.rotateSpeed,
+					enablePan: this.controls.enablePan,
+					panSpeed: this.controls.panSpeed,
+					screenSpacePanning: this.controls.screenSpacePanning,
+					keyPanSpeed: this.controls.keyPanSpeed,
+					autoRotate: this.controls.autoRotate,
+					autoRotateSpeed: this.controls.autoRotateSpeed,
+					keys: this.controls.keys,
+					mouseButtons: this.controls.mouseButtons,
+					touches: this.controls.touches,
+					cameraUp: this.controls.object ? this.controls.object.up.toArray().map(v => v.toFixed(4)) : null
+				};
+			}
+
+			collectAnimationInfo() {
+				const animationInfo = {
+					hasAnimations: false,
+					totalClips: 0,
+					totalTracks: 0,
+					totalKeyframes: 0,
+					clips: [],
+					animatedObjects: [],
+					playbackInfo: {
+						fps: this.state.playback.fps,
+						totalFrames: this.state.playback.totalFrames,
+						currentFrame: this.state.playback.currentFrame,
+						isPlaying: this.state.playback.playing || false,
+						loopMode: this.state.playback.loop || 'once',
+						speed: this.state.playback.speed || 1.0,
+						timeScale: this.state.animationMixer ? this.state.animationMixer.timeScale : 1.0
+					},
+					mixerInfo: null,
+					clipStatistics: {
+						byDuration: { short: 0, medium: 0, long: 0 },
+						byTrackCount: { simple: 0, medium: 0, complex: 0 },
+						byPropertyType: {
+							position: 0,
+							rotation: 0,
+							scale: 0,
+							morph: 0,
+							visibility: 0,
+							other: 0
+						}
+					},
+					// 添加独立的统计信息，不依赖 mixerInfo
+					statistics: {
+						totalDuration: 0,
+						averageDuration: 0,
+						maxDuration: 0
+					}
+				};
+				
+				// 如果有动画混合器，收集混合器信息
+				if (this.state.animationMixer) {
+					animationInfo.mixerInfo = {
+						time: this.state.animationMixer.time,
+						timeScale: this.state.animationMixer.timeScale,
+						activeActionsCount: 0,
+						totalRoots: 0
+					};
+				}
+				
+				// 收集动画剪辑信息
+				if (this.state.currentAnimations && this.state.currentAnimations.length > 0) {
+					animationInfo.totalClips = this.state.currentAnimations.length;
+					animationInfo.hasAnimations = true;
+					
+					let totalDuration = 0;
+					let maxDuration = 0;
+					
+					this.state.currentAnimations.forEach((anim, index) => {
+						// 分析动画轨道
+						const trackAnalysis = this.analyzeAnimationTracks(anim.tracks);
+						
+						// 计算动画时长
+						const duration = anim.duration;
+						totalDuration += duration;
+						maxDuration = Math.max(maxDuration, duration);
+						
+						// 检查动画是否循环
+						const loopMode = this.getClipLoopMode(anim);
+						
+						// 创建动画剪辑信息
+						const clipInfo = {
+							id: index,
+							name: anim.name || "Clip_" + index,
+							uuid: anim.uuid || "clip_" + index,
+							duration: duration,
+							frameCount: Math.ceil(duration * this.state.playback.fps),
+							tracks: anim.tracks.length,
+							totalKeyframes: trackAnalysis.totalKeyframes,
+							loopMode: loopMode,
+							blendMode: this.getClipBlendMode(anim),
+							trackAnalysis: trackAnalysis,
+							animatedObjects: this.getAnimatedObjectsFromClip(anim),
+							properties: {
+								hasPositionAnimation: trackAnalysis.propertyTypes.position > 0,
+								hasRotationAnimation: trackAnalysis.propertyTypes.rotation > 0,
+								hasScaleAnimation: trackAnalysis.propertyTypes.scale > 0,
+								hasMorphAnimation: trackAnalysis.propertyTypes.morph > 0,
+								hasVisibilityAnimation: trackAnalysis.propertyTypes.visibility > 0,
+								hasColorAnimation: trackAnalysis.propertyTypes.color > 0,
+								hasOpacityAnimation: trackAnalysis.propertyTypes.opacity > 0,
+								hasFOVAnimation: trackAnalysis.propertyTypes.fov > 0,
+								hasIntensityAnimation: trackAnalysis.propertyTypes.intensity > 0
+							},
+							metadata: anim.metadata || {},
+							userData: anim.userData || {}
+						};
+						
+						// 添加当前播放状态（如果混合器中有对应动作）
+						if (this.state.animationMixer) {
+							const action = this.state.animationMixer.existingAction(anim);
+							if (action) {
+								clipInfo.actionInfo = {
+									isPlaying: action.isRunning(),
+									isScheduled: action.isScheduled(),
+									time: action.time,
+									timeScale: action.timeScale,
+									weight: action.weight,
+									loop: action.loop,
+									enabled: action.enabled,
+									clampWhenFinished: action.clampWhenFinished,
+									zeroSlopeAtStart: action.zeroSlopeAtStart,
+									zeroSlopeAtEnd: action.zeroSlopeAtEnd
+								};
+								
+								if (action.isRunning()) {
+									animationInfo.mixerInfo.activeActionsCount++;
+								}
+							}
+						}
+						
+						animationInfo.clips.push(clipInfo);
+						animationInfo.totalTracks += anim.tracks.length;
+						animationInfo.totalKeyframes += trackAnalysis.totalKeyframes;
+						
+						// 更新统计信息
+						this.updateClipStatistics(animationInfo.clipStatistics, clipInfo);
+					});
+					
+					// 计算独立于 mixerInfo 的统计信息
+					if (animationInfo.totalClips > 0) {
+						animationInfo.statistics.totalDuration = totalDuration;
+						animationInfo.statistics.averageDuration = totalDuration / animationInfo.totalClips;
+						animationInfo.statistics.maxDuration = maxDuration;
+						
+						// 如果有 mixerInfo，也更新它
+						if (animationInfo.mixerInfo) {
+							animationInfo.mixerInfo.statistics = {
+								totalDuration: totalDuration,
+								averageDuration: totalDuration / animationInfo.totalClips,
+								maxDuration: maxDuration
+							};
+						}
+					}
+					
+					// 收集所有被动画控制的对象
+					animationInfo.animatedObjects = this.collectAnimatedObjects();
+				}
+				
+				// 如果有混合器，收集根对象信息
+				if (this.state.animationMixer && this.state.animationMixer._roots) {
+					animationInfo.mixerInfo.totalRoots = this.state.animationMixer._roots.length;
+				}
+				
+				return animationInfo;
+			}
+
+			analyzeAnimationTracks(tracks) {
+				const analysis = {
+					totalKeyframes: 0,
+					tracksByType: {},
+					propertyTypes: {
+						position: 0,
+						rotation: 0,
+						scale: 0,
+						morph: 0,
+						visibility: 0,
+						color: 0,
+						opacity: 0,
+						fov: 0,
+						intensity: 0,
+						other: 0
+					},
+					interpolationTypes: {
+						linear: 0,
+						step: 0,
+						cubic: 0,
+						unknown: 0
+					},
+					keyframeDensity: {
+						averagePerSecond: 0,
+						maxPerTrack: 0,
+						minPerTrack: Infinity
+					},
+					objectReferences: new Set()
+				};
+				
+				let totalKeyframesAllTracks = 0;
+				
+				tracks.forEach(track => {
+					// 计算关键帧数量
+					const keyframeCount = track.times ? track.times.length : 0;
+					totalKeyframesAllTracks += keyframeCount;
+					
+					// 统计轨道类型
+					const trackType = track.constructor.name;
+					analysis.tracksByType[trackType] = (analysis.tracksByType[trackType] || 0) + 1;
+					
+					// 分析属性类型
+					const propertyType = this.getAnimationPropertyType(track.name);
+					analysis.propertyTypes[propertyType] = (analysis.propertyTypes[propertyType] || 0) + 1;
+					
+					// 分析插值类型
+					const interpolationType = track.getInterpolation ? track.getInterpolation() : 'unknown';
+					analysis.interpolationTypes[interpolationType] = (analysis.interpolationTypes[interpolationType] || 0) + 1;
+					
+					// 更新关键帧密度
+					if (keyframeCount > analysis.keyframeDensity.maxPerTrack) {
+						analysis.keyframeDensity.maxPerTrack = keyframeCount;
+					}
+					if (keyframeCount < analysis.keyframeDensity.minPerTrack) {
+						analysis.keyframeDensity.minPerTrack = keyframeCount;
+					}
+					
+					// 提取对象引用
+					const objectPath = this.extractObjectPathFromTrackName(track.name);
+					if (objectPath) {
+						analysis.objectReferences.add(objectPath);
+					}
+				});
+				
+				analysis.totalKeyframes = totalKeyframesAllTracks;
+				
+				// 计算平均关键帧密度（假设平均时长为5秒）
+				const averageDuration = 5; // 默认值
+				analysis.keyframeDensity.averagePerSecond = totalKeyframesAllTracks > 0 ? 
+					(totalKeyframesAllTracks / tracks.length) / averageDuration : 0;
+				
+				if (analysis.keyframeDensity.minPerTrack === Infinity) {
+					analysis.keyframeDensity.minPerTrack = 0;
+				}
+				
+				return analysis;
+			}
+
+			getAnimationPropertyType(trackName) {
+				const lowerName = trackName.toLowerCase();
+				
+				if (lowerName.includes('.position') || lowerName.includes('.position[')) {
+					return 'position';
+				} else if (lowerName.includes('.quaternion') || lowerName.includes('.rotation')) {
+					return 'rotation';
+				} else if (lowerName.includes('.scale')) {
+					return 'scale';
+				} else if (lowerName.includes('.morph') || lowerName.includes('.influences')) {
+					return 'morph';
+				} else if (lowerName.includes('.visible') || lowerName.includes('.visibility')) {
+					return 'visibility';
+				} else if (lowerName.includes('.color') || lowerName.includes('.emissive')) {
+					return 'color';
+				} else if (lowerName.includes('.opacity') || lowerName.includes('.transparent')) {
+					return 'opacity';
+				} else if (lowerName.includes('.fov') || lowerName.includes('.fieldofview')) {
+					return 'fov';
+				} else if (lowerName.includes('.intensity')) {
+					return 'intensity';
+				}
+				
+				return 'other';
+			}
+
+			extractObjectPathFromTrackName(trackName) {
+				// 典型的轨道名称格式: "objectName.property" 或 "objectName.property[index]"
+				const match = trackName.match(/^([^.]+)/);
+				return match ? match[1] : null;
+			}
+
+			getAnimatedObjectsFromClip(clip) {
+				const objects = new Set();
+				
+				clip.tracks.forEach(track => {
+					const objectPath = this.extractObjectPathFromTrackName(track.name);
+					if (objectPath) {
+						objects.add(objectPath);
+					}
+				});
+				
+				return Array.from(objects);
+			}
+
+			collectAnimatedObjects() {
+				const animatedObjects = [];
+				const objectMap = new Map();
+				
+				if (this.state.currentAnimations && this.state.currentAnimations.length > 0) {
+					this.state.currentAnimations.forEach((anim, clipIndex) => {
+						anim.tracks.forEach(track => {
+							const objectPath = this.extractObjectPathFromTrackName(track.name);
+							if (objectPath && !objectMap.has(objectPath)) {
+								// 在场景中查找对象
+								const object = this.findObjectByPath(objectPath);
+								
+								const animatedObject = {
+									path: objectPath,
+									name: objectPath.split('/').pop(),
+									object: object,
+									clipCount: 1,
+									trackCount: 1,
+									propertyTypes: new Set([this.getAnimationPropertyType(track.name)]),
+									clips: [clipIndex]
+								};
+								
+								if (object) {
+									animatedObject.type = object.type;
+									animatedObject.visible = object.visible;
+									animatedObject.isMesh = object.isMesh;
+									animatedObject.isCamera = object.isCamera;
+									animatedObject.isLight = object.isLight;
+								}
+								
+								objectMap.set(objectPath, animatedObject);
+								animatedObjects.push(animatedObject);
+							} else if (objectMap.has(objectPath)) {
+								// 更新现有对象信息
+								const existingObject = objectMap.get(objectPath);
+								existingObject.trackCount++;
+								existingObject.propertyTypes.add(this.getAnimationPropertyType(track.name));
+								if (!existingObject.clips.includes(clipIndex)) {
+									existingObject.clips.push(clipIndex);
+									existingObject.clipCount++;
+								}
+							}
+						});
+					});
+				}
+				
+				// 转换Set为数组
+				animatedObjects.forEach(obj => {
+					obj.propertyTypes = Array.from(obj.propertyTypes);
+				});
+				
+				return animatedObjects;
+			}
+
+			findObjectByPath(objectPath) {
+				// 简单实现：通过名称查找（实际实现可能需要处理层级路径）
+				const pathParts = objectPath.split('/');
+				const objectName = pathParts[pathParts.length - 1];
+				
+				let foundObject = null;
+				this.scene.traverse(child => {
+					if (child.name === objectName) {
+						foundObject = child;
+					}
+				});
+				
+				return foundObject;
+			}
+
+			getClipLoopMode(clip) {
+				if (clip.loop !== undefined) {
+					const loopModes = {
+						2200: 'Once',
+						2201: 'Repeat',
+						2202: 'PingPong'
+					};
+					return loopModes[clip.loop] || "Unknown (" + clip.loop + ")";
+				}
+				
+				// 检查用户数据
+				if (clip.userData && clip.userData.loopMode) {
+					return clip.userData.loopMode;
+				}
+				
+				return 'Once'; // 默认值
+			}
+
+			getClipBlendMode(clip) {
+				if (clip.blendMode !== undefined) {
+					const blendModes = {
+						0: 'Normal',
+						1: 'Additive',
+						2: 'Subtractive',
+						3: 'Multiply',
+						4: 'Custom'
+					};
+					return blendModes[clip.blendMode] || "Unknown (" + clip.blendMode + ")";
+				}
+				
+				return 'Normal'; // 默认值
+			}
+
+			updateClipStatistics(statistics, clipInfo) {
+				// 按时长分类
+				if (clipInfo.duration < 2) {
+					statistics.byDuration.short++;
+				} else if (clipInfo.duration < 10) {
+					statistics.byDuration.medium++;
+				} else {
+					statistics.byDuration.long++;
+				}
+				
+				// 按轨道数量分类
+				if (clipInfo.tracks < 5) {
+					statistics.byTrackCount.simple++;
+				} else if (clipInfo.tracks < 20) {
+					statistics.byTrackCount.medium++;
+				} else {
+					statistics.byTrackCount.complex++;
+				}
+				
+				// 按属性类型统计
+				const trackAnalysis = clipInfo.trackAnalysis;
+				if (trackAnalysis && trackAnalysis.propertyTypes) {
+					for (const propType in trackAnalysis.propertyTypes) {
+						if (trackAnalysis.propertyTypes[propType] > 0) {
+							statistics.byPropertyType[propType] = 
+								(statistics.byPropertyType[propType] || 0) + 1;
+						}
+					}
+				}
+			}
         }
+
+		// zip虚拟环境
+		class ZipVirtualFileSystem {
+			constructor(zip) {
+				this.zip = zip;
+				this.blobUrls = new Map();
+				this.fileNameIndex = new Map();
+				this.pendingRequests = new Map();
+				
+				// 初始化文件名索引
+				this._initFileNameIndex();
+			}
+
+			// 初始化文件名索引
+			_initFileNameIndex() {
+				if (this.fileNameIndex.size === 0) {
+					for (const filePath of Object.keys(this.zip.files)) {
+						const fileName = PathUtils.getFileName(filePath);
+						if (!this.fileNameIndex.has(fileName)) {
+							this.fileNameIndex.set(fileName, filePath);
+						} else {
+							// 如果文件名有重复，记录警告
+							console.log(\"文件名重复: \" + fileName + \", 使用第一个匹配项\");
+						}
+					}
+				}
+			}
+
+			findFilePath(originalPath, basePath = null) {
+				// 1. 清洗路径
+				let cleanedPath = PathUtils.cleanPath(originalPath);
+				
+				// 2. 尝试直接路径
+				if (this.zip.file(cleanedPath)) {
+					return cleanedPath;
+				}
+				
+				// 3. 尝试相对路径（如果有基础路径）
+				if (basePath) {
+					const baseDir = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+					const relativePath = PathUtils.joinPaths(baseDir, cleanedPath);
+					if (this.zip.file(relativePath)) {
+						return relativePath;
+					}
+				}
+				
+				// 4. 尝试只使用文件名
+				const fileName = PathUtils.getFileName(cleanedPath);
+				
+				// 确保文件名索引已初始化
+				this.initFileNameIndex();
+				
+				if (this.fileNameIndex.has(fileName)) {
+					return this.fileNameIndex.get(fileName);
+				}
+				
+				// 5. 尝试在ZIP中搜索（递归）
+				return this.searchFileInZip(zip, fileName);
+			}
+
+			// 递归搜索文件
+			searchFileInZip(zip, fileName) {
+				for (const filePath of Object.keys(zip.files)) {
+					const currentFileName = PathUtils.getFileName(filePath);
+					if (currentFileName.toLowerCase() === fileName.toLowerCase()) {
+						return filePath;
+					}
+				}
+				return null;
+			}
+
+			// 获取文件为Blob URL
+			async getBlobUrl(filePath, basePath = null) {
+				console.log('getBlobUrl调用:');
+				console.log('  文件路径: ' + filePath);
+				console.log('  基础路径: ' + basePath);
+				
+				let actualPath = filePath;
+				
+				// 如果是相对路径，尝试查找
+				if (!this.zip.file(filePath) && basePath) {
+					console.log('  尝试查找文件路径...');
+					actualPath = this.findFilePath(filePath, basePath);
+					console.log('  查找到的实际路径: ' + actualPath);
+				}
+				
+				if (!actualPath) {
+					console.log('  ZIP中未找到文件: ' + filePath);
+					throw new Error("ZIP中未找到文件: " + filePath);
+				}
+				
+				// 检查是否有正在进行的请求
+				if (this.pendingRequests && this.pendingRequests.has(actualPath)) {
+					console.log('  已有正在进行的请求，等待...');
+					return await this.pendingRequests.get(actualPath);
+				}
+				
+				// 检查是否有缓存的blob URL
+				if (this.blobUrls.has(actualPath)) {
+					return this.blobUrls.get(actualPath);
+				}
+				
+				console.log('  创建新的blob URL请求...');
+				
+				// 创建请求Promise
+				const requestPromise = (async () => {
+					const file = this.zip.file(actualPath);
+					if (!file) {
+						console.log('  ZIP中未找到文件: ' + actualPath);
+						throw new Error("ZIP中未找到文件: " + actualPath);
+					}
+					
+					console.log('  找到ZIP文件: ' + actualPath);
+					
+					const blob = await file.async('blob');
+					console.log('  获取blob成功，大小: ' + blob.size + ' 字节');
+					
+					const url = URL.createObjectURL(blob);
+					console.log('  创建blob URL: ' + url);
+					
+					this.blobUrls.set(actualPath, url);
+					
+					// 请求完成后从pendingRequests中移除
+					if (this.pendingRequests) {
+						this.pendingRequests.delete(actualPath);
+					}
+					
+					console.log("加载纹理: " + filePath + " -> " + actualPath);
+					return url;
+				})();
+				
+				// 保存到进行中的请求
+				if (!this.pendingRequests) {
+					this.pendingRequests = new Map();
+				}
+				this.pendingRequests.set(actualPath, requestPromise);
+				
+				return requestPromise;
+			}
+
+			// 获取文件为ArrayBuffer
+			async getArrayBuffer(filePath) {
+				const file = this.zip.file(filePath);
+				if (!file) {
+					throw new Error(\"ZIP中未找到文件: \" + filePath);
+				}
+				return await file.async('arraybuffer');
+			}
+
+			// 获取文件为文本
+			async getText(filePath) {
+				const file = this.zip.file(filePath);
+				if (!file) {
+					throw new Error(\"ZIP中未找到文件: \" + filePath);
+				}
+				return await file.async('text');
+			}
+
+			// 清理所有Blob URL
+			dispose() {
+				this.blobUrls.forEach(url => {
+					if (url && url.startsWith('blob:')) {
+						URL.revokeObjectURL(url);
+					}
+				});
+				this.blobUrls.clear();
+				this.fileNameIndex.clear();
+				this.pendingRequests.clear();
+			}
+		}
+
+		// fbx材质与贴图对应
+		class FBXMappingExtractor {
+			constructor() {
+				this.materialTextureMap = new Map();
+			}
+
+			extractFromBuffer(buffer) {
+				try {
+					const isBinary = this.isFbxFormatBinary(buffer);
+					
+					if (isBinary) {
+						console.log('检测到Binary FBX格式');
+						return this.extractFromBinaryBuffer(buffer);
+					} else {
+						const text = this.convertArrayBufferToString(buffer);
+						const isASCII = this.isFbxFormatASCII(text);
+						
+						if (isASCII) {
+							console.log('检测到ASCII FBX格式');
+							return this.extractFromAsciiText(text);
+						} else {
+							throw new Error('Unknown FBX format');
+						}
+					}
+				} catch (error) {
+					console.log('FBX映射提取失败:', error);
+					return new Map();
+				}
+			}
+
+			isFbxFormatBinary(buffer) {
+				const CORRECT = 'Kaydara\\u0020FBX\\u0020Binary\\u0020\\u0020\\0';
+				return buffer.byteLength >= CORRECT.length && CORRECT === this.convertArrayBufferToString(buffer, 0, CORRECT.length);
+			}
+
+			isFbxFormatASCII(text) {
+				const CORRECT = ['K', 'a', 'y', 'd', 'a', 'r', 'a', '\\\\', 'F', 'B', 'X', '\\\\', 'B', 'i', 'n', 'a', 'r', 'y', '\\\\', '\\\\'];
+				let cursor = 0;
+				function read(offset) {
+					const result = text[offset - 1];
+					text = text.slice(cursor + offset);
+					cursor++;
+					return result;
+				}
+				for (let i = 0; i < CORRECT.length; ++i) {
+					const num = read(1);
+					if (num === CORRECT[i]) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			convertArrayBufferToString(buffer, from, to) {
+				if (from === undefined) from = 0;
+				if (to === undefined) to = buffer.byteLength;
+				return new TextDecoder().decode(new Uint8Array(buffer, from, to));
+			}
+
+			extractFromBinaryBuffer(buffer) {
+				try {
+					console.log('开始解析Binary FBX，文件大小:', buffer.byteLength, '字节');
+					
+					// 使用简化的解析器
+					const parser = new BinaryFBXParser();
+					const result = parser.parse(buffer);
+					
+					console.log('解析结果顶级节点:', Object.keys(result));
+					
+					// 检查是否有Objects和Connections
+					if (result.Objects && result.Connections) {
+						console.log('找到Objects和Connections节点');
+						
+						// 提取关键信息
+						const materials = this.extractMaterialsBinary(result.Objects);
+						const textures = this.extractTexturesBinary(result.Objects);
+						const videos = this.extractVideosBinary(result.Objects);
+						const connections = this.parseConnectionsBinary(result.Connections);
+						
+						console.log('材质数量:', materials.size);
+						console.log('纹理数量:', textures.size);
+						console.log('视频数量:', videos.size);
+						console.log('连接数量:', connections.length);
+						
+						// 建立映射
+						const materialTextureMap = new Map();
+						this.buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap);
+						
+						console.log('建立的映射数量:', materialTextureMap.size);
+						return materialTextureMap;
+					} else {
+						console.log('没有找到Objects或Connections节点');
+						return new Map();
+					}
+					
+				} catch (error) {
+					console.log('Binary FBX解析失败:', error);
+					return new Map();
+				}
+			}
+
+			extractFromAsciiText(text) {
+				try {
+					console.log('=== 开始详细解析ASCII FBX ===');
+					
+					// 使用官方的解析逻辑
+					const parser = new AsciiFBXParser();
+					const fbxTree = parser.parse(text);
+					
+					console.log('FBX树解析完成');
+					
+					// 直接提取材质-纹理映射（原extractMappingsFromFBXTree的逻辑）
+					const materialTextureMap = new Map();
+					
+					// 检查是否有Objects和Connections
+					if (!fbxTree.Objects || !fbxTree.Connections) {
+						console.log('FBX树中没有Objects或Connections节点');
+						return materialTextureMap;
+					}
+					
+					console.log('从FBX树中提取映射...');
+					
+					// 1. 提取材质、纹理、视频信息
+					const materials = this.extractMaterialsAscii(fbxTree.Objects);
+					const textures = this.extractTexturesAscii(fbxTree.Objects);
+					const videos = this.extractVideosAscii(fbxTree.Objects);
+					const connections = this.parseConnectionsAscii(fbxTree.Connections);
+					
+					console.log('材质数量:', materials.size);
+					console.log('纹理数量:', textures.size);
+					console.log('视频数量:', videos.size);
+					console.log('连接数量:', connections.length);
+					
+					// 2. 建立映射关系
+					this.buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap);
+					
+					console.log('建立的映射数量:', materialTextureMap.size);
+					return materialTextureMap;
+				} catch (error) {
+					console.log('ASCII FBX解析失败:', error, error.stack);
+					return new Map();
+				}
+			}
+
+			extractMaterialsBinary(objectsNode) {
+				const materials = new Map();
+				
+				if (objectsNode && objectsNode.Material) {
+					// Binary FBX 的 Material 是一个对象，键为ID，值为节点
+					for (const id in objectsNode.Material) {
+						const matNode = objectsNode.Material[id];
+						const nodeId = parseInt(id);
+						
+						// 从节点属性中获取材质名称
+						let materialName = matNode.attrName || 'Material_' + id;
+						
+						materials.set(nodeId, {
+							id: nodeId,
+							name: materialName,
+							shortName: this.getShortMaterialName(materialName)
+						});
+						
+						console.log('提取材质: ID=' + nodeId + ', 名称=' + materialName);
+					}
+				}
+				
+				return materials;
+			}
+
+			extractTexturesBinary(objectsNode) {
+				const textures = new Map();
+				
+				if (objectsNode && objectsNode.Texture) {
+					for (const id in objectsNode.Texture) {
+						const texNode = objectsNode.Texture[id];
+						const texture = {
+							id: parseInt(id),
+							name: texNode.attrName || 'Texture_' + id,
+							fileName: '',
+							mediaRef: null
+						};
+						
+						// 获取文件名
+						if (texNode.FileName) {
+							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.FileName);
+						} else if (texNode.RelativeFilename) {
+							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.RelativeFilename);
+						}
+						
+						// 获取媒体引用
+						if (texNode.Media) {
+							texture.mediaRef = texNode.Media;
+						}
+						
+						textures.set(parseInt(id), texture);
+					}
+				}
+				
+				return textures;
+			}
+
+			extractVideosBinary(objectsNode) {
+				const videos = new Map();
+				
+				if (objectsNode && objectsNode.Video) {
+					for (const id in objectsNode.Video) {
+						const vidNode = objectsNode.Video[id];
+						const video = {
+							id: parseInt(id),
+							name: vidNode.attrName || 'Video_' + id,
+							fileName: ''
+						};
+						
+						// 获取文件名
+						if (vidNode.Filename) {
+							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.Filename);
+						} else if (vidNode.RelativeFilename) {
+							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.RelativeFilename);
+						}
+						
+						videos.set(parseInt(id), video);
+					}
+				}
+				
+				return videos;
+			}
+
+			parseConnectionsBinary(connectionsNode) {
+				const connections = [];
+				
+				if (connectionsNode && connectionsNode.connections) {
+					// Binary FBX 的 connections 是一个二维数组
+					connectionsNode.connections.forEach(connArray => {
+						// 连接格式: [fromId, toId, relation, ...rest]
+						if (connArray.length >= 3) {
+							const connection = {
+								fromId: connArray[0],
+								toId: connArray[1],
+								relation: connArray[2] || ''
+							};
+							
+							// 如果有额外参数（如属性名）
+							if (connArray.length > 3) {
+								connection.property = connArray[3];
+							}
+							
+							connections.push(connection);
+						}
+					});
+				}
+				
+				return connections;
+			}
+
+			extractMaterialsAscii(objectsNode) {
+				const materials = new Map();
+				
+				if (objectsNode.Material) {
+					for (const id in objectsNode.Material) {
+						const matNode = objectsNode.Material[id];
+						const nodeId = parseInt(id);
+						
+						// 从节点属性中获取材质名称
+						let materialName = matNode.attrName || 'Material_' + id;
+						
+						materials.set(nodeId, {
+							id: nodeId,
+							name: materialName,
+							shortName: this.getShortMaterialName(materialName)
+						});
+						
+						console.log('提取材质: ID=' + nodeId + ', 名称=' + materialName);
+					}
+				}
+				
+				return materials;
+			}
+
+			extractTexturesAscii(objectsNode) {
+				const textures = new Map();
+				
+				if (objectsNode.Texture) {
+					for (const id in objectsNode.Texture) {
+						const texNode = objectsNode.Texture[id];
+						const texture = {
+							id: parseInt(id),
+							name: texNode.attrName || 'Texture_' + id,
+							fileName: '',
+							mediaRef: null
+						};
+						
+						// 获取文件名
+						if (texNode.FileName) {
+							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.FileName);
+						} else if (texNode.RelativeFilename) {
+							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.RelativeFilename);
+						}
+						
+						// 获取媒体引用
+						if (texNode.Media) {
+							texture.mediaRef = texNode.Media;
+						}
+						
+						textures.set(parseInt(id), texture);
+					}
+				}
+				
+				return textures;
+			}
+
+			extractVideosAscii(objectsNode) {
+				const videos = new Map();
+				
+				if (objectsNode.Video) {
+					for (const id in objectsNode.Video) {
+						const vidNode = objectsNode.Video[id];
+						const video = {
+							id: parseInt(id),
+							name: vidNode.attrName || 'Video_' + id,
+							fileName: ''
+						};
+						
+						// 获取文件名
+						if (vidNode.Filename) {
+							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.Filename);
+						} else if (vidNode.RelativeFilename) {
+							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.RelativeFilename);
+						}
+						
+						videos.set(parseInt(id), video);
+					}
+				}
+				
+				return videos;
+			}
+
+			parseConnectionsAscii(connectionsNode) {
+				const connections = [];
+				
+				if (connectionsNode.connections) {
+					connectionsNode.connections.forEach(conn => {
+						// 连接格式: [fromId, toId, relation, ...rest]
+						if (conn.length >= 3) {
+							const connection = {
+								fromId: conn[0],
+								toId: conn[1],
+								relation: conn[2] || ''
+							};
+							
+							// 如果有额外参数（如属性名）
+							if (conn.length > 3) {
+								connection.property = conn[3];
+							}
+							
+							connections.push(connection);
+						}
+					});
+				}
+				
+				return connections;
+			}
+
+			buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap) {
+				console.log('开始建立映射关系...');
+				console.log('材料数量:', materials.size);
+				console.log('纹理数量:', textures.size);
+				console.log('视频数量:', videos.size);
+				console.log('连接数量:', connections.length);
+				
+				// 1. 先建立视频到文件名的映射
+				const videoFileMap = new Map();
+				videos.forEach(video => {
+					if (video.fileName) {
+						videoFileMap.set(video.id, video.fileName);
+						console.log('视频 ' + video.id + ' -> ' + video.fileName);
+					}
+				});
+				
+				// 2. 建立纹理到视频的映射（通过OO连接）
+				const textureToVideoMap = new Map();
+				connections.forEach(conn => {
+					// OO连接：视频 -> 纹理
+					if (conn.relation === 'OO') {
+						const video = videos.get(conn.fromId);
+						const texture = textures.get(conn.toId);
+						
+						if (video && texture) {
+							textureToVideoMap.set(texture.id, video.id);
+							console.log('OO连接: 视频' + video.id + ' -> 纹理' + texture.id);
+							
+							// 如果视频有文件名，复制给纹理
+							if (video.fileName) {
+								texture.fileName = video.fileName;
+							}
+						}
+					}
+				});
+				
+				// 3. 处理OP连接：纹理 -> 材质
+				connections.forEach(conn => {
+					// OP连接：纹理 -> 材质（属性连接）
+					if (conn.relation === 'OP' && conn.property) {
+						const texture = textures.get(conn.fromId);
+						const material = materials.get(conn.toId);
+						
+						if (texture && material) {
+							console.log('OP连接: 纹理' + texture.id + '(' + texture.name + ') -> 材质' + material.id + '(' + material.name + '), 属性: ' + conn.property);
+							
+							// 获取纹理的文件名
+							let fileName = texture.fileName;
+							
+							// 如果纹理没有文件名，查找关联的视频
+							if (!fileName && textureToVideoMap.has(texture.id)) {
+								const videoId = textureToVideoMap.get(texture.id);
+								const video = videos.get(videoId);
+								if (video && video.fileName) {
+									fileName = video.fileName;
+									console.log('  通过视频连接找到文件: ' + fileName);
+								}
+							}
+							
+							if (fileName) {
+								// 根据属性推断纹理类型
+								const texType = this.inferTextureTypeFromProperty(conn.property);
+								const threeJsProp = this.mapTextureTypeToThreeJs(texType);
+								
+								// 使用材质的简短名称
+								const materialKey = material.shortName || material.name;
+								
+								if (!materialTextureMap.has(materialKey)) {
+									materialTextureMap.set(materialKey, new Map());
+								}
+								
+								materialTextureMap.get(materialKey).set(threeJsProp, {
+									textureId: texture.id,
+									textureName: texture.name,
+									imageFilename: fileName,
+									textureType: texType,
+									property: conn.property
+								});
+								
+								console.log('  建立映射: ' + materialKey + ' -> ' + threeJsProp + ' -> ' + fileName);
+							} else {
+								console.log('  找不到纹理 ' + texture.id + ' 的文件名');
+							}
+						}
+					}
+				});
+				
+				// 4. 如果没有找到映射，尝试回退方法
+				if (materialTextureMap.size === 0) {
+					console.log('没有通过连接找到映射，尝试回退映射...');
+					this.tryFallbackMappings(materials, textures, videos, materialTextureMap);
+				}
+				
+				console.log('映射建立完成，共建立', materialTextureMap.size, '个材质映射');
+			}
+
+			tryFallbackMappings(materials, textures, videos, materialTextureMap) {
+				const materialArray = Array.from(materials.values());
+				const textureArray = Array.from(textures.values());
+				const videoArray = Array.from(videos.values());
+				
+				// 尝试按顺序映射
+				for (let i = 0; i < materialArray.length; i++) {
+					const material = materialArray[i];
+					const materialKey = material.shortName || material.name;
+					
+					// 首先尝试使用纹理
+					if (i < textureArray.length) {
+						const texture = textureArray[i];
+						let fileName = texture.fileName;
+						
+						// 如果纹理没有文件名，尝试使用视频
+						if (!fileName && i < videoArray.length) {
+							fileName = videoArray[i].fileName;
+						}
+						
+						if (fileName) {
+							const texType = this.inferTextureTypeFromName(texture.name);
+							const threeJsProp = this.mapTextureTypeToThreeJs(texType);
+							
+							materialTextureMap.set(materialKey, new Map());
+							materialTextureMap.get(materialKey).set(threeJsProp, {
+								textureId: texture.id,
+								textureName: texture.name,
+								imageFilename: fileName,
+								textureType: texType
+							});
+							
+							console.log('回退映射: ' + materialKey + ' -> ' + threeJsProp + ' -> ' + fileName);
+						}
+					} else if (i < videoArray.length) {
+						// 如果没有纹理，直接使用视频
+						const video = videoArray[i];
+						const texType = this.inferTextureTypeFromName(video.name);
+						const threeJsProp = this.mapTextureTypeToThreeJs(texType);
+						
+						materialTextureMap.set(materialKey, new Map());
+						materialTextureMap.get(materialKey).set(threeJsProp, {
+							imageFilename: video.fileName,
+							textureType: texType
+						});
+						
+						console.log('视频回退映射: ' + materialKey + ' -> ' + threeJsProp + ' -> ' + video.fileName);
+					}
+				}
+			}
+
+			inferTextureTypeFromProperty(property) {
+				const propertyMap = {
+					'DiffuseColor': 'diffuse',
+					'DiffuseFactor': 'diffuse',
+					'SpecularColor': 'specular',
+					'SpecularFactor': 'specular',
+					'NormalMap': 'normal',
+					'Bump': 'normal',
+					'EmissiveColor': 'emissive',
+					'EmissiveFactor': 'emissive',
+					'TransparentColor': 'opacity',
+					'TransparencyFactor': 'opacity',
+					'ReflectionColor': 'reflection',
+					'ShininessExponent': 'roughness',
+					'Roughness': 'roughness',
+					'Metalness': 'metalness',
+					'AmbientColor': 'ambientOcclusion',
+					'AmbientFactor': 'ambientOcclusion'
+				};
+				
+				return propertyMap[property] || 'diffuse';
+			}
+
+			inferTextureTypeFromName(name) {
+				if (!name) return 'diffuse';
+				
+				const lowerName = name.toLowerCase();
+				
+				if (lowerName.includes('diffuse') || lowerName.includes('basecolor') || lowerName.includes('color')) {
+					return 'diffuse';
+				} else if (lowerName.includes('normal')) {
+					return 'normal';
+				} else if (lowerName.includes('specular')) {
+					return 'specular';
+				} else if (lowerName.includes('roughness')) {
+					return 'roughness';
+				} else if (lowerName.includes('metalness') || lowerName.includes('metallic')) {
+					return 'metalness';
+				} else if (lowerName.includes('emissive')) {
+					return 'emissive';
+				} else if (lowerName.includes('opacity') || lowerName.includes('alpha')) {
+					return 'opacity';
+				} else if (lowerName.includes('ao') || lowerName.includes('ambient') || lowerName.includes('occlusion')) {
+					return 'ambientOcclusion';
+				}
+				
+				return 'diffuse';
+			}
+
+			mapTextureTypeToThreeJs(textureType) {
+				const mapping = {
+					'diffuse': 'map',
+					'normal': 'normalMap',
+					'specular': 'specularMap',
+					'roughness': 'roughnessMap',
+					'metalness': 'metalnessMap',
+					'emissive': 'emissiveMap',
+					'opacity': 'alphaMap',
+					'ambientOcclusion': 'aoMap'
+				};
+				
+				return mapping[textureType] || 'map';
+			}
+
+			getShortMaterialName(fullName) {
+				if (!fullName) return '';
+				
+				 // 移除"Material::"
+				if (fullName.startsWith('Material::')) {
+					return fullName.substring(10);
+				}
+				
+				return fullName;
+			}
+		}
+
+		class FBXTree {
+			add( key, val ) {
+				this[ key ] = val;
+			}
+		}
+
+		class BinaryFBXParser {
+			parse( buffer ) {
+				const reader = new BinaryFBXReader( buffer );
+				reader.skip( 23 ); // skip magic 23 bytes
+				const version = reader.getUint32();
+				if ( version < 6400 ) {
+					throw new Error( 'THREE.FBXLoader: FBX version not supported, FileVersion: ' + version );
+				}
+				const allNodes = new FBXTree();
+				while ( ! this.endOfContent( reader ) ) {
+					const node = this.parseNode( reader, version );
+					if ( node !== null ) allNodes.add( node.name, node );
+				}
+				return allNodes;
+			}
+			// Check if reader has reached the end of content.
+			endOfContent( reader ) {
+				// footer size: 160bytes + 16-byte alignment padding
+				// - 16bytes: magic
+				// - padding til 16-byte alignment (at least 1byte?)
+				//	(seems like some exporters embed fixed 15 or 16bytes?)
+				// - 4bytes: magic
+				// - 4bytes: version
+				// - 120bytes: zero
+				// - 16bytes: magic
+				if ( reader.size() % 16 === 0 ) {
+					return ( ( reader.getOffset() + 160 + 16 ) & ~ 0xf ) >= reader.size();
+				} else {
+					return reader.getOffset() + 160 + 16 >= reader.size();
+				}
+			}
+			// recursively parse nodes until the end of the file is reached
+			parseNode( reader, version ) {
+				const node = {};
+				// The first three data sizes depends on version.
+				const endOffset = ( version >= 7500 ) ? reader.getUint64() : reader.getUint32();
+				const numProperties = ( version >= 7500 ) ? reader.getUint64() : reader.getUint32();
+				( version >= 7500 ) ? reader.getUint64() : reader.getUint32(); // the returned propertyListLen is not used
+				const nameLen = reader.getUint8();
+				const name = reader.getString( nameLen );
+				// Regards this node as NULL-record if endOffset is zero
+				if ( endOffset === 0 ) return null;
+				const propertyList = [];
+				for ( let i = 0; i < numProperties; i ++ ) {
+					propertyList.push( this.parseProperty( reader ) );
+				}
+				// Regards the first three elements in propertyList as id, attrName, and attrType
+				const id = propertyList.length > 0 ? propertyList[ 0 ] : '';
+				const attrName = propertyList.length > 1 ? propertyList[ 1 ] : '';
+				const attrType = propertyList.length > 2 ? propertyList[ 2 ] : '';
+				// check if this node represents just a single property
+				// like (name, 0) set or (name2, [0, 1, 2]) set of {name: 0, name2: [0, 1, 2]}
+				node.singleProperty = ( numProperties === 1 && reader.getOffset() === endOffset ) ? true : false;
+				while ( endOffset > reader.getOffset() ) {
+					const subNode = this.parseNode( reader, version );
+					if ( subNode !== null ) this.parseSubNode( name, node, subNode );
+				}
+				node.propertyList = propertyList; // raw property list used by parent
+				if ( typeof id === 'number' ) node.id = id;
+				if ( attrName !== '' ) node.attrName = attrName;
+				if ( attrType !== '' ) node.attrType = attrType;
+				if ( name !== '' ) node.name = name;
+				return node;
+			}
+			parseSubNode( name, node, subNode ) {
+				// special case: child node is single property
+				if ( subNode.singleProperty === true ) {
+					const value = subNode.propertyList[ 0 ];
+					if ( Array.isArray( value ) ) {
+						node[ subNode.name ] = subNode;
+						subNode.a = value;
+					} else {
+						node[ subNode.name ] = value;
+					}
+				} else if ( name === 'Connections' && subNode.name === 'C' ) {
+					const array = [];
+					subNode.propertyList.forEach( function ( property, i ) {
+						// first Connection is FBX type (OO, OP, etc.). We'll discard these
+						if ( i !== 0 ) array.push( property );
+					} );
+					if ( node.connections === undefined ) {
+						node.connections = [];
+					}
+					node.connections.push( array );
+				} else if ( subNode.name === 'Properties70' ) {
+					const keys = Object.keys( subNode );
+					keys.forEach( function ( key ) {
+						node[ key ] = subNode[ key ];
+					} );
+				} else if ( name === 'Properties70' && subNode.name === 'P' ) {
+					let innerPropName = subNode.propertyList[ 0 ];
+					let innerPropType1 = subNode.propertyList[ 1 ];
+					const innerPropType2 = subNode.propertyList[ 2 ];
+					const innerPropFlag = subNode.propertyList[ 3 ];
+					let innerPropValue;
+					if ( innerPropName.indexOf( 'Lcl ' ) === 0 ) innerPropName = innerPropName.replace( 'Lcl ', 'Lcl_' );
+					if ( innerPropType1.indexOf( 'Lcl ' ) === 0 ) innerPropType1 = innerPropType1.replace( 'Lcl ', 'Lcl_' );
+					if ( innerPropType1 === 'Color' || innerPropType1 === 'ColorRGB' || innerPropType1 === 'Vector' || innerPropType1 === 'Vector3D' || innerPropType1.indexOf( 'Lcl_' ) === 0 ) {
+						innerPropValue = [
+							subNode.propertyList[ 4 ],
+							subNode.propertyList[ 5 ],
+							subNode.propertyList[ 6 ]
+						];
+					} else {
+						innerPropValue = subNode.propertyList[ 4 ];
+					}
+					// this will be copied to parent, see above
+					node[ innerPropName ] = {
+						'type': innerPropType1,
+						'type2': innerPropType2,
+						'flag': innerPropFlag,
+						'value': innerPropValue
+					};
+				} else if ( node[ subNode.name ] === undefined ) {
+					if ( typeof subNode.id === 'number' ) {
+						node[ subNode.name ] = {};
+						node[ subNode.name ][ subNode.id ] = subNode;
+					} else {
+						node[ subNode.name ] = subNode;
+					}
+				} else {
+					if ( subNode.name === 'PoseNode' ) {
+						if ( ! Array.isArray( node[ subNode.name ] ) ) {
+							node[ subNode.name ] = [ node[ subNode.name ] ];
+						}
+						node[ subNode.name ].push( subNode );
+					} else if ( node[ subNode.name ][ subNode.id ] === undefined ) {
+						node[ subNode.name ][ subNode.id ] = subNode;
+					}
+				}
+			}
+			parseProperty( reader ) {
+				const type = reader.getString( 1 );
+				let length;
+				switch ( type ) {
+					case 'C':
+						return reader.getBoolean();
+					case 'D':
+						return reader.getFloat64();
+					case 'F':
+						return reader.getFloat32();
+					case 'I':
+						return reader.getInt32();
+					case 'L':
+						return reader.getInt64();
+					case 'R':
+						length = reader.getUint32();
+						return reader.getArrayBuffer( length );
+					case 'S':
+						length = reader.getUint32();
+						return reader.getString( length );
+					case 'Y':
+						return reader.getInt16();
+					case 'b':
+					case 'c':
+					case 'd':
+					case 'f':
+					case 'i':
+					case 'l':
+						const arrayLength = reader.getUint32();
+						const encoding = reader.getUint32(); // 0: non-compressed, 1: compressed
+						const compressedLength = reader.getUint32();
+						if ( encoding === 0 ) {
+							switch ( type ) {
+								case 'b':
+								case 'c':
+									return reader.getBooleanArray( arrayLength );
+								case 'd':
+									return reader.getFloat64Array( arrayLength );
+								case 'f':
+									return reader.getFloat32Array( arrayLength );
+								case 'i':
+									return reader.getInt32Array( arrayLength );
+								case 'l':
+									return reader.getInt64Array( arrayLength );
+							}
+						}
+						const data = fflate.unzlibSync( new Uint8Array( reader.getArrayBuffer( compressedLength ) ) );
+						const reader2 = new BinaryFBXReader( data.buffer );
+						switch ( type ) {
+							case 'b':
+							case 'c':
+								return reader2.getBooleanArray( arrayLength );
+							case 'd':
+								return reader2.getFloat64Array( arrayLength );
+							case 'f':
+								return reader2.getFloat32Array( arrayLength );
+							case 'i':
+								return reader2.getInt32Array( arrayLength );
+							case 'l':
+								return reader2.getInt64Array( arrayLength );
+						}
+						break; // cannot happen but is required by the DeepScan
+					default:
+						throw new Error( 'THREE.FBXLoader: Unknown property type ' + type );
+				}
+			}
+		}
+
+		class BinaryFBXReader {
+			constructor( buffer, littleEndian ) {
+				this.dv = new DataView( buffer );
+				this.offset = 0;
+				this.littleEndian = ( littleEndian !== undefined ) ? littleEndian : true;
+				this._textDecoder = new TextDecoder();
+			}
+			getOffset() {
+				return this.offset;
+			}
+			size() {
+				return this.dv.buffer.byteLength;
+			}
+			skip( length ) {
+				this.offset += length;
+			}
+			// seems like true/false representation depends on exporter.
+			// true: 1 or 'Y'(=0x59), false: 0 or 'T'(=0x54)
+			// then sees LSB.
+			getBoolean() {
+				return ( this.getUint8() & 1 ) === 1;
+			}
+			getBooleanArray( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getBoolean() );
+				}
+				return a;
+			}
+			getUint8() {
+				const value = this.dv.getUint8( this.offset );
+				this.offset += 1;
+				return value;
+			}
+			getInt16() {
+				const value = this.dv.getInt16( this.offset, this.littleEndian );
+				this.offset += 2;
+				return value;
+			}
+			getInt32() {
+				const value = this.dv.getInt32( this.offset, this.littleEndian );
+				this.offset += 4;
+				return value;
+			}
+			getInt32Array( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getInt32() );
+				}
+				return a;
+			}
+			getUint32() {
+				const value = this.dv.getUint32( this.offset, this.littleEndian );
+				this.offset += 4;
+				return value;
+			}
+			// JavaScript doesn't support 64-bit integer so calculate this here
+			// 1 << 32 will return 1 so using multiply operation instead here.
+			// There's a possibility that this method returns wrong value if the value
+			// is out of the range between Number.MAX_SAFE_INTEGER and Number.MIN_SAFE_INTEGER.
+			// TODO: safely handle 64-bit integer
+			getInt64() {
+				let low, high;
+				if ( this.littleEndian ) {
+					low = this.getUint32();
+					high = this.getUint32();
+				} else {
+					high = this.getUint32();
+					low = this.getUint32();
+				}
+				// calculate negative value
+				if ( high & 0x80000000 ) {
+					high = ~ high & 0xFFFFFFFF;
+					low = ~ low & 0xFFFFFFFF;
+					if ( low === 0xFFFFFFFF ) high = ( high + 1 ) & 0xFFFFFFFF;
+					low = ( low + 1 ) & 0xFFFFFFFF;
+					return - ( high * 0x100000000 + low );
+				}
+				return high * 0x100000000 + low;
+			}
+			getInt64Array( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getInt64() );
+				}
+				return a;
+			}
+			// Note: see getInt64() comment
+			getUint64() {
+				let low, high;
+				if ( this.littleEndian ) {
+					low = this.getUint32();
+					high = this.getUint32();
+				} else {
+					high = this.getUint32();
+					low = this.getUint32();
+				}
+				return high * 0x100000000 + low;
+			}
+			getFloat32() {
+				const value = this.dv.getFloat32( this.offset, this.littleEndian );
+				this.offset += 4;
+				return value;
+			}
+			getFloat32Array( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getFloat32() );
+				}
+				return a;
+			}
+			getFloat64() {
+				const value = this.dv.getFloat64( this.offset, this.littleEndian );
+				this.offset += 8;
+				return value;
+			}
+			getFloat64Array( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getFloat64() );
+				}
+				return a;
+			}
+			getArrayBuffer( size ) {
+				const value = this.dv.buffer.slice( this.offset, this.offset + size );
+				this.offset += size;
+				return value;
+			}
+			getString( size ) {
+				const start = this.offset;
+				let a = new Uint8Array( this.dv.buffer, start, size );
+				this.skip( size );
+				const nullByte = a.indexOf( 0 );
+				if ( nullByte >= 0 ) a = new Uint8Array( this.dv.buffer, start, nullByte );
+				return this._textDecoder.decode( a );
+			}
+			
+			setOffset(offset) {
+				if (offset >= 0 && offset <= this.size()) {
+					this.offset = offset;
+				} else {
+					console.log('尝试设置无效的偏移量:', offset, '文件大小:', this.size());
+					this.offset = Math.max(0, Math.min(offset, this.size()));
+				}
+			}
+		}
+
+		class AsciiFBXParser {
+			constructor() {
+				this.currentIndent = 0;
+				this.allNodes = new FBXTree();
+				this.nodeStack = [];
+				this.currentProp = null;
+				this.currentPropName = '';
+			}
+			getPrevNode() {
+				return this.nodeStack[this.currentIndent - 2];
+			}
+			getCurrentNode() {
+				return this.nodeStack[this.currentIndent - 1];
+			}
+			pushStack(node) {
+				this.nodeStack.push(node);
+				this.currentIndent += 1;
+			}
+			popStack() {
+				this.nodeStack.pop();
+				this.currentIndent -= 1;
+			}
+			setCurrentProp(val, name) {
+				this.currentProp = val;
+				this.currentPropName = name;
+			}
+			parse(text) {
+				this.currentIndent = 0;
+				this.allNodes = {};
+				this.nodeStack = [];
+				this.currentProp = null;
+				this.currentPropName = '';
+				
+				const lines = text.split(/[\\r\\n]+/);
+				lines.forEach((line, i) => {
+					const matchComment = line.match( /^[\\s\\t]*;/ );
+					const matchEmpty = line.match( /^[\\s\\t]*$/ );
+					if ( matchComment || matchEmpty ) return;
+					const matchBeginning = line.match(new RegExp('^\\\\t{' + this.currentIndent + '}(\\\\w+):(.*)\\\\{'));
+					const matchProperty = line.match(new RegExp('^\\\\t{' + (this.currentIndent) + '}(\\\\w+):[\\\\s\\\\t\\\\r\\\\n](.*)'));
+					const matchEnd = line.match(new RegExp('^\\\\t{' + (this.currentIndent - 1) + '}\\\\}'));
+					if (matchBeginning) {
+						this.parseNodeBegin(line, matchBeginning);
+					} else if (matchProperty) {
+						this.parseNodeProperty(line, matchProperty, lines[i + 1]);
+					} else if (matchEnd) {
+						this.popStack();
+					} else if (line.match(/^[^\\s\\t}]/)) {
+						// large arrays are split over multiple lines terminated with a ',' character
+						// if this is encountered the line needs to be joined to the previous line
+						this.parseNodePropertyContinued(line);
+					}
+				});
+				return this.allNodes;
+			}
+			parseNodeBegin(line, match) {
+				const nodeName = match[1].trim().replace(/^"/, '').replace(/"$/, '');
+				const nodeAttrs = match[2].split(',').map(attr => {
+					return attr.trim().replace(/^"/, '').replace(/"$/, '');
+				});
+				const node = { name: nodeName };
+				const attrs = this.parseNodeAttr(nodeAttrs);
+				const currentNode = this.getCurrentNode();
+				if (this.currentIndent === 0) {
+					this.addNode(nodeName, node);
+				} else {
+					if (typeof attrs.id === 'number') {
+						if (!currentNode[nodeName]) {
+							currentNode[nodeName] = {};
+						}
+						currentNode[nodeName][attrs.id] = node;
+					} else {
+						currentNode[nodeName] = node;
+					}
+				}
+				if (typeof attrs.id === 'number') node.id = attrs.id;
+				if (attrs.name !== '') node.attrName = attrs.name;
+				if (attrs.type !== '') node.attrType = attrs.type;
+				this.pushStack(node);
+			}
+			parseNodeAttr(attrs) {
+				let id = attrs[0];
+				if (attrs[0] !== '') {
+					id = parseInt(attrs[0]);
+					if (isNaN(id)) {
+						id = attrs[0];
+					}
+				}
+				let name = '', type = '';
+				if (attrs.length > 1) {
+					name = attrs[1].replace(/^(\\\\w+)::/, '');
+					type = attrs[2];
+				}
+				return { id: id, name: name, type: type };
+			}
+			parseNodeProperty(line, match, nextLine) {
+				let propName = match[1].replace(/^"/, '').replace(/"$/, '').trim();
+				let propValue = match[2].replace(/^"/, '').replace(/"$/, '').trim();
+				if (propName === 'Content' && propValue === ',') {
+					propValue = nextLine.replace(/"/g, '').replace(/,$/, '').trim();
+				}
+				const currentNode = this.getCurrentNode();
+				const parentName = currentNode ? currentNode.name : '';
+				if (propName === 'C') {
+					const connProps = propValue.split(',').slice(1);
+					const from = parseInt(connProps[0]);
+					const to = parseInt(connProps[1]);
+					let rest = propValue.split(',').slice(3);
+					rest = rest.map(elem => {
+						return elem.trim().replace(/^"/, '');
+					});
+					propName = 'connections';
+					propValue = [from, to];
+					if (rest.length > 0) {
+						propValue = propValue.concat(rest);
+					}
+					if (!currentNode[propName]) {
+						currentNode[propName] = [];
+					}
+					currentNode[propName].push(propValue);
+				} else {
+					currentNode[propName] = propValue;
+				}
+				this.setCurrentProp(currentNode, propName);
+			}
+			parseNodePropertyContinued(line) {
+				const currentNode = this.getCurrentNode();
+				if (currentNode && currentNode.a !== undefined) {
+					currentNode.a += line;
+					if (line.slice(-1) !== ',') {
+						currentNode.a = this.parseNumberArray(currentNode.a);
+					}
+				}
+			}
+			parseNumberArray(str) {
+				try {
+					return str.split(',').map(num => parseFloat(num.trim()));
+				} catch (e) {
+					return str;
+				}
+			}
+			addNode(name, node) {
+				this.allNodes[name] = node;
+			}
+		}
+
+		// zip环境MTL解析
+		class MTLParser {
+			constructor() {
+				// 支持的材质属性映射
+				this.supportedProperties = [
+					// 颜色属性
+					'Ka', 'Kd', 'Ks', 'Ke',
+					// 标量属性
+					'Ns', 'Ni', 'd', 'Tr', 'illum',
+					// 纹理属性
+					'map_Ka', 'map_Kd', 'map_Ks', 'map_Ke', 
+					'map_Ns', 'map_d', 'map_bump', 'bump', 'norm'
+				];
+				
+				// 纹理参数关键字
+				this.textureParamKeywords = ['-s', '-o', '-bm', '-clamp', '-mm'];
+			}
+
+			// 解析MTL文本，返回材质信息对象
+			parseMTLText(mtlText) {
+				const materials = {};
+				const lines = mtlText.split('\\n');
+				let currentMaterial = null;
+				
+				for (let i = 0; i < lines.length; i++) {
+					const line = lines[i].trim();
+					
+					// 跳过空行和注释
+					if (!line || line.startsWith('#')) {
+						continue;
+					}
+					
+					// 处理行
+					this.parseLine(line, materials, currentMaterial);
+					
+					// 更新当前材质引用
+					if (materials.current) {
+						currentMaterial = materials.current;
+						delete materials.current;
+					}
+				}
+				
+				console.log('MTL解析完成，发现 ' + Object.keys(materials).length + ' 个材质');
+				return materials;
+			}
+
+			// 解析单行MTL内容
+			parseLine(line, materials, currentMaterial) {
+				const parts = line.split(/\\s+/);
+				const keyword = parts[0];
+				
+				// 新材质定义
+				if (keyword.toLowerCase() === 'newmtl') {
+					if (parts.length < 2) {
+						console.log('无效的newmtl语句: ' + line);
+						return;
+					}
+					
+					const materialName = parts[1];
+					materials[materialName] = this.createDefaultMaterialInfo(materialName);
+					materials.current = materials[materialName];
+					console.log('发现新材质: ' + materialName);
+				}
+				// 颜色属性 (Ka, Kd, Ks, Ke)
+				else if (keyword.toLowerCase() === 'ka' || 
+						 keyword.toLowerCase() === 'kd' || 
+						 keyword.toLowerCase() === 'ks' || 
+						 keyword.toLowerCase() === 'ke') {
+					this.parseColorProperty(line, keyword, currentMaterial);
+				}
+				// 标量属性 (Ns, Ni, d, Tr, illum) - 修正这里
+				else if (keyword.toLowerCase() === 'ns') {
+					this.parseScalarProperty(line, 'Ns', currentMaterial);
+				}
+				else if (keyword.toLowerCase() === 'ni') {
+					this.parseScalarProperty(line, 'Ni', currentMaterial);
+				}
+				else if (keyword.toLowerCase() === 'd') {
+					this.parseScalarProperty(line, 'd', currentMaterial);
+				}
+				else if (keyword.toLowerCase() === 'tr') {
+					this.parseScalarProperty(line, 'Tr', currentMaterial);
+				}
+				else if (keyword.toLowerCase() === 'illum') {
+					this.parseScalarProperty(line, 'illum', currentMaterial);
+				}
+				// 纹理属性
+				else if (keyword.toLowerCase().startsWith('map_') || 
+						 keyword.toLowerCase() === 'bump' || 
+						 keyword.toLowerCase() === 'norm') {
+					this.parseTextureProperty(line, keyword, currentMaterial);
+				}
+				// 未知属性（记录但不处理）
+				else if (currentMaterial) {
+					console.log('未知MTL属性: ' + keyword + ' (在材质 ' + currentMaterial.name + ')');
+				}
+			}
+
+			// 创建默认材质信息对象
+			createDefaultMaterialInfo(name) {
+				return {
+					name: name,
+					// 颜色属性
+					Ka: [0, 0, 0],      // 环境光颜色
+					Kd: [1, 1, 1],      // 漫反射颜色
+					Ks: [0, 0, 0],      // 高光颜色
+					Ke: [0, 0, 0],      // 自发光颜色
+					
+					// 标量属性 - 只设置必需的默认值
+					Ns: 0,              // 高光指数 (0-1000)
+					Ni: 1.0,            // 折射率 (默认1.0)
+					d: 1.0,             // 不透明度 (1.0 = 完全不透明)
+					illum: 2,           // 光照模型 (2 = 高光启用)
+					// 注意：Tr 不设置默认值，只有解析到时才设置
+					
+					// 纹理映射
+					map_Ka: null,
+					map_Kd: null,
+					map_Ks: null,
+					map_Ke: null,
+					map_Ns: null,
+					map_d: null,
+					map_bump: null,
+					bump: null,
+					norm: null,
+					
+					// 纹理参数
+					textureParams: {}
+				};
+			}
+
+			// 解析颜色属性 (RGB格式)
+			parseColorProperty(line, keyword, material) {
+				if (!material) return;
+				
+				// 使用split方法而不是正则表达式
+				const parts = line.split(/\\s+/);
+				if (parts.length < 4) {
+					console.log('颜色属性格式错误: ' + line);
+					return;
+				}
+				
+				try {
+					const color = [
+						parseFloat(parts[1]),
+						parseFloat(parts[2]),
+						parseFloat(parts[3])
+					];
+					
+					material[keyword] = color;
+					console.log('材质 ' + material.name + ' - ' + keyword + ': [' + color.join(', ') + ']');
+				} catch (e) {
+					console.log('解析颜色属性失败: ' + line, e);
+				}
+			}
+
+			// 解析标量属性
+			parseScalarProperty(line, keyword, material) {
+				if (!material) return;
+				
+				const parts = line.split(/\\s+/);
+				if (parts.length < 2) {
+					console.log('标量属性格式错误: ' + line);
+					return;
+				}
+				
+				try {
+					const value = parseFloat(parts[1]);
+					material[keyword] = value;
+					console.log('材质 ' + material.name + ' - ' + keyword + ': ' + value);
+				} catch (e) {
+					console.log('解析标量属性失败: ' + line, e);
+				}
+			}
+
+			// 解析纹理属性（支持参数）
+			// 格式示例: map_Kd -s 2.0 2.0 -o 0.5 0.5 texture.png
+			parseTextureProperty(line, keyword, material) {
+				if (!material) return;
+				
+				// 移除关键字，获取剩余部分
+				const textureDef = line.substring(keyword.length).trim();
+				
+				// 解析纹理参数
+				const textureInfo = this.parseTextureDefinition(textureDef);
+				
+				if (textureInfo) {
+					// 存储纹理信息
+					material[keyword] = textureInfo;
+					
+					// 存储参数到textureParams中，便于后续查找
+					if (!material.textureParams[keyword]) {
+						material.textureParams[keyword] = [];
+					}
+					material.textureParams[keyword].push(textureInfo);
+					
+					console.log('材质 ' + material.name + ' - ' + keyword + ': ' + 
+							   textureInfo.path + ' (scale: ' + textureInfo.scale.x + ',' + textureInfo.scale.y + 
+							   ', offset: ' + textureInfo.offset.x + ',' + textureInfo.offset.y + ')');
+				}
+			}
+
+			// 解析纹理定义（路径和参数）
+			parseTextureDefinition(textureDef) {
+				const items = textureDef.split(/\\s+/);
+				const result = {
+					path: '',
+					scale: { x: 1, y: 1 },
+					offset: { x: 0, y: 0 },
+					bumpScale: 1,
+					brightness: { base: 0, gain: 1 },
+					clamp: false
+				};
+				
+				let i = 0;
+				let hasPath = false;
+				
+				while (i < items.length) {
+					const item = items[i];
+					
+					// 缩放参数: -s <u> <v>
+					if (item === '-s' && i + 2 < items.length) {
+						result.scale.x = parseFloat(items[i + 1]);
+						result.scale.y = parseFloat(items[i + 2]);
+						i += 3;
+					}
+					// 偏移参数: -o <u> <v>
+					else if (item === '-o' && i + 2 < items.length) {
+						result.offset.x = parseFloat(items[i + 1]);
+						result.offset.y = parseFloat(items[i + 2]);
+						i += 3;
+					}
+					// bump缩放参数: -bm <value>
+					else if (item === '-bm' && i + 1 < items.length) {
+						result.bumpScale = parseFloat(items[i + 1]);
+						i += 2;
+					}
+					// 钳制参数: -clamp on|off
+					else if (item === '-clamp' && i + 1 < items.length) {
+						result.clamp = items[i + 1].toLowerCase() === 'on';
+						i += 2;
+					}
+					// 亮度参数: -mm <base> <gain>
+					else if (item === '-mm' && i + 2 < items.length) {
+						result.brightness.base = parseFloat(items[i + 1]);
+						result.brightness.gain = parseFloat(items[i + 2]);
+						i += 3;
+					}
+					// 纹理路径（剩余部分）
+					else {
+						// 将剩余部分组合成路径
+						const pathParts = [];
+						for (let j = i; j < items.length; j++) {
+							if (items[j] && items[j] !== '') {
+								pathParts.push(items[j]);
+							}
+						}
+						if (pathParts.length > 0) {
+							result.path = PathUtils.cleanTexturePath(pathParts.join(' '));
+							hasPath = true;
+						}
+						break; // 跳出循环，剩余的都是路径
+					}
+				}
+				
+				// 如果没有找到路径，尝试将整个字符串作为路径
+				if (!hasPath && textureDef.trim()) {
+					result.path = PathUtils.cleanTexturePath(textureDef.trim());
+				}
+				
+				return hasPath ? result : null;
+			}
+
+			// 获取材质列表
+			getMaterialNames(materials) {
+				return Object.keys(materials);
+			}
+
+			// 获取指定材质的纹理信息
+			getTexturesForMaterial(material) {
+				const textures = [];
+				
+				// 检查所有可能的纹理属性
+				const textureKeys = ['map_Ka', 'map_Kd', 'map_Ks', 'map_Ke', 
+									'map_Ns', 'map_d', 'map_bump', 'bump', 'norm'];
+				
+				for (const key of textureKeys) {
+					if (material[key] && material[key].path) {
+						textures.push({
+							type: key,
+							path: material[key].path,
+							params: material[key]
+						});
+					}
+				}
+				
+				return textures;
+			}
+		}
+
+		// zip环境贴图读取
+		class TextureLoaderFromZip {
+			constructor(virtualFS) {
+				this.virtualFS = virtualFS;
+				this.loadedTextures = new Map();
+				this.pendingRequests = new Map();
+				
+				// 用户可配置的映射规则
+				this.mappingRules = [
+					// 规则1: 材质名称直接匹配贴图文件名
+					(materialName, fileName) => {
+						if (!materialName || !fileName) return false;
+						const cleanMatName = materialName.toLowerCase().replace(/[^a-z0-9]/g, '');
+						const cleanFileName = fileName.toLowerCase().replace(/[^a-z0-9]/g, '');
+						return cleanFileName.includes(cleanMatName) || cleanMatName.includes(cleanFileName);
+					},
+					
+					// 规则2: 数字匹配
+					(materialName, fileName) => {
+						const matNum = (materialName.match(/\d+/) || [])[0];
+						const fileNum = (fileName.match(/\d+/) || [])[0];
+						return matNum && fileNum && matNum === fileNum;
+					},
+					
+					// 规则3: 常见后缀匹配
+					(materialName, fileName, materialIndex) => {
+						const suffixes = [
+							'_' + (materialIndex + 1),
+							(materialIndex + 1),
+							'_' + String.fromCharCode(97 + materialIndex),
+							String.fromCharCode(97 + materialIndex)
+						];
+						
+						const baseName = fileName.toLowerCase().replace(/\.[^/.]+$/, '');
+						return suffixes.some(suffix => baseName.endsWith(suffix) || baseName.includes('_' + suffix + '_'));
+					}
+				];
+				
+				// 初始化文件名索引（如果虚拟文件系统没有的话）
+				if (virtualFS && !virtualFS.fileNameIndex) {
+					virtualFS.fileNameIndex = new Map();
+					if (virtualFS.zip) {
+						for (const filePath of Object.keys(virtualFS.zip.files)) {
+							const fileName = PathUtils.getFileName(filePath);
+							if (!virtualFS.fileNameIndex.has(fileName)) {
+								virtualFS.fileNameIndex.set(fileName, filePath);
+							}
+						}
+					}
+				}
+			}
+
+			findTexturePath(texturePath, basePath = null, options = {}) {
+				const { textureType = null, materialIndex = 0, totalMaterials = 1 } = options;
+				
+				console.log('findTexturePath - 查找纹理:', texturePath, '基础路径:', basePath, '选项:', options);
+				
+				// 1. 清洗路径
+				const cleanedPath = PathUtils.cleanTextureUrl(texturePath);
+				
+				// 如果清洗后路径不为空，尝试直接查找
+				if (cleanedPath) {
+					// 2. 尝试直接查找（使用清洗后的文件名）
+					if (this.virtualFS.fileNameIndex && this.virtualFS.fileNameIndex.has(cleanedPath)) {
+						const foundPath = this.virtualFS.fileNameIndex.get(cleanedPath);
+						console.log('通过文件名索引找到:', foundPath);
+						return foundPath;
+					}
+					
+					// 3. 尝试相对路径（如果有基础路径）
+					if (basePath) {
+						const baseDir = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+						const relativePath = PathUtils.joinPaths(baseDir, cleanedPath);
+						
+						console.log('尝试相对路径:', relativePath);
+						if (this.virtualFS.zip && this.virtualFS.zip.file(relativePath)) {
+							return relativePath;
+						}
+					}
+					
+					// 4. 在ZIP中搜索文件（递归查找）
+					if (this.virtualFS.zip) {
+						const files = Object.keys(this.virtualFS.zip.files);
+						for (const filePath of files) {
+							const currentFileName = PathUtils.getFileName(filePath);
+							if (currentFileName.toLowerCase() === cleanedPath.toLowerCase()) {
+								console.log('在ZIP中搜索到文件:', filePath);
+								return filePath;
+							}
+						}
+					}
+				}
+				
+				// 5. 如果以上都没有找到，尝试基于纹理类型和命名模式查找
+				return this.findTextureByPattern(texturePath, textureType, materialIndex, totalMaterials);
+			}
+
+			findTextureByPattern(texturePath, textureType, materialIndex = 0, totalMaterials = 1, materialName = '') {
+				console.log('尝试基于模式查找纹理:', texturePath, '类型:', textureType, 
+							'材质索引:', materialIndex, '总材质数:', totalMaterials, 
+							'材质名称:', materialName);
+				
+				if (!this.virtualFS.zip) {
+					return null;
+				}
+				
+				const files = Object.keys(this.virtualFS.zip.files);
+				let candidateFiles = [];
+				
+				// 首先收集所有图片文件
+				const imageExtensions = ['.png', '.jpg', '.jpeg', '.tga', '.bmp', '.tiff', '.dds'];
+				for (const filePath of files) {
+					const ext = filePath.toLowerCase().substring(filePath.lastIndexOf('.'));
+					if (imageExtensions.includes(ext)) {
+						candidateFiles.push(filePath);
+					}
+				}
+				
+				console.log('ZIP中的图片文件:', candidateFiles);
+				
+				// 如果没有图片文件，返回null
+				if (candidateFiles.length === 0) {
+					return null;
+				}
+				
+				// ========== 关键策略：基于材质名称和纹理类型精确匹配 ==========
+				
+				// 策略1: 如果材质名称和贴图文件名有明确的数字对应关系
+				if (materialName) {
+					// 提取材质名称中的数字
+					const materialNumberMatch = materialName.match(/\d+/);
+					if (materialNumberMatch) {
+						const materialNumber = materialNumberMatch[0];
+						console.log('材质名称中的数字:', materialNumber);
+						
+						// 创建可能的贴图文件名模式
+						const possiblePatterns = [
+							// 直接数字匹配: 53 -> 53.png, texture_53.png, 53_texture.png
+							materialNumber,
+							// 带材质索引: 53_0, 53_1 等
+							materialNumber + '_' + materialIndex,
+							// 材质名称的简化版本
+							materialName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase(),
+							// 纹理类型结合数字: base_color_53, 53_base_color
+							textureType + '_' + materialNumber,
+							materialNumber + '_' + textureType
+						];
+						
+						// 尝试匹配每个可能的模式
+						for (const pattern of possiblePatterns) {
+							for (const filePath of candidateFiles) {
+								const fileName = PathUtils.getFileName(filePath).toLowerCase();
+								const baseName = fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase();
+								
+								// 检查是否匹配模式
+								if (baseName === pattern || 
+									baseName.includes('_' + pattern + '_') || 
+									baseName.endsWith('_' + pattern) || 
+									baseName.startsWith(pattern + '_')) {
+									console.log('通过模式匹配找到贴图:', filePath, '模式:', pattern);
+									return filePath;
+								}
+							}
+						}
+					}
+				}
+				
+				// 策略2: 基于材质索引的顺序分配（仅在无法精确匹配时使用）
+				if (candidateFiles.length === totalMaterials && totalMaterials > 1) {
+					// 如果贴图数量和材质数量相同，按顺序分配
+					const selectedFile = candidateFiles[materialIndex % candidateFiles.length];
+					console.log('按材质索引顺序分配:', 
+							   '材质索引', materialIndex, '-> 贴图索引', materialIndex % candidateFiles.length, 
+							   '->', selectedFile);
+					return selectedFile;
+				}
+				
+				// 策略3: 如果以上都失败，返回第一个贴图文件
+				console.log('使用第一个图片文件:', candidateFiles[0]);
+				return candidateFiles[0];
+			}
+
+			async loadTextures(textureRequests, basePath = null) {
+				console.log('批量加载纹理，数量:', textureRequests.length);
+				
+				const results = [];
+				for (const request of textureRequests) {
+					try {
+						const options = request.options || {};
+						if (basePath && !options.basePath) {
+							options.basePath = basePath;
+						}
+						
+						// 添加更多调试信息
+						console.log('加载纹理 ' + request.path + ' 用于材质 ' + options.materialName || 'unnamed' + ' (索引: ' + options.materialIndex + ')');
+						
+						const texture = await this.loadTexture(request.path, options);
+						results.push({
+							...request,
+							texture: texture,
+							path: request.path,
+							options: options
+						});
+					} catch (error) {
+						console.log('加载纹理失败:', request.path, error);
+						results.push({
+							...request,
+							texture: null,
+							error: error
+						});
+					}
+				}
+				
+				return results;
+			}
+
+			async loadTexture(texturePath, options = {}) {
+				console.log('TextureLoaderFromZip.loadTexture:', texturePath, 'options:', options);
+				
+				const { basePath = null, textureType = null, materialIndex = 0, totalMaterials = 1 } = 
+					typeof options === 'string' ? { basePath: options } : options;
+				
+				// 查找实际路径
+				const actualPath = this.findTexturePath(texturePath, basePath, {
+					textureType,
+					materialIndex,
+					totalMaterials
+				});
+				
+				if (!actualPath) {
+					console.log('未找到纹理文件:', texturePath);
+					throw new Error('Texture not found: ' + texturePath);
+				}
+				
+				// 检查是否已经加载
+				if (this.loadedTextures.has(actualPath)) {
+					console.log('使用缓存的纹理:', actualPath);
+					return this.loadedTextures.get(actualPath);
+				}
+				
+				// 检查是否有正在进行的请求
+				if (this.pendingRequests.has(actualPath)) {
+					console.log('等待正在进行的请求:', actualPath);
+					return await this.pendingRequests.get(actualPath);
+				}
+				
+				// 创建新的加载请求
+				const loadPromise = (async () => {
+					try {
+						console.log('开始加载纹理:', actualPath, '材质索引:', materialIndex);
+						
+						// 从虚拟文件系统获取blob URL
+						const blobUrl = await this.virtualFS.getBlobUrl(actualPath, basePath);
+						
+						// 加载纹理
+						const texture = await new Promise((resolve, reject) => {
+							const loader = new THREE.TextureLoader();
+							loader.load(
+								blobUrl,
+								(loadedTexture) => {
+									console.log('纹理加载成功:', actualPath, 
+											  '尺寸:', loadedTexture.image.width + 'x' + loadedTexture.image.height,
+											  '材质索引:', materialIndex);
+									
+									// 设置默认包装方式
+									loadedTexture.wrapS = THREE.RepeatWrapping;
+									loadedTexture.wrapT = THREE.RepeatWrapping;
+									
+									// 根据纹理类型设置色彩空间
+									if (textureType === 'base_color' || textureType === 'emissive' || textureType === 'map') {
+										loadedTexture.colorSpace = THREE.SRGBColorSpace;
+									} else {
+										loadedTexture.colorSpace = THREE.LinearSRGBColorSpace;
+									}
+									
+									// 记录材质索引信息
+									loadedTexture.userData = loadedTexture.userData || {};
+									loadedTexture.userData.materialIndex = materialIndex;
+									loadedTexture.userData.originalPath = actualPath;
+									
+									// 缓存纹理
+									this.loadedTextures.set(actualPath, loadedTexture);
+									resolve(loadedTexture);
+								},
+								undefined,
+								(error) => {
+									console.log('纹理加载失败:', actualPath, error);
+									reject(error);
+								}
+							);
+						});
+						
+						return texture;
+					} catch (error) {
+						console.log('纹理加载过程出错:', actualPath, error);
+						throw error;
+					} finally {
+						// 清理pending请求
+						this.pendingRequests.delete(actualPath);
+					}
+				})();
+				
+				// 保存pending请求
+				this.pendingRequests.set(actualPath, loadPromise);
+				
+				return loadPromise;
+			}
+
+			dispose() {
+				this.loadedTextures.forEach(texture => {
+					if (texture.image && texture.image.src && texture.image.src.startsWith('blob:')) {
+						URL.revokeObjectURL(texture.image.src);
+					}
+				});
+				this.loadedTextures.clear();
+				this.pendingRequests.clear();
+			}
+		}
 
         const viewer = new Adv3DViewer();
     </script>
