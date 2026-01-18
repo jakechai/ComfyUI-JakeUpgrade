@@ -354,7 +354,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 		/* 灯光GUI容器样式 */
 		.light-gui-container {
 			position: absolute;
-			bottom: 8px;
+			top: 8px;
 			left: 8px;
 			z-index: 1001;
 			background: rgba(30, 30, 30, 0.9);
@@ -367,10 +367,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			backdrop-filter: blur(5px);
 		}
 		
-		/* 后处理GUI容器样式 */
+		/* 材质GUI容器样式 */
 		.material-gui-container {
 			position: absolute;
-			bottom: 8px;
+			top: 30px;
 			right: 8px;
 			z-index: 1000;
 			background: rgba(30, 30, 30, 0.9);
@@ -378,13 +378,33 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			border-radius: 3px;
 			padding: 4px;
 			width: 180px;
-			max-height: 300px;
+			max-height: 502px;
 			overflow-y: auto;
 			backdrop-filter: blur(5px);
 		}
 		
-		.light-gui-disabled, .material-gui-disabled {
+		.light-gui-disabled, .material-gui-disabled, .selected-material-gui-disabled {
 			display: none !important;
+		}
+		
+		/* 文件夹及按键文本不溢出 */
+		.lil-gui .controller {
+			max-width: 100%;
+			overflow: hidden;
+		}
+		.lil-gui .controller .property-name {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		.lil-gui button {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 100%;
+		}
+		.lil-gui .folder {
+			margin-left: 8px;
 		}
 		
 		/* 动画*/
@@ -557,8 +577,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						<option value="Bottom">Bottom</option>
 					</select>
                     <button id="new-camera-btn" class="compact-btn" title="New Camera">📷</button>
-					<button id="center-to-object-btn" title="Move Camera to Scene Center">👁️</button>
-					<button id="focus-to-object-btn" title="Set Near and Far Clip Plane to Scene Depth">📐</button>
+					<button id="center-to-object-btn" title="Move Camera to Object Center">👁️</button>
+					<button id="focus-to-object-btn" title="Set Near and Far Clip Plane to Object Depth">📐</button>
                 </div>
                 <div class="separator">|</div>
                 
@@ -631,6 +651,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 		import * as fflate from 'three/addons/libs/fflate.module.js';
 		import JSZip from 'jszip';
 
+		// 路径工具
 		class PathUtils {
 			// 通用清理路径
 			static cleanTextureUrl(url) {
@@ -781,6 +802,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 		}
 
+		// 载入提示管理
 		class LoadingProgressManager {
 			constructor(viewer) {
 				this.viewer = viewer;
@@ -853,6 +875,2007 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 		}
 
+		// 贴图管理
+		class TextureManager {
+			constructor(viewer) {
+				this.viewer = viewer;
+				this.textureLoader = new THREE.TextureLoader();
+			}
+
+			async loadTexture(material, propertyName, isColorMap = false) {
+				return new Promise((resolve, reject) => {
+					try {
+						const input = document.createElement('input');
+						input.type = 'file';
+						input.accept = 'image/*';
+						input.style.display = 'none';
+						
+						const cleanup = () => {
+							if (document.body.contains(input)) {
+								document.body.removeChild(input);
+							}
+						};
+						
+						input.onchange = async (e) => {
+							const file = e.target.files[0];
+							if (!file) {
+								cleanup();
+								reject(new Error('No file selected'));
+								return;
+							}
+							
+							try {
+								const reader = new FileReader();
+								
+								reader.onload = (event) => {
+									const image = new Image();
+									
+									image.onload = () => {
+										const texture = new THREE.Texture(image);
+										
+										// 关键设置：立即更新纹理
+										texture.needsUpdate = true;
+										
+										// 设置编码
+										texture.encoding = isColorMap ? 
+											THREE.sRGBEncoding : 
+											THREE.LinearEncoding;
+										
+										// 保存文件名到userData
+										texture.userData = texture.userData || {};
+										texture.userData.filename = file.name;
+										
+										// 应用到材质
+										material[propertyName] = texture;  // 重要：立即应用到材质
+										
+										// 保存到缓存
+										if (!material._textureCache) {
+											material._textureCache = {};
+										}
+										material._textureCache[propertyName] = texture;
+										
+										// 设置默认参数
+										this.setDefaultTextureParameters(material, propertyName);
+										
+										// 强制材质更新
+										material.needsUpdate = true;
+										
+										cleanup();
+										resolve(texture);
+									};
+									
+									image.onerror = () => {
+										cleanup();
+										reject(new Error('Failed to load image'));
+									};
+									
+									image.src = event.target.result;
+								};
+								
+								reader.onerror = () => {
+									cleanup();
+									reject(new Error('Failed to read file'));
+								};
+								
+								reader.readAsDataURL(file);
+							} catch (error) {
+								cleanup();
+								reject(error);
+							}
+						};
+						
+						// 添加取消处理
+						input.oncancel = () => {
+							cleanup();
+							reject(new Error('File selection cancelled'));
+						};
+						
+						// 添加到DOM并触发点击
+						document.body.appendChild(input);
+						input.click();
+						
+					} catch (error) {
+						reject(error);
+					}
+				});
+			}
+
+			toggleTexture(material, propertyName, enabled) {
+				if (!material._textureCache) {
+					material._textureCache = {};
+				}
+				
+				if (enabled) {
+					// 从缓存中恢复贴图（需要确保缓存中有贴图）
+					if (material._textureCache[propertyName]) {
+						material[propertyName] = material._textureCache[propertyName];
+						// 确保纹理已更新
+						if (material[propertyName]) {
+							material[propertyName].needsUpdate = true;
+						}
+					} else {
+						// 如果没有贴图文件，保持null
+						material[propertyName] = null;
+					}
+				} else {
+					// 禁用贴图，但保留在缓存中（不删除贴图文件）
+					material[propertyName] = null;
+				}
+				
+				material.needsUpdate = true;
+			}
+
+			removeTexture(material, propertyName) {
+				// 从材质中移除贴图应用
+				const texture = material[propertyName];
+				material[propertyName] = null;
+				
+				// 从缓存中移除贴图
+				if (material._textureCache && material._textureCache[propertyName]) {
+					// 释放纹理资源
+					const cachedTexture = material._textureCache[propertyName];
+					if (cachedTexture.dispose) {
+						cachedTexture.dispose();
+					}
+					delete material._textureCache[propertyName];
+				}
+				
+				// 重置相关参数
+				this.resetTextureParameters(material, propertyName);
+				
+				material.needsUpdate = true;
+			}
+
+			setDefaultTextureParameters(material, propertyName) {
+				switch (propertyName) {
+					case 'normalMap':
+						if (!material.normalScale) {
+							material.normalScale = new THREE.Vector2(1, 1);
+						}
+						break;
+					case 'bumpMap':
+						if (material.bumpScale === undefined) {
+							material.bumpScale = 1;
+						}
+						break;
+					case 'aoMap':
+						if (material.aoMapIntensity === undefined) {
+							material.aoMapIntensity = 1;
+						}
+						break;
+					case 'displacementMap':
+						if (material.displacementScale === undefined) {
+							material.displacementScale = 1;
+						}
+						if (material.displacementBias === undefined) {
+							material.displacementBias = 0;
+						}
+						break;
+				}
+			}
+
+			resetTextureParameters(material, propertyName) {
+				switch (propertyName) {
+					case 'normalMap':
+						material.normalScale = new THREE.Vector2(1, 1);
+						break;
+					case 'bumpMap':
+						material.bumpScale = 1;
+						break;
+					case 'aoMap':
+						material.aoMapIntensity = 1;
+						break;
+					case 'displacementMap':
+						material.displacementScale = 1;
+						material.displacementBias = 0;
+						break;
+				}
+			}
+
+			disposeMaterialTextures(material) {
+				if (!material) return;
+				
+				// 清理缓存中的纹理
+				if (material._textureCache) {
+					Object.keys(material._textureCache).forEach(key => {
+						const texture = material._textureCache[key];
+						if (texture && texture.dispose) {
+							texture.dispose();
+						}
+					});
+					material._textureCache = {};
+				}
+				
+				// 清理材质中直接引用的纹理
+				const textureProperties = [
+					'map', 'roughnessMap', 'metalnessMap', 'emissiveMap',
+					'normalMap', 'bumpMap', 'aoMap', 'displacementMap',
+					'alphaMap', 'lightMap', 'envMap', 'specularMap',
+					'alphaMap', 'transmissionMap', 'thicknessMap', 'sheenColorMap'
+				];
+				
+				textureProperties.forEach(prop => {
+					if (material[prop] && material[prop].dispose) {
+						material[prop].dispose();
+						material[prop] = null;
+					}
+				});
+				
+				// 重置相关参数
+				this.resetAllTextureParameters(material);
+			}
+			
+			resetAllTextureParameters(material) {
+				if (material.normalScale) material.normalScale.set(1, 1);
+				if (material.bumpScale !== undefined) material.bumpScale = 1;
+				if (material.aoMapIntensity !== undefined) material.aoMapIntensity = 1;
+				if (material.emissiveIntensity !== undefined) material.emissiveIntensity = 1;
+				if (material.displacementScale !== undefined) material.displacementScale = 1;
+				if (material.displacementBias !== undefined) material.displacementBias = 0;
+				if (material.envMapIntensity !== undefined) material.envMapIntensity = 1;
+				if (material.transmission !== undefined) material.transmission = 0;
+				if (material.thickness !== undefined) material.thickness = 0;
+			}
+		}
+
+		// zip虚拟环境
+		class ZipVirtualFileSystem {
+			constructor(zip) {
+				this.zip = zip;
+				this.blobUrls = new Map();
+				this.fileNameIndex = new Map();
+				this.pendingRequests = new Map();
+				
+				// 初始化文件名索引
+				this._initFileNameIndex();
+			}
+
+			// 初始化文件名索引
+			_initFileNameIndex() {
+				if (this.fileNameIndex.size === 0) {
+					for (const filePath of Object.keys(this.zip.files)) {
+						const fileName = PathUtils.getFileName(filePath);
+						if (!this.fileNameIndex.has(fileName)) {
+							this.fileNameIndex.set(fileName, filePath);
+						} else {
+							// 如果文件名有重复，记录警告
+							console.log(\"Duplicated filenames: \" + fileName + \", choose the first file\");
+						}
+					}
+				}
+			}
+
+			findFilePath(originalPath, basePath = null) {
+				// 1. 清洗路径
+				let cleanedPath = PathUtils.cleanPath(originalPath);
+				
+				// 2. 尝试直接路径
+				if (this.zip.file(cleanedPath)) {
+					return cleanedPath;
+				}
+				
+				// 3. 尝试相对路径（如果有基础路径）
+				if (basePath) {
+					const baseDir = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+					const relativePath = PathUtils.joinPaths(baseDir, cleanedPath);
+					if (this.zip.file(relativePath)) {
+						return relativePath;
+					}
+				}
+				
+				// 4. 尝试只使用文件名
+				const fileName = PathUtils.getFileName(cleanedPath);
+				
+				// 确保文件名索引已初始化
+				this.initFileNameIndex();
+				
+				if (this.fileNameIndex.has(fileName)) {
+					return this.fileNameIndex.get(fileName);
+				}
+				
+				// 5. 尝试在ZIP中搜索（递归）
+				return this.searchFileInZip(zip, fileName);
+			}
+
+			// 递归搜索文件
+			searchFileInZip(zip, fileName) {
+				for (const filePath of Object.keys(zip.files)) {
+					const currentFileName = PathUtils.getFileName(filePath);
+					if (currentFileName.toLowerCase() === fileName.toLowerCase()) {
+						return filePath;
+					}
+				}
+				return null;
+			}
+
+			// 获取文件为Blob URL
+			async getBlobUrl(filePath, basePath = null) {
+				let actualPath = filePath;
+				
+				// 如果是相对路径，尝试查找
+				if (!this.zip.file(filePath) && basePath) {
+					actualPath = this.findFilePath(filePath, basePath);
+				}
+				
+				if (!actualPath) {
+					throw new Error("File not found in ZIP: " + filePath);
+				}
+				
+				// 检查是否有正在进行的请求
+				if (this.pendingRequests && this.pendingRequests.has(actualPath)) {
+					return await this.pendingRequests.get(actualPath);
+				}
+				
+				// 检查是否有缓存的blob URL
+				if (this.blobUrls.has(actualPath)) {
+					return this.blobUrls.get(actualPath);
+				}
+				
+				// 创建请求Promise
+				const requestPromise = (async () => {
+					const file = this.zip.file(actualPath);
+					if (!file) {
+						throw new Error("File not found in ZIP: " + actualPath);
+					}
+					
+					const blob = await file.async('blob');
+					const url = URL.createObjectURL(blob);
+					this.blobUrls.set(actualPath, url);
+					
+					// 请求完成后从pendingRequests中移除
+					if (this.pendingRequests) {
+						this.pendingRequests.delete(actualPath);
+					}
+					
+					return url;
+				})();
+				
+				// 保存到进行中的请求
+				if (!this.pendingRequests) {
+					this.pendingRequests = new Map();
+				}
+				this.pendingRequests.set(actualPath, requestPromise);
+				
+				return requestPromise;
+			}
+
+			// 获取文件为ArrayBuffer
+			async getArrayBuffer(filePath) {
+				const file = this.zip.file(filePath);
+				if (!file) {
+					throw new Error(\"File not found in ZIP: \" + filePath);
+				}
+				return await file.async('arraybuffer');
+			}
+
+			// 获取文件为文本
+			async getText(filePath) {
+				const file = this.zip.file(filePath);
+				if (!file) {
+					throw new Error(\"File not found in ZIP: \" + filePath);
+				}
+				return await file.async('text');
+			}
+
+			// 清理所有Blob URL
+			dispose() {
+				this.blobUrls.forEach(url => {
+					if (url && url.startsWith('blob:')) {
+						URL.revokeObjectURL(url);
+					}
+				});
+				this.blobUrls.clear();
+				this.fileNameIndex.clear();
+				this.pendingRequests.clear();
+			}
+		}
+
+		// fbx材质与贴图对应
+		class FBXMappingExtractor {
+			constructor() {
+				this.materialTextureMap = new Map();
+			}
+
+			extractFromBuffer(buffer) {
+				try {
+					const isBinary = this.isFbxFormatBinary(buffer);
+					
+					if (isBinary) {
+						return this.extractFromBinaryBuffer(buffer);
+					} else {
+						const text = this.convertArrayBufferToString(buffer);
+						const isASCII = this.isFbxFormatASCII(text);
+						
+						if (isASCII) {
+							return this.extractFromAsciiText(text);
+						} else {
+							throw new Error('Unknown FBX format');
+						}
+					}
+				} catch (error) {
+					console.log('FBX Mapping Extraction failed:', error);
+					return new Map();
+				}
+			}
+
+			isFbxFormatBinary(buffer) {
+				const CORRECT = 'Kaydara\\u0020FBX\\u0020Binary\\u0020\\u0020\\0';
+				return buffer.byteLength >= CORRECT.length && CORRECT === this.convertArrayBufferToString(buffer, 0, CORRECT.length);
+			}
+
+			isFbxFormatASCII(text) {
+				const CORRECT = ['K', 'a', 'y', 'd', 'a', 'r', 'a', '\\\\', 'F', 'B', 'X', '\\\\', 'B', 'i', 'n', 'a', 'r', 'y', '\\\\', '\\\\'];
+				let cursor = 0;
+				function read(offset) {
+					const result = text[offset - 1];
+					text = text.slice(cursor + offset);
+					cursor++;
+					return result;
+				}
+				for (let i = 0; i < CORRECT.length; ++i) {
+					const num = read(1);
+					if (num === CORRECT[i]) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			convertArrayBufferToString(buffer, from, to) {
+				if (from === undefined) from = 0;
+				if (to === undefined) to = buffer.byteLength;
+				return new TextDecoder().decode(new Uint8Array(buffer, from, to));
+			}
+
+			extractFromBinaryBuffer(buffer) {
+				try {
+					// 使用简化的解析器
+					const parser = new BinaryFBXParser();
+					const result = parser.parse(buffer);
+					
+					// 检查是否有Objects和Connections
+					if (result.Objects && result.Connections) {
+						// 提取关键信息
+						const materials = this.extractMaterialsBinary(result.Objects);
+						const textures = this.extractTexturesBinary(result.Objects);
+						const videos = this.extractVideosBinary(result.Objects);
+						const connections = this.parseConnectionsBinary(result.Connections);
+						
+						// 建立映射
+						const materialTextureMap = new Map();
+						this.buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap);
+						
+						return materialTextureMap;
+					} else {
+						console.log('Objects or Connections not found');
+						return new Map();
+					}
+					
+				} catch (error) {
+					console.log('Parse Binary FBX failed:', error);
+					return new Map();
+				}
+			}
+
+			extractFromAsciiText(text) {
+				try {
+					// 使用官方的解析逻辑
+					const parser = new AsciiFBXParser();
+					const fbxTree = parser.parse(text);
+					
+					// 直接提取材质-纹理映射（原extractMappingsFromFBXTree的逻辑）
+					const materialTextureMap = new Map();
+					
+					// 检查是否有Objects和Connections
+					if (!fbxTree.Objects || !fbxTree.Connections) {
+						return materialTextureMap;
+					}
+					
+					// 1. 提取材质、纹理、视频信息
+					const materials = this.extractMaterialsAscii(fbxTree.Objects);
+					const textures = this.extractTexturesAscii(fbxTree.Objects);
+					const videos = this.extractVideosAscii(fbxTree.Objects);
+					const connections = this.parseConnectionsAscii(fbxTree.Connections);
+					
+					// 2. 建立映射关系
+					this.buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap);
+					
+					return materialTextureMap;
+				} catch (error) {
+					console.log('Parse ASCII FBX failed:', error, error.stack);
+					return new Map();
+				}
+			}
+
+			extractMaterialsBinary(objectsNode) {
+				const materials = new Map();
+				
+				if (objectsNode && objectsNode.Material) {
+					// Binary FBX 的 Material 是一个对象，键为ID，值为节点
+					for (const id in objectsNode.Material) {
+						const matNode = objectsNode.Material[id];
+						const nodeId = parseInt(id);
+						
+						// 从节点属性中获取材质名称
+						let materialName = matNode.attrName || 'Material_' + id;
+						
+						materials.set(nodeId, {
+							id: nodeId,
+							name: materialName,
+							shortName: this.getShortMaterialName(materialName)
+						});
+					}
+				}
+				
+				return materials;
+			}
+
+			extractTexturesBinary(objectsNode) {
+				const textures = new Map();
+				
+				if (objectsNode && objectsNode.Texture) {
+					for (const id in objectsNode.Texture) {
+						const texNode = objectsNode.Texture[id];
+						const texture = {
+							id: parseInt(id),
+							name: texNode.attrName || 'Texture_' + id,
+							fileName: '',
+							mediaRef: null
+						};
+						
+						// 获取文件名
+						if (texNode.FileName) {
+							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.FileName);
+						} else if (texNode.RelativeFilename) {
+							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.RelativeFilename);
+						}
+						
+						// 获取媒体引用
+						if (texNode.Media) {
+							texture.mediaRef = texNode.Media;
+						}
+						
+						textures.set(parseInt(id), texture);
+					}
+				}
+				
+				return textures;
+			}
+
+			extractVideosBinary(objectsNode) {
+				const videos = new Map();
+				
+				if (objectsNode && objectsNode.Video) {
+					for (const id in objectsNode.Video) {
+						const vidNode = objectsNode.Video[id];
+						const video = {
+							id: parseInt(id),
+							name: vidNode.attrName || 'Video_' + id,
+							fileName: ''
+						};
+						
+						// 获取文件名
+						if (vidNode.Filename) {
+							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.Filename);
+						} else if (vidNode.RelativeFilename) {
+							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.RelativeFilename);
+						}
+						
+						videos.set(parseInt(id), video);
+					}
+				}
+				
+				return videos;
+			}
+
+			parseConnectionsBinary(connectionsNode) {
+				const connections = [];
+				
+				if (connectionsNode && connectionsNode.connections) {
+					// Binary FBX 的 connections 是一个二维数组
+					connectionsNode.connections.forEach(connArray => {
+						// 连接格式: [fromId, toId, relation, ...rest]
+						if (connArray.length >= 3) {
+							const connection = {
+								fromId: connArray[0],
+								toId: connArray[1],
+								relation: connArray[2] || ''
+							};
+							
+							// 如果有额外参数（如属性名）
+							if (connArray.length > 3) {
+								connection.property = connArray[3];
+							}
+							
+							connections.push(connection);
+						}
+					});
+				}
+				
+				return connections;
+			}
+
+			extractMaterialsAscii(objectsNode) {
+				const materials = new Map();
+				
+				if (objectsNode.Material) {
+					for (const id in objectsNode.Material) {
+						const matNode = objectsNode.Material[id];
+						const nodeId = parseInt(id);
+						
+						// 从节点属性中获取材质名称
+						let materialName = matNode.attrName || 'Material_' + id;
+						
+						materials.set(nodeId, {
+							id: nodeId,
+							name: materialName,
+							shortName: this.getShortMaterialName(materialName)
+						});
+					}
+				}
+				
+				return materials;
+			}
+
+			extractTexturesAscii(objectsNode) {
+				const textures = new Map();
+				
+				if (objectsNode.Texture) {
+					for (const id in objectsNode.Texture) {
+						const texNode = objectsNode.Texture[id];
+						const texture = {
+							id: parseInt(id),
+							name: texNode.attrName || 'Texture_' + id,
+							fileName: '',
+							mediaRef: null
+						};
+						
+						// 获取文件名
+						if (texNode.FileName) {
+							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.FileName);
+						} else if (texNode.RelativeFilename) {
+							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.RelativeFilename);
+						}
+						
+						// 获取媒体引用
+						if (texNode.Media) {
+							texture.mediaRef = texNode.Media;
+						}
+						
+						textures.set(parseInt(id), texture);
+					}
+				}
+				
+				return textures;
+			}
+
+			extractVideosAscii(objectsNode) {
+				const videos = new Map();
+				
+				if (objectsNode.Video) {
+					for (const id in objectsNode.Video) {
+						const vidNode = objectsNode.Video[id];
+						const video = {
+							id: parseInt(id),
+							name: vidNode.attrName || 'Video_' + id,
+							fileName: ''
+						};
+						
+						// 获取文件名
+						if (vidNode.Filename) {
+							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.Filename);
+						} else if (vidNode.RelativeFilename) {
+							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.RelativeFilename);
+						}
+						
+						videos.set(parseInt(id), video);
+					}
+				}
+				
+				return videos;
+			}
+
+			parseConnectionsAscii(connectionsNode) {
+				const connections = [];
+				
+				if (connectionsNode.connections) {
+					connectionsNode.connections.forEach(conn => {
+						// 连接格式: [fromId, toId, relation, ...rest]
+						if (conn.length >= 3) {
+							const connection = {
+								fromId: conn[0],
+								toId: conn[1],
+								relation: conn[2] || ''
+							};
+							
+							// 如果有额外参数（如属性名）
+							if (conn.length > 3) {
+								connection.property = conn[3];
+							}
+							
+							connections.push(connection);
+						}
+					});
+				}
+				
+				return connections;
+			}
+
+			buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap) {
+				// 1. 先建立视频到文件名的映射
+				const videoFileMap = new Map();
+				videos.forEach(video => {
+					if (video.fileName) {
+						videoFileMap.set(video.id, video.fileName);
+					}
+				});
+				
+				// 2. 建立纹理到视频的映射（通过OO连接）
+				const textureToVideoMap = new Map();
+				connections.forEach(conn => {
+					// OO连接：视频 -> 纹理
+					if (conn.relation === 'OO') {
+						const video = videos.get(conn.fromId);
+						const texture = textures.get(conn.toId);
+						
+						if (video && texture) {
+							textureToVideoMap.set(texture.id, video.id);
+							
+							// 如果视频有文件名，复制给纹理
+							if (video.fileName) {
+								texture.fileName = video.fileName;
+							}
+						}
+					}
+				});
+				
+				// 3. 处理OP连接：纹理 -> 材质
+				connections.forEach(conn => {
+					// OP连接：纹理 -> 材质（属性连接）
+					if (conn.relation === 'OP' && conn.property) {
+						const texture = textures.get(conn.fromId);
+						const material = materials.get(conn.toId);
+						
+						if (texture && material) {
+							// 获取纹理的文件名
+							let fileName = texture.fileName;
+							
+							// 如果纹理没有文件名，查找关联的视频
+							if (!fileName && textureToVideoMap.has(texture.id)) {
+								const videoId = textureToVideoMap.get(texture.id);
+								const video = videos.get(videoId);
+								if (video && video.fileName) {
+									fileName = video.fileName;
+								}
+							}
+							
+							if (fileName) {
+								// 根据属性推断纹理类型
+								const texType = this.inferTextureTypeFromProperty(conn.property);
+								const threeJsProp = this.mapTextureTypeToThreeJs(texType);
+								
+								// 使用材质的简短名称
+								const materialKey = material.shortName || material.name;
+								
+								if (!materialTextureMap.has(materialKey)) {
+									materialTextureMap.set(materialKey, new Map());
+								}
+								
+								materialTextureMap.get(materialKey).set(threeJsProp, {
+									textureId: texture.id,
+									textureName: texture.name,
+									imageFilename: fileName,
+									textureType: texType,
+									property: conn.property
+								});
+								
+							} else {
+								console.log('  Cannot find ' + texture.id + ' texture file');
+							}
+						}
+					}
+				});
+				
+				// 4. 如果没有找到映射，尝试回退方法
+				if (materialTextureMap.size === 0) {
+					this.tryFallbackMappings(materials, textures, videos, materialTextureMap);
+				}
+			}
+
+			tryFallbackMappings(materials, textures, videos, materialTextureMap) {
+				const materialArray = Array.from(materials.values());
+				const textureArray = Array.from(textures.values());
+				const videoArray = Array.from(videos.values());
+				
+				// 尝试按顺序映射
+				for (let i = 0; i < materialArray.length; i++) {
+					const material = materialArray[i];
+					const materialKey = material.shortName || material.name;
+					
+					// 首先尝试使用纹理
+					if (i < textureArray.length) {
+						const texture = textureArray[i];
+						let fileName = texture.fileName;
+						
+						// 如果纹理没有文件名，尝试使用视频
+						if (!fileName && i < videoArray.length) {
+							fileName = videoArray[i].fileName;
+						}
+						
+						if (fileName) {
+							const texType = this.inferTextureTypeFromName(texture.name);
+							const threeJsProp = this.mapTextureTypeToThreeJs(texType);
+							
+							materialTextureMap.set(materialKey, new Map());
+							materialTextureMap.get(materialKey).set(threeJsProp, {
+								textureId: texture.id,
+								textureName: texture.name,
+								imageFilename: fileName,
+								textureType: texType
+							});
+						}
+					} else if (i < videoArray.length) {
+						// 如果没有纹理，直接使用视频
+						const video = videoArray[i];
+						const texType = this.inferTextureTypeFromName(video.name);
+						const threeJsProp = this.mapTextureTypeToThreeJs(texType);
+						
+						materialTextureMap.set(materialKey, new Map());
+						materialTextureMap.get(materialKey).set(threeJsProp, {
+							imageFilename: video.fileName,
+							textureType: texType
+						});
+					}
+				}
+			}
+
+			inferTextureTypeFromProperty(property) {
+				const propertyMap = {
+					'DiffuseColor': 'diffuse',
+					'DiffuseFactor': 'diffuse',
+					'SpecularColor': 'specular',
+					'SpecularFactor': 'specular',
+					'NormalMap': 'normal',
+					'Bump': 'normal',
+					'EmissiveColor': 'emissive',
+					'EmissiveFactor': 'emissive',
+					'TransparentColor': 'opacity',
+					'TransparencyFactor': 'opacity',
+					'ReflectionColor': 'reflection',
+					'ShininessExponent': 'roughness',
+					'Roughness': 'roughness',
+					'Metalness': 'metalness',
+					'AmbientColor': 'ambientOcclusion',
+					'AmbientFactor': 'ambientOcclusion'
+				};
+				
+				return propertyMap[property] || 'diffuse';
+			}
+
+			inferTextureTypeFromName(name) {
+				if (!name) return 'diffuse';
+				
+				const lowerName = name.toLowerCase();
+				
+				if (lowerName.includes('diffuse') || lowerName.includes('basecolor') || lowerName.includes('color')) {
+					return 'diffuse';
+				} else if (lowerName.includes('normal')) {
+					return 'normal';
+				} else if (lowerName.includes('specular')) {
+					return 'specular';
+				} else if (lowerName.includes('roughness')) {
+					return 'roughness';
+				} else if (lowerName.includes('metalness') || lowerName.includes('metallic')) {
+					return 'metalness';
+				} else if (lowerName.includes('emissive')) {
+					return 'emissive';
+				} else if (lowerName.includes('opacity') || lowerName.includes('alpha')) {
+					return 'opacity';
+				} else if (lowerName.includes('ao') || lowerName.includes('ambient') || lowerName.includes('occlusion')) {
+					return 'ambientOcclusion';
+				}
+				
+				return 'diffuse';
+			}
+
+			mapTextureTypeToThreeJs(textureType) {
+				const mapping = {
+					'diffuse': 'map',
+					'normal': 'normalMap',
+					'specular': 'specularMap',
+					'roughness': 'roughnessMap',
+					'metalness': 'metalnessMap',
+					'emissive': 'emissiveMap',
+					'opacity': 'alphaMap',
+					'ambientOcclusion': 'aoMap'
+				};
+				
+				return mapping[textureType] || 'map';
+			}
+
+			getShortMaterialName(fullName) {
+				if (!fullName) return '';
+				
+				 // 移除"Material::"
+				if (fullName.startsWith('Material::')) {
+					return fullName.substring(10);
+				}
+				
+				return fullName;
+			}
+		}
+
+		class FBXTree {
+			add( key, val ) {
+				this[ key ] = val;
+			}
+		}
+
+		class BinaryFBXParser {
+			parse( buffer ) {
+				const reader = new BinaryFBXReader( buffer );
+				reader.skip( 23 ); // skip magic 23 bytes
+				const version = reader.getUint32();
+				if ( version < 6400 ) {
+					throw new Error( 'THREE.FBXLoader: FBX version not supported, FileVersion: ' + version );
+				}
+				const allNodes = new FBXTree();
+				while ( ! this.endOfContent( reader ) ) {
+					const node = this.parseNode( reader, version );
+					if ( node !== null ) allNodes.add( node.name, node );
+				}
+				return allNodes;
+			}
+			// Check if reader has reached the end of content.
+			endOfContent( reader ) {
+				// footer size: 160bytes + 16-byte alignment padding
+				// - 16bytes: magic
+				// - padding til 16-byte alignment (at least 1byte?)
+				//	(seems like some exporters embed fixed 15 or 16bytes?)
+				// - 4bytes: magic
+				// - 4bytes: version
+				// - 120bytes: zero
+				// - 16bytes: magic
+				if ( reader.size() % 16 === 0 ) {
+					return ( ( reader.getOffset() + 160 + 16 ) & ~ 0xf ) >= reader.size();
+				} else {
+					return reader.getOffset() + 160 + 16 >= reader.size();
+				}
+			}
+			// recursively parse nodes until the end of the file is reached
+			parseNode( reader, version ) {
+				const node = {};
+				// The first three data sizes depends on version.
+				const endOffset = ( version >= 7500 ) ? reader.getUint64() : reader.getUint32();
+				const numProperties = ( version >= 7500 ) ? reader.getUint64() : reader.getUint32();
+				( version >= 7500 ) ? reader.getUint64() : reader.getUint32(); // the returned propertyListLen is not used
+				const nameLen = reader.getUint8();
+				const name = reader.getString( nameLen );
+				// Regards this node as NULL-record if endOffset is zero
+				if ( endOffset === 0 ) return null;
+				const propertyList = [];
+				for ( let i = 0; i < numProperties; i ++ ) {
+					propertyList.push( this.parseProperty( reader ) );
+				}
+				// Regards the first three elements in propertyList as id, attrName, and attrType
+				const id = propertyList.length > 0 ? propertyList[ 0 ] : '';
+				const attrName = propertyList.length > 1 ? propertyList[ 1 ] : '';
+				const attrType = propertyList.length > 2 ? propertyList[ 2 ] : '';
+				// check if this node represents just a single property
+				// like (name, 0) set or (name2, [0, 1, 2]) set of {name: 0, name2: [0, 1, 2]}
+				node.singleProperty = ( numProperties === 1 && reader.getOffset() === endOffset ) ? true : false;
+				while ( endOffset > reader.getOffset() ) {
+					const subNode = this.parseNode( reader, version );
+					if ( subNode !== null ) this.parseSubNode( name, node, subNode );
+				}
+				node.propertyList = propertyList; // raw property list used by parent
+				if ( typeof id === 'number' ) node.id = id;
+				if ( attrName !== '' ) node.attrName = attrName;
+				if ( attrType !== '' ) node.attrType = attrType;
+				if ( name !== '' ) node.name = name;
+				return node;
+			}
+			parseSubNode( name, node, subNode ) {
+				// special case: child node is single property
+				if ( subNode.singleProperty === true ) {
+					const value = subNode.propertyList[ 0 ];
+					if ( Array.isArray( value ) ) {
+						node[ subNode.name ] = subNode;
+						subNode.a = value;
+					} else {
+						node[ subNode.name ] = value;
+					}
+				} else if ( name === 'Connections' && subNode.name === 'C' ) {
+					const array = [];
+					subNode.propertyList.forEach( function ( property, i ) {
+						// first Connection is FBX type (OO, OP, etc.). We'll discard these
+						if ( i !== 0 ) array.push( property );
+					} );
+					if ( node.connections === undefined ) {
+						node.connections = [];
+					}
+					node.connections.push( array );
+				} else if ( subNode.name === 'Properties70' ) {
+					const keys = Object.keys( subNode );
+					keys.forEach( function ( key ) {
+						node[ key ] = subNode[ key ];
+					} );
+				} else if ( name === 'Properties70' && subNode.name === 'P' ) {
+					let innerPropName = subNode.propertyList[ 0 ];
+					let innerPropType1 = subNode.propertyList[ 1 ];
+					const innerPropType2 = subNode.propertyList[ 2 ];
+					const innerPropFlag = subNode.propertyList[ 3 ];
+					let innerPropValue;
+					if ( innerPropName.indexOf( 'Lcl ' ) === 0 ) innerPropName = innerPropName.replace( 'Lcl ', 'Lcl_' );
+					if ( innerPropType1.indexOf( 'Lcl ' ) === 0 ) innerPropType1 = innerPropType1.replace( 'Lcl ', 'Lcl_' );
+					if ( innerPropType1 === 'Color' || innerPropType1 === 'ColorRGB' || innerPropType1 === 'Vector' || innerPropType1 === 'Vector3D' || innerPropType1.indexOf( 'Lcl_' ) === 0 ) {
+						innerPropValue = [
+							subNode.propertyList[ 4 ],
+							subNode.propertyList[ 5 ],
+							subNode.propertyList[ 6 ]
+						];
+					} else {
+						innerPropValue = subNode.propertyList[ 4 ];
+					}
+					// this will be copied to parent, see above
+					node[ innerPropName ] = {
+						'type': innerPropType1,
+						'type2': innerPropType2,
+						'flag': innerPropFlag,
+						'value': innerPropValue
+					};
+				} else if ( node[ subNode.name ] === undefined ) {
+					if ( typeof subNode.id === 'number' ) {
+						node[ subNode.name ] = {};
+						node[ subNode.name ][ subNode.id ] = subNode;
+					} else {
+						node[ subNode.name ] = subNode;
+					}
+				} else {
+					if ( subNode.name === 'PoseNode' ) {
+						if ( ! Array.isArray( node[ subNode.name ] ) ) {
+							node[ subNode.name ] = [ node[ subNode.name ] ];
+						}
+						node[ subNode.name ].push( subNode );
+					} else if ( node[ subNode.name ][ subNode.id ] === undefined ) {
+						node[ subNode.name ][ subNode.id ] = subNode;
+					}
+				}
+			}
+			parseProperty( reader ) {
+				const type = reader.getString( 1 );
+				let length;
+				switch ( type ) {
+					case 'C':
+						return reader.getBoolean();
+					case 'D':
+						return reader.getFloat64();
+					case 'F':
+						return reader.getFloat32();
+					case 'I':
+						return reader.getInt32();
+					case 'L':
+						return reader.getInt64();
+					case 'R':
+						length = reader.getUint32();
+						return reader.getArrayBuffer( length );
+					case 'S':
+						length = reader.getUint32();
+						return reader.getString( length );
+					case 'Y':
+						return reader.getInt16();
+					case 'b':
+					case 'c':
+					case 'd':
+					case 'f':
+					case 'i':
+					case 'l':
+						const arrayLength = reader.getUint32();
+						const encoding = reader.getUint32(); // 0: non-compressed, 1: compressed
+						const compressedLength = reader.getUint32();
+						if ( encoding === 0 ) {
+							switch ( type ) {
+								case 'b':
+								case 'c':
+									return reader.getBooleanArray( arrayLength );
+								case 'd':
+									return reader.getFloat64Array( arrayLength );
+								case 'f':
+									return reader.getFloat32Array( arrayLength );
+								case 'i':
+									return reader.getInt32Array( arrayLength );
+								case 'l':
+									return reader.getInt64Array( arrayLength );
+							}
+						}
+						const data = fflate.unzlibSync( new Uint8Array( reader.getArrayBuffer( compressedLength ) ) );
+						const reader2 = new BinaryFBXReader( data.buffer );
+						switch ( type ) {
+							case 'b':
+							case 'c':
+								return reader2.getBooleanArray( arrayLength );
+							case 'd':
+								return reader2.getFloat64Array( arrayLength );
+							case 'f':
+								return reader2.getFloat32Array( arrayLength );
+							case 'i':
+								return reader2.getInt32Array( arrayLength );
+							case 'l':
+								return reader2.getInt64Array( arrayLength );
+						}
+						break; // cannot happen but is required by the DeepScan
+					default:
+						throw new Error( 'THREE.FBXLoader: Unknown property type ' + type );
+				}
+			}
+		}
+
+		class BinaryFBXReader {
+			constructor( buffer, littleEndian ) {
+				this.dv = new DataView( buffer );
+				this.offset = 0;
+				this.littleEndian = ( littleEndian !== undefined ) ? littleEndian : true;
+				this._textDecoder = new TextDecoder();
+			}
+			getOffset() {
+				return this.offset;
+			}
+			size() {
+				return this.dv.buffer.byteLength;
+			}
+			skip( length ) {
+				this.offset += length;
+			}
+			// seems like true/false representation depends on exporter.
+			// true: 1 or 'Y'(=0x59), false: 0 or 'T'(=0x54)
+			// then sees LSB.
+			getBoolean() {
+				return ( this.getUint8() & 1 ) === 1;
+			}
+			getBooleanArray( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getBoolean() );
+				}
+				return a;
+			}
+			getUint8() {
+				const value = this.dv.getUint8( this.offset );
+				this.offset += 1;
+				return value;
+			}
+			getInt16() {
+				const value = this.dv.getInt16( this.offset, this.littleEndian );
+				this.offset += 2;
+				return value;
+			}
+			getInt32() {
+				const value = this.dv.getInt32( this.offset, this.littleEndian );
+				this.offset += 4;
+				return value;
+			}
+			getInt32Array( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getInt32() );
+				}
+				return a;
+			}
+			getUint32() {
+				const value = this.dv.getUint32( this.offset, this.littleEndian );
+				this.offset += 4;
+				return value;
+			}
+			// JavaScript doesn't support 64-bit integer so calculate this here
+			// 1 << 32 will return 1 so using multiply operation instead here.
+			// There's a possibility that this method returns wrong value if the value
+			// is out of the range between Number.MAX_SAFE_INTEGER and Number.MIN_SAFE_INTEGER.
+			// TODO: safely handle 64-bit integer
+			getInt64() {
+				let low, high;
+				if ( this.littleEndian ) {
+					low = this.getUint32();
+					high = this.getUint32();
+				} else {
+					high = this.getUint32();
+					low = this.getUint32();
+				}
+				// calculate negative value
+				if ( high & 0x80000000 ) {
+					high = ~ high & 0xFFFFFFFF;
+					low = ~ low & 0xFFFFFFFF;
+					if ( low === 0xFFFFFFFF ) high = ( high + 1 ) & 0xFFFFFFFF;
+					low = ( low + 1 ) & 0xFFFFFFFF;
+					return - ( high * 0x100000000 + low );
+				}
+				return high * 0x100000000 + low;
+			}
+			getInt64Array( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getInt64() );
+				}
+				return a;
+			}
+			// Note: see getInt64() comment
+			getUint64() {
+				let low, high;
+				if ( this.littleEndian ) {
+					low = this.getUint32();
+					high = this.getUint32();
+				} else {
+					high = this.getUint32();
+					low = this.getUint32();
+				}
+				return high * 0x100000000 + low;
+			}
+			getFloat32() {
+				const value = this.dv.getFloat32( this.offset, this.littleEndian );
+				this.offset += 4;
+				return value;
+			}
+			getFloat32Array( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getFloat32() );
+				}
+				return a;
+			}
+			getFloat64() {
+				const value = this.dv.getFloat64( this.offset, this.littleEndian );
+				this.offset += 8;
+				return value;
+			}
+			getFloat64Array( size ) {
+				const a = [];
+				for ( let i = 0; i < size; i ++ ) {
+					a.push( this.getFloat64() );
+				}
+				return a;
+			}
+			getArrayBuffer( size ) {
+				const value = this.dv.buffer.slice( this.offset, this.offset + size );
+				this.offset += size;
+				return value;
+			}
+			getString( size ) {
+				const start = this.offset;
+				let a = new Uint8Array( this.dv.buffer, start, size );
+				this.skip( size );
+				const nullByte = a.indexOf( 0 );
+				if ( nullByte >= 0 ) a = new Uint8Array( this.dv.buffer, start, nullByte );
+				return this._textDecoder.decode( a );
+			}
+			
+			setOffset(offset) {
+				if (offset >= 0 && offset <= this.size()) {
+					this.offset = offset;
+				} else {
+					this.offset = Math.max(0, Math.min(offset, this.size()));
+				}
+			}
+		}
+
+		class AsciiFBXParser {
+			constructor() {
+				this.currentIndent = 0;
+				this.allNodes = new FBXTree();
+				this.nodeStack = [];
+				this.currentProp = null;
+				this.currentPropName = '';
+			}
+			getPrevNode() {
+				return this.nodeStack[this.currentIndent - 2];
+			}
+			getCurrentNode() {
+				return this.nodeStack[this.currentIndent - 1];
+			}
+			pushStack(node) {
+				this.nodeStack.push(node);
+				this.currentIndent += 1;
+			}
+			popStack() {
+				this.nodeStack.pop();
+				this.currentIndent -= 1;
+			}
+			setCurrentProp(val, name) {
+				this.currentProp = val;
+				this.currentPropName = name;
+			}
+			parse(text) {
+				this.currentIndent = 0;
+				this.allNodes = {};
+				this.nodeStack = [];
+				this.currentProp = null;
+				this.currentPropName = '';
+				
+				const lines = text.split(/[\\r\\n]+/);
+				lines.forEach((line, i) => {
+					const matchComment = line.match( /^[\\s\\t]*;/ );
+					const matchEmpty = line.match( /^[\\s\\t]*$/ );
+					if ( matchComment || matchEmpty ) return;
+					const matchBeginning = line.match(new RegExp('^\\\\t{' + this.currentIndent + '}(\\\\w+):(.*)\\\\{'));
+					const matchProperty = line.match(new RegExp('^\\\\t{' + (this.currentIndent) + '}(\\\\w+):[\\\\s\\\\t\\\\r\\\\n](.*)'));
+					const matchEnd = line.match(new RegExp('^\\\\t{' + (this.currentIndent - 1) + '}\\\\}'));
+					if (matchBeginning) {
+						this.parseNodeBegin(line, matchBeginning);
+					} else if (matchProperty) {
+						this.parseNodeProperty(line, matchProperty, lines[i + 1]);
+					} else if (matchEnd) {
+						this.popStack();
+					} else if (line.match(/^[^\\s\\t}]/)) {
+						// large arrays are split over multiple lines terminated with a ',' character
+						// if this is encountered the line needs to be joined to the previous line
+						this.parseNodePropertyContinued(line);
+					}
+				});
+				return this.allNodes;
+			}
+			parseNodeBegin(line, match) {
+				const nodeName = match[1].trim().replace(/^"/, '').replace(/"$/, '');
+				const nodeAttrs = match[2].split(',').map(attr => {
+					return attr.trim().replace(/^"/, '').replace(/"$/, '');
+				});
+				const node = { name: nodeName };
+				const attrs = this.parseNodeAttr(nodeAttrs);
+				const currentNode = this.getCurrentNode();
+				if (this.currentIndent === 0) {
+					this.addNode(nodeName, node);
+				} else {
+					if (typeof attrs.id === 'number') {
+						if (!currentNode[nodeName]) {
+							currentNode[nodeName] = {};
+						}
+						currentNode[nodeName][attrs.id] = node;
+					} else {
+						currentNode[nodeName] = node;
+					}
+				}
+				if (typeof attrs.id === 'number') node.id = attrs.id;
+				if (attrs.name !== '') node.attrName = attrs.name;
+				if (attrs.type !== '') node.attrType = attrs.type;
+				this.pushStack(node);
+			}
+			parseNodeAttr(attrs) {
+				let id = attrs[0];
+				if (attrs[0] !== '') {
+					id = parseInt(attrs[0]);
+					if (isNaN(id)) {
+						id = attrs[0];
+					}
+				}
+				let name = '', type = '';
+				if (attrs.length > 1) {
+					name = attrs[1].replace(/^(\\\\w+)::/, '');
+					type = attrs[2];
+				}
+				return { id: id, name: name, type: type };
+			}
+			parseNodeProperty(line, match, nextLine) {
+				let propName = match[1].replace(/^"/, '').replace(/"$/, '').trim();
+				let propValue = match[2].replace(/^"/, '').replace(/"$/, '').trim();
+				if (propName === 'Content' && propValue === ',') {
+					propValue = nextLine.replace(/"/g, '').replace(/,$/, '').trim();
+				}
+				const currentNode = this.getCurrentNode();
+				const parentName = currentNode ? currentNode.name : '';
+				if (propName === 'C') {
+					const connProps = propValue.split(',').slice(1);
+					const from = parseInt(connProps[0]);
+					const to = parseInt(connProps[1]);
+					let rest = propValue.split(',').slice(3);
+					rest = rest.map(elem => {
+						return elem.trim().replace(/^"/, '');
+					});
+					propName = 'connections';
+					propValue = [from, to];
+					if (rest.length > 0) {
+						propValue = propValue.concat(rest);
+					}
+					if (!currentNode[propName]) {
+						currentNode[propName] = [];
+					}
+					currentNode[propName].push(propValue);
+				} else {
+					currentNode[propName] = propValue;
+				}
+				this.setCurrentProp(currentNode, propName);
+			}
+			parseNodePropertyContinued(line) {
+				const currentNode = this.getCurrentNode();
+				if (currentNode && currentNode.a !== undefined) {
+					currentNode.a += line;
+					if (line.slice(-1) !== ',') {
+						currentNode.a = this.parseNumberArray(currentNode.a);
+					}
+				}
+			}
+			parseNumberArray(str) {
+				try {
+					return str.split(',').map(num => parseFloat(num.trim()));
+				} catch (e) {
+					return str;
+				}
+			}
+			addNode(name, node) {
+				this.allNodes[name] = node;
+			}
+		}
+
+		// zip环境MTL解析
+		class MTLParser {
+			constructor() {
+				// 支持的材质属性映射
+				this.supportedProperties = [
+					// 颜色属性
+					'Ka', 'Kd', 'Ks', 'Ke', 'Tf',
+					// 标量属性
+					'Ns', 'Ni', 'd', 'Tr', 'illum',
+					// 纹理属性
+					'map_Ka', 'map_Kd', 'map_Ks', 'map_Ke', 
+					'map_Ns', 'map_d', 'map_bump', 'bump', 'norm'
+				];
+				
+				// 纹理参数关键字
+				this.textureParamKeywords = ['-s', '-o', '-bm', '-clamp', '-mm'];
+			}
+
+			// 解析MTL文本，返回材质信息对象
+			parseMTLText(mtlText) {
+				const materials = {};
+				const lines = mtlText.split('\\n');
+				let currentMaterial = null;
+				
+				for (let i = 0; i < lines.length; i++) {
+					const line = lines[i].trim();
+					
+					// 跳过空行和注释
+					if (!line || line.startsWith('#')) {
+						continue;
+					}
+					
+					// 处理行
+					this.parseLine(line, materials, currentMaterial);
+					
+					// 更新当前材质引用
+					if (materials.current) {
+						currentMaterial = materials.current;
+						delete materials.current;
+					}
+				}
+				return materials;
+			}
+
+			// 解析单行MTL内容
+			parseLine(line, materials, currentMaterial) {
+				const parts = line.split(/\\s+/);
+				const keyword = parts[0];
+				
+				// 新材质定义
+				if (keyword.toLowerCase() === 'newmtl') {
+					if (parts.length < 2) {
+						return;
+					}
+					
+					const materialName = parts[1];
+					materials[materialName] = this.createDefaultMaterialInfo(materialName);
+					materials.current = materials[materialName];
+				}
+				// 颜色属性 (Ka, Kd, Ks, Ke)
+				else if (keyword.toLowerCase() === 'ka' || 
+						 keyword.toLowerCase() === 'kd' || 
+						 keyword.toLowerCase() === 'ks' || 
+						 keyword.toLowerCase() === 'ke' ||
+						 keyword.toLowerCase() === 'tf') {
+					this.parseColorProperty(line, keyword, currentMaterial);
+				}
+				// 标量属性 (Ns, Ni, d, Tr, illum) - 修正这里
+				else if (keyword.toLowerCase() === 'ns') {
+					this.parseScalarProperty(line, 'Ns', currentMaterial);
+				}
+				else if (keyword.toLowerCase() === 'ni') {
+					this.parseScalarProperty(line, 'Ni', currentMaterial);
+				}
+				else if (keyword.toLowerCase() === 'd') {
+					this.parseScalarProperty(line, 'd', currentMaterial);
+				}
+				else if (keyword.toLowerCase() === 'tr') {
+					this.parseScalarProperty(line, 'Tr', currentMaterial);
+				}
+				else if (keyword.toLowerCase() === 'illum') {
+					this.parseScalarProperty(line, 'illum', currentMaterial);
+				}
+				// 纹理属性
+				else if (keyword.toLowerCase().startsWith('map_') || 
+						 keyword.toLowerCase() === 'bump' || 
+						 keyword.toLowerCase() === 'norm') {
+					this.parseTextureProperty(line, keyword, currentMaterial);
+				}
+				// 未知属性（记录但不处理）
+				else if (currentMaterial) {
+					console.log('Unknown MTL property: ' + keyword + ' (in ' + currentMaterial.name + ')');
+				}
+			}
+
+			// 创建默认材质信息对象
+			createDefaultMaterialInfo(name) {
+				return {
+					name: name,
+					// 颜色属性
+					Ka: [0, 0, 0],      // 环境光颜色
+					Kd: [1, 1, 1],      // 漫反射颜色
+					Ks: [0, 0, 0],      // 高光颜色
+					Ke: [0, 0, 0],      // 自发光颜色
+					Tf: [1, 1, 1],      // 透射颜色
+					
+					// 标量属性 - 只设置必需的默认值
+					Ns: 0,              // 高光指数 (0-1000)
+					Ni: 1.0,            // 折射率 (默认1.0)
+					d: 1.0,             // 不透明度 (1.0 = 完全不透明)
+					illum: 2,           // 光照模型 (2 = 高光启用)
+					// 注意：Tr 不设置默认值，只有解析到时才设置
+					
+					// 纹理映射
+					map_Ka: null,
+					map_Kd: null,
+					map_Ks: null,
+					map_Ke: null,
+					map_Ns: null,
+					map_d: null,
+					map_bump: null,
+					bump: null,
+					norm: null,
+					
+					// 纹理参数
+					textureParams: {}
+				};
+			}
+
+			// 解析颜色属性 (RGB格式)
+			parseColorProperty(line, keyword, material) {
+				if (!material) return;
+				
+				// 使用split方法而不是正则表达式
+				const parts = line.split(/\\s+/);
+				if (parts.length < 4) {
+					console.log('Color format error: ' + line);
+					return;
+				}
+				
+				try {
+					const color = [
+						parseFloat(parts[1]),
+						parseFloat(parts[2]),
+						parseFloat(parts[3])
+					];
+					
+					material[keyword] = color;
+				} catch (e) {
+					console.log('Parse Color error: ' + line, e);
+				}
+			}
+
+			// 解析标量属性
+			parseScalarProperty(line, keyword, material) {
+				if (!material) return;
+				
+				const parts = line.split(/\\s+/);
+				if (parts.length < 2) {
+					console.log('Scalar format error: ' + line);
+					return;
+				}
+				
+				try {
+					const value = parseFloat(parts[1]);
+					material[keyword] = value;
+				} catch (e) {
+					console.log('Parse Scalar failed: ' + line, e);
+				}
+			}
+
+			// 解析纹理属性（支持参数）
+			// 格式示例: map_Kd -s 2.0 2.0 -o 0.5 0.5 texture.png
+			parseTextureProperty(line, keyword, material) {
+				if (!material) return;
+				
+				// 移除关键字，获取剩余部分
+				const textureDef = line.substring(keyword.length).trim();
+				
+				// 解析纹理参数
+				const textureInfo = this.parseTextureDefinition(textureDef);
+				
+				if (textureInfo) {
+					// 存储纹理信息
+					material[keyword] = textureInfo;
+					
+					// 存储参数到textureParams中，便于后续查找
+					if (!material.textureParams[keyword]) {
+						material.textureParams[keyword] = [];
+					}
+					material.textureParams[keyword].push(textureInfo);
+				}
+			}
+
+			// 解析纹理定义（路径和参数）
+			parseTextureDefinition(textureDef) {
+				const items = textureDef.split(/\\s+/);
+				const result = {
+					path: '',
+					scale: { x: 1, y: 1 },
+					offset: { x: 0, y: 0 },
+					bumpScale: 1,
+					brightness: { base: 0, gain: 1 },
+					clamp: false
+				};
+				
+				let i = 0;
+				let hasPath = false;
+				
+				while (i < items.length) {
+					const item = items[i];
+					
+					// 缩放参数: -s <u> <v>
+					if (item === '-s' && i + 2 < items.length) {
+						result.scale.x = parseFloat(items[i + 1]);
+						result.scale.y = parseFloat(items[i + 2]);
+						i += 3;
+					}
+					// 偏移参数: -o <u> <v>
+					else if (item === '-o' && i + 2 < items.length) {
+						result.offset.x = parseFloat(items[i + 1]);
+						result.offset.y = parseFloat(items[i + 2]);
+						i += 3;
+					}
+					// bump缩放参数: -bm <value>
+					else if (item === '-bm' && i + 1 < items.length) {
+						result.bumpScale = parseFloat(items[i + 1]);
+						i += 2;
+					}
+					// 钳制参数: -clamp on|off
+					else if (item === '-clamp' && i + 1 < items.length) {
+						result.clamp = items[i + 1].toLowerCase() === 'on';
+						i += 2;
+					}
+					// 亮度参数: -mm <base> <gain>
+					else if (item === '-mm' && i + 2 < items.length) {
+						result.brightness.base = parseFloat(items[i + 1]);
+						result.brightness.gain = parseFloat(items[i + 2]);
+						i += 3;
+					}
+					// 纹理路径（剩余部分）
+					else {
+						// 将剩余部分组合成路径
+						const pathParts = [];
+						for (let j = i; j < items.length; j++) {
+							if (items[j] && items[j] !== '') {
+								pathParts.push(items[j]);
+							}
+						}
+						if (pathParts.length > 0) {
+							result.path = PathUtils.cleanTexturePath(pathParts.join(' '));
+							hasPath = true;
+						}
+						break; // 跳出循环，剩余的都是路径
+					}
+				}
+				
+				// 如果没有找到路径，尝试将整个字符串作为路径
+				if (!hasPath && textureDef.trim()) {
+					result.path = PathUtils.cleanTexturePath(textureDef.trim());
+				}
+				
+				return hasPath ? result : null;
+			}
+
+			// 获取指定材质的纹理信息
+			getTexturesForMaterial(material) {
+				const textures = [];
+				
+				// 检查所有可能的纹理属性
+				const textureKeys = ['map_Ka', 'map_Kd', 'map_Ks', 'map_Ke', 
+									'map_Ns', 'map_d', 'map_bump', 'bump', 'norm'];
+				
+				for (const key of textureKeys) {
+					if (material[key] && material[key].path) {
+						textures.push({
+							type: key,
+							path: material[key].path,
+							params: material[key]
+						});
+					}
+				}
+				
+				return textures;
+			}
+		}
+
+		// zip环境贴图读取
+		class TextureLoaderFromZip {
+			constructor(virtualFS) {
+				this.virtualFS = virtualFS;
+				this.loadedTextures = new Map();
+				this.pendingRequests = new Map();
+				
+				// 用户可配置的映射规则
+				this.mappingRules = [
+					// 规则1: 材质名称直接匹配贴图文件名
+					(materialName, fileName) => {
+						if (!materialName || !fileName) return false;
+						const cleanMatName = materialName.toLowerCase().replace(/[^a-z0-9]/g, '');
+						const cleanFileName = fileName.toLowerCase().replace(/[^a-z0-9]/g, '');
+						return cleanFileName.includes(cleanMatName) || cleanMatName.includes(cleanFileName);
+					},
+					
+					// 规则2: 数字匹配
+					(materialName, fileName) => {
+						const matNum = (materialName.match(/\d+/) || [])[0];
+						const fileNum = (fileName.match(/\d+/) || [])[0];
+						return matNum && fileNum && matNum === fileNum;
+					},
+					
+					// 规则3: 常见后缀匹配
+					(materialName, fileName, materialIndex) => {
+						const suffixes = [
+							'_' + (materialIndex + 1),
+							(materialIndex + 1),
+							'_' + String.fromCharCode(97 + materialIndex),
+							String.fromCharCode(97 + materialIndex)
+						];
+						
+						const baseName = fileName.toLowerCase().replace(/\.[^/.]+$/, '');
+						return suffixes.some(suffix => baseName.endsWith(suffix) || baseName.includes('_' + suffix + '_'));
+					}
+				];
+				
+				// 初始化文件名索引（如果虚拟文件系统没有的话）
+				if (virtualFS && !virtualFS.fileNameIndex) {
+					virtualFS.fileNameIndex = new Map();
+					if (virtualFS.zip) {
+						for (const filePath of Object.keys(virtualFS.zip.files)) {
+							const fileName = PathUtils.getFileName(filePath);
+							if (!virtualFS.fileNameIndex.has(fileName)) {
+								virtualFS.fileNameIndex.set(fileName, filePath);
+							}
+						}
+					}
+				}
+			}
+
+			findTexturePath(texturePath, basePath = null, options = {}) {
+				const { textureType = null, materialIndex = 0, totalMaterials = 1 } = options;
+				
+				// 1. 清洗路径
+				const cleanedPath = PathUtils.cleanTextureUrl(texturePath);
+				
+				// 如果清洗后路径不为空，尝试直接查找
+				if (cleanedPath) {
+					// 2. 尝试直接查找（使用清洗后的文件名）
+					if (this.virtualFS.fileNameIndex && this.virtualFS.fileNameIndex.has(cleanedPath)) {
+						const foundPath = this.virtualFS.fileNameIndex.get(cleanedPath);
+						return foundPath;
+					}
+					
+					// 3. 尝试相对路径（如果有基础路径）
+					if (basePath) {
+						const baseDir = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+						const relativePath = PathUtils.joinPaths(baseDir, cleanedPath);
+						
+						if (this.virtualFS.zip && this.virtualFS.zip.file(relativePath)) {
+							return relativePath;
+						}
+					}
+					
+					// 4. 在ZIP中搜索文件（递归查找）
+					if (this.virtualFS.zip) {
+						const files = Object.keys(this.virtualFS.zip.files);
+						for (const filePath of files) {
+							const currentFileName = PathUtils.getFileName(filePath);
+							if (currentFileName.toLowerCase() === cleanedPath.toLowerCase()) {
+								return filePath;
+							}
+						}
+					}
+				}
+				
+				// 5. 如果以上都没有找到，尝试基于纹理类型和命名模式查找
+				return this.findTextureByPattern(texturePath, textureType, materialIndex, totalMaterials);
+			}
+
+			findTextureByPattern(texturePath, textureType, materialIndex = 0, totalMaterials = 1, materialName = '') {
+				if (!this.virtualFS.zip) {
+					return null;
+				}
+				
+				const files = Object.keys(this.virtualFS.zip.files);
+				let candidateFiles = [];
+				
+				// 首先收集所有图片文件
+				const imageExtensions = ['.png', '.jpg', '.jpeg', '.tga', '.bmp', '.tiff', '.dds'];
+				for (const filePath of files) {
+					const ext = filePath.toLowerCase().substring(filePath.lastIndexOf('.'));
+					if (imageExtensions.includes(ext)) {
+						candidateFiles.push(filePath);
+					}
+				}
+				
+				// 如果没有图片文件，返回null
+				if (candidateFiles.length === 0) {
+					return null;
+				}
+				
+				// ========== 关键策略：基于材质名称和纹理类型精确匹配 ==========
+				
+				// 策略1: 如果材质名称和贴图文件名有明确的数字对应关系
+				if (materialName) {
+					// 提取材质名称中的数字
+					const materialNumberMatch = materialName.match(/\d+/);
+					if (materialNumberMatch) {
+						const materialNumber = materialNumberMatch[0];
+						
+						// 创建可能的贴图文件名模式
+						const possiblePatterns = [
+							// 直接数字匹配: 53 -> 53.png, texture_53.png, 53_texture.png
+							materialNumber,
+							// 带材质索引: 53_0, 53_1 等
+							materialNumber + '_' + materialIndex,
+							// 材质名称的简化版本
+							materialName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase(),
+							// 纹理类型结合数字: base_color_53, 53_base_color
+							textureType + '_' + materialNumber,
+							materialNumber + '_' + textureType
+						];
+						
+						// 尝试匹配每个可能的模式
+						for (const pattern of possiblePatterns) {
+							for (const filePath of candidateFiles) {
+								const fileName = PathUtils.getFileName(filePath).toLowerCase();
+								const baseName = fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase();
+								
+								// 检查是否匹配模式
+								if (baseName === pattern || 
+									baseName.includes('_' + pattern + '_') || 
+									baseName.endsWith('_' + pattern) || 
+									baseName.startsWith(pattern + '_')) {
+									return filePath;
+								}
+							}
+						}
+					}
+				}
+				
+				// 策略2: 基于材质索引的顺序分配（仅在无法精确匹配时使用）
+				if (candidateFiles.length === totalMaterials && totalMaterials > 1) {
+					// 如果贴图数量和材质数量相同，按顺序分配
+					const selectedFile = candidateFiles[materialIndex % candidateFiles.length];
+					return selectedFile;
+				}
+				
+				// 策略3: 如果以上都失败，返回第一个贴图文件
+				return candidateFiles[0];
+			}
+
+			async loadTextures(textureRequests, basePath = null) {
+				const results = [];
+				for (const request of textureRequests) {
+					try {
+						const options = request.options || {};
+						if (basePath && !options.basePath) {
+							options.basePath = basePath;
+						}
+						
+						const texture = await this.loadTexture(request.path, options);
+						results.push({
+							...request,
+							texture: texture,
+							path: request.path,
+							options: options
+						});
+					} catch (error) {
+						console.log('Load Textures failed:', request.path, error);
+						results.push({
+							...request,
+							texture: null,
+							error: error
+						});
+					}
+				}
+				
+				return results;
+			}
+
+			async loadTexture(texturePath, options = {}) {
+				const { basePath = null, textureType = null, materialIndex = 0, totalMaterials = 1 } = 
+					typeof options === 'string' ? { basePath: options } : options;
+				
+				// 查找实际路径
+				const actualPath = this.findTexturePath(texturePath, basePath, {
+					textureType,
+					materialIndex,
+					totalMaterials
+				});
+				
+				if (!actualPath) {
+					throw new Error('Texture not found: ' + texturePath);
+				}
+				
+				// 检查是否已经加载
+				if (this.loadedTextures.has(actualPath)) {
+					return this.loadedTextures.get(actualPath);
+				}
+				
+				// 检查是否有正在进行的请求
+				if (this.pendingRequests.has(actualPath)) {
+					return await this.pendingRequests.get(actualPath);
+				}
+				
+				// 创建新的加载请求
+				const loadPromise = (async () => {
+					try {
+						// 从虚拟文件系统获取blob URL
+						const blobUrl = await this.virtualFS.getBlobUrl(actualPath, basePath);
+						
+						// 加载纹理
+						const texture = await new Promise((resolve, reject) => {
+							const loader = new THREE.TextureLoader();
+							loader.load(
+								blobUrl,
+								(loadedTexture) => {
+									// 设置默认包装方式
+									loadedTexture.wrapS = THREE.RepeatWrapping;
+									loadedTexture.wrapT = THREE.RepeatWrapping;
+									
+									// 根据纹理类型设置色彩空间
+									if (textureType === 'base_color' || textureType === 'emissive' || textureType === 'map') {
+										loadedTexture.colorSpace = THREE.SRGBColorSpace;
+									} else {
+										loadedTexture.colorSpace = THREE.LinearSRGBColorSpace;
+									}
+									
+									// 记录材质索引信息
+									loadedTexture.userData = loadedTexture.userData || {};
+									loadedTexture.userData.materialIndex = materialIndex;
+									loadedTexture.userData.originalPath = actualPath;
+									
+									// 缓存纹理
+									this.loadedTextures.set(actualPath, loadedTexture);
+									resolve(loadedTexture);
+								},
+								undefined,
+								(error) => {
+									console.log('Load Texture failed:', actualPath, error);
+									reject(error);
+								}
+							);
+						});
+						
+						return texture;
+					} catch (error) {
+						console.log('Load Texture failed:', actualPath, error);
+						throw error;
+					} finally {
+						// 清理pending请求
+						this.pendingRequests.delete(actualPath);
+					}
+				})();
+				
+				// 保存pending请求
+				this.pendingRequests.set(actualPath, loadPromise);
+				
+				return loadPromise;
+			}
+
+			dispose() {
+				this.loadedTextures.forEach(texture => {
+					if (texture.image && texture.image.src && texture.image.src.startsWith('blob:')) {
+						URL.revokeObjectURL(texture.image.src);
+					}
+				});
+				this.loadedTextures.clear();
+				this.pendingRequests.clear();
+			}
+		}
+
+		// 主函数
         class Adv3DViewer {
 			// 初始化
 			constructor() {
@@ -865,7 +2888,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					currentFileData: null,
 					smplData: null,
 					smplMesh: null,
+					
 					controlsDisabled: false,
+					isMouseDown: false,
+					mouseDownTime: 0,
 					
 					grid: null,
 					axesHelper: null,
@@ -1073,7 +3099,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						visible: false,
 						guiInstance: null,
 						container: null,
-						commonFolder: null,
 						defaultFolder: null,
 						normalFolder: null,
 						wireframeFolder: null,
@@ -1084,6 +3109,17 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						ssaoFolder: null,
 						gtaoFolder: null
 					},
+					selectedMaterialGUI: {
+						visible: false,
+						guiInstance: null,
+						container: null,
+						title: '',
+						material: null,
+						object: null,
+						isMultiMaterial: false,
+						materialIndex: 0,
+						materialArray: null
+					},
 					lightGUI: {
 						visible: false,
 						guiInstance: null,
@@ -1091,6 +3127,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						dirLightFolder: null,
 						ambLightFolder: null
 					},
+					
+					selection: {
+						selectedObject: null,
+						selectionBBox: null,
+						selectionHelper: null,
+						raycaster: new THREE.Raycaster(),
+						mouse: new THREE.Vector2(),
+						isSelecting: false
+					},
+					
 					getScene3DData: {
 						isProcessing: false,
 						screenshotQueue: []
@@ -1107,6 +3153,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				this._messageTimer = null;
 				this.loadingProgress = new LoadingProgressManager(this);
+				this.textureManager = new TextureManager(this);
 				this.renderer = null;
 				this.composer = null;
 				this.contourPass = null;
@@ -1267,7 +3314,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.dom.inputs.sideSelect.value = this.state.commonParams.side;
 				
 				this.updateBgColorPickerState(this.state.materialMode);
-				this.setupScrollDragging();
+				this.handleScrollDragging();
 				this.updateTimeSleder();
 				this.updateKeyframeButtonsState();
 				this.updateAutoAddKeyframeButtonState();
@@ -1417,6 +3464,25 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				});
 				
+				// 鼠标选择
+				this.renderer.domElement.addEventListener('mousedown', (e) => {
+					this.state.isMouseDown = true;
+					this.state.mouseDownTime = Date.now();
+				});
+				
+				this.renderer.domElement.addEventListener('mouseup', (e) => {
+					if (!this.state.isMouseDown) return;
+					
+					const clickDuration = Date.now() - this.state.mouseDownTime;
+					this.state.isMouseDown = false;
+					
+					// 如果点击持续时间小于200ms且没有明显移动，认为是单击（选择操作）
+					if (clickDuration < 200) {
+						this.handleCanvasClick(e);
+					}
+					// 否则是拖拽操作（旋转视窗），不改变选择状态
+				});
+				
 				// 窗口变化事件
 				window.addEventListener('resize', this.debounce(() => {
 					this.onWindowResize(), 100
@@ -1429,7 +3495,136 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			// 核心控制
-			setupScrollDragging() {
+			handleCanvasClick(event) {
+				if (this.state.controlsDisabled || !this.state.currentModel) return;
+				
+				// 防止在旋转视窗时改变选择状态
+				if (this.state.isMouseDown && (Date.now() - this.state.mouseDownTime) >= 200) {
+					return;
+				}
+				
+				const rect = this.renderer.domElement.getBoundingClientRect();
+				this.state.selection.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+				this.state.selection.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+				
+				this.state.selection.raycaster.setFromCamera(this.state.selection.mouse, this.camera);
+				
+				const intersects = this.state.selection.raycaster.intersectObject(this.scene, true);
+				
+				// 过滤出Mesh对象
+				const meshIntersects = intersects.filter(intersect => intersect.object.isMesh);
+				
+				if (meshIntersects.length > 0) {
+					const selectedObject = meshIntersects[0].object;
+					this.selectObject(selectedObject);
+				} else {
+					this.clearSelection();
+				}
+				
+				this.renderInvalidate();
+			}
+
+			selectObject(object) {
+				// 清除之前的选择
+				this.clearSelection();
+				
+				// 保存选中的对象
+				this.state.selection.selectedObject = object;
+				this.state.selection.isSelecting = true;
+				
+				// 创建BoundingBox辅助线
+				const bbox = new THREE.Box3().setFromObject(object);
+				const bboxHelper = new THREE.Box3Helper(bbox, 0xffff00);
+				bboxHelper.name = "SelectionBBox";
+				this.scene.add(bboxHelper);
+				this.state.selection.selectionBBox = bboxHelper;
+				
+				// 创建选择辅助对象（用于可视化）
+				const geometry = new THREE.BoxGeometry(1, 1, 1);
+				const edges = new THREE.EdgesGeometry(geometry);
+				const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ 
+					color: 0xffff00, 
+					linewidth: 2 
+				}));
+				
+				// 缩放线框到物体大小
+				const size = new THREE.Vector3();
+				bbox.getSize(size);
+				line.scale.copy(size);
+				
+				// 定位到物体中心
+				const center = new THREE.Vector3();
+				bbox.getCenter(center);
+				line.position.copy(center);
+				
+				line.name = "SelectionHelper";
+				this.scene.add(line);
+				this.state.selection.selectionHelper = line;
+				
+				// 如果是original材质模式，显示材质GUI
+				if (this.state.materialMode === 'original' && object.material) {
+					this.showSelectedMaterialGUI(object);
+				}
+				
+				this.updateInfoDisplay();
+			}
+
+			clearSelection() {
+				// 移除BBox辅助线
+				if (this.state.selection.selectionBBox) {
+					this.scene.remove(this.state.selection.selectionBBox);
+					this.state.selection.selectionBBox.geometry.dispose();
+					this.state.selection.selectionBBox.material.dispose();
+					this.state.selection.selectionBBox = null;
+				}
+				
+				// 移除选择辅助对象
+				if (this.state.selection.selectionHelper) {
+					this.scene.remove(this.state.selection.selectionHelper);
+					this.state.selection.selectionHelper.geometry.dispose();
+					this.state.selection.selectionHelper.material.dispose();
+					this.state.selection.selectionHelper = null;
+				}
+				
+				// 清除选择状态
+				this.state.selection.selectedObject = null;
+				this.state.selection.isSelecting = false;
+				
+				// 隐藏材质GUI（不销毁材质引用）
+				this.hideSelectedMaterialGUI();
+				
+				// 清除材质引用（只在清除选择时）
+				this.state.selectedMaterialGUI.material = null;
+				this.state.selectedMaterialGUI.object = null;
+				this.state.selectedMaterialGUI.title = '';
+				this.state.selectedMaterialGUI.isMultiMaterial = false;
+				this.state.selectedMaterialGUI.materialIndex = 0;
+				this.state.selectedMaterialGUI.materialArray = null;
+				
+				this.updateInfoDisplay();
+			}
+
+			updateSelectionHelpers() {
+				if (!this.state.selection.selectedObject || !this.state.selection.selectionBBox) return;
+				
+				const bbox = new THREE.Box3().setFromObject(this.state.selection.selectedObject);
+				
+				// 更新BBox
+				this.state.selection.selectionBBox.box = bbox;
+				
+				// 更新线框辅助
+				if (this.state.selection.selectionHelper) {
+					const size = new THREE.Vector3();
+					bbox.getSize(size);
+					this.state.selection.selectionHelper.scale.copy(size);
+					
+					const center = new THREE.Vector3();
+					bbox.getCenter(center);
+					this.state.selection.selectionHelper.position.copy(center);
+				}
+			}
+
+			handleScrollDragging() {
 				const controls = this.dom.controlsPanel;
 				
 				// 鼠标拖拽功能
@@ -1569,9 +3764,17 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 禁用控制面板
 				this.dom.controlsPanel.classList.add('controls-disabled');
 				
-				// 禁用所有按钮和输入
-				const allInteractiveElements = this.dom.controlsPanel.querySelectorAll('button, input, select');
+				// 禁用所有按钮和输入控件
+				const allInteractiveElements = this.dom.controlsPanel.querySelectorAll('button, input, select, label');
 				allInteractiveElements.forEach(el => {
+					// 保存原始背景色（如果有内联样式）
+					if (el.style.background && !el.getAttribute('data-original-bg')) {
+						el.setAttribute('data-original-bg', el.style.background);
+					}
+					
+					// 清除内联背景色，让CSS类生效
+					el.style.background = '';
+					
 					el.disabled = true;
 					el.classList.add('disabled-control');
 				});
@@ -1587,6 +3790,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (this.state.lightGUI.container) {
 					this.state.lightGUI.container.classList.add('light-gui-disabled');
 				}
+				
+				this.updateKeyframeButtonsState();
+				this.updateCameraUIForMode();
+				this.updateCameraControlsState();
+				this.updateOrthoToggleState();
 			}
 
 			enableControls() {
@@ -1595,13 +3803,20 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 启用控制面板
 				this.dom.controlsPanel.classList.remove('controls-disabled');
 				
-				// 启用所有按钮和输入（除了本来就禁用的）
-				const allInteractiveElements = this.dom.controlsPanel.querySelectorAll('button, input, select');
+				// 启用所有按钮和输入控件（除了本来就禁用的）
+				const allInteractiveElements = this.dom.controlsPanel.querySelectorAll('button, input, select, label');
 				allInteractiveElements.forEach(el => {
 					// 只启用那些不是固有禁用的元素
 					if (!el.hasAttribute('data-inherently-disabled')) {
 						el.disabled = false;
 						el.classList.remove('disabled-control');
+						
+						// 恢复原始背景色
+						const originalBg = el.getAttribute('data-original-bg');
+						if (originalBg) {
+							el.style.background = originalBg;
+							el.removeAttribute('data-original-bg');
+						}
 					}
 				});
 				
@@ -1613,7 +3828,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					this.state.lightGUI.container.classList.remove('light-gui-disabled');
 				}
 				
+				// 重新应用按钮状态
 				this.updateKeyframeButtonsState();
+				this.updateCameraUIForMode();
+				this.updateCameraControlsState();
+				this.updateOrthoToggleState();
 			}
 
 			updateInfoDisplay() {
@@ -1737,7 +3956,13 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				info += cameraInfo;
 				
-				// 7. 添加FPS信息（如果有）
+				// 添加选择信息
+				if (this.state.selection.isSelecting && this.state.selection.selectedObject) {
+					const selectedName = this.state.selection.selectedObject.name || 'Unnamed Mesh';
+					info += ' | Selected: ' + selectedName;
+				}
+				
+				// 添加FPS信息
 				/* if (this.fps && this.fps.value > 0) {
 					info += ' | ' + this.fps.value + ' FPS';
 				} else {
@@ -1829,6 +4054,307 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.renderInvalidate();
 			}
 
+			// 数值输入控制
+			validateNumericInput(event, paramName) {
+				const input = event.target;
+				let value = paramName === 'fps' ? parseInt(input.value) : parseFloat(input.value);
+				
+				input.classList.remove('invalid');
+				input.style.borderColor = '';
+				
+				// 检查是否是有效数字
+				if (isNaN(value)) {
+					input.classList.add('invalid');
+					input.style.borderColor = 'var(--danger-color)';
+					return false;
+				}
+				
+				// 添加pending状态
+				input.classList.add('pending');
+				input.style.borderColor = 'var(--primary-color)';
+				
+				return true;
+			}
+
+			applyNumericInput(event, paramName, fromUserInput = false) {
+				const input = event.target;
+				let value = paramName === 'fps' ? parseInt(input.value) : parseFloat(input.value);
+				
+				input.classList.remove('pending', 'invalid');
+				input.style.borderColor = '';
+				
+				if (isNaN(value)) {
+					this.updateCameraUIForMode();
+					this.updateTimeSleder();
+					return;
+				}
+				
+				switch(paramName) {
+					case 'fps':
+						if (value < 1) value = 1;
+						else if (value > 120) value = 120;
+						value = Math.floor(value);
+						input.value = value.toString();
+						break;
+					case 'fov':
+						if (this.camera.isOrthographicCamera) {
+							if (value < 0.01) value = 0.01;
+							else if (value > 1000) value = 1000;
+						} else {
+							if (value < 0.01) value = 0.01;
+							else if (value > 179.99) value = 179.99;
+						}
+						input.value = value.toFixed(2);
+						this.updateCameraFOV();
+						break;
+					case 'near':
+						if (value < 0.01) value = 0.01;
+						else if (value > 5000) value = 5000;
+						input.value = value.toFixed(2);
+						this.updateCameraNear();
+						this.dom.inputs.far.min = (value + 0.01).toFixed(2);
+						if (parseFloat(this.dom.inputs.far.value) < value + 0.01) {
+							this.dom.inputs.far.value = (value + 0.01).toFixed(2);
+							this.applyNumericInput({
+								target: this.dom.inputs.far
+							}, 'far');
+						}
+						break;
+					case 'far':
+						const nearValue = parseFloat(this.dom.inputs.near.value);
+						const minFar = nearValue + 0.01;
+						if (value < minFar) value = minFar;
+						else if (value > 5000) value = 5000;
+						input.value = value.toFixed(2);
+						this.updateCameraFar();
+						break;
+					case 'startFrame':
+						if (value < -9999) value = -9999;
+						else if (value > 9999) value = 9999;
+						break;
+					case 'endFrame':
+						const startFrameVal = parseFloat(this.dom.inputs.startFrame.value);
+						if (value < startFrameVal) value = startFrameVal;
+						else if (value > 9999) value = 9999;
+						break;
+					case 'roll':
+						if (value < -180) value = -180;
+						else if (value > 180) value = 180;
+						input.value = value.toFixed(2);
+						break;
+				}
+				
+				input.value = value.toFixed(2);
+				
+				switch(paramName) {
+					case 'fps':
+						this.updateFPS();
+						break;
+					case 'fov':
+						this.updateCameraFOV();
+						break;
+					case 'near':
+						this.updateCameraNear();
+						break;
+					case 'far':
+						this.updateCameraFar();
+						break;
+					case 'startFrame':
+					case 'endFrame':
+						this.applyFrameRange();
+						break;
+					case 'roll':
+						this.applyRollAngle();
+						break;
+				}
+				
+				if (fromUserInput && 
+					this.state.cameras.currentType === 'custom' && 
+					this.state.autoAddKeyframeEnabled &&
+					(paramName === 'fov' || paramName === 'roll')) {
+					this.addCameraKeyframe();
+				}
+			}
+
+			// 关键帧插值计算
+			catmullRomInterpolate(t, p0, p1, p2, p3) {
+				const t2 = t * t;
+				const t3 = t2 * t;
+				
+				const result = 0.5 * (
+					(2 * p1) + 
+					(-p0 + p2) * t + 
+					(2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + 
+					(-p0 + 3 * p1 - 3 * p2 + p3) * t3
+				);
+				
+				return result;
+			}
+
+			catmullRomInterpolateVector3(t, v0, v1, v2, v3) {
+				const x = this.catmullRomInterpolate(t, v0.x, v1.x, v2.x, v3.x);
+				const y = this.catmullRomInterpolate(t, v0.y, v1.y, v2.y, v3.y);
+				const z = this.catmullRomInterpolate(t, v0.z, v1.z, v2.z, v3.z);
+				
+				return new THREE.Vector3(x, y, z);
+			}
+
+			catmullRomInterpolateEuler(t, e0, e1, e2, e3) {
+				var interpolateAngle = function(t, a0, a1, a2, a3) {
+					var normalizeAngle = function(angle) {
+						while (angle > Math.PI) angle -= 2 * Math.PI;
+						while (angle < -Math.PI) angle += 2 * Math.PI;
+						return angle;
+					};
+					a0 = normalizeAngle(a0); a1 = normalizeAngle(a1); a2 = normalizeAngle(a2); a3 = normalizeAngle(a3);
+					return this.catmullRomInterpolate(t, a0, a1, a2, a3);
+				}.bind(this);
+				return new THREE.Euler(
+					interpolateAngle(t, e0.x, e1.x, e2.x, e3.x),
+					interpolateAngle(t, e0.y, e1.y, e2.y, e3.y),
+					interpolateAngle(t, e0.z, e1.z, e2.z, e3.z)
+				);
+			}
+
+			normalizeAngle(angle) {
+				angle = angle % 360;
+				if (angle > 180) angle -= 360;
+				if (angle < -180) angle += 360;
+				return angle;
+			}
+
+			catmullRomInterpolateAngle(t, a0, a1, a2, a3) {
+				// 1. 展开角度序列，确保连续性
+				const angles = [a0, a1, a2, a3];
+				
+				// 展开角度，确保连续性（解决360°边界问题）
+				for (let i = 1; i < angles.length; i++) {
+					let diff = angles[i] - angles[i-1];
+					
+					// 确保角度差在[-180, 180]范围内（最短路径）
+					while (diff > 180) diff -= 360;
+					while (diff < -180) diff += 360;
+					
+					// 累积角度，形成连续序列
+					angles[i] = angles[i-1] + diff;
+				}
+				
+				// 2. 对连续角度序列应用Catmull-Rom插值
+				const interpolated = this.catmullRomInterpolate(t, angles[0], angles[1], angles[2], angles[3]);
+				
+				// 3. 规范化到[-180,180]范围
+				return this.normalizeAngle(interpolated);
+			}
+
+			lerpAngle(a, b, t) {
+				// 将角度标准化到 [-180, 180]
+				a = this.normalizeAngle(a);
+				b = this.normalizeAngle(b);
+				
+				// 计算差值，选择最短路径
+				let diff = b - a;
+				if (diff > 180) {
+					diff -= 360;
+				} else if (diff < -180) {
+					diff += 360;
+				}
+				
+				// 线性插值并标准化
+				const result = a + diff * t;
+				return this.normalizeAngle(result);
+			}
+
+			// 关键帧格式转换
+			convertToVector3(value, defaultValue) {
+				if (!value) {
+					return defaultValue.clone();
+				}
+				
+				if (value.isVector3) {
+					return value.clone();
+				}
+				
+				// 处理普通对象 {x, y, z}
+				if (value.x !== undefined && value.y !== undefined && value.z !== undefined) {
+					return new THREE.Vector3(value.x, value.y, value.z);
+				}
+				
+				// 处理数组 [x, y, z]
+				if (Array.isArray(value) && value.length >= 3) {
+					return new THREE.Vector3(value[0], value[1], value[2]);
+				}
+				
+				return defaultValue.clone();
+			}
+
+			convertToEuler(value, defaultValue) {
+				if (!value) {
+					return defaultValue.clone();
+				}
+				
+				if (value.isEuler) {
+					return value.clone();
+				}
+				
+				// 处理普通对象 {x, y, z}
+				if (value.x !== undefined && value.y !== undefined && value.z !== undefined) {
+					return new THREE.Euler(value.x, value.y, value.z);
+				}
+				
+				// 处理数组 [x, y, z]
+				if (Array.isArray(value) && value.length >= 3) {
+					return new THREE.Euler(value[0], value[1], value[2]);
+				}
+				
+				return defaultValue.clone();
+			}
+
+			convertToQuaternion(value, defaultValue) {
+				if (!value) {
+					return defaultValue.clone();
+				}
+				
+				if (value.isQuaternion) {
+					return value.clone();
+				}
+				
+				// 处理普通对象 {x, y, z, w}
+				if (value.x !== undefined && value.y !== undefined && value.z !== undefined && value.w !== undefined) {
+					return new THREE.Quaternion(value.x, value.y, value.z, value.w);
+				}
+				
+				// 处理数组 [x, y, z, w]
+				if (Array.isArray(value) && value.length >= 4) {
+					return new THREE.Quaternion(value[0], value[1], value[2], value[3]);
+				}
+				
+				return defaultValue.clone();
+			}
+
+			vectorToArray(vector) {
+				if (!vector) return [0, 0, 0];
+				if (Array.isArray(vector)) return vector;
+				if (vector.isVector3) return vector.toArray();
+				if (vector.x !== undefined) return [vector.x, vector.y, vector.z];
+				return [0, 0, 0];
+			}
+
+			eulerToArray(euler) {
+				if (!euler) return [0, 0, 0];
+				if (Array.isArray(euler)) return euler;
+				if (euler.isEuler) return [euler.x, euler.y, euler.z];
+				if (euler.x !== undefined) return [euler.x, euler.y, euler.z];
+				return [0, 0, 0];
+			}
+
+			quaternionToArray(quaternion) {
+				if (!quaternion) return [0, 0, 0, 1];
+				if (Array.isArray(quaternion)) return quaternion;
+				if (quaternion.isQuaternion) return [quaternion.x, quaternion.y, quaternion.z, quaternion.w];
+				if (quaternion.x !== undefined) return [quaternion.x, quaternion.y, quaternion.z, quaternion.w];
+				return [0, 0, 0, 1];
+			}
+
 			// 材质GUI
 			initMaterialGUI() {
 				// 创建GUI容器
@@ -1910,7 +4436,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 					
 					// 创建材质参数文件夹
-					this.state.materialGUI.commonFolder = null;
 					this.state.materialGUI.defaultFolder = null;
 					this.state.materialGUI.normalFolder = null;
 					this.state.materialGUI.wireframeFolder = null;
@@ -2451,6 +4976,1733 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.state.materialGUI.gtaoFolder.open();
 			}
 
+			// 选择材质GUI
+			initSelectedMaterialGUI() {
+				// 创建GUI容器
+				this.state.selectedMaterialGUI.container = document.createElement('div');
+				this.state.selectedMaterialGUI.container.id = 'selected-material-gui';
+				this.state.selectedMaterialGUI.container.className = 'material-gui-container';
+				this.state.selectedMaterialGUI.container.style.display = 'none';
+				
+				// 将GUI容器添加到页面（放在info display后面）
+				if (this.dom.infoDisplay && this.dom.infoDisplay.parentNode) {
+					this.dom.infoDisplay.parentNode.insertBefore(
+						this.state.selectedMaterialGUI.container,
+						this.dom.infoDisplay.nextSibling
+					);
+				} else {
+					// 如果找不到info display，添加到body
+					document.body.appendChild(this.state.selectedMaterialGUI.container);
+				}
+				
+				// 确保lil-gui已加载
+				if (typeof lil === 'undefined' || !lil.GUI) {
+					const script = document.createElement('script');
+					script.src = 'https://cdn.jsdelivr.net/npm/lil-gui@0.19.2/dist/lil-gui.umd.js';
+					script.onload = () => {
+						this.createSelectedMaterialGUI();
+					};
+					document.head.appendChild(script);
+				}
+			}
+
+			createSelectedMaterialGUI() {
+				if (typeof lil === 'undefined' || !lil.GUI) {
+					console.warn('lil-gui not loaded');
+					return;
+				}
+				
+				// 如果GUI实例已存在，先销毁
+				if (this.state.selectedMaterialGUI.guiInstance) {
+					try {
+						this.state.selectedMaterialGUI.guiInstance.destroy();
+					} catch (e) {
+						console.log('Error destroying selected material GUI:', e);
+					}
+					this.state.selectedMaterialGUI.guiInstance = null;
+				}
+				
+				// 更新标题，包含多重材质信息
+				let title = this.state.selectedMaterialGUI.title;
+				
+				try {
+					this.state.selectedMaterialGUI.guiInstance = new lil.GUI({
+						container: this.state.selectedMaterialGUI.container,
+						autoPlace: false,
+						width: 180,
+						title: title
+					});
+					
+					// 获取GUI根元素并应用样式
+					const guiRoot = this.state.selectedMaterialGUI.container.querySelector('.lil-gui');
+					if (guiRoot) {
+						guiRoot.style.width = '100%';
+						guiRoot.style.maxHeight = '502';
+						guiRoot.style.overflowY = 'auto';
+						guiRoot.style.padding = '0';
+						guiRoot.style.margin = '0';
+					}
+				} catch (error) {
+					console.log('Error creating selected material GUI:', error);
+				}
+			}
+
+			showSelectedMaterialGUI(object) {
+				if (!object) return;
+				
+				// 处理多重材质的情况
+				let material = object.material;
+				let isMultiMaterial = false;
+				let materialArray = [];
+				
+				if (Array.isArray(material)) {
+					// 如果是材质数组，处理所有材质
+					if (material.length === 0) {
+						console.warn('Object has empty material array');
+						return;
+					}
+					materialArray = material;
+					isMultiMaterial = true;
+				} else {
+					// 单个材质也放入数组中，统一处理
+					materialArray = [material];
+				}
+				
+				// 检查材质是否有效
+				for (const mat of materialArray) {
+					if (!mat || !mat.type) {
+						console.warn('Object has invalid material:', object);
+						return;
+					}
+				}
+				
+				this.state.selectedMaterialGUI.material = isMultiMaterial ? materialArray[0] : materialArray[0];
+				this.state.selectedMaterialGUI.object = object;
+				this.state.selectedMaterialGUI.isMultiMaterial = isMultiMaterial;
+				this.state.selectedMaterialGUI.materialIndex = 0;
+				this.state.selectedMaterialGUI.materialArray = materialArray;
+				
+				// 创建标题
+				let displayTitle = '';
+				if (isMultiMaterial) {
+					// 多重材质标题 - 修改为: Multi Sub Material (2)
+					displayTitle = 'Multi Sub Material (' + materialArray.length + ')';
+				} else {
+					// 单个材质标题
+					let materialType = materialArray[0].type;
+					if (typeof materialType === 'string') {
+						materialType = materialType.replace('Material', '');
+					} else {
+						materialType = 'Unknown';
+					}
+					
+					const fullTitle = (materialArray[0].name || 'Unnamed') + ' - ' + materialType;
+					const maxTitleLength = 25;
+					
+					if (fullTitle.length > maxTitleLength) {
+						const objectName = materialArray[0].name || 'Material';
+						if (objectName.length > 15) {
+							const shortObjectName = objectName.substring(0, 12) + '...';
+							displayTitle = shortObjectName + ' - ' + materialType;
+						} else {
+							displayTitle = fullTitle.substring(0, maxTitleLength - 3) + '...';
+						}
+					} else {
+						displayTitle = fullTitle;
+					}
+				}
+				
+				this.state.selectedMaterialGUI.title = displayTitle;
+				
+				// 初始化GUI容器（如果还没有）
+				if (!this.state.selectedMaterialGUI.container) {
+					this.initSelectedMaterialGUI();
+				}
+				
+				// 创建GUI
+				this.createSelectedMaterialGUI();
+				
+				const gui = this.state.selectedMaterialGUI.guiInstance;
+				if (!gui) return;
+				
+				// 清空现有内容
+				gui.children.forEach(child => {
+					if (child._controllers) {
+						child._controllers.forEach(controller => controller.destroy());
+					}
+				});
+				gui.children.length = 0;
+				
+				// 如果是多重材质，创建子材质文件夹
+				if (isMultiMaterial) {
+					for (let i = 0; i < materialArray.length; i++) {
+						const subMaterial = materialArray[i];
+						
+						// 创建子材质文件夹标题
+						let subMaterialTitle = '';
+						let materialType = subMaterial.type;
+						if (typeof materialType === 'string') {
+							materialType = materialType.replace('Material', '');
+						} else {
+							materialType = 'Unknown';
+						}
+						
+						const fullSubTitle = (subMaterial.name || 'Material ' + (i + 1)) + ' - ' + materialType;
+						const maxSubTitleLength = 20;
+						
+						if (fullSubTitle.length > maxSubTitleLength) {
+							subMaterialTitle = fullSubTitle.substring(0, maxSubTitleLength - 3) + '...';
+						} else {
+							subMaterialTitle = fullSubTitle;
+						}
+						
+						// 添加序号 - 保持不变：(1/2), (2/2)等
+						subMaterialTitle += ' (' + (i + 1) + '/' + materialArray.length + ')';
+						
+						// 创建子材质文件夹
+						const subMaterialFolder = gui.addFolder(subMaterialTitle);
+						
+						// 根据材质类型创建对应的GUI
+						if (subMaterial.isMeshStandardMaterial) {
+							this.createStandardMaterialFolderForSub(subMaterialFolder, subMaterial, i);
+						} else if (subMaterial.isMeshBasicMaterial) {
+							this.createBasicMaterialFolderForSub(subMaterialFolder, subMaterial, i);
+						} else if (subMaterial.isMeshPhongMaterial) {
+							this.createPhongMaterialFolderForSub(subMaterialFolder, subMaterial, i);
+						} else if (subMaterial.isMeshLambertMaterial) {
+							this.createLambertMaterialFolderForSub(subMaterialFolder, subMaterial, i);
+						} else if (subMaterial.isMeshToonMaterial) {
+							this.createToonMaterialFolderForSub(subMaterialFolder, subMaterial, i);
+						} else {
+							// 默认显示标准材质GUI
+							this.createStandardMaterialFolderForSub(subMaterialFolder, subMaterial, i);
+						}
+						
+						// 默认关闭子材质文件夹
+						if (subMaterialFolder && subMaterialFolder.close) {
+							subMaterialFolder.close();
+						}
+					}
+				} else {
+					// 单个材质，直接创建对应的GUI
+					const singleMaterial = materialArray[0];
+					
+					if (singleMaterial.isMeshStandardMaterial) {
+						this.createStandardMaterialFolder(gui, singleMaterial);
+					} else if (singleMaterial.isMeshBasicMaterial) {
+						this.createBasicMaterialFolder(gui, singleMaterial);
+					} else if (singleMaterial.isMeshPhongMaterial) {
+						this.createPhongMaterialFolder(gui, singleMaterial);
+					} else if (singleMaterial.isMeshLambertMaterial) {
+						this.createLambertMaterialFolder(gui, singleMaterial);
+					} else if (singleMaterial.isMeshToonMaterial) {
+						this.createToonMaterialFolder(gui, singleMaterial);
+					} else {
+						// 默认显示标准材质GUI
+						this.createStandardMaterialFolder(gui, singleMaterial);
+					}
+				}
+				
+				// 显示GUI容器
+				this.state.selectedMaterialGUI.container.style.display = 'block';
+				this.state.selectedMaterialGUI.visible = true;
+				
+				// 隐藏全局材质GUI
+				this.hideMaterialGUI();
+			}
+
+			hideSelectedMaterialGUI() {
+				if (!this.state.selectedMaterialGUI.container) return;
+				
+				// 不再清理材质贴图缓存，只隐藏GUI
+				this.state.selectedMaterialGUI.container.style.display = 'none';
+				this.state.selectedMaterialGUI.visible = false;
+				
+				// 销毁GUI实例但不清除材质引用
+				if (this.state.selectedMaterialGUI.guiInstance) {
+					try {
+						this.state.selectedMaterialGUI.guiInstance.destroy();
+					} catch (e) {
+						console.log('Error destroying selected material GUI:', e);
+					}
+					this.state.selectedMaterialGUI.guiInstance = null;
+				}
+				
+				// 保持材质和对象的引用，不清除它们
+				// 只在clearSelection中清除材质引用
+			}
+
+			createStandardMaterialFolder(parentFolder, material) {
+				// 如果parentFolder是GUI实例，则使用它；否则使用全局的selectedMaterialGUI.guiInstance
+				const gui = parentFolder || this.state.selectedMaterialGUI.guiInstance;
+				if (!gui) return;
+				
+				// 清空现有的控制器
+				gui.children.forEach(child => {
+					if (child._controllers) {
+						child._controllers.forEach(controller => controller.destroy());
+					}
+				});
+				gui.children.length = 0;
+				
+				// 确保材质有纹理缓存
+				if (!material._textureCache) {
+					material._textureCache = {};
+				}
+				
+				// 扫描并缓存材质中的所有现有贴图
+				const textureProperties = [
+					'map', 'roughnessMap', 'metalnessMap', 'emissiveMap',
+					'normalMap', 'bumpMap', 'aoMap', 'displacementMap',
+					'alphaMap', 'lightMap', 'envMap'
+				];
+				
+				textureProperties.forEach(prop => {
+					if (material[prop] && !material._textureCache[prop]) {
+						material._textureCache[prop] = material[prop];
+						
+						// 确保贴图已加载并可用
+						if (material[prop].image) {
+							material[prop].needsUpdate = true;
+							material.needsUpdate = true;
+						}
+					}
+				});
+				
+				// 存储folder引用以便更新按钮
+				const folderRefs = {};
+				
+				// 1. Base Color
+				const colorFolder = gui.addFolder('Base Color');
+				folderRefs.baseColor = colorFolder;
+				
+				// Base Color
+				colorFolder.addColor(material, 'color').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Base Color Map
+				this.createTextureControl(colorFolder, material, 'map', {
+					label: 'Color Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(colorFolder, 'map', material.map);
+					}
+				});
+				
+				// 2. Roughness
+				const roughnessFolder = gui.addFolder('Roughness');
+				folderRefs.roughness = roughnessFolder;
+				
+				// Roughness 值
+				roughnessFolder.add(material, 'roughness', 0, 1, 0.01).name('Value')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Roughness Map
+				this.createTextureControl(roughnessFolder, material, 'roughnessMap', {
+					label: 'Roughness Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(roughnessFolder, 'roughnessMap', material.roughnessMap);
+					}
+				});
+				
+				// 3. Metalness
+				const metalnessFolder = gui.addFolder('Metalness');
+				folderRefs.metalness = metalnessFolder;
+				
+				// Metalness 值
+				metalnessFolder.add(material, 'metalness', 0, 1, 0.01).name('Value')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Metalness Map
+				this.createTextureControl(metalnessFolder, material, 'metalnessMap', {
+					label: 'Metalness Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(metalnessFolder, 'metalnessMap', material.metalnessMap);
+					}
+				});
+				
+				// 4. Emissive
+				const emissiveFolder = gui.addFolder('Emissive');
+				folderRefs.emissive = emissiveFolder;
+				
+				// Emissive Color
+				emissiveFolder.addColor(material, 'emissive').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Emissive Intensity
+				emissiveFolder.add(material, 'emissiveIntensity', 0, 10, 0.1).name('Intensity')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Emissive Map
+				this.createTextureControl(emissiveFolder, material, 'emissiveMap', {
+					label: 'Emissive Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(emissiveFolder, 'emissiveMap', material.emissiveMap);
+					}
+				});
+				
+				// 5. Normal Map
+				const normalFolder = gui.addFolder('Normal');
+				folderRefs.normal = normalFolder;
+				
+				// Normal Map
+				this.createTextureControl(normalFolder, material, 'normalMap', {
+					label: 'Normal Texture',
+					hasScale: true,
+					scaleProperty: 'normalScale',
+					onTextureChange: () => {
+						this.updateTextureButtonName(normalFolder, 'normalMap', material.normalMap);
+					}
+				});
+				
+				// Normal Scale (如果有贴图或已设置)
+				if (material.normalMap || material.normalScale) {
+					if (!material.normalScale) {
+						material.normalScale = new THREE.Vector2(1, 1);
+					}
+					normalFolder.add(material.normalScale, 'x', -3, 3, 0.1).name('Scale X')
+						.onChange(() => {
+							material.needsUpdate = true;
+							this.renderInvalidate();
+						});
+					normalFolder.add(material.normalScale, 'y', -3, 3, 0.1).name('Scale Y')
+						.onChange(() => {
+							material.needsUpdate = true;
+							this.renderInvalidate();
+						});
+				}
+				
+				// 6. Bump Map
+				const bumpFolder = gui.addFolder('Bump');
+				folderRefs.bump = bumpFolder;
+				
+				// Bump Map
+				this.createTextureControl(bumpFolder, material, 'bumpMap', {
+					label: 'Bump Texture',
+					hasScale: true,
+					scaleProperty: 'bumpScale',
+					onTextureChange: () => {
+						this.updateTextureButtonName(bumpFolder, 'bumpMap', material.bumpMap);
+					}
+				});
+				
+				// Bump Scale (如果有贴图或已设置)
+				if (material.bumpMap || material.bumpScale !== undefined) {
+					if (material.bumpScale === undefined) {
+						material.bumpScale = 1;
+					}
+					bumpFolder.add(material, 'bumpScale', 0, 3, 0.1).name('Scale')
+						.onChange(() => {
+							material.needsUpdate = true;
+							this.renderInvalidate();
+						});
+				}
+				
+				// 7. Ambient Occlusion
+				const aoFolder = gui.addFolder('Ambient Occlusion');
+				folderRefs.ao = aoFolder;
+				
+				// AO Map
+				this.createTextureControl(aoFolder, material, 'aoMap', {
+					label: 'AO Texture',
+					hasIntensity: true,
+					intensityProperty: 'aoMapIntensity',
+					onTextureChange: () => {
+						this.updateTextureButtonName(aoFolder, 'aoMap', material.aoMap);
+					}
+				});
+				
+				// AO Intensity (如果有贴图或已设置)
+				if (material.aoMap || material.aoMapIntensity !== undefined) {
+					if (material.aoMapIntensity === undefined) {
+						material.aoMapIntensity = 1;
+					}
+					aoFolder.add(material, 'aoMapIntensity', 0, 3, 0.1).name('Intensity')
+						.onChange(() => {
+							material.needsUpdate = true;
+							this.renderInvalidate();
+						});
+				}
+				
+				// 8. Displacement
+				const displacementFolder = gui.addFolder('Displacement');
+				folderRefs.displacement = displacementFolder;
+				
+				// Displacement Map
+				this.createTextureControl(displacementFolder, material, 'displacementMap', {
+					label: 'Displacement Texture',
+					hasScale: true,
+					scaleProperty: 'displacementScale',
+					hasBias: true,
+					biasProperty: 'displacementBias',
+					onTextureChange: () => {
+						this.updateTextureButtonName(displacementFolder, 'displacementMap', material.displacementMap);
+					}
+				});
+				
+				// Displacement Scale & Bias (如果有贴图或已设置)
+				if (material.displacementMap || material.displacementScale !== undefined) {
+					if (material.displacementScale === undefined) {
+						material.displacementScale = 1;
+					}
+					if (material.displacementBias === undefined) {
+						material.displacementBias = 0;
+					}
+					
+					displacementFolder.add(material, 'displacementScale', 0, 10, 0.1).name('Scale')
+						.onChange(() => {
+							material.needsUpdate = true;
+							this.renderInvalidate();
+						});
+					displacementFolder.add(material, 'displacementBias', -5, 5, 0.1).name('Bias')
+						.onChange(() => {
+							material.needsUpdate = true;
+							this.renderInvalidate();
+						});
+				}
+				
+				// 9. Environment Map
+				const envFolder = gui.addFolder('Environment');
+				folderRefs.environment = envFolder;
+				
+				this.createTextureControl(envFolder, material, 'envMap', {
+					label: 'Environment Texture',
+					isColorMap: true,
+					hasIntensity: true,
+					intensityProperty: 'envMapIntensity',
+					onTextureChange: () => {
+						this.updateTextureButtonName(envFolder, 'envMap', material.envMap);
+					}
+				});
+				
+				// 10. Light Map
+				const lightMapFolder = gui.addFolder('Light');
+				folderRefs.light = lightMapFolder;
+				
+				this.createTextureControl(lightMapFolder, material, 'lightMap', {
+					label: 'Light Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(lightMapFolder, 'lightMap', material.lightMap);
+					}
+				});
+				
+				// 11. Opacity
+				const opacityFolder = gui.addFolder('Opacity');
+				folderRefs.opacity = opacityFolder;
+				
+				// Opacity 值
+				opacityFolder.add(material, 'opacity', 0, 1, 0.01).name('Value')
+					.onChange(() => {
+						material.transparent = material.opacity < 1;
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Alpha Map
+				this.createTextureControl(opacityFolder, material, 'alphaMap', {
+					label: 'Alpha Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(opacityFolder, 'alphaMap', material.alphaMap);
+					}
+				});
+				
+				// 12. Other Properties
+				const otherFolder = gui.addFolder('Other');
+				folderRefs.other = otherFolder;
+				
+				// Flat Shading
+				otherFolder.add(material, 'flatShading').name('Flat Shading')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Vertex Colors
+				otherFolder.add(material, 'vertexColors').name('Vertex Colors')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe
+				otherFolder.add(material, 'wireframe').name('Wireframe')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe Linewidth
+				otherFolder.add(material, 'wireframeLinewidth', 0.1, 5, 0.1).name('Line Width')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// 保存folder引用和材质引用以便后续更新
+				if (parentFolder) {
+					// 如果是子材质，保存到父文件夹的userData中
+					parentFolder.userData = parentFolder.userData || {};
+					parentFolder.userData.folderRefs = folderRefs;
+					parentFolder.userData.material = material;
+				} else {
+					// 单个材质，保存到全局
+					this.state.selectedMaterialGUI.folderRefs = folderRefs;
+					this.state.selectedMaterialGUI.material = material;
+				}
+				
+				// 所有folder默认关闭
+				Object.values(folderRefs).forEach(folder => {
+					if (folder && folder.close) {
+						folder.close();
+					}
+				});
+			}
+
+			createBasicMaterialFolder(parentFolder, material) {
+				// 如果parentFolder是GUI实例，则使用它；否则使用全局的selectedMaterialGUI.guiInstance
+				const gui = parentFolder || this.state.selectedMaterialGUI.guiInstance;
+				if (!gui) return;
+				
+				// 清空现有的控制器
+				gui.children.forEach(child => {
+					if (child._controllers) {
+						child._controllers.forEach(controller => controller.destroy());
+					}
+				});
+				gui.children.length = 0;
+				
+				// 确保材质有纹理缓存
+				if (!material._textureCache) {
+					material._textureCache = {};
+				}
+				
+				// 存储folder引用
+				const folderRefs = {};
+				
+				// 1. Base Color
+				const colorFolder = gui.addFolder('Base Color');
+				folderRefs.baseColor = colorFolder;
+				
+				colorFolder.addColor(material, 'color').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Base Color Map
+				this.createTextureControl(colorFolder, material, 'map', {
+					label: 'Color Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(colorFolder, 'basecolor', material.map);
+					}
+				});
+				
+				// 2. Environment Map (环境贴图)
+				const envFolder = gui.addFolder('Environment');
+				folderRefs.environment = envFolder;
+				
+				this.createTextureControl(envFolder, material, 'envMap', {
+					label: 'Environment Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(envFolder, 'env', material.envMap);
+					}
+				});
+				
+				// 3. Ambient Occlusion (环境光遮蔽)
+				const aoFolder = gui.addFolder('Ambient Occlusion');
+				folderRefs.ao = aoFolder;
+				
+				this.createTextureControl(aoFolder, material, 'aoMap', {
+					label: 'AO Texture',
+					hasIntensity: true,
+					intensityProperty: 'aoMapIntensity',
+					onTextureChange: () => {
+						this.updateTextureButtonName(aoFolder, 'ao', material.aoMap);
+					}
+				});
+				
+				// 4. Opacity (透明度)
+				const opacityFolder = gui.addFolder('Opacity');
+				folderRefs.opacity = opacityFolder;
+				
+				opacityFolder.add(material, 'opacity', 0, 1, 0.01).name('Value')
+					.onChange(() => {
+						material.transparent = material.opacity < 1;
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Alpha Map
+				this.createTextureControl(opacityFolder, material, 'alphaMap', {
+					label: 'Alpha Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(opacityFolder, 'opacity', material.alphaMap);
+					}
+				});
+				
+				// 5. Other Properties
+				const otherFolder = gui.addFolder('Other');
+				folderRefs.other = otherFolder;
+				
+				// Vertex Colors
+				otherFolder.add(material, 'vertexColors').name('Vertex Colors')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe
+				otherFolder.add(material, 'wireframe').name('Wireframe')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe Linewidth
+				otherFolder.add(material, 'wireframeLinewidth', 0.1, 5, 0.1).name('Line Width')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// 保存folder引用
+				this.state.selectedMaterialGUI.folderRefs = folderRefs;
+				
+				// 默认关闭所有文件夹
+				Object.values(folderRefs).forEach(folder => {
+					if (folder && folder.close) {
+						folder.close();
+					}
+				});
+			}
+
+			createLambertMaterialFolder(parentFolder, material) {
+				// 如果parentFolder是GUI实例，则使用它；否则使用全局的selectedMaterialGUI.guiInstance
+				const gui = parentFolder || this.state.selectedMaterialGUI.guiInstance;
+				if (!gui) return;
+				
+				// 清空现有的控制器
+				gui.children.forEach(child => {
+					if (child._controllers) {
+						child._controllers.forEach(controller => controller.destroy());
+					}
+				});
+				gui.children.length = 0;
+				
+				// 确保材质有纹理缓存
+				if (!material._textureCache) {
+					material._textureCache = {};
+				}
+				
+				// 存储folder引用
+				const folderRefs = {};
+				
+				// 1. Base Color
+				const colorFolder = gui.addFolder('Base Color');
+				folderRefs.baseColor = colorFolder;
+				
+				colorFolder.addColor(material, 'color').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Base Color Map
+				this.createTextureControl(colorFolder, material, 'map', {
+					label: 'Color Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(colorFolder, 'baseColor', material.map);
+					}
+				});
+				
+				// 2. Emissive (自发光)
+				const emissiveFolder = gui.addFolder('Emissive');
+				folderRefs.emissive = emissiveFolder;
+				
+				emissiveFolder.addColor(material, 'emissive').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				emissiveFolder.add(material, 'emissiveIntensity', 0, 10, 0.1).name('Intensity')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Emissive Map
+				this.createTextureControl(emissiveFolder, material, 'emissiveMap', {
+					label: 'Emissive Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(emissiveFolder, 'emissive', material.emissiveMap);
+					}
+				});
+				
+				// 3. Normal Map (法线贴图)
+				const normalFolder = gui.addFolder('Normal');
+				folderRefs.normal = normalFolder;
+				
+				this.createTextureControl(normalFolder, material, 'normalMap', {
+					label: 'Normal Texture',
+					hasScale: true,
+					scaleProperty: 'normalScale',
+					onTextureChange: () => {
+						this.updateTextureButtonName(normalFolder, 'normal', material.normalMap);
+					}
+				});
+				
+				// 4. Bump Map (凹凸贴图)
+				const bumpFolder = gui.addFolder('Bump');
+				folderRefs.bump = bumpFolder;
+				
+				this.createTextureControl(bumpFolder, material, 'bumpMap', {
+					label: 'Bump Texture',
+					hasScale: true,
+					scaleProperty: 'bumpScale',
+					onTextureChange: () => {
+						this.updateTextureButtonName(bumpFolder, 'bump', material.bumpMap);
+					}
+				});
+				
+				// 5. Displacement Map (位移贴图)
+				const displacementFolder = gui.addFolder('Displacement');
+				folderRefs.displacement = displacementFolder;
+				
+				this.createTextureControl(displacementFolder, material, 'displacementMap', {
+					label: 'Displacement Texture',
+					hasScale: true,
+					scaleProperty: 'displacementScale',
+					hasBias: true,
+					biasProperty: 'displacementBias',
+					onTextureChange: () => {
+						this.updateTextureButtonName(displacementFolder, 'displacement', material.displacementMap);
+					}
+				});
+				
+				// 6. Ambient Occlusion (环境光遮蔽)
+				const aoFolder = gui.addFolder('Ambient Occlusion');
+				folderRefs.ao = aoFolder;
+				
+				this.createTextureControl(aoFolder, material, 'aoMap', {
+					label: 'AO Texture',
+					hasIntensity: true,
+					intensityProperty: 'aoMapIntensity',
+					onTextureChange: () => {
+						this.updateTextureButtonName(aoFolder, 'ao', material.aoMap);
+					}
+				});
+				
+				// 7. Environment Map (环境贴图)
+				const envFolder = gui.addFolder('Environment');
+				folderRefs.environment = envFolder;
+				
+				this.createTextureControl(envFolder, material, 'envMap', {
+					label: 'Environment Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(envFolder, 'environment', material.envMap);
+					}
+				});
+				
+				// 8. Light Map (光照贴图)
+				const lightMapFolder = gui.addFolder('Light');
+				folderRefs.light = lightMapFolder;
+				
+				this.createTextureControl(lightMapFolder, material, 'lightMap', {
+					label: 'Light Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(lightMapFolder, 'light', material.lightMap);
+					}
+				});
+				
+				// 9. Opacity (透明度)
+				const opacityFolder = gui.addFolder('Opacity');
+				folderRefs.opacity = opacityFolder;
+				
+				opacityFolder.add(material, 'opacity', 0, 1, 0.01).name('Value')
+					.onChange(() => {
+						material.transparent = material.opacity < 1;
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Alpha Map
+				this.createTextureControl(opacityFolder, material, 'alphaMap', {
+					label: 'Alpha Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(opacityFolder, 'opacity', material.alphaMap);
+					}
+				});
+				
+				// 10. Other Properties
+				const otherFolder = gui.addFolder('Other');
+				folderRefs.other = otherFolder;
+				
+				// Flat Shading
+				otherFolder.add(material, 'flatShading').name('Flat Shading')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Vertex Colors
+				otherFolder.add(material, 'vertexColors').name('Vertex Colors')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe
+				otherFolder.add(material, 'wireframe').name('Wireframe')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe Linewidth
+				otherFolder.add(material, 'wireframeLinewidth', 0.1, 5, 0.1).name('Line Width')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// 保存folder引用
+				this.state.selectedMaterialGUI.folderRefs = folderRefs;
+				
+				// 默认关闭所有文件夹
+				Object.values(folderRefs).forEach(folder => {
+					if (folder && folder.close) {
+						folder.close();
+					}
+				});
+			}
+
+			createPhongMaterialFolder(parentFolder, material) {
+				// 如果parentFolder是GUI实例，则使用它；否则使用全局的selectedMaterialGUI.guiInstance
+				const gui = parentFolder || this.state.selectedMaterialGUI.guiInstance;
+				if (!gui) return;
+				
+				// 清空现有的控制器
+				gui.children.forEach(child => {
+					if (child._controllers) {
+						child._controllers.forEach(controller => controller.destroy());
+					}
+				});
+				gui.children.length = 0;
+				
+				// 确保材质有纹理缓存
+				if (!material._textureCache) {
+					material._textureCache = {};
+				}
+				
+				// 存储folder引用
+				const folderRefs = {};
+				
+				// 1. Base Color
+				const colorFolder = gui.addFolder('Base Color');
+				folderRefs.baseColor = colorFolder;
+				
+				colorFolder.addColor(material, 'color').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Base Color Map
+				this.createTextureControl(colorFolder, material, 'map', {
+					label: 'Color Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(colorFolder, 'baseColor', material.map);
+					}
+				});
+				
+				// 2. Specular (高光)
+				const specularFolder = gui.addFolder('Specular');
+				folderRefs.specular = specularFolder;
+				
+				specularFolder.addColor(material, 'specular').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				specularFolder.add(material, 'shininess', 0, 100, 1).name('Shininess')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Specular Map
+				this.createTextureControl(specularFolder, material, 'specularMap', {
+					label: 'Specular Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(specularFolder, 'specular', material.specularMap);
+					}
+				});
+				
+				// 3. Emissive (自发光)
+				const emissiveFolder = gui.addFolder('Emissive');
+				folderRefs.emissive = emissiveFolder;
+				
+				emissiveFolder.addColor(material, 'emissive').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				emissiveFolder.add(material, 'emissiveIntensity', 0, 10, 0.1).name('Intensity')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Emissive Map
+				this.createTextureControl(emissiveFolder, material, 'emissiveMap', {
+					label: 'Emissive Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(emissiveFolder, 'emissive', material.emissiveMap);
+					}
+				});
+				
+				// 4. Normal Map (法线贴图)
+				const normalFolder = gui.addFolder('Normal');
+				folderRefs.normal = normalFolder;
+				
+				this.createTextureControl(normalFolder, material, 'normalMap', {
+					label: 'Normal Texture',
+					hasScale: true,
+					scaleProperty: 'normalScale',
+					onTextureChange: () => {
+						this.updateTextureButtonName(normalFolder, 'normal', material.normalMap);
+					}
+				});
+				
+				// 5. Bump Map (凹凸贴图)
+				const bumpFolder = gui.addFolder('Bump');
+				folderRefs.bump = bumpFolder;
+				
+				this.createTextureControl(bumpFolder, material, 'bumpMap', {
+					label: 'Bump Texture',
+					hasScale: true,
+					scaleProperty: 'bumpScale',
+					onTextureChange: () => {
+						this.updateTextureButtonName(bumpFolder, 'bump', material.bumpMap);
+					}
+				});
+				
+				// 6. Displacement Map (位移贴图)
+				const displacementFolder = gui.addFolder('Displacement');
+				folderRefs.displacement = displacementFolder;
+				
+				this.createTextureControl(displacementFolder, material, 'displacementMap', {
+					label: 'Displacement Texture',
+					hasScale: true,
+					scaleProperty: 'displacementScale',
+					hasBias: true,
+					biasProperty: 'displacementBias',
+					onTextureChange: () => {
+						this.updateTextureButtonName(displacementFolder, 'displacement', material.displacementMap);
+					}
+				});
+				
+				// 7. Ambient Occlusion (环境光遮蔽)
+				const aoFolder = gui.addFolder('Ambient Occlusion');
+				folderRefs.ao = aoFolder;
+				
+				this.createTextureControl(aoFolder, material, 'aoMap', {
+					label: 'AO Texture',
+					hasIntensity: true,
+					intensityProperty: 'aoMapIntensity',
+					onTextureChange: () => {
+						this.updateTextureButtonName(aoFolder, 'ao', material.aoMap);
+					}
+				});
+				
+				// 8. Environment Map (环境贴图)
+				const envFolder = gui.addFolder('Environment');
+				folderRefs.environment = envFolder;
+				
+				this.createTextureControl(envFolder, material, 'envMap', {
+					label: 'Environment Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(envFolder, 'environment', material.envMap);
+					}
+				});
+				
+				// 9. Light Map (光照贴图)
+				const lightMapFolder = gui.addFolder('Light');
+				folderRefs.light = lightMapFolder;
+				
+				this.createTextureControl(lightMapFolder, material, 'lightMap', {
+					label: 'Light Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(lightMapFolder, 'light', material.lightMap);
+					}
+				});
+				
+				// 10. Opacity (透明度)
+				const opacityFolder = gui.addFolder('Opacity');
+				folderRefs.opacity = opacityFolder;
+				
+				opacityFolder.add(material, 'opacity', 0, 1, 0.01).name('Value')
+					.onChange(() => {
+						material.transparent = material.opacity < 1;
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Alpha Map
+				this.createTextureControl(opacityFolder, material, 'alphaMap', {
+					label: 'Alpha Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(opacityFolder, 'opacity', material.alphaMap);
+					}
+				});
+				
+				// 11. Other Properties
+				const otherFolder = gui.addFolder('Other');
+				folderRefs.other = otherFolder;
+				
+				// Flat Shading
+				otherFolder.add(material, 'flatShading').name('Flat Shading')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Vertex Colors
+				otherFolder.add(material, 'vertexColors').name('Vertex Colors')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe
+				otherFolder.add(material, 'wireframe').name('Wireframe')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe Linewidth
+				otherFolder.add(material, 'wireframeLinewidth', 0.1, 5, 0.1).name('Line Width')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// 保存folder引用
+				this.state.selectedMaterialGUI.folderRefs = folderRefs;
+				
+				// 默认关闭所有文件夹
+				Object.values(folderRefs).forEach(folder => {
+					if (folder && folder.close) {
+						folder.close();
+					}
+				});
+			}
+
+			createToonMaterialFolder(parentFolder, material) {
+				// 如果parentFolder是GUI实例，则使用它；否则使用全局的selectedMaterialGUI.guiInstance
+				const gui = parentFolder || this.state.selectedMaterialGUI.guiInstance;
+				if (!gui) return;
+				
+				// 清空现有的控制器
+				gui.children.forEach(child => {
+					if (child._controllers) {
+						child._controllers.forEach(controller => controller.destroy());
+					}
+				});
+				gui.children.length = 0;
+				
+				// 确保材质有纹理缓存
+				if (!material._textureCache) {
+					material._textureCache = {};
+				}
+				
+				// 存储folder引用
+				const folderRefs = {};
+				
+				// 1. Base Color
+				const colorFolder = gui.addFolder('Base Color');
+				folderRefs.baseColor = colorFolder;
+				
+				colorFolder.addColor(material, 'color').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Base Color Map
+				this.createTextureControl(colorFolder, material, 'map', {
+					label: 'Color Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(colorFolder, 'baseColor', material.map);
+					}
+				});
+				
+				// 2. Gradient Map (渐变贴图) - Toon材质特有
+				const gradientFolder = gui.addFolder('Gradient');
+				folderRefs.gradient = gradientFolder;
+				
+				this.createTextureControl(gradientFolder, material, 'gradientMap', {
+					label: 'Gradient Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(gradientFolder, 'gradient', material.gradientMap);
+					}
+				});
+				
+				// 3. Emissive (自发光)
+				const emissiveFolder = gui.addFolder('Emissive');
+				folderRefs.emissive = emissiveFolder;
+				
+				emissiveFolder.addColor(material, 'emissive').name('Color')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				emissiveFolder.add(material, 'emissiveIntensity', 0, 10, 0.1).name('Intensity')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Emissive Map
+				this.createTextureControl(emissiveFolder, material, 'emissiveMap', {
+					label: 'Emissive Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(emissiveFolder, 'emissive', material.emissiveMap);
+					}
+				});
+				
+				// 4. Normal Map (法线贴图)
+				const normalFolder = gui.addFolder('Normal');
+				folderRefs.normal = normalFolder;
+				
+				this.createTextureControl(normalFolder, material, 'normalMap', {
+					label: 'Normal Texture',
+					hasScale: true,
+					scaleProperty: 'normalScale',
+					onTextureChange: () => {
+						this.updateTextureButtonName(normalFolder, 'normal', material.normalMap);
+					}
+				});
+				
+				// 5. Bump Map (凹凸贴图)
+				const bumpFolder = gui.addFolder('Bump');
+				folderRefs.bump = bumpFolder;
+				
+				this.createTextureControl(bumpFolder, material, 'bumpMap', {
+					label: 'Bump Texture',
+					hasScale: true,
+					scaleProperty: 'bumpScale',
+					onTextureChange: () => {
+						this.updateTextureButtonName(bumpFolder, 'bump', material.bumpMap);
+					}
+				});
+				
+				// 6. Displacement Map (位移贴图)
+				const displacementFolder = gui.addFolder('Displacement');
+				folderRefs.displacement = displacementFolder;
+				
+				this.createTextureControl(displacementFolder, material, 'displacementMap', {
+					label: 'Displacement Texture',
+					hasScale: true,
+					scaleProperty: 'displacementScale',
+					hasBias: true,
+					biasProperty: 'displacementBias',
+					onTextureChange: () => {
+						this.updateTextureButtonName(displacementFolder, 'displacement', material.displacementMap);
+					}
+				});
+				
+				// 7. Ambient Occlusion (环境光遮蔽)
+				const aoFolder = gui.addFolder('Ambient Occlusion');
+				folderRefs.ao = aoFolder;
+				
+				this.createTextureControl(aoFolder, material, 'aoMap', {
+					label: 'AO Texture',
+					hasIntensity: true,
+					intensityProperty: 'aoMapIntensity',
+					onTextureChange: () => {
+						this.updateTextureButtonName(aoFolder, 'ao', material.aoMap);
+					}
+				});
+				
+				// 8. Environment Map (环境贴图)
+				const envFolder = gui.addFolder('Environment');
+				folderRefs.environment = envFolder;
+				
+				this.createTextureControl(envFolder, material, 'envMap', {
+					label: 'Environment Texture',
+					isColorMap: true,
+					onTextureChange: () => {
+						this.updateTextureButtonName(envFolder, 'environment', material.envMap);
+					}
+				});
+				
+				// 9. Light Map (光照贴图)
+				const lightMapFolder = gui.addFolder('Light');
+				folderRefs.light = lightMapFolder;
+				
+				this.createTextureControl(lightMapFolder, material, 'lightMap', {
+					label: 'Light Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(lightMapFolder, 'light', material.lightMap);
+					}
+				});
+				
+				// 10. Opacity (透明度)
+				const opacityFolder = gui.addFolder('Opacity');
+				folderRefs.opacity = opacityFolder;
+				
+				opacityFolder.add(material, 'opacity', 0, 1, 0.01).name('Value')
+					.onChange(() => {
+						material.transparent = material.opacity < 1;
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Alpha Map
+				this.createTextureControl(opacityFolder, material, 'alphaMap', {
+					label: 'Alpha Texture',
+					onTextureChange: () => {
+						this.updateTextureButtonName(opacityFolder, 'opacity', material.alphaMap);
+					}
+				});
+				
+				// 11. Other Properties
+				const otherFolder = gui.addFolder('Other');
+				folderRefs.other = otherFolder;
+				
+				// Vertex Colors
+				otherFolder.add(material, 'vertexColors').name('Vertex Colors')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe
+				otherFolder.add(material, 'wireframe').name('Wireframe')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// Wireframe Linewidth
+				otherFolder.add(material, 'wireframeLinewidth', 0.1, 5, 0.1).name('Line Width')
+					.onChange(() => {
+						material.needsUpdate = true;
+						this.renderInvalidate();
+					});
+				
+				// 保存folder引用
+				this.state.selectedMaterialGUI.folderRefs = folderRefs;
+				
+				// 默认关闭所有文件夹
+				Object.values(folderRefs).forEach(folder => {
+					if (folder && folder.close) {
+						folder.close();
+					}
+				});
+			}
+
+			createStandardMaterialFolderForSub(parentFolder, material, index) {
+				this.createStandardMaterialFolder(parentFolder, material);
+			}
+
+			createBasicMaterialFolderForSub(parentFolder, material, index) {
+				this.createBasicMaterialFolder(parentFolder, material);
+			}
+
+			createPhongMaterialFolderForSub(parentFolder, material, index) {
+				this.createPhongMaterialFolder(parentFolder, material);
+			}
+
+			createLambertMaterialFolderForSub(parentFolder, material, index) {
+				this.createLambertMaterialFolder(parentFolder, material);
+			}
+
+			createToonMaterialFolderForSub(parentFolder, material, index) {
+				this.createToonMaterialFolder(parentFolder, material);
+			}
+
+			createTextureControl(folder, material, propertyName, config = {}) {
+				const {
+					label = propertyName,
+					isColorMap = false,
+					hasScale = false,
+					scaleProperty = null,
+					hasIntensity = false,
+					intensityProperty = null,
+					hasBias = false,
+					biasProperty = null,
+					onTextureChange = null
+				} = config;
+				
+				// 确保材质有纹理缓存
+				if (!material._textureCache) {
+					material._textureCache = {};
+				}
+				
+				// 检查是否有贴图（当前应用或缓存中）
+				const currentTexture = material[propertyName] || material._textureCache[propertyName];
+				const hasTexture = !!currentTexture;
+				
+				// 创建贴图操作对象
+				const textureActions = {
+					action: () => {
+						if (material[propertyName] || material._textureCache[propertyName]) {
+							// 有贴图：执行移除操作
+							this.textureManager.removeTexture(material, propertyName);
+							
+							// **立即更新GUI控件**
+							this.updateTextureUIAfterAction(folder, propertyName, material, false);
+							
+							if (onTextureChange) {
+								onTextureChange();
+							}
+							
+							// **立即强制渲染**
+							this.renderInvalidate();
+						} else {
+							// 无贴图：执行加载操作
+							this.textureManager.loadTexture(material, propertyName, isColorMap).then((texture) => {
+								if (texture) {
+									// **立即更新GUI控件**
+									this.updateTextureUIAfterAction(folder, propertyName, material, true, texture);
+									
+									if (onTextureChange) {
+										onTextureChange();
+									}
+									
+									// **立即强制渲染**
+									this.renderInvalidate();
+								}
+							}).catch((error) => {
+								console.log('Texture loading cancelled:', error);
+							});
+						}
+					}
+				};
+				
+				// 创建按钮
+				let initialButtonName;
+				if (currentTexture) {
+					const textureName = this.getTextureDisplayName(currentTexture);
+					initialButtonName = 'Remove ' + textureName;
+				} else {
+					initialButtonName = 'Load Texture';
+				}
+				
+				const buttonController = folder.add(textureActions, 'action').name(initialButtonName);
+				
+				// 创建贴图开关
+				const state = {
+					useTexture: !!material[propertyName]
+				};
+				
+				const toggleController = folder.add(state, 'useTexture').name('Texture Enabled')
+					.onChange((value) => {
+						if (value && !material._textureCache[propertyName]) {
+							// 没有贴图文件，但试图启用，应该先加载贴图
+							console.log('No texture file to enable. Please load a texture first.');
+							toggleController.setValue(false);
+							return;
+						}
+						
+						this.textureManager.toggleTexture(material, propertyName, value);
+						this.renderInvalidate();
+						
+						if (onTextureChange) {
+							onTextureChange();
+						}
+					});
+				
+				// 保存引用
+				folder._textureButtons = folder._textureButtons || {};
+				folder._textureButtons[propertyName] = {
+					controller: buttonController,
+					toggleController: toggleController,
+					actions: textureActions,
+					config: config,
+					material: material
+				};
+				
+				return {
+					button: buttonController,
+					toggle: toggleController
+				};
+			}
+
+			updateTextureUIAfterAction(folder, propertyName, material, hasTexture, texture = null) {
+				if (!folder || !folder._textureButtons || !folder._textureButtons[propertyName]) return;
+				
+				const buttonInfo = folder._textureButtons[propertyName];
+				
+				// 更新材质状态（确保缓存同步）
+				const currentTexture = texture || material[propertyName] || material._textureCache[propertyName];
+				const hasTextureFile = !!currentTexture;
+				const isTextureApplied = !!material[propertyName];
+				
+				// 更新按钮文字
+				if (buttonInfo.controller) {
+					if (hasTextureFile) {
+						const textureName = this.getTextureDisplayName(currentTexture);
+						buttonInfo.controller.name('Remove ' + textureName);
+						
+						// 更新按钮动作
+						buttonInfo.actions.action = () => {
+							this.textureManager.removeTexture(material, propertyName);
+							this.updateTextureUIAfterAction(folder, propertyName, material, false);
+							this.renderInvalidate();
+						};
+					} else {
+						buttonInfo.controller.name('Load Texture');
+						
+						// 更新按钮动作
+						buttonInfo.actions.action = () => {
+							this.textureManager.loadTexture(material, propertyName, buttonInfo.config.isColorMap).then((newTexture) => {
+								if (newTexture) {
+									this.updateTextureUIAfterAction(folder, propertyName, material, true, newTexture);
+									this.renderInvalidate();
+								}
+							}).catch((error) => {
+								console.log('Texture loading cancelled:', error);
+							});
+						};
+					}
+					
+					// 更新控制器显示
+					if (buttonInfo.controller.updateDisplay) {
+						buttonInfo.controller.updateDisplay();
+					}
+				}
+				
+				// 更新toggle状态
+				if (buttonInfo.toggleController) {
+					// 先保存当前值，防止触发onChange事件
+					const currentValue = buttonInfo.toggleController.getValue();
+					const newValue = isTextureApplied;
+					
+					if (currentValue !== newValue) {
+						buttonInfo.toggleController.setValue(newValue);
+						
+						// 确保toggle的onChange事件被触发
+						if (buttonInfo.toggleController._onChange) {
+							buttonInfo.toggleController._onChange(newValue);
+						}
+					}
+				}
+			}
+
+			updateTextureButtonName(folder, propertyName, texture) {
+				if (!folder || !folder._textureButtons || !folder._textureButtons[propertyName]) return;
+				
+				const buttonInfo = folder._textureButtons[propertyName];
+				if (buttonInfo && buttonInfo.controller) {
+					// 检查是否有贴图文件（不只是是否应用）
+					const hasTextureFile = !!buttonInfo.material._textureCache[propertyName];
+					
+					if (hasTextureFile) {
+						// 有贴图文件：显示Remove按钮
+						const textureInCache = buttonInfo.material._textureCache[propertyName];
+						const textureName = this.getTextureDisplayName(textureInCache);
+						buttonInfo.controller.name('Remove ' + textureName);
+						
+						// 更新按钮动作为移除贴图
+						buttonInfo.actions.action = () => {
+							this.textureManager.removeTexture(buttonInfo.material, propertyName);
+							
+							// 更新按钮文字为Load Texture
+							buttonInfo.controller.name('Load Texture');
+							buttonInfo.controller.updateDisplay();
+							
+							// 更新toggle状态为false（因为贴图文件已移除）
+							if (buttonInfo.toggleController) {
+								buttonInfo.toggleController.setValue(false);
+							}
+							
+							this.renderInvalidate();
+						};
+					} else {
+						// 无贴图文件：显示Load按钮
+						buttonInfo.controller.name('Load Texture');
+						
+						// 更新按钮动作为加载贴图
+						buttonInfo.actions.action = () => {
+							this.textureManager.loadTexture(buttonInfo.material, propertyName, buttonInfo.config.isColorMap).then((newTexture) => {
+								if (newTexture) {
+									// 更新按钮文字
+									const textureName = this.getTextureDisplayName(newTexture);
+									buttonInfo.controller.name('Remove ' + textureName);
+									buttonInfo.controller.updateDisplay();
+									
+									// 更新toggle状态为true（加载后自动启用）
+									if (buttonInfo.toggleController) {
+										buttonInfo.toggleController.setValue(true);
+									}
+									
+									this.renderInvalidate();
+								}
+							}).catch((error) => {
+								console.log('Texture loading cancelled:', error);
+							});
+						};
+					}
+					
+					// 更新控制器显示
+					if (buttonInfo.controller.updateDisplay) {
+						buttonInfo.controller.updateDisplay();
+					}
+				}
+			}
+
+			getTextureDisplayName(texture) {
+				if (!texture || !texture.isTexture) return 'Texture';
+				
+				let textureName = 'Texture';
+				
+				// 1. 优先从userData获取文件名
+				if (texture.userData && texture.userData.filename) {
+					textureName = texture.userData.filename;
+				}
+				// 2. 从原始文件名获取
+				else if (texture.image && texture.image.currentSrc) {
+					const src = texture.image.currentSrc;
+					const filename = src.split('/').pop().split('?')[0];
+					if (filename && filename.length > 0) {
+						textureName = filename;
+					}
+				}
+				// 3. 从image.src获取
+				else if (texture.image && texture.image.src) {
+					const src = texture.image.src;
+					if (!src.startsWith('data:')) {
+						const filename = src.split('/').pop().split('?')[0];
+						if (filename && filename.length > 0) {
+							textureName = filename;
+						}
+					}
+				}
+				// 4. 从texture.name获取
+				else if (texture.name) {
+					textureName = texture.name;
+				}
+				// 5. 使用UUID（作为最后备选）
+				else if (texture.uuid) {
+					textureName = 'Texture-' + texture.uuid.substring(0, 8);
+				}
+				
+				// 限制名称长度
+				if (textureName.length > 20) {
+					textureName = textureName.substring(0, 17) + '...';
+				}
+				
+				return textureName;
+			}
+
+			addTextureParameterControllers(folder, material, propertyName, config) {
+				const { hasScale, scaleProperty, hasIntensity, intensityProperty, hasBias, biasProperty } = config;
+				
+				// 清理已存在的参数控制器
+				if (folder._paramControllers) {
+					folder._paramControllers.forEach(controller => {
+						if (controller && controller.destroy) {
+							controller.destroy();
+						}
+					});
+				}
+				folder._paramControllers = [];
+				
+				// 添加缩放控制器
+				if (hasScale && scaleProperty) {
+					if (material[scaleProperty] !== undefined) {
+						if (typeof material[scaleProperty] === 'object' && material[scaleProperty].x !== undefined) {
+							// 向量缩放
+							const xController = folder.add(material[scaleProperty], 'x', -3, 3, 0.1)
+								.name('Scale X')
+								.onChange(() => {
+									material.needsUpdate = true;
+									this.renderInvalidate();
+								});
+							folder._paramControllers.push(xController);
+							
+							const yController = folder.add(material[scaleProperty], 'y', -3, 3, 0.1)
+								.name('Scale Y')
+								.onChange(() => {
+									material.needsUpdate = true;
+									this.renderInvalidate();
+								});
+							folder._paramControllers.push(yController);
+						} else {
+							// 标量缩放
+							const scaleController = folder.add(material, scaleProperty, 0, 3, 0.1)
+								.name('Scale')
+								.onChange(() => {
+									material.needsUpdate = true;
+									this.renderInvalidate();
+								});
+							folder._paramControllers.push(scaleController);
+						}
+					}
+				}
+				
+				// 添加强度控制器
+				if (hasIntensity && intensityProperty) {
+					if (material[intensityProperty] !== undefined) {
+						const intensityController = folder.add(material, intensityProperty, 0, 3, 0.1)
+							.name('Intensity')
+							.onChange(() => {
+								material.needsUpdate = true;
+								this.renderInvalidate();
+							});
+						folder._paramControllers.push(intensityController);
+					}
+				}
+				
+				// 添加偏移控制器
+				if (hasBias && biasProperty) {
+					if (material[biasProperty] !== undefined) {
+						const biasController = folder.add(material, biasProperty, -5, 5, 0.1)
+							.name('Bias')
+							.onChange(() => {
+								material.needsUpdate = true;
+								this.renderInvalidate();
+							});
+						folder._paramControllers.push(biasController);
+					}
+				}
+			}
+
 			// 灯光GUI
 			initLightGUI() {
 				// 创建灯光GUI容器
@@ -2754,307 +7006,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				} else {
 					ambLightFolder.close();
 				}
-			}
-
-			// 数值输入控制
-			validateNumericInput(event, paramName) {
-				const input = event.target;
-				let value = paramName === 'fps' ? parseInt(input.value) : parseFloat(input.value);
-				
-				input.classList.remove('invalid');
-				input.style.borderColor = '';
-				
-				// 检查是否是有效数字
-				if (isNaN(value)) {
-					input.classList.add('invalid');
-					input.style.borderColor = 'var(--danger-color)';
-					return false;
-				}
-				
-				// 添加pending状态
-				input.classList.add('pending');
-				input.style.borderColor = 'var(--primary-color)';
-				
-				return true;
-			}
-
-			applyNumericInput(event, paramName, fromUserInput = false) {
-				const input = event.target;
-				let value = paramName === 'fps' ? parseInt(input.value) : parseFloat(input.value);
-				
-				input.classList.remove('pending', 'invalid');
-				input.style.borderColor = '';
-				
-				if (isNaN(value)) {
-					this.updateCameraUIForMode();
-					this.updateTimeSleder();
-					return;
-				}
-				
-				switch(paramName) {
-					case 'fps':
-						if (value < 1) value = 1;
-						else if (value > 120) value = 120;
-						value = Math.floor(value);
-						input.value = value.toString();
-						break;
-					case 'fov':
-						if (this.camera.isOrthographicCamera) {
-							if (value < 0.01) value = 0.01;
-							else if (value > 1000) value = 1000;
-						} else {
-							if (value < 0.01) value = 0.01;
-							else if (value > 179.99) value = 179.99;
-						}
-						input.value = value.toFixed(2);
-						this.updateCameraFOV();
-						break;
-					case 'near':
-						if (value < 0.01) value = 0.01;
-						else if (value > 5000) value = 5000;
-						input.value = value.toFixed(2);
-						this.updateCameraNear();
-						this.dom.inputs.far.min = (value + 0.01).toFixed(2);
-						if (parseFloat(this.dom.inputs.far.value) < value + 0.01) {
-							this.dom.inputs.far.value = (value + 0.01).toFixed(2);
-							this.applyNumericInput({
-								target: this.dom.inputs.far
-							}, 'far');
-						}
-						break;
-					case 'far':
-						const nearValue = parseFloat(this.dom.inputs.near.value);
-						const minFar = nearValue + 0.01;
-						if (value < minFar) value = minFar;
-						else if (value > 5000) value = 5000;
-						input.value = value.toFixed(2);
-						this.updateCameraFar();
-						break;
-					case 'startFrame':
-						if (value < -9999) value = -9999;
-						else if (value > 9999) value = 9999;
-						break;
-					case 'endFrame':
-						const startFrameVal = parseFloat(this.dom.inputs.startFrame.value);
-						if (value < startFrameVal) value = startFrameVal;
-						else if (value > 9999) value = 9999;
-						break;
-					case 'roll':
-						if (value < -180) value = -180;
-						else if (value > 180) value = 180;
-						input.value = value.toFixed(2);
-						break;
-				}
-				
-				input.value = value.toFixed(2);
-				
-				switch(paramName) {
-					case 'fps':
-						this.updateFPS();
-						break;
-					case 'fov':
-						this.updateCameraFOV();
-						break;
-					case 'near':
-						this.updateCameraNear();
-						break;
-					case 'far':
-						this.updateCameraFar();
-						break;
-					case 'startFrame':
-					case 'endFrame':
-						this.applyFrameRange();
-						break;
-					case 'roll':
-						this.applyRollAngle();
-						break;
-				}
-				
-				if (fromUserInput && 
-					this.state.cameras.currentType === 'custom' && 
-					this.state.autoAddKeyframeEnabled &&
-					(paramName === 'fov' || paramName === 'roll')) {
-					this.addCameraKeyframe();
-				}
-			}
-
-			// 关键帧插值计算
-			catmullRomInterpolate(t, p0, p1, p2, p3) {
-				const t2 = t * t;
-				const t3 = t2 * t;
-				
-				const result = 0.5 * (
-					(2 * p1) + 
-					(-p0 + p2) * t + 
-					(2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + 
-					(-p0 + 3 * p1 - 3 * p2 + p3) * t3
-				);
-				
-				return result;
-			}
-
-			catmullRomInterpolateVector3(t, v0, v1, v2, v3) {
-				const x = this.catmullRomInterpolate(t, v0.x, v1.x, v2.x, v3.x);
-				const y = this.catmullRomInterpolate(t, v0.y, v1.y, v2.y, v3.y);
-				const z = this.catmullRomInterpolate(t, v0.z, v1.z, v2.z, v3.z);
-				
-				return new THREE.Vector3(x, y, z);
-			}
-
-			catmullRomInterpolateEuler(t, e0, e1, e2, e3) {
-				var interpolateAngle = function(t, a0, a1, a2, a3) {
-					var normalizeAngle = function(angle) {
-						while (angle > Math.PI) angle -= 2 * Math.PI;
-						while (angle < -Math.PI) angle += 2 * Math.PI;
-						return angle;
-					};
-					a0 = normalizeAngle(a0); a1 = normalizeAngle(a1); a2 = normalizeAngle(a2); a3 = normalizeAngle(a3);
-					return this.catmullRomInterpolate(t, a0, a1, a2, a3);
-				}.bind(this);
-				return new THREE.Euler(
-					interpolateAngle(t, e0.x, e1.x, e2.x, e3.x),
-					interpolateAngle(t, e0.y, e1.y, e2.y, e3.y),
-					interpolateAngle(t, e0.z, e1.z, e2.z, e3.z)
-				);
-			}
-
-			normalizeAngle(angle) {
-				angle = angle % 360;
-				if (angle > 180) angle -= 360;
-				if (angle < -180) angle += 360;
-				return angle;
-			}
-
-			catmullRomInterpolateAngle(t, a0, a1, a2, a3) {
-				// 1. 展开角度序列，确保连续性
-				const angles = [a0, a1, a2, a3];
-				
-				// 展开角度，确保连续性（解决360°边界问题）
-				for (let i = 1; i < angles.length; i++) {
-					let diff = angles[i] - angles[i-1];
-					
-					// 确保角度差在[-180, 180]范围内（最短路径）
-					while (diff > 180) diff -= 360;
-					while (diff < -180) diff += 360;
-					
-					// 累积角度，形成连续序列
-					angles[i] = angles[i-1] + diff;
-				}
-				
-				// 2. 对连续角度序列应用Catmull-Rom插值
-				const interpolated = this.catmullRomInterpolate(t, angles[0], angles[1], angles[2], angles[3]);
-				
-				// 3. 规范化到[-180,180]范围
-				return this.normalizeAngle(interpolated);
-			}
-
-			lerpAngle(a, b, t) {
-				// 将角度标准化到 [-180, 180]
-				a = this.normalizeAngle(a);
-				b = this.normalizeAngle(b);
-				
-				// 计算差值，选择最短路径
-				let diff = b - a;
-				if (diff > 180) {
-					diff -= 360;
-				} else if (diff < -180) {
-					diff += 360;
-				}
-				
-				// 线性插值并标准化
-				const result = a + diff * t;
-				return this.normalizeAngle(result);
-			}
-
-			// 关键帧格式转换
-			convertToVector3(value, defaultValue) {
-				if (!value) {
-					return defaultValue.clone();
-				}
-				
-				if (value.isVector3) {
-					return value.clone();
-				}
-				
-				// 处理普通对象 {x, y, z}
-				if (value.x !== undefined && value.y !== undefined && value.z !== undefined) {
-					return new THREE.Vector3(value.x, value.y, value.z);
-				}
-				
-				// 处理数组 [x, y, z]
-				if (Array.isArray(value) && value.length >= 3) {
-					return new THREE.Vector3(value[0], value[1], value[2]);
-				}
-				
-				return defaultValue.clone();
-			}
-
-			convertToEuler(value, defaultValue) {
-				if (!value) {
-					return defaultValue.clone();
-				}
-				
-				if (value.isEuler) {
-					return value.clone();
-				}
-				
-				// 处理普通对象 {x, y, z}
-				if (value.x !== undefined && value.y !== undefined && value.z !== undefined) {
-					return new THREE.Euler(value.x, value.y, value.z);
-				}
-				
-				// 处理数组 [x, y, z]
-				if (Array.isArray(value) && value.length >= 3) {
-					return new THREE.Euler(value[0], value[1], value[2]);
-				}
-				
-				return defaultValue.clone();
-			}
-
-			convertToQuaternion(value, defaultValue) {
-				if (!value) {
-					return defaultValue.clone();
-				}
-				
-				if (value.isQuaternion) {
-					return value.clone();
-				}
-				
-				// 处理普通对象 {x, y, z, w}
-				if (value.x !== undefined && value.y !== undefined && value.z !== undefined && value.w !== undefined) {
-					return new THREE.Quaternion(value.x, value.y, value.z, value.w);
-				}
-				
-				// 处理数组 [x, y, z, w]
-				if (Array.isArray(value) && value.length >= 4) {
-					return new THREE.Quaternion(value[0], value[1], value[2], value[3]);
-				}
-				
-				return defaultValue.clone();
-			}
-
-			vectorToArray(vector) {
-				if (!vector) return [0, 0, 0];
-				if (Array.isArray(vector)) return vector;
-				if (vector.isVector3) return vector.toArray();
-				if (vector.x !== undefined) return [vector.x, vector.y, vector.z];
-				return [0, 0, 0];
-			}
-
-			eulerToArray(euler) {
-				if (!euler) return [0, 0, 0];
-				if (Array.isArray(euler)) return euler;
-				if (euler.isEuler) return [euler.x, euler.y, euler.z];
-				if (euler.x !== undefined) return [euler.x, euler.y, euler.z];
-				return [0, 0, 0];
-			}
-
-			quaternionToArray(quaternion) {
-				if (!quaternion) return [0, 0, 0, 1];
-				if (Array.isArray(quaternion)) return quaternion;
-				if (quaternion.isQuaternion) return [quaternion.x, quaternion.y, quaternion.z, quaternion.w];
-				if (quaternion.x !== undefined) return [quaternion.x, quaternion.y, quaternion.z, quaternion.w];
-				return [0, 0, 0, 1];
 			}
 
 			// 模型导入
@@ -3767,7 +7718,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 								if (!mat.emissiveMap && mat.emissiveIntensity === 1) {
 									mat.emissiveIntensity = 0;
 								}
-								if (!mat.metalnessmap && mat.metalness === 1) {
+								if (!mat.metalnessMap && mat.metalness === 1) {
 									mat.metalness = 0;
 								}
 								
@@ -3818,7 +7769,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							texture.image.height === 0 ||
 							(texture.image.src && texture.image.src.includes('undefined'))) {
 							
-							console.log('移除无效贴图: ' + prop + ' from material ' + material.name || 'unnamed');
 							material[prop] = null;
 							
 							// 如果是alphaMap被移除，确保材质不是透明的
@@ -3838,7 +7788,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 1. 检查缓存
 				if (this.materialConversionCache.has(materialId)) {
-					console.log('使用缓存的转换材质: ' + material.name || materialId);
 					return this.materialConversionCache.get(materialId);
 				}
 				
@@ -3850,12 +7799,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				if (!isPhong) {
 					// 不是Phong材质，无需转换，返回原材质
 					// 不缓存非Phong材质，因为原材质应该被复用
-					console.log('跳过非Phong材质: ' + material.name || 'unnamed' + ', 类型: ' + material.type);
 					return material;
 				}
-				
-				console.log('开始转换Phong材质: ' + material.name || 'unnamed');
-				console.log('  转换前: type=' + material.type + ', shininess=' + material.shininess + ', specular=(' + material.specular?.r + ', ' + material.specular?.g + ', ' + material.specular?.b + ')');
 				
 				// 记录原始信息
 				const originalInfo = {
@@ -3959,9 +7904,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				standardMaterial.userData.originalSpecular = originalInfo.specular;
 				standardMaterial.userData.originalMaterialType = originalInfo.type;
 				
-				console.log('  转换后: type=' + standardMaterial.type + ', roughness=' + standardMaterial.roughness.toFixed(3) + ', metalness=' + standardMaterial.metalness.toFixed(3));
-				console.log('  转换完成: ' + material.name || 'unnamed' + ' -> ' + standardMaterial.name);
-				
 				// 缓存转换后的材质
 				this.materialConversionCache.set(materialId, standardMaterial);
 				
@@ -3995,8 +7937,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						if (prop === 'displacementMap' && sourceMaterial.displacementScale !== undefined) {
 							targetMaterial.displacementScale = sourceMaterial.displacementScale;
 						}
-						
-						console.log('  复制贴图: ' + prop + ' from ' + sourceMaterial.name || 'source' + ' to ' + targetMaterial.name || 'target');
 					}
 				});
 			}
@@ -4096,17 +8036,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					const zip = await this.JSZip.loadAsync(buffer);
 					
 					// 记录ZIP内容
-					this.loadingProgress.update("Analyzing ZIP contents...", 88);
-					this.logZipContents(zip);
+					/* this.loadingProgress.update("Analyzing ZIP contents...", 88); */
+					/* this.logZipContents(zip); */
 					
 					// 分析ZIP内容，确定格式
 					const format = this.detectZipFormat(zip);
 					
 					if (!format) {
-						throw new Error('ZIP包中未找到支持的3D格式文件');
+						throw new Error('Cannot find supported 3D model format in ZIP');
 					}
 					
-					console.log('检测到格式: ' + format.type + ', 主文件: ' + format.mainFile);
 					this.loadingProgress.update('Detected format: ' + format.type.toUpperCase() + ', main file: ' + format.mainFile, 90);
 					
 					// 创建临时虚拟文件系统
@@ -4130,13 +8069,12 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							await this.loadOBJFromZip(zip, format.mainFile, virtualFS);
 							break;
 						default:
-							throw new Error('不支持的格式: ' + format.type);
+							throw new Error('Unsupported format: ' + format.type);
 					}
 					
 					this.loadingProgress.update("ZIP processing complete", 98);
 					
 				} catch (error) {
-					console.log('ZIP解析错误:', error);
 					this.loadingProgress.error('ZIP parsing error: ' + error.message);
 					throw error;
 				} finally {
@@ -4151,7 +8089,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			logZipContents(zip) {
-				console.log("ZIP内容分析:");
+				console.log("ZIP Content:");
 				const files = Object.keys(zip.files);
 				const categories = {
 					models: [],
@@ -4173,16 +8111,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				});
 				
-				console.log("  模型文件: " + categories.models.length);
+				console.log("  Model: " + categories.models.length);
 				categories.models.forEach(f => console.log("    " + f));
 				
-				console.log("  纹理文件: " + categories.textures.length);
+				console.log("  Texture: " + categories.textures.length);
 				categories.textures.forEach(f => console.log("    " + f));
 				
-				console.log("  材质文件: " + categories.materials.length);
+				console.log("  Material: " + categories.materials.length);
 				categories.materials.forEach(f => console.log("    " + f));
 				
-				console.log("  其他文件: " + categories.others.length);
+				console.log("  Other: " + categories.others.length);
 				categories.others.forEach(f => console.log("    " + f));
 			}
 
@@ -4249,8 +8187,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					let gltf;
 					
 					if (isGLTF) {
-						console.log('处理分离式 GLTF 文件: ' + mainFilePath);
-						
 						// 1. 读取 GLTF JSON 文件
 						this.loadingProgress.update("Reading GLTF JSON file...", 96);
 						const gltfText = await virtualFS.getText(mainFilePath);
@@ -4265,8 +8201,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						gltf = await this.parseGLTFJsonWithLoader(gltfJson, mainFilePath, virtualFS);
 						
 					} else {
-						console.log('处理 GLB 文件（假设为分离式）: ' + mainFilePath);
-						
 						// GLB文件也需要当作分离式处理
 						this.loadingProgress.update("Reading GLB data...", 96);
 						const arrayBuffer = await virtualFS.getArrayBuffer(mainFilePath);
@@ -4298,7 +8232,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					this.loadingProgress.stop((isGLTF ? "GLTF" : "GLB") + " from ZIP loaded successfully", 100);
 					
 				} catch (error) {
-					console.log('加载ZIP中的GLB/GLTF失败:', error);
 					this.loadingProgress.error("Failed to load from ZIP: " + error.message);
 					throw error;
 				} finally {
@@ -4310,8 +8243,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			async extractGLTFJsonFromGLB(arrayBuffer) {
-				console.log('从 GLB 中提取 JSON 数据');
-				
 				// GLB 格式解析
 				const dataView = new DataView(arrayBuffer);
 				
@@ -4323,11 +8254,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 获取版本
 				const version = dataView.getUint32(4, true);
-				console.log('GLB 版本: ' + version);
 				
 				// 获取长度
 				const length = dataView.getUint32(8, true);
-				console.log('GLB 总长度: ' + length + ' bytes');
 				
 				// 解析第一个 Chunk（应该是 JSON）
 				const chunkLength = dataView.getUint32(12, true);
@@ -4344,20 +8273,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				const jsonText = new TextDecoder().decode(jsonBytes);
 				const gltfJson = JSON.parse(jsonText);
 				
-				console.log('成功从 GLB 提取 JSON，包含 ' + Object.keys(gltfJson).length + ' 个属性');
-				
 				return gltfJson;
 			}
 
 			async processSeparatedGLTFResources(gltfJson, mainFilePath, virtualFS) {
-				console.log('处理分离式 GLTF 资源');
-				
 				const baseDir = mainFilePath.substring(0, mainFilePath.lastIndexOf('/') + 1);
 				
 				// 1. 处理 buffers (BIN 文件)
 				if (gltfJson.buffers && Array.isArray(gltfJson.buffers)) {
-					console.log('处理 ' + gltfJson.buffers.length + ' 个缓冲区');
-					
 					for (let i = 0; i < gltfJson.buffers.length; i++) {
 						const buffer = gltfJson.buffers[i];
 						
@@ -4373,10 +8296,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 								// 转换为base64 Data URI
 								const base64 = this.arrayBufferToBase64(arrayBuffer);
 								buffer.uri = 'data:application/octet-stream;base64,' + base64;
-								
-								console.log('处理BIN文件: ' + bufferPath + ' -> data URI (size: ' + arrayBuffer.byteLength + ' bytes)');
 							} catch (error) {
-								console.log('无法加载BIN文件: ' + buffer.uri, error);
+								console.log('Failed to load buffer: ' + buffer.uri, error);
 								throw new Error('Failed to load buffer: ' + buffer.uri);
 							}
 						}
@@ -4385,8 +8306,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 2. 处理 images (纹理)
 				if (gltfJson.images && Array.isArray(gltfJson.images)) {
-					console.log('处理 ' + gltfJson.images.length + ' 个图像');
-					
 					const texturePromises = [];
 					
 					for (let i = 0; i < gltfJson.images.length; i++) {
@@ -4404,19 +8323,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 									
 									// 更新图像URI为Blob URL
 									image.uri = blobUrl;
-									
-									console.log('处理纹理: ' + imagePath + ' -> blob URL');
 								} catch (error) {
-									console.log('无法加载纹理: ' + image.uri, error);
 									// 如果纹理加载失败，尝试其他可能的位置
 									const fileName = PathUtils.getFileName(image.uri);
 									try {
 										const blobUrl = await virtualFS.getBlobUrl(fileName, mainFilePath);
 										image.uri = blobUrl;
-										console.log('使用文件名找到纹理: ' + fileName);
+										console.log('Find texture using filename: ' + fileName);
 									} catch (e) {
-										console.log('纹理完全加载失败: ' + image.uri);
-										// 可以在这里设置一个默认纹理或抛出错
+										console.log('Failed to load texture: ' + image.uri);
 									}
 								}
 							})();
@@ -4428,15 +8343,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					// 等待所有纹理处理完成
 					await Promise.all(texturePromises);
 				}
-				
-				console.log('分离式 GLTF 资源处理完成');
 			}
 
 			parseGLTFJsonWithLoader(gltfJson, mainFilePath, virtualFS) {
 				return new Promise((resolve, reject) => {
 					try {
-						console.log('使用 GLTFLoader 解析 GLTF JSON');
-						
 						// 创建 GLTFLoader
 						const gltfLoader = new GLTFLoader();
 						
@@ -4464,8 +8375,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							
 							// 尝试从虚拟文件系统获取Blob URL
 							return virtualFS.getBlobUrl(fullPath, mainFilePath).catch(() => {
-								console.log('无法获取Blob URL: ' + url);
-								return url; // 返回原始URL，让加载器处理错误
+								return url;
 							});
 						});
 						
@@ -4477,24 +8387,18 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						
 						// 使用parse方法解析GLTF JSON
 						gltfLoaderWithManager.parse(gltfJsonString, '', (gltf) => {
-							console.log('GLTF 解析成功');
 							resolve(gltf);
 						}, (error) => {
-							console.log('GLTF 解析失败:', error);
-							
 							// 如果带manager的加载器失败，尝试普通加载器
-							console.log('尝试使用普通 GLTFLoader');
 							gltfLoader.parse(gltfJsonString, '', (gltf) => {
-								console.log('普通 GLTFLoader 解析成功');
 								resolve(gltf);
 							}, (secondError) => {
-								console.log('普通 GLTFLoader 也失败:', secondError);
 								reject(secondError);
 							});
 						});
 						
 					} catch (error) {
-						console.log('GLTF 解析过程出错:', error);
+						console.log('Parse GLTF error:', error);
 						reject(error);
 					}
 				});
@@ -4513,8 +8417,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			// load fbx zip
 			async loadFBXFromZip(zip, mainFilePath, virtualFS) {
 				try {
-					console.log('开始加载ZIP中的FBX: ' + mainFilePath);
-					
 					this.loadingProgress.start("Extracting FBX from ZIP...", 95);
 					
 					// 1. 获取FBX文件的ArrayBuffer
@@ -4525,8 +8427,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					this.loadingProgress.update("Extracting texture mappings...", 97);
 					const mappingExtractor = new FBXMappingExtractor();
 					const materialTextureMap = mappingExtractor.extractFromBuffer(arrayBuffer);
-					
-					console.log('提取的材质-贴图映射:', materialTextureMap);
 					
 					// 3. 使用官方FBXLoader加载FBX
 					this.loadingProgress.update("Parsing FBX model...", 98);
@@ -4541,7 +8441,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						await this.processFBXTexturesWithMapping(object, mainFilePath, virtualFS, materialTextureMap);
 					} else {
 						// 6. 如果没有映射关系，使用默认处理
-						console.log('没有提取到映射关系，使用默认纹理处理');
 						this.loadingProgress.update("Processing textures (fallback)...");
 						await this.processFBXTexturesFallback(object, mainFilePath, virtualFS);
 					}
@@ -4558,21 +8457,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						isFromZip: true
 					};
 					
-					console.log('ZIP中的FBX加载完成');
 					this.loadingProgress.stop("FBX from ZIP loaded successfully");
 					
 				} catch (error) {
-					console.log('加载ZIP中的FBX失败:', error);
 					this.loadingProgress.error("Failed to load FBX from ZIP");
 					throw error;
 				}
 			}
 
 			async processFBXTexturesWithMapping(object, mainFilePath, virtualFS, materialTextureMap) {
-				console.log('使用映射关系处理FBX纹理...');
-				
 				if (!materialTextureMap || materialTextureMap.size === 0) {
-					console.log('没有找到材质-贴图映射关系，使用默认处理');
 					return this.processFBXTexturesFallback(object, mainFilePath, virtualFS);
 				}
 				
@@ -4594,9 +8488,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 				});
 				
-				console.log('场景中的材质:', Array.from(materials.keys()));
-				console.log('映射表中的材质:', Array.from(materialTextureMap.keys()));
-				
 				// 为每个材质应用贴图
 				const texturePromises = [];
 				const totalTextures = Array.from(materialTextureMap.values()).reduce((sum, mappings) => sum + mappings.size, 0);
@@ -4607,11 +8498,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					const material = materials.get(materialName);
 					
 					if (!material) {
-						console.log('找不到材质: ' + materialName);
 						continue;
 					}
-					
-					console.log('为材质 ' + materialName + ' 应用贴图...');
 					
 					// 为每个纹理类型加载并应用贴图
 					for (const [threeJsProp, textureInfo] of textureMappings.entries()) {
@@ -4619,11 +8507,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							// 获取贴图文件名
 							let textureFileName = textureInfo.imageFilename;
 							if (!textureFileName) {
-								console.log('材质 ' + materialName + ' 的 ' + threeJsProp + ' 通道没有贴图路径');
 								continue;
 							}
-							
-							console.log('  加载贴图: ' + textureFileName + ' -> ' + threeJsProp);
 							
 							// 从ZIP中加载贴图
 							const promise = textureLoader.loadTexture(textureFileName, {
@@ -4639,18 +8524,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 									
 									material.needsUpdate = true;
 									
-									console.log('    贴图应用成功');
-								} else {
-									console.log('    贴图加载失败: ' + textureFileName);
 								}
 							}).catch(error => {
-								console.log('处理材质 ' + materialName + ' 的 ' + threeJsProp + ' 通道时出错:', error);
+								console.log('Process ' + threeJsProp + ' of ' + materialName + ' error:', error);
 							});
 							
 							texturePromises.push(promise);
 							
 						} catch (error) {
-							console.log('处理材质 ' + materialName + ' 的 ' + threeJsProp + ' 通道时出错:', error);
+							console.log('Process ' + threeJsProp + ' of ' + materialName + ' error:', error);
 						}
 					}
 				}
@@ -4658,16 +8540,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 等待所有纹理加载完成
 				if (texturePromises.length > 0) {
 					await Promise.allSettled(texturePromises);
-					console.log('使用映射关系处理FBX纹理完成，处理了', texturePromises.length, '个贴图');
 					this.loadingProgress.update(texturePromises.length + ' textures loaded...');
-				} else {
-					console.log('没有找到需要加载的贴图');
 				}
 			}
 
 			async processFBXTexturesFallback(object, mainFilePath, virtualFS) {
-				console.log('使用回退方法处理FBX纹理...');
-				
 				// 创建纹理加载器
 				const textureLoader = new TextureLoaderFromZip(virtualFS);
 				
@@ -4705,10 +8582,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 												if (newTexture) {
 													material[prop] = newTexture;
 													material.needsUpdate = true;
-													console.log('成功加载纹理:', fileName, '->', prop);
 												}
 											}).catch(error => {
-												console.log('加载纹理失败:', fileName, error);
+												console.log('Load texture failed:', fileName, error);
 											});
 											
 											texturePromises.push(promise);
@@ -4723,9 +8599,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 等待所有纹理加载完成
 				if (texturePromises.length > 0) {
 					await Promise.allSettled(texturePromises);
-					console.log('回退纹理处理完成，加载了', texturePromises.length, '个纹理');
-				} else {
-					console.log('没有找到需要处理的纹理');
 				}
 			}
 
@@ -4763,8 +8636,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				try {
 					const formatInfo = this.detectZipFormat(zip);
 					
-					console.log('开始加载ZIP中的OBJ: ' + mainFilePath);
-					console.log('MTL文件: ' + (formatInfo.mtlFile || '无'));
 					this.loadingProgress.start("Extracting OBJ from ZIP...", 95);
 					
 					// 加载OBJ文件
@@ -4774,19 +8645,12 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					// 如果有MTL文件，加载它
 					let materialsDict = null;
 					if (formatInfo.mtlFile) {
-						console.log('加载MTL文件: ' + formatInfo.mtlFile);
 						try {
 							this.loadingProgress.update("Loading MTL materials...", 97);
 							const mtlText = await virtualFS.getText(formatInfo.mtlFile);
 							materialsDict = await this.loadMTLFromZip(mtlText, formatInfo.mtlFile, virtualFS);
 							
-							if (materialsDict) {
-								console.log('MTL材质加载成功，包含 ' + Object.keys(materialsDict).length + ' 个材质');
-							} else {
-								console.log('MTL材质加载失败，将使用默认材质');
-							}
 						} catch (mtlError) {
-							console.log('MTL文件加载失败: ', mtlError);
 							materialsDict = null;
 						}
 					}
@@ -4797,11 +8661,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					
 					let object;
 					if (allSingleMaterial) {
-						console.log('全部是单材质物体，使用OBJLoader快速加载');
 						this.loadingProgress.update("Parsing OBJ (single material)...");
 						object = await this.loadSingleMaterialOBJ(objText, materialsDict);
 					} else {
-						console.log('包含多材质物体，使用手动解析');
 						this.loadingProgress.update("Parsing OBJ (multi-material)...");
 						object = await this.parseOBJManually(objText, mainFilePath, virtualFS, materialsDict);
 					}
@@ -4822,7 +8684,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					return object;
 					
 				} catch (error) {
-					console.log('加载ZIP中的OBJ失败:', error);
 					this.loadingProgress.error("Failed to load OBJ from ZIP");
 					throw error;
 				}
@@ -4869,15 +8730,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			async loadSingleMaterialOBJ(objText, materialsDict) {
-				console.log('使用OBJLoader加载整个OBJ文件');
-				
 				// 与obj-singlemat.js完全相同的方法
 				const objLoader = new OBJLoader();
-				console.log('解析OBJ数据...');
 				const object = objLoader.parse(objText);
-				console.log('OBJ解析完成，对象类型: ' + object.type + ', 子对象数量: ' + object.children.length);
 				
-				// 关键：手动应用材质到网格
+				// 手动应用材质到网格
 				if (materialsDict) {
 					this.applyMaterialsToOBJ(object, materialsDict);
 				}
@@ -4901,18 +8758,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							materialName = 'defaultMat';
 						}
 						
-						console.log('为网格应用材质: ' + materialName);
-						
 						// 从材质字典中获取对应的Three.js材质
 						if (materialsDict[materialName]) {
 							child.material = materialsDict[materialName];
-							console.log('成功应用材质: ' + materialName);
 						} else {
 							// 如果没有找到对应材质，使用第一个可用材质
 							const firstMaterialName = Object.keys(materialsDict)[0];
 							if (firstMaterialName) {
 								child.material = materialsDict[firstMaterialName];
-								console.log('使用第一个可用材质: ' + firstMaterialName);
 							}
 						}
 					}
@@ -4920,8 +8773,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			async parseOBJManually(objText, mainFilePath, virtualFS, materialsDict) {
-				console.log("开始手动解析OBJ文件（准确算法版-修复）");
-				
 				try {
 					const startTime = performance.now();
 					
@@ -4952,14 +8803,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						}
 						
 						startObject(name, fromDeclaration = false) {
-							// 如果当前对象不是来自声明，则使用它
-							if (this.object && this.object.fromDeclaration === false) {
+							// 启用会导致所有物体合成一个物体
+							/* if (this.object && this.object.fromDeclaration === false) {
 								this.object.name = name;
 								this.object.fromDeclaration = (fromDeclaration !== false);
 								return;
-							}
+							} */
 							
-							const previousMaterial = (this.object && this.object.currentMaterial ? this.object.currentMaterial() : undefined);
+							const previousMaterial = (this.object && typeof this.object.currentMaterial === 'function') 
+								? this.object.currentMaterial() 
+								: undefined;
 							
 							if (this.object && this.object._finalize) {
 								this.object._finalize(true);
@@ -5194,8 +9047,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 					
 					// ============== 解析主流程 ==============
-					console.log("解析OBJ数据...");
-					
 					setTimeout(() => {
 						this.loadingProgress.update("Processing vertices and faces...", 98.5);
 					}, 500);
@@ -5304,11 +9155,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					
 					state.finalize();
 					
-					console.log("解析完成，对象数量: " + state.objects.length);
-					
 					// ============== 创建Three.js对象 ==============
-					console.log("创建Three.js对象...");
-					
 					const container = new THREE.Group();
 					const hasPrimitives = !(state.objects.length === 1 && state.objects[0].geometry.vertices.length === 0);
 					
@@ -5348,11 +9195,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 								let material;
 								if (materialsDict && materialsDict[sourceMaterial.name]) {
 									material = materialsDict[sourceMaterial.name];
-									console.log("使用解析的材质: " + sourceMaterial.name);
 								} else {
 									material = this.createDefaultMaterial();
 									material.name = sourceMaterial.name || "default";
-									console.log("创建默认材质: " + material.name);
 								}
 								
 								createdMaterials.push(material);
@@ -5392,19 +9237,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						}
 					}
 					
-					// 性能统计
-					const endTime = performance.now();
-					console.log("准确算法版解析完成统计:");
-					console.log("  处理时间: " + ((endTime - startTime) / 1000).toFixed(2) + "秒");
-					console.log("  对象数量: " + state.objects.length);
-					console.log("  总顶点数: " + (state.vertices.length / 3));
-					console.log("  创建的网格数量: " + container.children.length);
-					
 					this.loadingProgress.update("Creating 3D objects...", 99.5);
 					return container;
 					
 				} catch (error) {
-					console.log("parseOBJManually函数错误: ", error);
+					console.log("Parse OBJ manually failed: ", error);
 					throw error;
 				}
 			}
@@ -5413,8 +9250,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			async loadMTLFromZip(mtlText, mainFilePath, virtualFS, options = {}) {
 				return new Promise((resolve, reject) => {
 					try {
-						console.log('开始解析MTL文件: ' + mainFilePath);
-						
 						// 创建统一的纹理加载器
 						this.loadingProgress.update("Parsing MTL file...", 97.5);
 						const textureLoader = new TextureLoaderFromZip(virtualFS);
@@ -5423,10 +9258,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						const parser = new MTLParser();
 						const materialsInfo = parser.parseMTLText(mtlText);
 						
-						console.log('解析出 ' + Object.keys(materialsInfo).length + ' 个材质信息');
-						
 						if (Object.keys(materialsInfo).length === 0) {
-							console.log('MTL文件中没有发现材质信息');
 							resolve({});
 							return;
 						}
@@ -5467,7 +9299,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							}
 							
 							materialsDict[materialName] = threeMaterial;
-							console.log('创建材质: ' + materialName + ' (预设: ' + mergedOptions.materialPreset + ')');
 							
 							// 收集纹理信息
 							const textures = parser.getTexturesForMaterial(materialInfo);
@@ -5489,8 +9320,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 								});
 							}
 						}
-						
-						console.log('需要加载的纹理数量:', textureInfos.length);
 						
 						if (textureInfos.length === 0) {
 							// 没有纹理，直接返回材质
@@ -5526,7 +9355,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							this.finalizeMaterials(materialsDict, materialsInfo);
 							
 							// 验证加载结果
-							this.logMaterialTextureInfo(materialsDict);
+							/* this.logMaterialTextureInfo(materialsDict); */
 							
 							// 清理纹理加载器
 							textureLoader.dispose();
@@ -5534,8 +9363,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							resolve(materialsDict);
 							
 						}).catch(error => {
-							console.log('纹理加载失败，但材质已创建:', error);
-							
 							// 即使纹理失败，也尝试最终调整
 							this.finalizeMaterials(materialsDict, materialsInfo);
 							
@@ -5546,15 +9373,13 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						});
 						
 					} catch (error) {
-						console.log('MTL解析失败:', error);
+						console.log('Parse MTL failed:', error);
 						reject(error);
 					}
 				});
 			}
 
 			finalizeMaterials(materialsDict, materialsInfo) {
-				console.log('进行最终材质调整...');
-				
 				for (const materialName in materialsDict) {
 					const material = materialsDict[materialName];
 					const mtlInfo = materialsInfo[materialName];
@@ -5586,8 +9411,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			createMaterialFromMTLInfo(mtlInfo, options = {}) {
-				console.log('为材质 ' + mtlInfo.name + ' 创建Three.js材质');
-				
 				const defaults = {
 					materialType: 'standard', // 'standard' 或 'phong'
 					convertPhongToStandard: true,
@@ -5608,8 +9431,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			createPhongMaterialFromMTLInfo(mtlInfo, options = {}) {
-				console.log('为材质 ' + mtlInfo.name + ' 创建Three.js Phong材质');
-				
 				// 默认选项（与官方MTLLoader一致）
 				const defaults = {
 					side: THREE.FrontSide,
@@ -5727,23 +9548,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					illum: mtlInfo.illum
 				};
 				
-				// 调试输出
-				console.log('创建的Phong材质 ' + mtlInfo.name + ' 参数:');
-				console.log('  color:', params.color ? '(' + params.color.r.toFixed(3) + ', ' + params.color.g.toFixed(3) + ', ' + params.color.b.toFixed(3) + ')' : 'null');
-				console.log('  specular:', params.specular ? '(' + params.specular.r.toFixed(3) + ', ' + params.specular.g.toFixed(3) + ', ' + params.specular.b.toFixed(3) + ')' : 'null');
-				console.log('  emissive:', params.emissive ? '(' + params.emissive.r.toFixed(3) + ', ' + params.emissive.g.toFixed(3) + ', ' + params.emissive.b.toFixed(3) + ')' : 'null');
-				console.log('  shininess:', params.shininess !== undefined ? params.shininess : '默认');
-				console.log('  opacity:', params.opacity !== undefined ? params.opacity.toFixed(3) : '1.000');
-				console.log('  transparent:', params.transparent);
-				console.log('  d值:', mtlInfo.d !== undefined ? mtlInfo.d : '未定义');
-				console.log('  Tr值:', mtlInfo.Tr !== undefined ? mtlInfo.Tr : '未定义');
-				
 				return material;
 			}
 
 			createStandardMaterialFromMTLInfo(mtlInfo, options = {}) {
-				console.log('为材质 ' + mtlInfo.name + ' 创建Three.js Standard材质');
-				
 				// 默认选项
 				const defaults = {
 					side: THREE.FrontSide,
@@ -5839,11 +9647,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					if (dValue < 1.0) {
 						opacity = dValue;
 						transparent = true;
-						console.log('  根据d值设置透明: d=' + dValue + ', opacity=' + opacity);
 					} else {
 						opacity = 1.0;
 						transparent = false;
-						console.log('  d=1.0，不透明');
 					}
 				}
 				
@@ -5856,16 +9662,12 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					if (trValue > 0) {
 						opacity = 1.0 - trValue;
 						transparent = true;
-						console.log('  根据Tr值设置透明: Tr=' + mtlInfo.Tr + ', 处理后=' + trValue + ', opacity=' + opacity);
-					} else {
-						console.log('  Tr=' + mtlInfo.Tr + '，不透明');
 					}
 				}
 				
 				// 如果有透明度贴图，必须设置透明
 				if (mtlInfo.map_d) {
 					transparent = true;
-					console.log('  有透明度贴图，设置透明');
 				}
 				
 				params.opacity = opacity;
@@ -5879,6 +9681,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					params.userData.ior = mtlInfo.Ni;
 				}
 				
+				// 透射颜色 Tf
+				
 				// 光照模型 illum - 仅记录
 				if (mtlInfo.illum !== undefined) {
 					params.userData = params.userData || {};
@@ -5886,7 +9690,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				// =============== 创建材质 ===============
-				
 				const material = new THREE.MeshStandardMaterial(params);
 				
 				// 记录原始MTL信息
@@ -5899,15 +9702,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					trValue: mtlInfo.Tr,
 					hasMapD: mtlInfo.map_d !== null
 				};
-				
-				// 调试输出
-				console.log('创建的Standard材质 ' + mtlInfo.name + ' 参数:');
-				console.log('  color:', params.color ? '(' + params.color.r.toFixed(3) + ', ' + params.color.g.toFixed(3) + ', ' + params.color.b.toFixed(3) + ')' : 'null');
-				console.log('  metalness:', params.metalness !== undefined ? params.metalness.toFixed(3) : '默认');
-				console.log('  roughness:', params.roughness !== undefined ? params.roughness.toFixed(3) : '默认');
-				console.log('  emissive:', params.emissive ? '(' + params.emissive.r.toFixed(3) + ', ' + params.emissive.g.toFixed(3) + ', ' + params.emissive.b.toFixed(3) + ')' : 'null');
-				console.log('  opacity:', params.opacity !== undefined ? params.opacity.toFixed(3) : '1.000');
-				console.log('  transparent:', params.transparent);
 				
 				return material;
 			}
@@ -5963,7 +9757,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				// 如果是FBX纹理类型，直接使用
 				else if (!fbxPropertyMap[propertyName]) {
-					console.log('未知的纹理类型: ' + propertyName + '，跳过');
 					return;
 				}
 				
@@ -5975,33 +9768,28 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 设置纹理
 				material[propertyName] = finalTexture;
-				console.log('为材质 ' + (material.name || 'unnamed') + ' 设置 ' + propertyName + ' (类型: ' + textureInfo.textureType + ')');
 				
 				// 应用纹理参数（仅适用于MTL）
 				if (params) {
 					// 缩放
 					if (params.scale && (params.scale.x !== 1 || params.scale.y !== 1)) {
 						finalTexture.repeat.set(params.scale.x, params.scale.y);
-						console.log('  纹理缩放: ' + params.scale.x + ', ' + params.scale.y);
 					}
 					
 					// 偏移
 					if (params.offset && (params.offset.x !== 0 || params.offset.y !== 0)) {
 						finalTexture.offset.set(params.offset.x, params.offset.y);
-						console.log('  纹理偏移: ' + params.offset.x + ', ' + params.offset.y);
 					}
 					
 					// bump缩放
 					if ((textureInfo.textureType === 'map_bump' || textureInfo.textureType === 'bump') && params.bumpScale !== 1) {
 						material.bumpScale = params.bumpScale;
-						console.log('  bump缩放: ' + params.bumpScale);
 					}
 					
 					// 钳制
 					if (params.clamp) {
 						finalTexture.wrapS = THREE.ClampToEdgeWrapping;
 						finalTexture.wrapT = THREE.ClampToEdgeWrapping;
-						console.log('  纹理钳制: 启用');
 					} else {
 						finalTexture.wrapS = THREE.RepeatWrapping;
 						finalTexture.wrapT = THREE.RepeatWrapping;
@@ -6047,14 +9835,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			logMaterialTextureInfo(materialsDict) {
-				console.log('=== 详细材质信息 ===');
+				console.log('=== Material Detail ===');
 				for (const materialName in materialsDict) {
 					const material = materialsDict[materialName];
-					console.log('材质: ' + materialName);
-					console.log('  类型: ' + material.type);
+					console.log('Material: ' + materialName);
+					console.log('  Type: ' + material.type);
 					
 					if (material.color) {
-						console.log('  基础颜色: (' + 
+						console.log('  Base Color: (' + 
 							material.color.r.toFixed(2) + ', ' +
 							material.color.g.toFixed(2) + ', ' +
 							material.color.b.toFixed(2) + ')');
@@ -6062,21 +9850,21 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					
 					if (material.emissive) {
 						const e = material.emissive;
-						console.log('  自发光: (' + 
+						console.log('  Emissive Color: (' + 
 							e.r.toFixed(2) + ', ' + e.g.toFixed(2) + ', ' + e.b.toFixed(2) + 
-							') 强度: ' + (material.emissiveIntensity || 0).toFixed(2));
+							') Intensity: ' + (material.emissiveIntensity || 0).toFixed(2));
 					}
 					
 					if (material.metalness !== undefined) {
-						console.log('  金属度: ' + material.metalness.toFixed(2));
+						console.log('  Metalness: ' + material.metalness.toFixed(2));
 					}
 					
 					if (material.roughness !== undefined) {
-						console.log('  粗糙度: ' + material.roughness.toFixed(2));
+						console.log('  Roughness: ' + material.roughness.toFixed(2));
 					}
 					
 					if (material.opacity !== undefined && material.opacity < 1.0) {
-						console.log('  透明度: ' + material.opacity.toFixed(2));
+						console.log('  Opacity: ' + material.opacity.toFixed(2));
 					}
 					
 					const textureProps = ['map', 'aoMap', 'specularMap', 'emissiveMap', 
@@ -6086,13 +9874,13 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					let hasTextures = false;
 					for (const prop of textureProps) {
 						if (material[prop]) {
-							console.log('  - ' + prop + ': 有');
+							console.log('  - ' + prop + ': yes');
 							hasTextures = true;
 						}
 					}
 					
 					if (!hasTextures) {
-						console.log('  - 纹理: 无');
+						console.log('  - Textures: no');
 					}
 				}
 				console.log('===================');
@@ -6279,7 +10067,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.state.originalMaterials.clear();
 				this.materialConversionCache.clear();
 				this.disposeMaterialCache();
-				this.disposeTextureCache();
+				this.scene.traverse(object => {
+					if (object.isMesh && object.material) {
+						this.textureManager.disposeMaterialTextures(object.material);
+					}
+				});
 				
 				// 重置纹理相关状态
 				this.state.useVertexColors = false;
@@ -6312,6 +10104,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.state.cameraAnim.isEnabled = false;
 				this.state.autoAddKeyframeEnabled = false;
 				this.hideMaterialGUI();
+				this.clearSelection();
 				this.controls.enabled = true;
 				
 				// 重置录制状态
@@ -6387,27 +10180,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					edge: null,
 					canny: null
 				};
-			}
-
-			disposeTextureCache() {
-				// 1. 清理纹理缓存
-				this.state.textureCache.forEach((texture, url) => {
-					try {
-						if (texture && texture.dispose) {
-							texture.dispose();
-						}
-						// 如果是Blob URL，释放它
-						if (url.startsWith('blob:')) {
-							URL.revokeObjectURL(url);
-						}
-					} catch (error) {
-						console.log("Error disposing texture: " + url);
-					}
-				});
-				this.state.textureCache.clear();
-			  
-				// 2. 清理原始纹理引用
-				this.state.originalTextures.clear();
 			}
 
 			// 模型动画输出
@@ -7746,11 +11518,32 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			async getScene3DData() {
-				// 0. 检查场景是否为空
-				const bboxData = this.getBBoxForCurrentFrame();
-				if (bboxData.isEmpty) {
-					this.showMessage('Scene is empty. Cannot generate 3D data.', 3000);
-					return;
+				// 0. 检查场景是否为空或有选中物体
+				let targetName = '';
+				let useSelectedObject = false;
+				
+				// 如果有选中物体，优先使用选中物体
+				if (this.state.selection.isSelecting && this.state.selection.selectedObject) {
+					const selectedObject = this.state.selection.selectedObject;
+					targetName = selectedObject.name || 'Selected Object';
+					useSelectedObject = true;
+					
+					// 验证选中物体是否有有效包围盒
+					const bbox = new THREE.Box3().setFromObject(selectedObject);
+					if (bbox.isEmpty()) {
+						this.showMessage('Selected object has empty bounding box.', 3000);
+						useSelectedObject = false;
+					}
+				}
+				
+				// 如果没有选中物体或选中物体无效，使用整个场景
+				if (!useSelectedObject) {
+					const bboxData = this.getBBoxForCurrentFrame();
+					if (bboxData.isEmpty) {
+						this.showMessage('Scene is empty. Cannot generate 3D data.', 3000);
+						return;
+					}
+					targetName = 'Scene';
 				}
 				
 				// 禁用控制面板
@@ -7758,17 +11551,43 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 显示加载状态
 				this.dom.loading.style.display = 'block';
-				this.dom.loadingText.textContent = 'Generating 3D data screenshots...';
+				this.dom.loadingText.textContent = useSelectedObject ? 
+					'Generating 3D data for selected object ' + targetName + '...' : 
+					'Generating 3D data for entire scene...';
 				this.dom.loadingProgressBar.style.width = '0%';
 				this.dom.loadingPercentage.textContent = '0%';
 				this.dom.loadingPercentage.style.display = 'block';
 				
+				// 保存选择辅助线原始可见性
+				let originalSelectionBBoxVisible = true;
+				let originalSelectionHelperVisible = true;
+				
+				if (this.state.selection.isSelecting) {
+					if (this.state.selection.selectionBBox) {
+						originalSelectionBBoxVisible = this.state.selection.selectionBBox.visible;
+						this.state.selection.selectionBBox.visible = false;
+					}
+					if (this.state.selection.selectionHelper) {
+						originalSelectionHelperVisible = this.state.selection.selectionHelper.visible;
+						this.state.selection.selectionHelper.visible = false;
+					}
+				}
+				
+				// 保存当前背景颜色
+				const originalBackground = this.scene.background ? this.scene.background.clone() : new THREE.Color(0x111111);
+				
 				try {
-					// 获取场景名称
+					// 获取场景名称（如果有选中物体，添加到名称中）
 					let sceneName = 'scene';
 					if (this.state.currentFileData && this.state.currentFileData.filename) {
 						const fileName = this.state.currentFileData.filename.split('/').pop().split('.')[0];
 						sceneName = fileName;
+						
+						if (useSelectedObject) {
+							// 在场景名称中添加选中物体信息
+							const objName = this.state.selection.selectedObject.name || 'selected';
+							sceneName = fileName + '_' + objName.replace(/[^a-zA-Z0-9_-]/g, '_');
+						}
 					}
 					
 					// 1. 获取所有默认正交相机
@@ -7780,6 +11599,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						this.showMessage('No orthographic cameras found.', 3000);
 						return;
 					}
+					
+					// 定义相机顺序映射
+					const cameraOrder = {
+						'Front': 1,
+						'Left': 2,
+						'Back': 3,
+						'Right': 4,
+						'Top': 5,
+						'Bottom': 6
+					};
 					
 					// 保存当前相机状态
 					const originalCamera = this.camera;
@@ -7795,9 +11624,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					const originalDirLightIntensity = this.state.lights.dirIntensity || this.state.lights.dir.intensity;
 					const originalAmbLightIntensity = this.state.lights.ambIntensity || this.state.lights.amb.intensity;
 					const originalUseSceneLight = this.state.useSceneLight;
-					
-					// 保存当前背景颜色
-					const originalBackground = this.scene.background ? this.scene.background.clone() : new THREE.Color(0x111111);
 					
 					// 确保使用默认灯光模式
 					this.state.useSceneLight = false;
@@ -7827,7 +11653,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					// 存储截图的数组
 					const screenshots = [];
 					
-					// 每个相机8步（切换+重置+居中+聚焦+4种材质截图）
+					// 定义材质列表
+					const materials = ['Original', 'Normal', 'Depth', 'Edge'];
+					const suffixes = ['O', 'N', 'D', 'E'];
+					
+					// 每个相机8步（切换+重置+居中+聚焦+5种材质截图）
 					const stepsPerCamera = 8;
 					const totalSteps = orthographicCameras.length * stepsPerCamera;
 					let currentStep = 0;
@@ -7836,13 +11666,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					for (let i = 0; i < orthographicCameras.length; i++) {
 						const camera = orthographicCameras[i];
 						const cameraName = camera.name || 'ortho_camera_' + i;
+						const cameraOrderId = cameraOrder[cameraName] || i + 1;
 						
 						// 更新进度
 						currentStep++;
 						const progress = Math.round((currentStep / totalSteps) * 100);
 						this.dom.loadingProgressBar.style.width = progress + '%';
 						this.dom.loadingPercentage.textContent = progress + '%';
-						this.dom.loadingText.textContent = 'Setting up ' + cameraName + '...';
+						this.dom.loadingText.textContent = useSelectedObject ? 
+							'Setting up ' + cameraName + ' for selected object...' : 
+							'Setting up ' + cameraName + '...';
 						
 						// a. 切换到该相机
 						this.camera = camera;
@@ -7859,7 +11692,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						const progressReset = Math.round((currentStep / totalSteps) * 100);
 						this.dom.loadingProgressBar.style.width = progressReset + '%';
 						this.dom.loadingPercentage.textContent = progressReset + '%';
-						this.dom.loadingText.textContent = 'Resetting ' + cameraName + '...';
+						this.dom.loadingText.textContent = useSelectedObject ? 
+							'Resetting ' + cameraName + ' for selected object...' : 
+							'Resetting ' + cameraName + '...';
 						
 						this.resetCamera();
 						await this.waitForNextFrame();
@@ -7869,7 +11704,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						const progressCenter = Math.round((currentStep / totalSteps) * 100);
 						this.dom.loadingProgressBar.style.width = progressCenter + '%';
 						this.dom.loadingPercentage.textContent = progressCenter + '%';
-						this.dom.loadingText.textContent = 'Centering ' + cameraName + ' to object...';
+						this.dom.loadingText.textContent = useSelectedObject ? 
+							'Centering ' + cameraName + ' to selected object...' : 
+							'Centering ' + cameraName + ' to object...';
 						
 						this.centerToObject();
 						await this.waitForNextFrame();
@@ -7879,21 +11716,22 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						const progressFocus = Math.round((currentStep / totalSteps) * 100);
 						this.dom.loadingProgressBar.style.width = progressFocus + '%';
 						this.dom.loadingPercentage.textContent = progressFocus + '%';
-						this.dom.loadingText.textContent = 'Focusing ' + cameraName + ' to object...';
+						this.dom.loadingText.textContent = useSelectedObject ? 
+							'Focusing ' + cameraName + ' to selected object...' : 
+							'Focusing ' + cameraName + ' to object...';
 						
 						this.focusToObject();
 						await this.waitForNextFrame();
 						
-						// e. 依次切换到Original, Normal, Depth, Edge材质并截屏
-						const materials = ['Original', 'Normal', 'Depth', 'Edge'];
-						const suffixes = ['O', 'N', 'D', 'E'];
-						
+						// e. 依次切换到Original, Normal, Depth, Edge, GTAO材质并截屏
 						for (let j = 0; j < materials.length; j++) {
 							currentStep++;
 							const progress3 = Math.round((currentStep / totalSteps) * 100);
 							this.dom.loadingProgressBar.style.width = progress3 + '%';
 							this.dom.loadingPercentage.textContent = progress3 + '%';
-							this.dom.loadingText.textContent = 'Capturing ' + materials[j] + ' for ' + cameraName + '...';
+							this.dom.loadingText.textContent = useSelectedObject ? 
+								'Capturing ' + materials[j] + ' for selected object (' + cameraName + ')...' : 
+								'Capturing ' + materials[j] + ' for ' + cameraName + '...';
 							
 							// 切换到材质
 							const materialMode = materials[j].toLowerCase();
@@ -7905,8 +11743,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 								this.scene.background = new THREE.Color(0x000000);
 							}
 							
-							// 截屏文件名格式: {scenename}_{camera}_{suffix}.png
-							const filename = sceneName + '_' + cameraName + '_' + suffixes[j] + '.png';
+							// 截屏文件名格式: {scenename}_{ID}_{camera}_{suffix}.png
+							// 如果有选中物体，在文件名中标记
+							let filename;
+							if (useSelectedObject) {
+								const objName = this.state.selection.selectedObject.name || 'selected';
+								const safeObjName = objName.replace(/[^a-zA-Z0-9_-]/g, '_');
+								filename = sceneName + '_' + cameraOrderId + '_' + cameraName + '_' + suffixes[j] + '_' + safeObjName + '.png';
+							} else {
+								filename = sceneName + '_' + cameraOrderId + '_' + cameraName + '_' + suffixes[j] + '.png';
+							}
 							const screenshot = this.captureScreenshot(filename);
 							
 							if (screenshot) {
@@ -7914,8 +11760,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 									blob: screenshot.blob,
 									filename: filename,
 									camera: cameraName,
+									cameraId: cameraOrderId,
 									material: materials[j],
-									materialFolder: materials[j].toLowerCase()
+									materialFolder: materials[j].toLowerCase(),
+									object: useSelectedObject ? targetName : null
 								});
 							}
 							
@@ -7968,7 +11816,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					
 					// 4. 将所有截屏打包输出并下载
 					if (screenshots.length > 0) {
-						this.showMessage("Starting to package screenshots...", 8000);
+						this.showMessage("Starting to package screenshots...", 10000);
 						await this.waitForNextFrame();
 						await this.packageAndDownloadScreenshots(screenshots, sceneName);
 					} else {
@@ -7976,7 +11824,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 					
 				} catch (error) {
-					console.error("Error in getScene3DData:", error);
+					console.log("Error in getScene3DData:", error);
 					this.showMessage("Error generating 3D data: " + error.message, 5000);
 					
 					// 即使出错，也尝试恢复原始光照强度
@@ -8007,6 +11855,16 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					}
 					
 				} finally {
+					// 恢复选择辅助线可见性
+					if (this.state.selection.isSelecting) {
+						if (this.state.selection.selectionBBox) {
+							this.state.selection.selectionBBox.visible = originalSelectionBBoxVisible;
+						}
+						if (this.state.selection.selectionHelper) {
+							this.state.selection.selectionHelper.visible = originalSelectionHelperVisible;
+						}
+					}
+					
 					// 恢复控制面板
 					this.enableControls();
 					
@@ -8072,25 +11930,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					// 显示成功消息
 					this.showMessage('3D data package (' + screenshots.length + ' screenshots in ' + Object.keys(materialFolders).length + ' folders) downloaded: ' + zipFilename, 5000);
 					
-					// 在控制台输出详细信息
-					console.log("3D Data Generation Complete:");
-					console.log('- Scene: ' + sceneName);
-					console.log('- Total screenshots: ' + screenshots.length);
-					console.log('- Material folders: ' + Object.keys(materialFolders).join(', '));
-					
-					// 按文件夹输出详细信息
-					Object.keys(materialFolders).forEach(folder => {
-						const folderScreenshots = screenshots.filter(s => 
-							(s.materialFolder || s.material.toLowerCase()) === folder
-						);
-						console.log('  - ' + folder + '/ (' + folderScreenshots.length + ' screenshots):');
-						folderScreenshots.forEach(s => {
-							console.log('    - ' + s.filename + ' (' + s.camera + ')');
-						});
-					});
-					
 				} catch (error) {
-					console.error("Error packaging screenshots:", error);
+					console.log("Error packaging screenshots:", error);
 					this.showMessage("Error creating package: " + error.message, 5000);
 					
 					// 如果打包失败，尝试单独下载每个文件
@@ -8114,7 +11955,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							document.body.removeChild(a);
 							URL.revokeObjectURL(url);
 						}, 100);
-					}, index * 100); // 避免同时下载太多文件
+					}, index * 100);
 				});
 				
 				this.showMessage('Downloading ' + screenshots.length + ' screenshots individually...', 5000);
@@ -8123,16 +11964,23 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			update3DDataButtonState() {
 				const bboxData = this.getBBoxForCurrentFrame();
 				const hasMesh = !bboxData.isEmpty;
+				const hasSelection = this.state.selection.isSelecting;
 				
 				if (this.dom.btns.threedDataBtn) {
 					this.dom.btns.threedDataBtn.disabled = !hasMesh;
 					
 					if (!hasMesh) {
 						this.dom.btns.threedDataBtn.title = "No mesh in scene";
-						this.dom.btns.threedDataBtn.classList.add('disabled-control');
+					} else if (hasSelection) {
+						this.dom.btns.threedDataBtn.title = "Get 3D data for selected object";
 					} else {
 						this.dom.btns.threedDataBtn.title = "Get Scene 3D Data";
+					}
+					
+					if (hasMesh) {
 						this.dom.btns.threedDataBtn.classList.remove('disabled-control');
+					} else {
+						this.dom.btns.threedDataBtn.classList.add('disabled-control');
 					}
 				}
 			}
@@ -9641,7 +13489,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			collectTexturesFromMaterial(material, textureMap, mesh) {
 				// 检查传入的是否是有效材质
 				if (!material) {
-					console.log("Warning: Attempted to collect textures from null material");
 					return;
 				}
 				
@@ -10948,7 +14795,39 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				// 2. 获取当前帧的包围盒数据
-				const bboxData = this.getBBoxForCurrentFrame();
+				let bboxData;
+				let targetName = '';
+				
+				if (this.state.selection.isSelecting && this.state.selection.selectedObject) {
+					const selectedObject = this.state.selection.selectedObject;
+					targetName = selectedObject.name || 'Selected Mesh';
+					
+					// 计算选中物体的包围盒
+					const box = new THREE.Box3().setFromObject(selectedObject);
+					if (!box.isEmpty()) {
+						const center = new THREE.Vector3();
+						const size = new THREE.Vector3();
+						box.getCenter(center);
+						box.getSize(size);
+						
+						bboxData = {
+							center: center.clone(),
+							size: size.clone(),
+							min: box.min.clone(),
+							max: box.max.clone(),
+							isEmpty: false
+						};
+						
+					} else {
+						// 选中物体为空，使用场景
+						bboxData = this.getBBoxForCurrentFrame();
+						targetName = 'Scene';
+					}
+				} else {
+					// 没有选中物体，使用场景
+					bboxData = this.getBBoxForCurrentFrame();
+					targetName = 'Scene';
+				}
 				
 				// 3. 检查是否有物体
 				if (bboxData.isEmpty) {
@@ -11170,7 +15049,39 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 				
 				// 2. 获取当前帧的包围盒数据
-				const bboxData = this.getBBoxForCurrentFrame();
+				let bboxData;
+				let targetName = '';
+				
+				// 2. 检查是否有选中的物体
+				if (this.state.selection.isSelecting && this.state.selection.selectedObject) {
+					const selectedObject = this.state.selection.selectedObject;
+					targetName = selectedObject.name || 'Selected Mesh';
+					
+					// 计算选中物体的包围盒
+					const box = new THREE.Box3().setFromObject(selectedObject);
+					if (!box.isEmpty()) {
+						const center = new THREE.Vector3();
+						const size = new THREE.Vector3();
+						box.getCenter(center);
+						box.getSize(size);
+						
+						bboxData = {
+							center: center.clone(),
+							size: size.clone(),
+							min: box.min.clone(),
+							max: box.max.clone(),
+							isEmpty: false
+						};
+					} else {
+						// 选中物体为空，使用场景
+						bboxData = this.getBBoxForCurrentFrame();
+						targetName = 'Scene';
+					}
+				} else {
+					// 没有选中物体，使用场景
+					bboxData = this.getBBoxForCurrentFrame();
+					targetName = 'Scene';
+				}
 				
 				// 3. 检查是否有物体
 				if (bboxData.isEmpty) {
@@ -11251,6 +15162,20 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			shouldExcludeFromBBox(object) {
+				// 如果是选中的物体，永远不要排除
+				if (this.state.selection.selectedObject === object) {
+					return false;
+				}
+				
+				// 检查选中的物体是否在父级链中
+				let parent = object.parent;
+				while (parent) {
+					if (parent === this.state.selection.selectedObject) {
+						return false; // 如果对象是选中物体的子对象，不要排除
+					}
+					parent = parent.parent;
+				}
+				
 				// 排除不可见物体
 				if (!object.visible) return true;
 				
@@ -11838,11 +15763,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					up: upVector
 				});
 				
-				/* if (currentRollAngle !== 0 && this.state.cameras.currentType !== 'scene') {
-					this.applyRollAngleToCamera(newCam, currentRollAngle, true);
-					this.controls.update();
-				} */
-				
 				this.scene.add(newCam);
 				this.state.cameras.custom.push(newCam);
 				this.state.cameras.customCount++;
@@ -12187,10 +16107,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 							replaceInArray(this.state.cameras.custom);
 						}
 						
-						/* if (creationPose.rollAngle) {
-							this.applyRollAngleToCamera(newCamera, creationPose.rollAngle, true);
-						} */
-						
 						// 立即同步UI状态和投影类型
 						this.dom.toggles.ortho.checked = newCamera.isOrthographicCamera;
 					} else {
@@ -12234,10 +16150,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 								camera.fov = creationPose.fov;
 							}
 						}
-						
-						/* if (creationPose.rollAngle) {
-							this.applyRollAngleToCamera(camera, creationPose.rollAngle, true);
-						} */
 					}
 					
 					// 更新相机userData
@@ -12709,10 +16621,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					replaceInArray(this.state.cameras.custom);
 				}
 				
-				/* if (currentRollAngle !== 0) {
-					this.applyRollAngleToCamera(newCamera, currentRollAngle, true);
-				} */
-				
 				setTimeout(() => {
 					this.updateCameraUIForMode();
 					this.renderInvalidate();
@@ -12734,7 +16642,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 												  this.camera.userData.keyframes.length > 0;
 				
 				// 应该禁用的条件：场景相机、自定义相机动画启用、自定义相机有关键帧
-				const shouldDisable = isSceneCamera || isCustomCameraWithAnim || isCustomCameraWithKeyframes;
+				const shouldDisable = this.state.controlsDisabled || isSceneCamera || isCustomCameraWithAnim || isCustomCameraWithKeyframes;
 				
 				// 应用状态
 				orthoToggle.disabled = shouldDisable;
@@ -12814,6 +16722,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				const applyButtonState = (button, shouldEnable) => {
 					if (!button) return;
 					
+					// 如果全局禁用，强制设为禁用状态
+					if (this.state.controlsDisabled) {
+						button.disabled = true;
+						button.classList.remove('enabled-control');
+						button.classList.add('disabled-control');
+						return;
+					}
+					
 					if (shouldEnable) {
 						// 启用状态
 						button.disabled = false;
@@ -12874,11 +16790,19 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			updateCameraControlsState() {
-				const isSceneCamera = this.state.cameras.currentType === 'scene';
-				const isCameraAnimEnabled = this.state.cameras.currentType === 'custom' && this.state.cameraAnim.isEnabled;
+				const isSceneCamera = !this.state.controlsDisabled && this.state.cameras.currentType === 'scene';
+				const isCameraAnimEnabled = !this.state.controlsDisabled && this.state.cameras.currentType === 'custom' && this.state.cameraAnim.isEnabled;
 				
 				const setEnabled = (el, enabled) => {
 					if (!el) return;
+					
+					// 如果全局禁用，强制设为禁用状态
+					if (this.state.controlsDisabled) {
+						el.classList.add('disabled-control');
+						el.classList.remove('enabled-control');
+						el.disabled = true;
+						return;
+					}
 					
 					if (enabled) {
 						el.classList.remove('disabled-control');
@@ -13030,6 +16954,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 使用CSS类控制状态
 				const setEnabledState = (el, enabled) => {
 					if (!el) return;
+					
+					// 如果全局禁用，强制设为禁用状态
+					if (this.state.controlsDisabled) {
+						el.disabled = true;
+						el.classList.add('disabled-control');
+						el.classList.remove('enabled-control');
+						return;
+					}
 					
 					if (enabled) {
 						el.classList.remove('disabled-control');
@@ -13488,10 +17420,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 应用roll角度
 				if (interpolated.roll !== undefined) {
 					this.camera.userData.rollAngle = interpolated.roll;
-					
-					// 直接使用up vector关键帧差值，不用再apply roll angle
-					// 默认两者都用catmullRom插值，虽有误差，但效率更高
-					/* this.applyRollAngleToCamera(this.camera, interpolated.roll, false); */
 				}
 				
 				// 确保 upVector 保存到相机 userData
@@ -14166,12 +18094,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						// const rollResult = this.calculateCameraRollAngle(tempCamera, targetPosition);
 						roll = camera.userData.rollAngle || 0;
 						upVector = camera.userData.upVector.clone();
-						
-						// 在预处理阶段将roll角应用到目标相机旋转中
-						/* if (Math.abs(roll) > 0.001) {
-							this.applyRollAngleToCamera(tempCamera, roll, true);
-							rotation.copy(tempCamera.rotation);
-						} */
 						
 					} else if (rotationTrack) {
 						// 自由相机：从轨道获取旋转
@@ -18055,1878 +21977,6 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				}
 			}
         }
-
-		// zip虚拟环境
-		class ZipVirtualFileSystem {
-			constructor(zip) {
-				this.zip = zip;
-				this.blobUrls = new Map();
-				this.fileNameIndex = new Map();
-				this.pendingRequests = new Map();
-				
-				// 初始化文件名索引
-				this._initFileNameIndex();
-			}
-
-			// 初始化文件名索引
-			_initFileNameIndex() {
-				if (this.fileNameIndex.size === 0) {
-					for (const filePath of Object.keys(this.zip.files)) {
-						const fileName = PathUtils.getFileName(filePath);
-						if (!this.fileNameIndex.has(fileName)) {
-							this.fileNameIndex.set(fileName, filePath);
-						} else {
-							// 如果文件名有重复，记录警告
-							console.log(\"文件名重复: \" + fileName + \", 使用第一个匹配项\");
-						}
-					}
-				}
-			}
-
-			findFilePath(originalPath, basePath = null) {
-				// 1. 清洗路径
-				let cleanedPath = PathUtils.cleanPath(originalPath);
-				
-				// 2. 尝试直接路径
-				if (this.zip.file(cleanedPath)) {
-					return cleanedPath;
-				}
-				
-				// 3. 尝试相对路径（如果有基础路径）
-				if (basePath) {
-					const baseDir = basePath.substring(0, basePath.lastIndexOf('/') + 1);
-					const relativePath = PathUtils.joinPaths(baseDir, cleanedPath);
-					if (this.zip.file(relativePath)) {
-						return relativePath;
-					}
-				}
-				
-				// 4. 尝试只使用文件名
-				const fileName = PathUtils.getFileName(cleanedPath);
-				
-				// 确保文件名索引已初始化
-				this.initFileNameIndex();
-				
-				if (this.fileNameIndex.has(fileName)) {
-					return this.fileNameIndex.get(fileName);
-				}
-				
-				// 5. 尝试在ZIP中搜索（递归）
-				return this.searchFileInZip(zip, fileName);
-			}
-
-			// 递归搜索文件
-			searchFileInZip(zip, fileName) {
-				for (const filePath of Object.keys(zip.files)) {
-					const currentFileName = PathUtils.getFileName(filePath);
-					if (currentFileName.toLowerCase() === fileName.toLowerCase()) {
-						return filePath;
-					}
-				}
-				return null;
-			}
-
-			// 获取文件为Blob URL
-			async getBlobUrl(filePath, basePath = null) {
-				console.log('getBlobUrl调用:');
-				console.log('  文件路径: ' + filePath);
-				console.log('  基础路径: ' + basePath);
-				
-				let actualPath = filePath;
-				
-				// 如果是相对路径，尝试查找
-				if (!this.zip.file(filePath) && basePath) {
-					console.log('  尝试查找文件路径...');
-					actualPath = this.findFilePath(filePath, basePath);
-					console.log('  查找到的实际路径: ' + actualPath);
-				}
-				
-				if (!actualPath) {
-					console.log('  ZIP中未找到文件: ' + filePath);
-					throw new Error("ZIP中未找到文件: " + filePath);
-				}
-				
-				// 检查是否有正在进行的请求
-				if (this.pendingRequests && this.pendingRequests.has(actualPath)) {
-					console.log('  已有正在进行的请求，等待...');
-					return await this.pendingRequests.get(actualPath);
-				}
-				
-				// 检查是否有缓存的blob URL
-				if (this.blobUrls.has(actualPath)) {
-					return this.blobUrls.get(actualPath);
-				}
-				
-				console.log('  创建新的blob URL请求...');
-				
-				// 创建请求Promise
-				const requestPromise = (async () => {
-					const file = this.zip.file(actualPath);
-					if (!file) {
-						console.log('  ZIP中未找到文件: ' + actualPath);
-						throw new Error("ZIP中未找到文件: " + actualPath);
-					}
-					
-					console.log('  找到ZIP文件: ' + actualPath);
-					
-					const blob = await file.async('blob');
-					console.log('  获取blob成功，大小: ' + blob.size + ' 字节');
-					
-					const url = URL.createObjectURL(blob);
-					console.log('  创建blob URL: ' + url);
-					
-					this.blobUrls.set(actualPath, url);
-					
-					// 请求完成后从pendingRequests中移除
-					if (this.pendingRequests) {
-						this.pendingRequests.delete(actualPath);
-					}
-					
-					console.log("加载纹理: " + filePath + " -> " + actualPath);
-					return url;
-				})();
-				
-				// 保存到进行中的请求
-				if (!this.pendingRequests) {
-					this.pendingRequests = new Map();
-				}
-				this.pendingRequests.set(actualPath, requestPromise);
-				
-				return requestPromise;
-			}
-
-			// 获取文件为ArrayBuffer
-			async getArrayBuffer(filePath) {
-				const file = this.zip.file(filePath);
-				if (!file) {
-					throw new Error(\"ZIP中未找到文件: \" + filePath);
-				}
-				return await file.async('arraybuffer');
-			}
-
-			// 获取文件为文本
-			async getText(filePath) {
-				const file = this.zip.file(filePath);
-				if (!file) {
-					throw new Error(\"ZIP中未找到文件: \" + filePath);
-				}
-				return await file.async('text');
-			}
-
-			// 清理所有Blob URL
-			dispose() {
-				this.blobUrls.forEach(url => {
-					if (url && url.startsWith('blob:')) {
-						URL.revokeObjectURL(url);
-					}
-				});
-				this.blobUrls.clear();
-				this.fileNameIndex.clear();
-				this.pendingRequests.clear();
-			}
-		}
-
-		// fbx材质与贴图对应
-		class FBXMappingExtractor {
-			constructor() {
-				this.materialTextureMap = new Map();
-			}
-
-			extractFromBuffer(buffer) {
-				try {
-					const isBinary = this.isFbxFormatBinary(buffer);
-					
-					if (isBinary) {
-						console.log('检测到Binary FBX格式');
-						return this.extractFromBinaryBuffer(buffer);
-					} else {
-						const text = this.convertArrayBufferToString(buffer);
-						const isASCII = this.isFbxFormatASCII(text);
-						
-						if (isASCII) {
-							console.log('检测到ASCII FBX格式');
-							return this.extractFromAsciiText(text);
-						} else {
-							throw new Error('Unknown FBX format');
-						}
-					}
-				} catch (error) {
-					console.log('FBX映射提取失败:', error);
-					return new Map();
-				}
-			}
-
-			isFbxFormatBinary(buffer) {
-				const CORRECT = 'Kaydara\\u0020FBX\\u0020Binary\\u0020\\u0020\\0';
-				return buffer.byteLength >= CORRECT.length && CORRECT === this.convertArrayBufferToString(buffer, 0, CORRECT.length);
-			}
-
-			isFbxFormatASCII(text) {
-				const CORRECT = ['K', 'a', 'y', 'd', 'a', 'r', 'a', '\\\\', 'F', 'B', 'X', '\\\\', 'B', 'i', 'n', 'a', 'r', 'y', '\\\\', '\\\\'];
-				let cursor = 0;
-				function read(offset) {
-					const result = text[offset - 1];
-					text = text.slice(cursor + offset);
-					cursor++;
-					return result;
-				}
-				for (let i = 0; i < CORRECT.length; ++i) {
-					const num = read(1);
-					if (num === CORRECT[i]) {
-						return false;
-					}
-				}
-				return true;
-			}
-
-			convertArrayBufferToString(buffer, from, to) {
-				if (from === undefined) from = 0;
-				if (to === undefined) to = buffer.byteLength;
-				return new TextDecoder().decode(new Uint8Array(buffer, from, to));
-			}
-
-			extractFromBinaryBuffer(buffer) {
-				try {
-					console.log('开始解析Binary FBX，文件大小:', buffer.byteLength, '字节');
-					
-					// 使用简化的解析器
-					const parser = new BinaryFBXParser();
-					const result = parser.parse(buffer);
-					
-					console.log('解析结果顶级节点:', Object.keys(result));
-					
-					// 检查是否有Objects和Connections
-					if (result.Objects && result.Connections) {
-						console.log('找到Objects和Connections节点');
-						
-						// 提取关键信息
-						const materials = this.extractMaterialsBinary(result.Objects);
-						const textures = this.extractTexturesBinary(result.Objects);
-						const videos = this.extractVideosBinary(result.Objects);
-						const connections = this.parseConnectionsBinary(result.Connections);
-						
-						console.log('材质数量:', materials.size);
-						console.log('纹理数量:', textures.size);
-						console.log('视频数量:', videos.size);
-						console.log('连接数量:', connections.length);
-						
-						// 建立映射
-						const materialTextureMap = new Map();
-						this.buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap);
-						
-						console.log('建立的映射数量:', materialTextureMap.size);
-						return materialTextureMap;
-					} else {
-						console.log('没有找到Objects或Connections节点');
-						return new Map();
-					}
-					
-				} catch (error) {
-					console.log('Binary FBX解析失败:', error);
-					return new Map();
-				}
-			}
-
-			extractFromAsciiText(text) {
-				try {
-					console.log('=== 开始详细解析ASCII FBX ===');
-					
-					// 使用官方的解析逻辑
-					const parser = new AsciiFBXParser();
-					const fbxTree = parser.parse(text);
-					
-					console.log('FBX树解析完成');
-					
-					// 直接提取材质-纹理映射（原extractMappingsFromFBXTree的逻辑）
-					const materialTextureMap = new Map();
-					
-					// 检查是否有Objects和Connections
-					if (!fbxTree.Objects || !fbxTree.Connections) {
-						console.log('FBX树中没有Objects或Connections节点');
-						return materialTextureMap;
-					}
-					
-					console.log('从FBX树中提取映射...');
-					
-					// 1. 提取材质、纹理、视频信息
-					const materials = this.extractMaterialsAscii(fbxTree.Objects);
-					const textures = this.extractTexturesAscii(fbxTree.Objects);
-					const videos = this.extractVideosAscii(fbxTree.Objects);
-					const connections = this.parseConnectionsAscii(fbxTree.Connections);
-					
-					console.log('材质数量:', materials.size);
-					console.log('纹理数量:', textures.size);
-					console.log('视频数量:', videos.size);
-					console.log('连接数量:', connections.length);
-					
-					// 2. 建立映射关系
-					this.buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap);
-					
-					console.log('建立的映射数量:', materialTextureMap.size);
-					return materialTextureMap;
-				} catch (error) {
-					console.log('ASCII FBX解析失败:', error, error.stack);
-					return new Map();
-				}
-			}
-
-			extractMaterialsBinary(objectsNode) {
-				const materials = new Map();
-				
-				if (objectsNode && objectsNode.Material) {
-					// Binary FBX 的 Material 是一个对象，键为ID，值为节点
-					for (const id in objectsNode.Material) {
-						const matNode = objectsNode.Material[id];
-						const nodeId = parseInt(id);
-						
-						// 从节点属性中获取材质名称
-						let materialName = matNode.attrName || 'Material_' + id;
-						
-						materials.set(nodeId, {
-							id: nodeId,
-							name: materialName,
-							shortName: this.getShortMaterialName(materialName)
-						});
-						
-						console.log('提取材质: ID=' + nodeId + ', 名称=' + materialName);
-					}
-				}
-				
-				return materials;
-			}
-
-			extractTexturesBinary(objectsNode) {
-				const textures = new Map();
-				
-				if (objectsNode && objectsNode.Texture) {
-					for (const id in objectsNode.Texture) {
-						const texNode = objectsNode.Texture[id];
-						const texture = {
-							id: parseInt(id),
-							name: texNode.attrName || 'Texture_' + id,
-							fileName: '',
-							mediaRef: null
-						};
-						
-						// 获取文件名
-						if (texNode.FileName) {
-							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.FileName);
-						} else if (texNode.RelativeFilename) {
-							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.RelativeFilename);
-						}
-						
-						// 获取媒体引用
-						if (texNode.Media) {
-							texture.mediaRef = texNode.Media;
-						}
-						
-						textures.set(parseInt(id), texture);
-					}
-				}
-				
-				return textures;
-			}
-
-			extractVideosBinary(objectsNode) {
-				const videos = new Map();
-				
-				if (objectsNode && objectsNode.Video) {
-					for (const id in objectsNode.Video) {
-						const vidNode = objectsNode.Video[id];
-						const video = {
-							id: parseInt(id),
-							name: vidNode.attrName || 'Video_' + id,
-							fileName: ''
-						};
-						
-						// 获取文件名
-						if (vidNode.Filename) {
-							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.Filename);
-						} else if (vidNode.RelativeFilename) {
-							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.RelativeFilename);
-						}
-						
-						videos.set(parseInt(id), video);
-					}
-				}
-				
-				return videos;
-			}
-
-			parseConnectionsBinary(connectionsNode) {
-				const connections = [];
-				
-				if (connectionsNode && connectionsNode.connections) {
-					// Binary FBX 的 connections 是一个二维数组
-					connectionsNode.connections.forEach(connArray => {
-						// 连接格式: [fromId, toId, relation, ...rest]
-						if (connArray.length >= 3) {
-							const connection = {
-								fromId: connArray[0],
-								toId: connArray[1],
-								relation: connArray[2] || ''
-							};
-							
-							// 如果有额外参数（如属性名）
-							if (connArray.length > 3) {
-								connection.property = connArray[3];
-							}
-							
-							connections.push(connection);
-						}
-					});
-				}
-				
-				return connections;
-			}
-
-			extractMaterialsAscii(objectsNode) {
-				const materials = new Map();
-				
-				if (objectsNode.Material) {
-					for (const id in objectsNode.Material) {
-						const matNode = objectsNode.Material[id];
-						const nodeId = parseInt(id);
-						
-						// 从节点属性中获取材质名称
-						let materialName = matNode.attrName || 'Material_' + id;
-						
-						materials.set(nodeId, {
-							id: nodeId,
-							name: materialName,
-							shortName: this.getShortMaterialName(materialName)
-						});
-						
-						console.log('提取材质: ID=' + nodeId + ', 名称=' + materialName);
-					}
-				}
-				
-				return materials;
-			}
-
-			extractTexturesAscii(objectsNode) {
-				const textures = new Map();
-				
-				if (objectsNode.Texture) {
-					for (const id in objectsNode.Texture) {
-						const texNode = objectsNode.Texture[id];
-						const texture = {
-							id: parseInt(id),
-							name: texNode.attrName || 'Texture_' + id,
-							fileName: '',
-							mediaRef: null
-						};
-						
-						// 获取文件名
-						if (texNode.FileName) {
-							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.FileName);
-						} else if (texNode.RelativeFilename) {
-							texture.fileName = PathUtils.cleanTextureUrlSimple(texNode.RelativeFilename);
-						}
-						
-						// 获取媒体引用
-						if (texNode.Media) {
-							texture.mediaRef = texNode.Media;
-						}
-						
-						textures.set(parseInt(id), texture);
-					}
-				}
-				
-				return textures;
-			}
-
-			extractVideosAscii(objectsNode) {
-				const videos = new Map();
-				
-				if (objectsNode.Video) {
-					for (const id in objectsNode.Video) {
-						const vidNode = objectsNode.Video[id];
-						const video = {
-							id: parseInt(id),
-							name: vidNode.attrName || 'Video_' + id,
-							fileName: ''
-						};
-						
-						// 获取文件名
-						if (vidNode.Filename) {
-							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.Filename);
-						} else if (vidNode.RelativeFilename) {
-							video.fileName = PathUtils.cleanTextureUrlSimple(vidNode.RelativeFilename);
-						}
-						
-						videos.set(parseInt(id), video);
-					}
-				}
-				
-				return videos;
-			}
-
-			parseConnectionsAscii(connectionsNode) {
-				const connections = [];
-				
-				if (connectionsNode.connections) {
-					connectionsNode.connections.forEach(conn => {
-						// 连接格式: [fromId, toId, relation, ...rest]
-						if (conn.length >= 3) {
-							const connection = {
-								fromId: conn[0],
-								toId: conn[1],
-								relation: conn[2] || ''
-							};
-							
-							// 如果有额外参数（如属性名）
-							if (conn.length > 3) {
-								connection.property = conn[3];
-							}
-							
-							connections.push(connection);
-						}
-					});
-				}
-				
-				return connections;
-			}
-
-			buildMappingsFromConnections(materials, textures, videos, connections, materialTextureMap) {
-				console.log('开始建立映射关系...');
-				console.log('材料数量:', materials.size);
-				console.log('纹理数量:', textures.size);
-				console.log('视频数量:', videos.size);
-				console.log('连接数量:', connections.length);
-				
-				// 1. 先建立视频到文件名的映射
-				const videoFileMap = new Map();
-				videos.forEach(video => {
-					if (video.fileName) {
-						videoFileMap.set(video.id, video.fileName);
-						console.log('视频 ' + video.id + ' -> ' + video.fileName);
-					}
-				});
-				
-				// 2. 建立纹理到视频的映射（通过OO连接）
-				const textureToVideoMap = new Map();
-				connections.forEach(conn => {
-					// OO连接：视频 -> 纹理
-					if (conn.relation === 'OO') {
-						const video = videos.get(conn.fromId);
-						const texture = textures.get(conn.toId);
-						
-						if (video && texture) {
-							textureToVideoMap.set(texture.id, video.id);
-							console.log('OO连接: 视频' + video.id + ' -> 纹理' + texture.id);
-							
-							// 如果视频有文件名，复制给纹理
-							if (video.fileName) {
-								texture.fileName = video.fileName;
-							}
-						}
-					}
-				});
-				
-				// 3. 处理OP连接：纹理 -> 材质
-				connections.forEach(conn => {
-					// OP连接：纹理 -> 材质（属性连接）
-					if (conn.relation === 'OP' && conn.property) {
-						const texture = textures.get(conn.fromId);
-						const material = materials.get(conn.toId);
-						
-						if (texture && material) {
-							console.log('OP连接: 纹理' + texture.id + '(' + texture.name + ') -> 材质' + material.id + '(' + material.name + '), 属性: ' + conn.property);
-							
-							// 获取纹理的文件名
-							let fileName = texture.fileName;
-							
-							// 如果纹理没有文件名，查找关联的视频
-							if (!fileName && textureToVideoMap.has(texture.id)) {
-								const videoId = textureToVideoMap.get(texture.id);
-								const video = videos.get(videoId);
-								if (video && video.fileName) {
-									fileName = video.fileName;
-									console.log('  通过视频连接找到文件: ' + fileName);
-								}
-							}
-							
-							if (fileName) {
-								// 根据属性推断纹理类型
-								const texType = this.inferTextureTypeFromProperty(conn.property);
-								const threeJsProp = this.mapTextureTypeToThreeJs(texType);
-								
-								// 使用材质的简短名称
-								const materialKey = material.shortName || material.name;
-								
-								if (!materialTextureMap.has(materialKey)) {
-									materialTextureMap.set(materialKey, new Map());
-								}
-								
-								materialTextureMap.get(materialKey).set(threeJsProp, {
-									textureId: texture.id,
-									textureName: texture.name,
-									imageFilename: fileName,
-									textureType: texType,
-									property: conn.property
-								});
-								
-								console.log('  建立映射: ' + materialKey + ' -> ' + threeJsProp + ' -> ' + fileName);
-							} else {
-								console.log('  找不到纹理 ' + texture.id + ' 的文件名');
-							}
-						}
-					}
-				});
-				
-				// 4. 如果没有找到映射，尝试回退方法
-				if (materialTextureMap.size === 0) {
-					console.log('没有通过连接找到映射，尝试回退映射...');
-					this.tryFallbackMappings(materials, textures, videos, materialTextureMap);
-				}
-				
-				console.log('映射建立完成，共建立', materialTextureMap.size, '个材质映射');
-			}
-
-			tryFallbackMappings(materials, textures, videos, materialTextureMap) {
-				const materialArray = Array.from(materials.values());
-				const textureArray = Array.from(textures.values());
-				const videoArray = Array.from(videos.values());
-				
-				// 尝试按顺序映射
-				for (let i = 0; i < materialArray.length; i++) {
-					const material = materialArray[i];
-					const materialKey = material.shortName || material.name;
-					
-					// 首先尝试使用纹理
-					if (i < textureArray.length) {
-						const texture = textureArray[i];
-						let fileName = texture.fileName;
-						
-						// 如果纹理没有文件名，尝试使用视频
-						if (!fileName && i < videoArray.length) {
-							fileName = videoArray[i].fileName;
-						}
-						
-						if (fileName) {
-							const texType = this.inferTextureTypeFromName(texture.name);
-							const threeJsProp = this.mapTextureTypeToThreeJs(texType);
-							
-							materialTextureMap.set(materialKey, new Map());
-							materialTextureMap.get(materialKey).set(threeJsProp, {
-								textureId: texture.id,
-								textureName: texture.name,
-								imageFilename: fileName,
-								textureType: texType
-							});
-							
-							console.log('回退映射: ' + materialKey + ' -> ' + threeJsProp + ' -> ' + fileName);
-						}
-					} else if (i < videoArray.length) {
-						// 如果没有纹理，直接使用视频
-						const video = videoArray[i];
-						const texType = this.inferTextureTypeFromName(video.name);
-						const threeJsProp = this.mapTextureTypeToThreeJs(texType);
-						
-						materialTextureMap.set(materialKey, new Map());
-						materialTextureMap.get(materialKey).set(threeJsProp, {
-							imageFilename: video.fileName,
-							textureType: texType
-						});
-						
-						console.log('视频回退映射: ' + materialKey + ' -> ' + threeJsProp + ' -> ' + video.fileName);
-					}
-				}
-			}
-
-			inferTextureTypeFromProperty(property) {
-				const propertyMap = {
-					'DiffuseColor': 'diffuse',
-					'DiffuseFactor': 'diffuse',
-					'SpecularColor': 'specular',
-					'SpecularFactor': 'specular',
-					'NormalMap': 'normal',
-					'Bump': 'normal',
-					'EmissiveColor': 'emissive',
-					'EmissiveFactor': 'emissive',
-					'TransparentColor': 'opacity',
-					'TransparencyFactor': 'opacity',
-					'ReflectionColor': 'reflection',
-					'ShininessExponent': 'roughness',
-					'Roughness': 'roughness',
-					'Metalness': 'metalness',
-					'AmbientColor': 'ambientOcclusion',
-					'AmbientFactor': 'ambientOcclusion'
-				};
-				
-				return propertyMap[property] || 'diffuse';
-			}
-
-			inferTextureTypeFromName(name) {
-				if (!name) return 'diffuse';
-				
-				const lowerName = name.toLowerCase();
-				
-				if (lowerName.includes('diffuse') || lowerName.includes('basecolor') || lowerName.includes('color')) {
-					return 'diffuse';
-				} else if (lowerName.includes('normal')) {
-					return 'normal';
-				} else if (lowerName.includes('specular')) {
-					return 'specular';
-				} else if (lowerName.includes('roughness')) {
-					return 'roughness';
-				} else if (lowerName.includes('metalness') || lowerName.includes('metallic')) {
-					return 'metalness';
-				} else if (lowerName.includes('emissive')) {
-					return 'emissive';
-				} else if (lowerName.includes('opacity') || lowerName.includes('alpha')) {
-					return 'opacity';
-				} else if (lowerName.includes('ao') || lowerName.includes('ambient') || lowerName.includes('occlusion')) {
-					return 'ambientOcclusion';
-				}
-				
-				return 'diffuse';
-			}
-
-			mapTextureTypeToThreeJs(textureType) {
-				const mapping = {
-					'diffuse': 'map',
-					'normal': 'normalMap',
-					'specular': 'specularMap',
-					'roughness': 'roughnessMap',
-					'metalness': 'metalnessMap',
-					'emissive': 'emissiveMap',
-					'opacity': 'alphaMap',
-					'ambientOcclusion': 'aoMap'
-				};
-				
-				return mapping[textureType] || 'map';
-			}
-
-			getShortMaterialName(fullName) {
-				if (!fullName) return '';
-				
-				 // 移除"Material::"
-				if (fullName.startsWith('Material::')) {
-					return fullName.substring(10);
-				}
-				
-				return fullName;
-			}
-		}
-
-		class FBXTree {
-			add( key, val ) {
-				this[ key ] = val;
-			}
-		}
-
-		class BinaryFBXParser {
-			parse( buffer ) {
-				const reader = new BinaryFBXReader( buffer );
-				reader.skip( 23 ); // skip magic 23 bytes
-				const version = reader.getUint32();
-				if ( version < 6400 ) {
-					throw new Error( 'THREE.FBXLoader: FBX version not supported, FileVersion: ' + version );
-				}
-				const allNodes = new FBXTree();
-				while ( ! this.endOfContent( reader ) ) {
-					const node = this.parseNode( reader, version );
-					if ( node !== null ) allNodes.add( node.name, node );
-				}
-				return allNodes;
-			}
-			// Check if reader has reached the end of content.
-			endOfContent( reader ) {
-				// footer size: 160bytes + 16-byte alignment padding
-				// - 16bytes: magic
-				// - padding til 16-byte alignment (at least 1byte?)
-				//	(seems like some exporters embed fixed 15 or 16bytes?)
-				// - 4bytes: magic
-				// - 4bytes: version
-				// - 120bytes: zero
-				// - 16bytes: magic
-				if ( reader.size() % 16 === 0 ) {
-					return ( ( reader.getOffset() + 160 + 16 ) & ~ 0xf ) >= reader.size();
-				} else {
-					return reader.getOffset() + 160 + 16 >= reader.size();
-				}
-			}
-			// recursively parse nodes until the end of the file is reached
-			parseNode( reader, version ) {
-				const node = {};
-				// The first three data sizes depends on version.
-				const endOffset = ( version >= 7500 ) ? reader.getUint64() : reader.getUint32();
-				const numProperties = ( version >= 7500 ) ? reader.getUint64() : reader.getUint32();
-				( version >= 7500 ) ? reader.getUint64() : reader.getUint32(); // the returned propertyListLen is not used
-				const nameLen = reader.getUint8();
-				const name = reader.getString( nameLen );
-				// Regards this node as NULL-record if endOffset is zero
-				if ( endOffset === 0 ) return null;
-				const propertyList = [];
-				for ( let i = 0; i < numProperties; i ++ ) {
-					propertyList.push( this.parseProperty( reader ) );
-				}
-				// Regards the first three elements in propertyList as id, attrName, and attrType
-				const id = propertyList.length > 0 ? propertyList[ 0 ] : '';
-				const attrName = propertyList.length > 1 ? propertyList[ 1 ] : '';
-				const attrType = propertyList.length > 2 ? propertyList[ 2 ] : '';
-				// check if this node represents just a single property
-				// like (name, 0) set or (name2, [0, 1, 2]) set of {name: 0, name2: [0, 1, 2]}
-				node.singleProperty = ( numProperties === 1 && reader.getOffset() === endOffset ) ? true : false;
-				while ( endOffset > reader.getOffset() ) {
-					const subNode = this.parseNode( reader, version );
-					if ( subNode !== null ) this.parseSubNode( name, node, subNode );
-				}
-				node.propertyList = propertyList; // raw property list used by parent
-				if ( typeof id === 'number' ) node.id = id;
-				if ( attrName !== '' ) node.attrName = attrName;
-				if ( attrType !== '' ) node.attrType = attrType;
-				if ( name !== '' ) node.name = name;
-				return node;
-			}
-			parseSubNode( name, node, subNode ) {
-				// special case: child node is single property
-				if ( subNode.singleProperty === true ) {
-					const value = subNode.propertyList[ 0 ];
-					if ( Array.isArray( value ) ) {
-						node[ subNode.name ] = subNode;
-						subNode.a = value;
-					} else {
-						node[ subNode.name ] = value;
-					}
-				} else if ( name === 'Connections' && subNode.name === 'C' ) {
-					const array = [];
-					subNode.propertyList.forEach( function ( property, i ) {
-						// first Connection is FBX type (OO, OP, etc.). We'll discard these
-						if ( i !== 0 ) array.push( property );
-					} );
-					if ( node.connections === undefined ) {
-						node.connections = [];
-					}
-					node.connections.push( array );
-				} else if ( subNode.name === 'Properties70' ) {
-					const keys = Object.keys( subNode );
-					keys.forEach( function ( key ) {
-						node[ key ] = subNode[ key ];
-					} );
-				} else if ( name === 'Properties70' && subNode.name === 'P' ) {
-					let innerPropName = subNode.propertyList[ 0 ];
-					let innerPropType1 = subNode.propertyList[ 1 ];
-					const innerPropType2 = subNode.propertyList[ 2 ];
-					const innerPropFlag = subNode.propertyList[ 3 ];
-					let innerPropValue;
-					if ( innerPropName.indexOf( 'Lcl ' ) === 0 ) innerPropName = innerPropName.replace( 'Lcl ', 'Lcl_' );
-					if ( innerPropType1.indexOf( 'Lcl ' ) === 0 ) innerPropType1 = innerPropType1.replace( 'Lcl ', 'Lcl_' );
-					if ( innerPropType1 === 'Color' || innerPropType1 === 'ColorRGB' || innerPropType1 === 'Vector' || innerPropType1 === 'Vector3D' || innerPropType1.indexOf( 'Lcl_' ) === 0 ) {
-						innerPropValue = [
-							subNode.propertyList[ 4 ],
-							subNode.propertyList[ 5 ],
-							subNode.propertyList[ 6 ]
-						];
-					} else {
-						innerPropValue = subNode.propertyList[ 4 ];
-					}
-					// this will be copied to parent, see above
-					node[ innerPropName ] = {
-						'type': innerPropType1,
-						'type2': innerPropType2,
-						'flag': innerPropFlag,
-						'value': innerPropValue
-					};
-				} else if ( node[ subNode.name ] === undefined ) {
-					if ( typeof subNode.id === 'number' ) {
-						node[ subNode.name ] = {};
-						node[ subNode.name ][ subNode.id ] = subNode;
-					} else {
-						node[ subNode.name ] = subNode;
-					}
-				} else {
-					if ( subNode.name === 'PoseNode' ) {
-						if ( ! Array.isArray( node[ subNode.name ] ) ) {
-							node[ subNode.name ] = [ node[ subNode.name ] ];
-						}
-						node[ subNode.name ].push( subNode );
-					} else if ( node[ subNode.name ][ subNode.id ] === undefined ) {
-						node[ subNode.name ][ subNode.id ] = subNode;
-					}
-				}
-			}
-			parseProperty( reader ) {
-				const type = reader.getString( 1 );
-				let length;
-				switch ( type ) {
-					case 'C':
-						return reader.getBoolean();
-					case 'D':
-						return reader.getFloat64();
-					case 'F':
-						return reader.getFloat32();
-					case 'I':
-						return reader.getInt32();
-					case 'L':
-						return reader.getInt64();
-					case 'R':
-						length = reader.getUint32();
-						return reader.getArrayBuffer( length );
-					case 'S':
-						length = reader.getUint32();
-						return reader.getString( length );
-					case 'Y':
-						return reader.getInt16();
-					case 'b':
-					case 'c':
-					case 'd':
-					case 'f':
-					case 'i':
-					case 'l':
-						const arrayLength = reader.getUint32();
-						const encoding = reader.getUint32(); // 0: non-compressed, 1: compressed
-						const compressedLength = reader.getUint32();
-						if ( encoding === 0 ) {
-							switch ( type ) {
-								case 'b':
-								case 'c':
-									return reader.getBooleanArray( arrayLength );
-								case 'd':
-									return reader.getFloat64Array( arrayLength );
-								case 'f':
-									return reader.getFloat32Array( arrayLength );
-								case 'i':
-									return reader.getInt32Array( arrayLength );
-								case 'l':
-									return reader.getInt64Array( arrayLength );
-							}
-						}
-						const data = fflate.unzlibSync( new Uint8Array( reader.getArrayBuffer( compressedLength ) ) );
-						const reader2 = new BinaryFBXReader( data.buffer );
-						switch ( type ) {
-							case 'b':
-							case 'c':
-								return reader2.getBooleanArray( arrayLength );
-							case 'd':
-								return reader2.getFloat64Array( arrayLength );
-							case 'f':
-								return reader2.getFloat32Array( arrayLength );
-							case 'i':
-								return reader2.getInt32Array( arrayLength );
-							case 'l':
-								return reader2.getInt64Array( arrayLength );
-						}
-						break; // cannot happen but is required by the DeepScan
-					default:
-						throw new Error( 'THREE.FBXLoader: Unknown property type ' + type );
-				}
-			}
-		}
-
-		class BinaryFBXReader {
-			constructor( buffer, littleEndian ) {
-				this.dv = new DataView( buffer );
-				this.offset = 0;
-				this.littleEndian = ( littleEndian !== undefined ) ? littleEndian : true;
-				this._textDecoder = new TextDecoder();
-			}
-			getOffset() {
-				return this.offset;
-			}
-			size() {
-				return this.dv.buffer.byteLength;
-			}
-			skip( length ) {
-				this.offset += length;
-			}
-			// seems like true/false representation depends on exporter.
-			// true: 1 or 'Y'(=0x59), false: 0 or 'T'(=0x54)
-			// then sees LSB.
-			getBoolean() {
-				return ( this.getUint8() & 1 ) === 1;
-			}
-			getBooleanArray( size ) {
-				const a = [];
-				for ( let i = 0; i < size; i ++ ) {
-					a.push( this.getBoolean() );
-				}
-				return a;
-			}
-			getUint8() {
-				const value = this.dv.getUint8( this.offset );
-				this.offset += 1;
-				return value;
-			}
-			getInt16() {
-				const value = this.dv.getInt16( this.offset, this.littleEndian );
-				this.offset += 2;
-				return value;
-			}
-			getInt32() {
-				const value = this.dv.getInt32( this.offset, this.littleEndian );
-				this.offset += 4;
-				return value;
-			}
-			getInt32Array( size ) {
-				const a = [];
-				for ( let i = 0; i < size; i ++ ) {
-					a.push( this.getInt32() );
-				}
-				return a;
-			}
-			getUint32() {
-				const value = this.dv.getUint32( this.offset, this.littleEndian );
-				this.offset += 4;
-				return value;
-			}
-			// JavaScript doesn't support 64-bit integer so calculate this here
-			// 1 << 32 will return 1 so using multiply operation instead here.
-			// There's a possibility that this method returns wrong value if the value
-			// is out of the range between Number.MAX_SAFE_INTEGER and Number.MIN_SAFE_INTEGER.
-			// TODO: safely handle 64-bit integer
-			getInt64() {
-				let low, high;
-				if ( this.littleEndian ) {
-					low = this.getUint32();
-					high = this.getUint32();
-				} else {
-					high = this.getUint32();
-					low = this.getUint32();
-				}
-				// calculate negative value
-				if ( high & 0x80000000 ) {
-					high = ~ high & 0xFFFFFFFF;
-					low = ~ low & 0xFFFFFFFF;
-					if ( low === 0xFFFFFFFF ) high = ( high + 1 ) & 0xFFFFFFFF;
-					low = ( low + 1 ) & 0xFFFFFFFF;
-					return - ( high * 0x100000000 + low );
-				}
-				return high * 0x100000000 + low;
-			}
-			getInt64Array( size ) {
-				const a = [];
-				for ( let i = 0; i < size; i ++ ) {
-					a.push( this.getInt64() );
-				}
-				return a;
-			}
-			// Note: see getInt64() comment
-			getUint64() {
-				let low, high;
-				if ( this.littleEndian ) {
-					low = this.getUint32();
-					high = this.getUint32();
-				} else {
-					high = this.getUint32();
-					low = this.getUint32();
-				}
-				return high * 0x100000000 + low;
-			}
-			getFloat32() {
-				const value = this.dv.getFloat32( this.offset, this.littleEndian );
-				this.offset += 4;
-				return value;
-			}
-			getFloat32Array( size ) {
-				const a = [];
-				for ( let i = 0; i < size; i ++ ) {
-					a.push( this.getFloat32() );
-				}
-				return a;
-			}
-			getFloat64() {
-				const value = this.dv.getFloat64( this.offset, this.littleEndian );
-				this.offset += 8;
-				return value;
-			}
-			getFloat64Array( size ) {
-				const a = [];
-				for ( let i = 0; i < size; i ++ ) {
-					a.push( this.getFloat64() );
-				}
-				return a;
-			}
-			getArrayBuffer( size ) {
-				const value = this.dv.buffer.slice( this.offset, this.offset + size );
-				this.offset += size;
-				return value;
-			}
-			getString( size ) {
-				const start = this.offset;
-				let a = new Uint8Array( this.dv.buffer, start, size );
-				this.skip( size );
-				const nullByte = a.indexOf( 0 );
-				if ( nullByte >= 0 ) a = new Uint8Array( this.dv.buffer, start, nullByte );
-				return this._textDecoder.decode( a );
-			}
-			
-			setOffset(offset) {
-				if (offset >= 0 && offset <= this.size()) {
-					this.offset = offset;
-				} else {
-					console.log('尝试设置无效的偏移量:', offset, '文件大小:', this.size());
-					this.offset = Math.max(0, Math.min(offset, this.size()));
-				}
-			}
-		}
-
-		class AsciiFBXParser {
-			constructor() {
-				this.currentIndent = 0;
-				this.allNodes = new FBXTree();
-				this.nodeStack = [];
-				this.currentProp = null;
-				this.currentPropName = '';
-			}
-			getPrevNode() {
-				return this.nodeStack[this.currentIndent - 2];
-			}
-			getCurrentNode() {
-				return this.nodeStack[this.currentIndent - 1];
-			}
-			pushStack(node) {
-				this.nodeStack.push(node);
-				this.currentIndent += 1;
-			}
-			popStack() {
-				this.nodeStack.pop();
-				this.currentIndent -= 1;
-			}
-			setCurrentProp(val, name) {
-				this.currentProp = val;
-				this.currentPropName = name;
-			}
-			parse(text) {
-				this.currentIndent = 0;
-				this.allNodes = {};
-				this.nodeStack = [];
-				this.currentProp = null;
-				this.currentPropName = '';
-				
-				const lines = text.split(/[\\r\\n]+/);
-				lines.forEach((line, i) => {
-					const matchComment = line.match( /^[\\s\\t]*;/ );
-					const matchEmpty = line.match( /^[\\s\\t]*$/ );
-					if ( matchComment || matchEmpty ) return;
-					const matchBeginning = line.match(new RegExp('^\\\\t{' + this.currentIndent + '}(\\\\w+):(.*)\\\\{'));
-					const matchProperty = line.match(new RegExp('^\\\\t{' + (this.currentIndent) + '}(\\\\w+):[\\\\s\\\\t\\\\r\\\\n](.*)'));
-					const matchEnd = line.match(new RegExp('^\\\\t{' + (this.currentIndent - 1) + '}\\\\}'));
-					if (matchBeginning) {
-						this.parseNodeBegin(line, matchBeginning);
-					} else if (matchProperty) {
-						this.parseNodeProperty(line, matchProperty, lines[i + 1]);
-					} else if (matchEnd) {
-						this.popStack();
-					} else if (line.match(/^[^\\s\\t}]/)) {
-						// large arrays are split over multiple lines terminated with a ',' character
-						// if this is encountered the line needs to be joined to the previous line
-						this.parseNodePropertyContinued(line);
-					}
-				});
-				return this.allNodes;
-			}
-			parseNodeBegin(line, match) {
-				const nodeName = match[1].trim().replace(/^"/, '').replace(/"$/, '');
-				const nodeAttrs = match[2].split(',').map(attr => {
-					return attr.trim().replace(/^"/, '').replace(/"$/, '');
-				});
-				const node = { name: nodeName };
-				const attrs = this.parseNodeAttr(nodeAttrs);
-				const currentNode = this.getCurrentNode();
-				if (this.currentIndent === 0) {
-					this.addNode(nodeName, node);
-				} else {
-					if (typeof attrs.id === 'number') {
-						if (!currentNode[nodeName]) {
-							currentNode[nodeName] = {};
-						}
-						currentNode[nodeName][attrs.id] = node;
-					} else {
-						currentNode[nodeName] = node;
-					}
-				}
-				if (typeof attrs.id === 'number') node.id = attrs.id;
-				if (attrs.name !== '') node.attrName = attrs.name;
-				if (attrs.type !== '') node.attrType = attrs.type;
-				this.pushStack(node);
-			}
-			parseNodeAttr(attrs) {
-				let id = attrs[0];
-				if (attrs[0] !== '') {
-					id = parseInt(attrs[0]);
-					if (isNaN(id)) {
-						id = attrs[0];
-					}
-				}
-				let name = '', type = '';
-				if (attrs.length > 1) {
-					name = attrs[1].replace(/^(\\\\w+)::/, '');
-					type = attrs[2];
-				}
-				return { id: id, name: name, type: type };
-			}
-			parseNodeProperty(line, match, nextLine) {
-				let propName = match[1].replace(/^"/, '').replace(/"$/, '').trim();
-				let propValue = match[2].replace(/^"/, '').replace(/"$/, '').trim();
-				if (propName === 'Content' && propValue === ',') {
-					propValue = nextLine.replace(/"/g, '').replace(/,$/, '').trim();
-				}
-				const currentNode = this.getCurrentNode();
-				const parentName = currentNode ? currentNode.name : '';
-				if (propName === 'C') {
-					const connProps = propValue.split(',').slice(1);
-					const from = parseInt(connProps[0]);
-					const to = parseInt(connProps[1]);
-					let rest = propValue.split(',').slice(3);
-					rest = rest.map(elem => {
-						return elem.trim().replace(/^"/, '');
-					});
-					propName = 'connections';
-					propValue = [from, to];
-					if (rest.length > 0) {
-						propValue = propValue.concat(rest);
-					}
-					if (!currentNode[propName]) {
-						currentNode[propName] = [];
-					}
-					currentNode[propName].push(propValue);
-				} else {
-					currentNode[propName] = propValue;
-				}
-				this.setCurrentProp(currentNode, propName);
-			}
-			parseNodePropertyContinued(line) {
-				const currentNode = this.getCurrentNode();
-				if (currentNode && currentNode.a !== undefined) {
-					currentNode.a += line;
-					if (line.slice(-1) !== ',') {
-						currentNode.a = this.parseNumberArray(currentNode.a);
-					}
-				}
-			}
-			parseNumberArray(str) {
-				try {
-					return str.split(',').map(num => parseFloat(num.trim()));
-				} catch (e) {
-					return str;
-				}
-			}
-			addNode(name, node) {
-				this.allNodes[name] = node;
-			}
-		}
-
-		// zip环境MTL解析
-		class MTLParser {
-			constructor() {
-				// 支持的材质属性映射
-				this.supportedProperties = [
-					// 颜色属性
-					'Ka', 'Kd', 'Ks', 'Ke',
-					// 标量属性
-					'Ns', 'Ni', 'd', 'Tr', 'illum',
-					// 纹理属性
-					'map_Ka', 'map_Kd', 'map_Ks', 'map_Ke', 
-					'map_Ns', 'map_d', 'map_bump', 'bump', 'norm'
-				];
-				
-				// 纹理参数关键字
-				this.textureParamKeywords = ['-s', '-o', '-bm', '-clamp', '-mm'];
-			}
-
-			// 解析MTL文本，返回材质信息对象
-			parseMTLText(mtlText) {
-				const materials = {};
-				const lines = mtlText.split('\\n');
-				let currentMaterial = null;
-				
-				for (let i = 0; i < lines.length; i++) {
-					const line = lines[i].trim();
-					
-					// 跳过空行和注释
-					if (!line || line.startsWith('#')) {
-						continue;
-					}
-					
-					// 处理行
-					this.parseLine(line, materials, currentMaterial);
-					
-					// 更新当前材质引用
-					if (materials.current) {
-						currentMaterial = materials.current;
-						delete materials.current;
-					}
-				}
-				
-				console.log('MTL解析完成，发现 ' + Object.keys(materials).length + ' 个材质');
-				return materials;
-			}
-
-			// 解析单行MTL内容
-			parseLine(line, materials, currentMaterial) {
-				const parts = line.split(/\\s+/);
-				const keyword = parts[0];
-				
-				// 新材质定义
-				if (keyword.toLowerCase() === 'newmtl') {
-					if (parts.length < 2) {
-						console.log('无效的newmtl语句: ' + line);
-						return;
-					}
-					
-					const materialName = parts[1];
-					materials[materialName] = this.createDefaultMaterialInfo(materialName);
-					materials.current = materials[materialName];
-					console.log('发现新材质: ' + materialName);
-				}
-				// 颜色属性 (Ka, Kd, Ks, Ke)
-				else if (keyword.toLowerCase() === 'ka' || 
-						 keyword.toLowerCase() === 'kd' || 
-						 keyword.toLowerCase() === 'ks' || 
-						 keyword.toLowerCase() === 'ke') {
-					this.parseColorProperty(line, keyword, currentMaterial);
-				}
-				// 标量属性 (Ns, Ni, d, Tr, illum) - 修正这里
-				else if (keyword.toLowerCase() === 'ns') {
-					this.parseScalarProperty(line, 'Ns', currentMaterial);
-				}
-				else if (keyword.toLowerCase() === 'ni') {
-					this.parseScalarProperty(line, 'Ni', currentMaterial);
-				}
-				else if (keyword.toLowerCase() === 'd') {
-					this.parseScalarProperty(line, 'd', currentMaterial);
-				}
-				else if (keyword.toLowerCase() === 'tr') {
-					this.parseScalarProperty(line, 'Tr', currentMaterial);
-				}
-				else if (keyword.toLowerCase() === 'illum') {
-					this.parseScalarProperty(line, 'illum', currentMaterial);
-				}
-				// 纹理属性
-				else if (keyword.toLowerCase().startsWith('map_') || 
-						 keyword.toLowerCase() === 'bump' || 
-						 keyword.toLowerCase() === 'norm') {
-					this.parseTextureProperty(line, keyword, currentMaterial);
-				}
-				// 未知属性（记录但不处理）
-				else if (currentMaterial) {
-					console.log('未知MTL属性: ' + keyword + ' (在材质 ' + currentMaterial.name + ')');
-				}
-			}
-
-			// 创建默认材质信息对象
-			createDefaultMaterialInfo(name) {
-				return {
-					name: name,
-					// 颜色属性
-					Ka: [0, 0, 0],      // 环境光颜色
-					Kd: [1, 1, 1],      // 漫反射颜色
-					Ks: [0, 0, 0],      // 高光颜色
-					Ke: [0, 0, 0],      // 自发光颜色
-					
-					// 标量属性 - 只设置必需的默认值
-					Ns: 0,              // 高光指数 (0-1000)
-					Ni: 1.0,            // 折射率 (默认1.0)
-					d: 1.0,             // 不透明度 (1.0 = 完全不透明)
-					illum: 2,           // 光照模型 (2 = 高光启用)
-					// 注意：Tr 不设置默认值，只有解析到时才设置
-					
-					// 纹理映射
-					map_Ka: null,
-					map_Kd: null,
-					map_Ks: null,
-					map_Ke: null,
-					map_Ns: null,
-					map_d: null,
-					map_bump: null,
-					bump: null,
-					norm: null,
-					
-					// 纹理参数
-					textureParams: {}
-				};
-			}
-
-			// 解析颜色属性 (RGB格式)
-			parseColorProperty(line, keyword, material) {
-				if (!material) return;
-				
-				// 使用split方法而不是正则表达式
-				const parts = line.split(/\\s+/);
-				if (parts.length < 4) {
-					console.log('颜色属性格式错误: ' + line);
-					return;
-				}
-				
-				try {
-					const color = [
-						parseFloat(parts[1]),
-						parseFloat(parts[2]),
-						parseFloat(parts[3])
-					];
-					
-					material[keyword] = color;
-					console.log('材质 ' + material.name + ' - ' + keyword + ': [' + color.join(', ') + ']');
-				} catch (e) {
-					console.log('解析颜色属性失败: ' + line, e);
-				}
-			}
-
-			// 解析标量属性
-			parseScalarProperty(line, keyword, material) {
-				if (!material) return;
-				
-				const parts = line.split(/\\s+/);
-				if (parts.length < 2) {
-					console.log('标量属性格式错误: ' + line);
-					return;
-				}
-				
-				try {
-					const value = parseFloat(parts[1]);
-					material[keyword] = value;
-					console.log('材质 ' + material.name + ' - ' + keyword + ': ' + value);
-				} catch (e) {
-					console.log('解析标量属性失败: ' + line, e);
-				}
-			}
-
-			// 解析纹理属性（支持参数）
-			// 格式示例: map_Kd -s 2.0 2.0 -o 0.5 0.5 texture.png
-			parseTextureProperty(line, keyword, material) {
-				if (!material) return;
-				
-				// 移除关键字，获取剩余部分
-				const textureDef = line.substring(keyword.length).trim();
-				
-				// 解析纹理参数
-				const textureInfo = this.parseTextureDefinition(textureDef);
-				
-				if (textureInfo) {
-					// 存储纹理信息
-					material[keyword] = textureInfo;
-					
-					// 存储参数到textureParams中，便于后续查找
-					if (!material.textureParams[keyword]) {
-						material.textureParams[keyword] = [];
-					}
-					material.textureParams[keyword].push(textureInfo);
-					
-					console.log('材质 ' + material.name + ' - ' + keyword + ': ' + 
-							   textureInfo.path + ' (scale: ' + textureInfo.scale.x + ',' + textureInfo.scale.y + 
-							   ', offset: ' + textureInfo.offset.x + ',' + textureInfo.offset.y + ')');
-				}
-			}
-
-			// 解析纹理定义（路径和参数）
-			parseTextureDefinition(textureDef) {
-				const items = textureDef.split(/\\s+/);
-				const result = {
-					path: '',
-					scale: { x: 1, y: 1 },
-					offset: { x: 0, y: 0 },
-					bumpScale: 1,
-					brightness: { base: 0, gain: 1 },
-					clamp: false
-				};
-				
-				let i = 0;
-				let hasPath = false;
-				
-				while (i < items.length) {
-					const item = items[i];
-					
-					// 缩放参数: -s <u> <v>
-					if (item === '-s' && i + 2 < items.length) {
-						result.scale.x = parseFloat(items[i + 1]);
-						result.scale.y = parseFloat(items[i + 2]);
-						i += 3;
-					}
-					// 偏移参数: -o <u> <v>
-					else if (item === '-o' && i + 2 < items.length) {
-						result.offset.x = parseFloat(items[i + 1]);
-						result.offset.y = parseFloat(items[i + 2]);
-						i += 3;
-					}
-					// bump缩放参数: -bm <value>
-					else if (item === '-bm' && i + 1 < items.length) {
-						result.bumpScale = parseFloat(items[i + 1]);
-						i += 2;
-					}
-					// 钳制参数: -clamp on|off
-					else if (item === '-clamp' && i + 1 < items.length) {
-						result.clamp = items[i + 1].toLowerCase() === 'on';
-						i += 2;
-					}
-					// 亮度参数: -mm <base> <gain>
-					else if (item === '-mm' && i + 2 < items.length) {
-						result.brightness.base = parseFloat(items[i + 1]);
-						result.brightness.gain = parseFloat(items[i + 2]);
-						i += 3;
-					}
-					// 纹理路径（剩余部分）
-					else {
-						// 将剩余部分组合成路径
-						const pathParts = [];
-						for (let j = i; j < items.length; j++) {
-							if (items[j] && items[j] !== '') {
-								pathParts.push(items[j]);
-							}
-						}
-						if (pathParts.length > 0) {
-							result.path = PathUtils.cleanTexturePath(pathParts.join(' '));
-							hasPath = true;
-						}
-						break; // 跳出循环，剩余的都是路径
-					}
-				}
-				
-				// 如果没有找到路径，尝试将整个字符串作为路径
-				if (!hasPath && textureDef.trim()) {
-					result.path = PathUtils.cleanTexturePath(textureDef.trim());
-				}
-				
-				return hasPath ? result : null;
-			}
-
-			// 获取材质列表
-			getMaterialNames(materials) {
-				return Object.keys(materials);
-			}
-
-			// 获取指定材质的纹理信息
-			getTexturesForMaterial(material) {
-				const textures = [];
-				
-				// 检查所有可能的纹理属性
-				const textureKeys = ['map_Ka', 'map_Kd', 'map_Ks', 'map_Ke', 
-									'map_Ns', 'map_d', 'map_bump', 'bump', 'norm'];
-				
-				for (const key of textureKeys) {
-					if (material[key] && material[key].path) {
-						textures.push({
-							type: key,
-							path: material[key].path,
-							params: material[key]
-						});
-					}
-				}
-				
-				return textures;
-			}
-		}
-
-		// zip环境贴图读取
-		class TextureLoaderFromZip {
-			constructor(virtualFS) {
-				this.virtualFS = virtualFS;
-				this.loadedTextures = new Map();
-				this.pendingRequests = new Map();
-				
-				// 用户可配置的映射规则
-				this.mappingRules = [
-					// 规则1: 材质名称直接匹配贴图文件名
-					(materialName, fileName) => {
-						if (!materialName || !fileName) return false;
-						const cleanMatName = materialName.toLowerCase().replace(/[^a-z0-9]/g, '');
-						const cleanFileName = fileName.toLowerCase().replace(/[^a-z0-9]/g, '');
-						return cleanFileName.includes(cleanMatName) || cleanMatName.includes(cleanFileName);
-					},
-					
-					// 规则2: 数字匹配
-					(materialName, fileName) => {
-						const matNum = (materialName.match(/\d+/) || [])[0];
-						const fileNum = (fileName.match(/\d+/) || [])[0];
-						return matNum && fileNum && matNum === fileNum;
-					},
-					
-					// 规则3: 常见后缀匹配
-					(materialName, fileName, materialIndex) => {
-						const suffixes = [
-							'_' + (materialIndex + 1),
-							(materialIndex + 1),
-							'_' + String.fromCharCode(97 + materialIndex),
-							String.fromCharCode(97 + materialIndex)
-						];
-						
-						const baseName = fileName.toLowerCase().replace(/\.[^/.]+$/, '');
-						return suffixes.some(suffix => baseName.endsWith(suffix) || baseName.includes('_' + suffix + '_'));
-					}
-				];
-				
-				// 初始化文件名索引（如果虚拟文件系统没有的话）
-				if (virtualFS && !virtualFS.fileNameIndex) {
-					virtualFS.fileNameIndex = new Map();
-					if (virtualFS.zip) {
-						for (const filePath of Object.keys(virtualFS.zip.files)) {
-							const fileName = PathUtils.getFileName(filePath);
-							if (!virtualFS.fileNameIndex.has(fileName)) {
-								virtualFS.fileNameIndex.set(fileName, filePath);
-							}
-						}
-					}
-				}
-			}
-
-			findTexturePath(texturePath, basePath = null, options = {}) {
-				const { textureType = null, materialIndex = 0, totalMaterials = 1 } = options;
-				
-				console.log('findTexturePath - 查找纹理:', texturePath, '基础路径:', basePath, '选项:', options);
-				
-				// 1. 清洗路径
-				const cleanedPath = PathUtils.cleanTextureUrl(texturePath);
-				
-				// 如果清洗后路径不为空，尝试直接查找
-				if (cleanedPath) {
-					// 2. 尝试直接查找（使用清洗后的文件名）
-					if (this.virtualFS.fileNameIndex && this.virtualFS.fileNameIndex.has(cleanedPath)) {
-						const foundPath = this.virtualFS.fileNameIndex.get(cleanedPath);
-						console.log('通过文件名索引找到:', foundPath);
-						return foundPath;
-					}
-					
-					// 3. 尝试相对路径（如果有基础路径）
-					if (basePath) {
-						const baseDir = basePath.substring(0, basePath.lastIndexOf('/') + 1);
-						const relativePath = PathUtils.joinPaths(baseDir, cleanedPath);
-						
-						console.log('尝试相对路径:', relativePath);
-						if (this.virtualFS.zip && this.virtualFS.zip.file(relativePath)) {
-							return relativePath;
-						}
-					}
-					
-					// 4. 在ZIP中搜索文件（递归查找）
-					if (this.virtualFS.zip) {
-						const files = Object.keys(this.virtualFS.zip.files);
-						for (const filePath of files) {
-							const currentFileName = PathUtils.getFileName(filePath);
-							if (currentFileName.toLowerCase() === cleanedPath.toLowerCase()) {
-								console.log('在ZIP中搜索到文件:', filePath);
-								return filePath;
-							}
-						}
-					}
-				}
-				
-				// 5. 如果以上都没有找到，尝试基于纹理类型和命名模式查找
-				return this.findTextureByPattern(texturePath, textureType, materialIndex, totalMaterials);
-			}
-
-			findTextureByPattern(texturePath, textureType, materialIndex = 0, totalMaterials = 1, materialName = '') {
-				console.log('尝试基于模式查找纹理:', texturePath, '类型:', textureType, 
-							'材质索引:', materialIndex, '总材质数:', totalMaterials, 
-							'材质名称:', materialName);
-				
-				if (!this.virtualFS.zip) {
-					return null;
-				}
-				
-				const files = Object.keys(this.virtualFS.zip.files);
-				let candidateFiles = [];
-				
-				// 首先收集所有图片文件
-				const imageExtensions = ['.png', '.jpg', '.jpeg', '.tga', '.bmp', '.tiff', '.dds'];
-				for (const filePath of files) {
-					const ext = filePath.toLowerCase().substring(filePath.lastIndexOf('.'));
-					if (imageExtensions.includes(ext)) {
-						candidateFiles.push(filePath);
-					}
-				}
-				
-				console.log('ZIP中的图片文件:', candidateFiles);
-				
-				// 如果没有图片文件，返回null
-				if (candidateFiles.length === 0) {
-					return null;
-				}
-				
-				// ========== 关键策略：基于材质名称和纹理类型精确匹配 ==========
-				
-				// 策略1: 如果材质名称和贴图文件名有明确的数字对应关系
-				if (materialName) {
-					// 提取材质名称中的数字
-					const materialNumberMatch = materialName.match(/\d+/);
-					if (materialNumberMatch) {
-						const materialNumber = materialNumberMatch[0];
-						console.log('材质名称中的数字:', materialNumber);
-						
-						// 创建可能的贴图文件名模式
-						const possiblePatterns = [
-							// 直接数字匹配: 53 -> 53.png, texture_53.png, 53_texture.png
-							materialNumber,
-							// 带材质索引: 53_0, 53_1 等
-							materialNumber + '_' + materialIndex,
-							// 材质名称的简化版本
-							materialName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase(),
-							// 纹理类型结合数字: base_color_53, 53_base_color
-							textureType + '_' + materialNumber,
-							materialNumber + '_' + textureType
-						];
-						
-						// 尝试匹配每个可能的模式
-						for (const pattern of possiblePatterns) {
-							for (const filePath of candidateFiles) {
-								const fileName = PathUtils.getFileName(filePath).toLowerCase();
-								const baseName = fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase();
-								
-								// 检查是否匹配模式
-								if (baseName === pattern || 
-									baseName.includes('_' + pattern + '_') || 
-									baseName.endsWith('_' + pattern) || 
-									baseName.startsWith(pattern + '_')) {
-									console.log('通过模式匹配找到贴图:', filePath, '模式:', pattern);
-									return filePath;
-								}
-							}
-						}
-					}
-				}
-				
-				// 策略2: 基于材质索引的顺序分配（仅在无法精确匹配时使用）
-				if (candidateFiles.length === totalMaterials && totalMaterials > 1) {
-					// 如果贴图数量和材质数量相同，按顺序分配
-					const selectedFile = candidateFiles[materialIndex % candidateFiles.length];
-					console.log('按材质索引顺序分配:', 
-							   '材质索引', materialIndex, '-> 贴图索引', materialIndex % candidateFiles.length, 
-							   '->', selectedFile);
-					return selectedFile;
-				}
-				
-				// 策略3: 如果以上都失败，返回第一个贴图文件
-				console.log('使用第一个图片文件:', candidateFiles[0]);
-				return candidateFiles[0];
-			}
-
-			async loadTextures(textureRequests, basePath = null) {
-				console.log('批量加载纹理，数量:', textureRequests.length);
-				
-				const results = [];
-				for (const request of textureRequests) {
-					try {
-						const options = request.options || {};
-						if (basePath && !options.basePath) {
-							options.basePath = basePath;
-						}
-						
-						// 添加更多调试信息
-						console.log('加载纹理 ' + request.path + ' 用于材质 ' + options.materialName || 'unnamed' + ' (索引: ' + options.materialIndex + ')');
-						
-						const texture = await this.loadTexture(request.path, options);
-						results.push({
-							...request,
-							texture: texture,
-							path: request.path,
-							options: options
-						});
-					} catch (error) {
-						console.log('加载纹理失败:', request.path, error);
-						results.push({
-							...request,
-							texture: null,
-							error: error
-						});
-					}
-				}
-				
-				return results;
-			}
-
-			async loadTexture(texturePath, options = {}) {
-				console.log('TextureLoaderFromZip.loadTexture:', texturePath, 'options:', options);
-				
-				const { basePath = null, textureType = null, materialIndex = 0, totalMaterials = 1 } = 
-					typeof options === 'string' ? { basePath: options } : options;
-				
-				// 查找实际路径
-				const actualPath = this.findTexturePath(texturePath, basePath, {
-					textureType,
-					materialIndex,
-					totalMaterials
-				});
-				
-				if (!actualPath) {
-					console.log('未找到纹理文件:', texturePath);
-					throw new Error('Texture not found: ' + texturePath);
-				}
-				
-				// 检查是否已经加载
-				if (this.loadedTextures.has(actualPath)) {
-					console.log('使用缓存的纹理:', actualPath);
-					return this.loadedTextures.get(actualPath);
-				}
-				
-				// 检查是否有正在进行的请求
-				if (this.pendingRequests.has(actualPath)) {
-					console.log('等待正在进行的请求:', actualPath);
-					return await this.pendingRequests.get(actualPath);
-				}
-				
-				// 创建新的加载请求
-				const loadPromise = (async () => {
-					try {
-						console.log('开始加载纹理:', actualPath, '材质索引:', materialIndex);
-						
-						// 从虚拟文件系统获取blob URL
-						const blobUrl = await this.virtualFS.getBlobUrl(actualPath, basePath);
-						
-						// 加载纹理
-						const texture = await new Promise((resolve, reject) => {
-							const loader = new THREE.TextureLoader();
-							loader.load(
-								blobUrl,
-								(loadedTexture) => {
-									console.log('纹理加载成功:', actualPath, 
-											  '尺寸:', loadedTexture.image.width + 'x' + loadedTexture.image.height,
-											  '材质索引:', materialIndex);
-									
-									// 设置默认包装方式
-									loadedTexture.wrapS = THREE.RepeatWrapping;
-									loadedTexture.wrapT = THREE.RepeatWrapping;
-									
-									// 根据纹理类型设置色彩空间
-									if (textureType === 'base_color' || textureType === 'emissive' || textureType === 'map') {
-										loadedTexture.colorSpace = THREE.SRGBColorSpace;
-									} else {
-										loadedTexture.colorSpace = THREE.LinearSRGBColorSpace;
-									}
-									
-									// 记录材质索引信息
-									loadedTexture.userData = loadedTexture.userData || {};
-									loadedTexture.userData.materialIndex = materialIndex;
-									loadedTexture.userData.originalPath = actualPath;
-									
-									// 缓存纹理
-									this.loadedTextures.set(actualPath, loadedTexture);
-									resolve(loadedTexture);
-								},
-								undefined,
-								(error) => {
-									console.log('纹理加载失败:', actualPath, error);
-									reject(error);
-								}
-							);
-						});
-						
-						return texture;
-					} catch (error) {
-						console.log('纹理加载过程出错:', actualPath, error);
-						throw error;
-					} finally {
-						// 清理pending请求
-						this.pendingRequests.delete(actualPath);
-					}
-				})();
-				
-				// 保存pending请求
-				this.pendingRequests.set(actualPath, loadPromise);
-				
-				return loadPromise;
-			}
-
-			dispose() {
-				this.loadedTextures.forEach(texture => {
-					if (texture.image && texture.image.src && texture.image.src.startsWith('blob:')) {
-						URL.revokeObjectURL(texture.image.src);
-					}
-				});
-				this.loadedTextures.clear();
-				this.pendingRequests.clear();
-			}
-		}
 
         const viewer = new Adv3DViewer();
     </script>

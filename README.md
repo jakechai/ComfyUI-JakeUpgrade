@@ -378,6 +378,13 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-01-15 - v2.4.3
 1. Add adv3d_viewer_jk features: Generate 3D Data.   
+
+- 2026-01-18 - v2.4.4
+1. Add adv3d_viewer_jk features: 
+	① Mesh select.  
+	② Original material | multi-sub material Editor for selected mesh.  
+	③ Center | focus to selected mesh.  
+	④ Get 3D Data for selected mesh.  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  
