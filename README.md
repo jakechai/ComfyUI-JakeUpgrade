@@ -388,6 +388,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-01-19 - v2.4.5
 1. Fix adv3d_viewer_jk bugs: disablePostProcessing includes renderPass; original material gui keep showing when switch to other material modes.  
+
+- 2026-01-19 - v2.4.6
+1. Fix adv3d_viewer_jk bugs: choose the shortest path around the rotation angle.  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  
