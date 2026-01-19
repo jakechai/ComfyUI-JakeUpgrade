@@ -10802,7 +10802,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			performRendering() {
 				const mode = this.state.materialMode;
 				
-				if (mode === 'default' || mode === 'original') {
+				// 判断是否需要使用composer
+				const useComposer = mode === 'contour' || mode === 'ssao' || mode === 'gtao';
+				
+				// 直接渲染模式
+				if (!useComposer) {
 					this.renderer.render(this.scene, this.camera);
 					return;
 				}
@@ -12609,17 +12613,17 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			disablePostProcessing() {
 				if (!this.composer) return;
 				
-				this.composer.passes.forEach(p => {
-					p.enabled = false;
+				// 只禁用非RenderPass的通道
+				this.composer.passes.forEach(pass => {
+					if (!(pass instanceof RenderPass)) {
+						pass.enabled = false;
+						pass.renderToScreen = false;
+					} else {
+						// 确保RenderPass启用并渲染到屏幕
+						pass.enabled = true;
+						pass.renderToScreen = true;
+					}
 				});
-				
-				// 会导致再次切换到contour时失效
-				/* this.composer.dispose();
-				this.composer = null;
-				this.normalRenderTarget?.dispose();
-				this.normalRenderTarget = null;
-				this.depthTexture?.dispose();
-				this.depthTexture = null; */
 			}
 
 			disableAllPostPasses() {
@@ -12666,6 +12670,13 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.contourPass.enabled = true;
 				this.contourPass.renderToScreen = true;
 				
+				// 确保RenderPass启用但不渲染到屏幕
+				const renderPass = this.composer.passes.find(pass => pass instanceof RenderPass);
+				if (renderPass) {
+					renderPass.enabled = true;
+					renderPass.renderToScreen = false;
+				}
+				
 				// 5. 静态 uniform 绑定（一次）
 				this.contourPass.uniforms.tNormal.value =
 					this.normalRenderTarget.texture;
@@ -12690,8 +12701,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 3. 启用
 				this.ssaoPass.enabled = true;
 				this.ssaoPass.renderToScreen = true;
-				this.reorderPass(this.ssaoPass);
 				
+				// 确保RenderPass启用但不渲染到屏幕
+				const renderPass = this.composer.passes.find(pass => pass instanceof RenderPass);
+				if (renderPass) {
+					renderPass.enabled = true;
+					renderPass.renderToScreen = false;
+				}
+				
+				this.reorderPass(this.ssaoPass);
 				this.resizePostProcessing();
 				this.renderInvalidate();
 			}
@@ -12708,8 +12726,15 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				// 3. 启用
 				this.gtaoPass.enabled = true;
 				this.gtaoPass.renderToScreen = true;
-				this.reorderPass(this.gtaoPass);
 				
+				// 确保RenderPass启用但不渲染到屏幕
+				const renderPass = this.composer.passes.find(pass => pass instanceof RenderPass);
+				if (renderPass) {
+					renderPass.enabled = true;
+					renderPass.renderToScreen = false;
+				}
+				
+				this.reorderPass(this.gtaoPass);
 				this.resizePostProcessing();
 				this.renderInvalidate();
 			}
@@ -13054,7 +13079,12 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					? eOrMode 
 					: eOrMode.target.value;
 				
+				const previousMode = this.state.materialMode;
 				this.state.materialMode = mode;
+				
+				if (mode !== 'original') {
+					this.hideSelectedMaterialGUI();
+				}
 				
 				if (!this.composer && (mode === 'contour' || mode === 'ssao' || mode === 'gtao')) {
 					this.initPostProcessing();
@@ -13101,6 +13131,20 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				this.applyMaterialMode();
 				this.updateBgColorPickerState(mode);
 				this.toggleLightGUI();
+				
+				// 当切换回original模式时，如果有选中的对象，显示选中的材质GUI
+				if (mode === 'original' && previousMode !== 'original') {
+					// 检查是否有选中的对象
+					if (this.state.selection.selectedObject && this.state.selection.selectedObject.material) {
+						// 延迟一点显示，确保材质已经应用完成
+						setTimeout(() => {
+							if (this.state.materialMode === 'original' && 
+								this.state.selection.selectedObject) {
+								this.showSelectedMaterialGUI(this.state.selection.selectedObject);
+							}
+						}, 50);
+					}
+				}
 			}
 
 			applyMaterialMode() {

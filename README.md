@@ -380,11 +380,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Add adv3d_viewer_jk features: Generate 3D Data.   
 
 - 2026-01-18 - v2.4.4
-1. Add adv3d_viewer_jk features: 
+1. Add adv3d_viewer_jk features:  
 	① Mesh select.  
 	② Original material | multi-sub material Editor for selected mesh.  
 	③ Center | focus to selected mesh.  
 	④ Get 3D Data for selected mesh.  
+
+- 2026-01-19 - v2.4.5
+1. Fix adv3d_viewer_jk bugs: disablePostProcessing includes renderPass; original material gui keep showing when switch to other material modes.  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  
@@ -822,7 +825,7 @@ TriMesh Input Switch JK🐉
 | *long video Model* | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
 | LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2v v2v | - |
-| Stable Video Infinity [2.1](https://github.com/vita-epfl/Stable-Video-Infinity) | lora | ff2v | √ |
+| Stable Video Infinity [2.2](https://github.com/vita-epfl/Stable-Video-Infinity) [2.1](https://github.com/vita-epfl/Stable-Video-Infinity) | lora | ff2v | √ |
 | *multi-shot Model* | | | |
 | Echo Shot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v | - |
 | HoloCine [2.2](https://holo-cine.github.io/) | main model | t2v | ? |
