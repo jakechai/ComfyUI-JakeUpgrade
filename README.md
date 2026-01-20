@@ -391,6 +391,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-01-19 - v2.4.6
 1. Fix adv3d_viewer_jk bugs: choose the shortest path around the rotation angle.  
+
+- 2026-01-20 - v2.4.7
+1. Fix adv3d_viewer_jk bugs: select invisible meshes.  
+2. Add adv3d_viewer_jk features: Add random env for camera tracking.  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  
