@@ -235,8 +235,8 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 		}
 		/* 滑块分类宽度*/
 		.light-slider { width: 48px; }
-		.time-slider { width: 214px; }
-		.helper-size-slider { width: 59px; }
+		.time-slider { width: 210px; }
+		.helper-size-slider { width: 44px; }
 		
 		/* 输入框样式*/
 		input[type=color] { 
@@ -279,7 +279,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			text-align: left;
 		}
 		.control-label#fov-label {
-			min-width: 30px;
+			min-width: 16px;
 			display: inline-block;
 		}
 		.frame-counter {
@@ -298,15 +298,18 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			flex-shrink: 0;
 		}
 		/* 特定标签宽度*/
-		.fixed-width-label-light { width: 64px; }
-		.fixed-width-label-shadow { width: 37px; }
-		.fixed-width-label-ortho { width: 27px; }
+		/fixed-width-label-info { width: 35px; }
+		.fixed-width-label-helper { width: 31px; }
+		.fixed-width-label-light { width: 62px; }
+		.fixed-width-label-shadow { width: 36px; }
+		.fixed-width-label-ortho { width: 30px; }
 		.fixed-width-label-clip { width: 59px; }
-		.fixed-width-label-roll { width: 24px; }
-		.fixed-width-label-helper-size { width: 57px; }
-		.fixed-width-label-mat { width: 45px; }
+		.fixed-width-label-roll { width: 27px; }
+		.fixed-width-label-env { width: 16px; }
+		.fixed-width-label-helper-size { width: 16px; }
+		.fixed-width-label-mat { width: 44px; }
 		.fixed-width-label-bg-color { width: 46px; }
-		.fixed-width-label-side { width: 24px; }
+		.fixed-width-label-side { width: 26px; }
 		
 		/* Views下拉菜单 */
 		#views-select {
@@ -461,14 +464,14 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
                 
                 <!-- 信息组 -->
                 <div class="control-group">
-                    <label class="control-label">Info Tag</label>
+                    <label class="control-label fixed-width-label-info">Info Tag</label>
                     <input type="checkbox" id="info-display-toggle" checked title="Toggle Info Display">
                 </div>
                 <div class="separator">|</div>
                 
                 <!-- 辅助组 -->
                 <div class="control-group">
-                    <label class="control-label">Helper</label>
+                    <label class="control-label fixed-width-label-helper">Helper</label>
                     <input type="checkbox" id="helper-toggle" checked title="Toggle Grid and Axes">
                 </div>
                 <div class="separator">|</div>
@@ -517,7 +520,9 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
                 <!-- 高级设置 -->
                 <div class="control-group">
-					<label class="control-label fixed-width-label-helper-size">Helper Size</label>
+					<label class="control-label fixed-width-label-env" id="env-label">Env</label>
+					<input type="checkbox" id="env-toggle" title="Toggle Environment Ground and Background Boxes">
+					<label class="control-label fixed-width-label-helper-size">Viz</label>
 					<input type="range" id="helper-size-slider" class="helper-size-slider" min="0.1" max="5" step="0.1" value="1.0" title="Helper Visualization Size">
 	                </div>
             </div>
@@ -3128,6 +3133,28 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						ambLightFolder: null
 					},
 					
+					environment: {
+						enabled: false,
+						ground: null,
+						backgroundBoxes: [],
+						params: {
+							groundEnabled: true,
+							boxesEnabled: true,
+							boxCount: 20,
+							boxSizeMin: 0.1,
+							boxSizeMax: 0.2,
+							boxDistanceMin: 2.5,
+							boxDistanceMax: 5.0,
+							boxHeightMin: -0.5,
+							boxHeightMax: 1.5,
+							groundSizeFactor: 5.0
+						},
+						materials: {
+							ground: null,
+							box: null
+						}
+					},
+					
 					selection: {
 						selectedObject: null,
 						selectionBBox: null,
@@ -3260,6 +3287,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					},
 					toggles: {
 						info: get('info-display-toggle'),
+						env: get('env-toggle'),
 						helper: get('helper-toggle'),
 						light: get('light-mode-toggle'),
 						shadows: get('shadows-toggle'),
@@ -3343,6 +3371,7 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				t.shadows.onchange = () => this.toggleShadows();
 				b.focusLight.onclick= () => this.adjustDefaultDirLightForScene();
 				b.resetSettings.onclick = () => this.resetSettings();
+				this.dom.toggles.env.onchange = () => this.toggleEnvironment();
 				i.helperSize.oninput = () => this.updateHelperSize();
 				
 				b.play.onclick = () => this.togglePlay();
@@ -3512,7 +3541,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				const intersects = this.state.selection.raycaster.intersectObject(this.scene, true);
 				
 				// 过滤出Mesh对象
-				const meshIntersects = intersects.filter(intersect => intersect.object.isMesh);
+				const meshIntersects = intersects.filter(intersect => {
+					if (!intersect.object.isMesh) return false;
+					const shouldExclude = this.shouldExcludeFromBBox(intersect.object);
+					return !shouldExclude;
+				});
 				
 				if (meshIntersects.length > 0) {
 					const selectedObject = meshIntersects[0].object;
@@ -3525,6 +3558,13 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 			}
 
 			selectObject(object) {
+				// 使用shouldExcludeFromBBox函数检查是否应该被排除
+				const shouldExclude = this.shouldExcludeFromBBox(object);
+				if (shouldExclude) {
+					this.clearSelection();
+					return;
+				}
+				
 				// 清除之前的选择
 				this.clearSelection();
 				
@@ -3622,6 +3662,257 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					bbox.getCenter(center);
 					this.state.selection.selectionHelper.position.copy(center);
 				}
+			}
+
+			toggleEnvironment() {
+				const enabled = this.dom.toggles.env.checked;
+				
+				if (enabled) {
+					this.createEnvironment();
+				} else {
+					this.destroyEnvironment();
+				}
+				
+				this.renderInvalidate();
+			}
+
+			createEnvironment() {
+				// 如果环境已经存在，先销毁
+				if (this.state.environment.ground || this.state.environment.backgroundBoxes.length > 0) {
+					this.destroyEnvironment();
+				}
+				
+				// 获取当前场景的包围盒
+				const bboxData = this.getBBoxForCurrentFrame();
+				
+				// 如果没有有效物体，使用默认设置
+				if (bboxData.isEmpty) {
+					// 默认场景：2x2x2的立方体，中心在(0,1,0)
+					const defaultSize = 2;
+					const defaultCenter = new THREE.Vector3(0, 1, 0);
+					bboxData.size = new THREE.Vector3(defaultSize, defaultSize, defaultSize);
+					bboxData.center = defaultCenter;
+					bboxData.min = new THREE.Vector3(
+						defaultCenter.x - defaultSize / 2,
+						defaultCenter.y - defaultSize / 2,
+						defaultCenter.z - defaultSize / 2
+					);
+					bboxData.max = new THREE.Vector3(
+						defaultCenter.x + defaultSize / 2,
+						defaultCenter.y + defaultSize / 2,
+						defaultCenter.z + defaultSize / 2
+					);
+				}
+				
+				// 创建材质
+				this.createEnvironmentMaterials();
+				
+				// 创建ground
+				if (this.state.environment.params.groundEnabled) {
+					this.createGround(bboxData);
+				}
+				
+				// 创建背景box
+				if (this.state.environment.params.boxesEnabled) {
+					this.createBackgroundBoxes(bboxData);
+				}
+				
+				this.state.environment.enabled = true;
+			}
+
+			createEnvironmentMaterials() {
+				// 创建ground材质 - 棋盘格纹理
+				const groundMaterial = new THREE.MeshStandardMaterial({
+					name: "defaultGround",
+					color: 0xffffff,
+					roughness: 1.0,
+					metalness: 0.0
+				});
+				
+				// 创建棋盘格纹理
+				const canvas = document.createElement('canvas');
+				canvas.width = 512;
+				canvas.height = 512;
+				const context = canvas.getContext('2d');
+				
+				// 绘制棋盘格
+				const tileSize = 8;
+				for (let y = 0; y < 2; y++) {
+					for (let x = 0; x < 2; x++) {
+						context.fillStyle = (x + y) % 2 === 0 ? '#888888' : '#cccccc';
+						context.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+					}
+				}
+				
+				const texture = new THREE.CanvasTexture(canvas);
+				texture.wrapS = THREE.RepeatWrapping;
+				texture.wrapT = THREE.RepeatWrapping;
+				const repeatSize = this.state.environment.params.groundSizeFactor
+				texture.repeat.set(repeatSize, repeatSize);
+				
+				groundMaterial.map = texture;
+				groundMaterial.needsUpdate = true;
+				
+				// 创建box材质 - 白色标准材质
+				const boxMaterial = new THREE.MeshStandardMaterial({
+					name: "defaultBox",
+					color: 0xffffff,
+					roughness: 1.0,
+					metalness: 0.0
+				});
+				
+				// 设置阴影属性：不产生阴影但接受阴影
+				groundMaterial.shadowSide = THREE.FrontSide;
+				boxMaterial.shadowSide = THREE.FrontSide;
+				
+				this.state.environment.materials.ground = groundMaterial;
+				this.state.environment.materials.box = boxMaterial;
+			}
+
+			createGround(bboxData) {
+				const params = this.state.environment.params;
+				const center = bboxData.center;
+				const size = bboxData.size;
+				
+				// 计算ground尺寸（基于bbox最大尺寸）
+				const maxDimension = Math.max(size.x, size.z);
+				const groundSize = maxDimension * params.groundSizeFactor;
+				
+				// 创建ground几何体
+				const groundGeometry = new THREE.PlaneGeometry(groundSize, groundSize);
+				
+				// 创建ground网格
+				const ground = new THREE.Mesh(
+					groundGeometry,
+					this.state.environment.materials.ground
+				);
+				
+				// 设置ground属性
+				ground.name = "Environment_Ground";
+				ground.rotation.x = -Math.PI / 2; // 水平放置
+				ground.position.set(
+					center.x,
+					bboxData.min.y - 0.01, // 稍微低于bbox底部
+					center.z
+				);
+				
+				// 设置阴影属性：不产生阴影，但接受阴影
+				ground.castShadow = false;
+				ground.receiveShadow = this.state.lights.shadowsEnabled;
+				
+				// 设置用户数据，标记为环境物体
+				ground.userData = {
+					isEnvironment: true,
+					isSelectable: false,
+					excludeFromExport: true,
+					excludeFromBBox: true
+				};
+				
+				this.scene.add(ground);
+				this.state.environment.ground = ground;
+			}
+
+			createBackgroundBoxes(bboxData) {
+				const params = this.state.environment.params;
+				const center = bboxData.center;
+				const size = bboxData.size;
+				
+				// 计算最大尺寸用于比例计算
+				const maxDimension = Math.max(size.x, size.y, size.z);
+				
+				// 清空现有的背景box
+				this.state.environment.backgroundBoxes.forEach(box => {
+					this.scene.remove(box);
+					box.geometry.dispose();
+				});
+				this.state.environment.backgroundBoxes = [];
+				
+				// 创建随机box
+				for (let i = 0; i < params.boxCount; i++) {
+					// 计算随机位置（在bbox外围）
+					const distance = this.randomBetween(
+						maxDimension * params.boxDistanceMin,
+						maxDimension * params.boxDistanceMax
+					);
+					
+					// 随机角度
+					const angle = Math.random() * Math.PI * 2;
+					const heightOffset = this.randomBetween(
+						size.y * params.boxHeightMin,
+						size.y * params.boxHeightMax
+					);
+					
+					// 计算位置
+					const x = center.x + Math.cos(angle) * distance;
+					const y = center.y + heightOffset;
+					const z = center.z + Math.sin(angle) * distance;
+					
+					// 随机尺寸（基于bbox尺寸的比例）
+					const boxSize = this.randomBetween(
+						maxDimension * params.boxSizeMin,
+						maxDimension * params.boxSizeMax
+					);
+					
+					// 创建box几何体
+					const boxGeometry = new THREE.BoxGeometry(boxSize, boxSize, boxSize);
+					
+					// 创建box网格
+					const box = new THREE.Mesh(
+						boxGeometry,
+						this.state.environment.materials.box
+					);
+					
+					// 设置box属性
+					box.name = 'Environment_Box_' + i;
+					box.position.set(x, y, z);
+					
+					// 随机旋转
+					box.rotation.set(
+						Math.random() * Math.PI,
+						Math.random() * Math.PI,
+						Math.random() * Math.PI
+					);
+					
+					// 设置阴影属性：不产生阴影，但接受阴影
+					box.castShadow = false;
+					box.receiveShadow = this.state.lights.shadowsEnabled;
+					
+					// 设置用户数据，标记为环境物体
+					box.userData = {
+						isEnvironment: true,
+						isSelectable: false,
+						excludeFromExport: true,
+						excludeFromBBox: true
+					};
+					
+					this.scene.add(box);
+					this.state.environment.backgroundBoxes.push(box);
+				}
+			}
+
+			randomBetween(min, max) {
+				return min + Math.random() * (max - min);
+			}
+
+			destroyEnvironment() {
+				// 移除ground
+				if (this.state.environment.ground) {
+					this.scene.remove(this.state.environment.ground);
+					this.state.environment.ground.geometry.dispose();
+					this.state.environment.ground = null;
+				}
+				
+				// 移除所有背景box
+				this.state.environment.backgroundBoxes.forEach(box => {
+					this.scene.remove(box);
+					box.geometry.dispose();
+				});
+				this.state.environment.backgroundBoxes = [];
+				
+				// 释放材质
+				// 只有在完全清理场景时才释放
+				
+				this.state.environment.enabled = false;
 			}
 
 			handleScrollDragging() {
@@ -10152,7 +10443,26 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					hasAnimation: false
 				};
 				
-				// 7. 重置核心状态
+				// 7. 清理环境
+				this.destroyEnvironment();
+				
+				// 释放环境材质
+				if (this.state.environment.materials.ground) {
+					this.state.environment.materials.ground.dispose();
+					this.state.environment.materials.ground = null;
+				}
+				
+				if (this.state.environment.materials.box) {
+					this.state.environment.materials.box.dispose();
+					this.state.environment.materials.box = null;
+				}
+				
+				// 重置Env复选框状态
+				if (this.dom.toggles.env) {
+					this.dom.toggles.env.checked = false;
+				}
+				
+				// 8. 重置核心状态
 				this.state.cameras.currentType = 'default';
 				this.state.cameras.activeScene = null;
 				this.state.cameraAnim.keyframes = [];
@@ -10254,6 +10564,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				const restoreInfo = [];
 				
 				const reparent = (obj) => {
+					// 跳过环境物体
+					if (obj.userData && obj.userData.excludeFromExport) {
+						return;
+					}
+					
 					restoreInfo.push({ 
 						object: obj, 
 						parent: obj.parent, 
@@ -14167,6 +14482,10 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 					if (model && model.traverse) {
 						model.traverse(child => {
 							if (child.isMesh) {
+								if (child.userData && child.userData.isEnvironment) {
+									return;
+								}
+								
 								child.castShadow = this.state.lights.shadowsEnabled;
 								child.receiveShadow = this.state.lights.shadowsEnabled;
 							}
@@ -15286,6 +15605,11 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 				
 				// 排除灯光
 				if (object.isLight) return true;
+				
+				// 排除环境物体
+				if (object.userData && object.userData.isEnvironment) {
+					return true;
+				}
 				
 				// 特殊包含：SMPL帧网格
 				if (object.userData && object.userData.isSMPLFrame) {
