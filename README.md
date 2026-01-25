@@ -354,37 +354,27 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							3. Add Wan 2.1 Ditto video edit sub workflows.
 							4. Add Wan 2.1 longcat refiner v2v sub workflows.
 	- 2025-11-30 - v2.3.14	1. Fix Get node error caused by the latest ComfyUI in the QWen Model Sheet workflow.
+	- 2025-12-27 - v2.4.0	1. Add Advanced 3D Viewer Node, supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without animation, and with custom camera animation and exported as GLB.
+	- 2026-01-07 - v2.4.1	1. Add adv3d_viewer_jk features:  
+								① wireframe, Normal, Depth, lineart, canny, edge, contour, ssao, and gtao shading support.  
+								② shading and default light gui support.  
+								③ center to object and focus to object function  
+							2. Update img2mesh 3D Data workflow.
+	- 2026-01-15 - v2.4.2	1. Add adv3d_viewer_jk features:  
+								① Reduce GPU usage: Control FPS, control RAF(requestAnimationFrame), control postProcessing.  
+								② More detailed Scene Diagnostics.  
+								③ Support zip format: obj.zip (obj + (mtl) + textures) | fbx.zip (fbx + textues) | glb(gltf).zip (glb(gltf) + bin + textures).  
+								④ Fix bug: recording never stop; GTAO GUI broken.  
+								⑤ Add screenshot btn.  
+								⑥ Add Loading UI.
+	- 2026-01-15 - v2.4.3	1. Add adv3d_viewer_jk features: Generate 3D Data.   
+	- 2026-01-18 - v2.4.4	1. Add adv3d_viewer_jk features:  
+								① Mesh select.  
+								② Original material | multi-sub material Editor for selected mesh.  
+								③ Center | focus to selected mesh.  
+								④ Get 3D Data for selected mesh.  
 
 </details>
-
-- 2025-12-27 - v2.4.0
-1. Add Advanced 3D Viewer Node, supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without animation, and with custom camera animation and exported as GLB.
-
-- 2026-01-07 - v2.4.1
-1. Add adv3d_viewer_jk features:  
-	① wireframe, Normal, Depth, lineart, canny, edge, contour, ssao, and gtao shading support.  
-	② shading and default light gui support.  
-	③ center to object and focus to object function  
-2. Update img2mesh 3D Data workflow.
-
-- 2026-01-15 - v2.4.2
-1. Add adv3d_viewer_jk features:  
-	① Reduce GPU usage: Control FPS, control RAF(requestAnimationFrame), control postProcessing.  
-	② More detailed Scene Diagnostics.  
-	③ Support zip format: obj.zip (obj + (mtl) + textures) | fbx.zip (fbx + textues) | glb(gltf).zip (glb(gltf) + bin + textures).  
-	④ Fix bug: recording never stop; GTAO GUI broken.  
-	⑤ Add screenshot btn.  
-	⑥ Add Loading UI.
-
-- 2026-01-15 - v2.4.3
-1. Add adv3d_viewer_jk features: Generate 3D Data.   
-
-- 2026-01-18 - v2.4.4
-1. Add adv3d_viewer_jk features:  
-	① Mesh select.  
-	② Original material | multi-sub material Editor for selected mesh.  
-	③ Center | focus to selected mesh.  
-	④ Get 3D Data for selected mesh.  
 
 - 2026-01-19 - v2.4.5
 1. Fix adv3d_viewer_jk bugs: disablePostProcessing includes renderPass; original material gui keep showing when switch to other material modes.  
@@ -395,12 +385,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2026-01-20 - v2.4.7
 1. Fix adv3d_viewer_jk bugs: select invisible meshes.  
 2. Add adv3d_viewer_jk features: Add random env for camera tracking.  
-![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK.png)  
-![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_normal.png)  
-![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_depth.png)  
-![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_lineart.png)  
-![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_edge.png)  
-![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_gtao.png)  
+
+- 2026-01-25 - v2.5.0
+1. Add Pose Control workflows for WAN Animate | OTA | Steady Dance | SCAIL.
+2. Add | Update Wan (long) video generation with pose control workflows including Vace, Wan Animate, SCAIL, One to All, Sdeady Dance.
+3. Replace all Enchance And Resize Hint Images JK nodes in video gen workflows with KJ Resize v2 node.
+4. Since KJ make Uni3C suport t2v model, which is greate, I add Uni3C to VACE and t2v workflows.
+5. Change default attention to sage attention instead of radial attention.  
+6. Clip Loader Multi GPU node doesn't work for the latest ComfyUI, it looks like the generation never follows the prompts, especially for t2v. Replace it with the CLIPLoaderDisTorch2MultiGPU node.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -786,6 +778,7 @@ TriMesh Input Switch JK🐉
 | [TSR](https://github.com/temporalscorerescaling/TSR) | enhancement | ~ | - |
 | [Loop](https://github.com/YisuiTT/Mobius/) | loop video | ~ | - |
 | [RIFLEx](https://github.com/thu-ml/RIFLEx) | long video | ~ | - |
+| [UltraVico](https://github.com/thu-ml/DiT-Extrapolation) | long video | ~ | - |
 | [Context Window](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) | long & loop video | ~ | √ |
 | [Flow Edit](https://github.com/fallenshock/FlowEdit) | in content edit | v2v | × |
 | *Main Model* | | | |
@@ -871,6 +864,9 @@ TriMesh Input Switch JK🐉
 | RealisDance* [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | ff2v | × |
 | MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v | - |
 | Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v | - |
+| SCAIL [2.1](https://teal024.github.io/SCAIL/) | main model | ff2v | √ |
+| One To All [2.1](https://github.com/ssj9596/One-to-All-Animation) | main model | ff2v with restrictions | - |
+| Steady Dance [2.1](https://mcg-nju.github.io/steadydancer-web/) | main model | ff2v | - |
 | Motion Stream [2.1](https://github.com/alex4727/motionstream) | not yet released | ff2v| ? |
 
 ## JakeUpgrade Workflow
