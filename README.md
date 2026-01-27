@@ -394,6 +394,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 5. Change default attention to sage attention instead of radial attention.  
 6. Clip Loader Multi GPU node doesn't work for the latest ComfyUI, it looks like the generation never follows the prompts, especially for t2v. Replace it with the CLIPLoaderDisTorch2MultiGPU node.
 
+- 2026-01-27 - v2.5.1
+1. Provide the modified `SeamlessTile.py` for seamless-tiling workflow since [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling) does not work with the latest ComfyUI and is inactive.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
