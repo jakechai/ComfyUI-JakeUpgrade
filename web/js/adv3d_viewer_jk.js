@@ -3140,12 +3140,12 @@ const ADV3DVIEWER_HTML = `<!DOCTYPE html>
 						params: {
 							groundEnabled: true,
 							boxesEnabled: true,
-							boxCount: 20,
+							boxCount: 30,
 							boxSizeMin: 0.1,
 							boxSizeMax: 0.2,
 							boxDistanceMin: 2.5,
-							boxDistanceMax: 5.0,
-							boxHeightMin: -0.5,
+							boxDistanceMax: 4.0,
+							boxHeightMin: -1.0,
 							boxHeightMax: 1.5,
 							groundSizeFactor: 5.0
 						},
