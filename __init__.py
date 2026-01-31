@@ -202,9 +202,11 @@ def load_modules():
         # print("🔶 Loading all main modules.")
         for module_key, (module_file, module_name) in MODULE_MAPPING.items():
             import_commands.append(f"from .nodes.{module_file} import *")
-            import_commands.append(f"from .nodes.{BASE_PROMPT_FILE} import *")
-            import_commands.append(f"from .nodes.jake_node_3d_viewer import *")
-            loaded_modules.append(module_key)
+        
+        import_commands.append(f"from .nodes.{BASE_PROMPT_FILE} import *")
+        import_commands.append(f"from .nodes.jake_node_3d_viewer import *")
+        import_commands.append(f"from .nodes.jake_node_3d_sam3dseq import *")
+        loaded_modules.append(module_key)
     else:
         # 加载指定的模块
         # print("🔶 Loading specified main modules.")
@@ -215,6 +217,7 @@ def load_modules():
                 # 特殊处理3d模块：先加载基础文件（不记录到loaded_modules）
                 if module_key == '3d':
                     import_commands.append(f"from .nodes.jake_node_3d_viewer import *")
+                    import_commands.append(f"from .nodes.jake_node_3d_sam3dseq import *")
                 
                 # 特殊处理prompt模块：先加载基础文件（不记录到loaded_modules）
                 if module_key == 'prompt':
@@ -265,6 +268,7 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
         ### 3D Nodes
         '3d': lambda: {
             "Adv3DViewer_JK": lambda: global_symbols.get("Adv3DViewer_JK"),
+            "SAM3D From Video JK": lambda: global_symbols.get("SAM3DMeshSequenceFromVideo_JK"),
             "Orbit Poses JK": lambda: global_symbols.get("OrbitPoses_JK"),
             "OrbitLists to OrbitPoses JK": lambda: global_symbols.get("OrbitLists_to_OrbitPoses_JK"),
             "OrbitPoses to OrbitLists JK": lambda: global_symbols.get("OrbitPoses_to_OrbitLists_JK"),
@@ -433,6 +437,8 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
                         # print(f"✅ Found node: {display_name}")
                     else:
                         print(f"⚠️ Node class not found: {display_name}")
+            else:
+                print(f"⚠️ Module mapping not found for: {module_key}")
     
     return node_mappings
 

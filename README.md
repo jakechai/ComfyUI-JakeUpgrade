@@ -396,6 +396,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 2. Control Video Gen workflow update.
 3. Add more random boxes to the background for Adv 3D Viewer node.
 
+- 2026-01-31 - v2.5.3
+1. Add SAM3D Mesh Sequence From Video node to get mesh sequence from video using SAM3D. Need ComfyUI-SAM3DBody installed.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -445,6 +448,8 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_gtao.png)  
 Adv3DViewer JK🐉: Supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without animation, and with custom camera animation and exported as GLB.  
 ![image](imgs/nodes/3D/Orbit%20Poses%20JK.png)  
+SAM3D Mesh Sequence JK🐉: Get mesh sequence from video using SAM3D.  
+![image](imgs/nodes/3D/SAM3D%20Mesh%20Sequence%20JK.png) 
 Orbit Poses JK🐉: Generate 3D camera track pose configurations, supporting multiple preset and custom parameters.  
 ![image](imgs/nodes/3D/Orbit%20Lists%20to%20Orbit%20Poses%20JK.png)  
 Orbit Lists to Orbit Poses JK🐉: Convert track list format to camera pose format.  
@@ -870,7 +875,6 @@ TriMesh Input Switch JK🐉
 | SCAIL [2.1](https://teal024.github.io/SCAIL/) | main model | ff2v | √ |
 | One To All [2.1](https://github.com/ssj9596/One-to-All-Animation) | main model | ff2v with restrictions | - |
 | Steady Dance [2.1](https://mcg-nju.github.io/steadydancer-web/) | main model | ff2v | - |
-| Motion Stream [2.1](https://github.com/alex4727/motionstream) | not yet released | ff2v| ? |
 
 ## JakeUpgrade Workflow
 
