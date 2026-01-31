@@ -397,7 +397,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 3. Add more random boxes to the background for Adv 3D Viewer node.
 
 - 2026-01-31 - v2.5.3
-1. Add SAM3D Mesh Sequence From Video node to get mesh sequence from video using SAM3D. Need ComfyUI-SAM3DBody installed.
+1. Add SAM3D Mesh Sequence From Video node to get mesh sequence from video using SAM3D. Need to install [ComfyUI-SAM3DBody](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody).
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
