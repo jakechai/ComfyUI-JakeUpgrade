@@ -436,23 +436,38 @@ def align_models_to_fixed_camera(frames_data, faces, reference_frame=0):
             aligned_vertices[i] = ref_vertices.copy()
             continue
         
-        # 应用对齐变换：V_i' = V_i + C_i - C_ref
-        # 注意：这里假设焦距相同，如果需要处理变焦，需要额外的缩放
+        # 应用对齐变换
+        # X和Y方向：V_i' = V_i + C_i - C_ref
+        # Z方向：V_i' = V_i
+        
         if focal_length is not None and ref_focal_length is not None and focal_length != ref_focal_length:
-            # 如果需要处理焦距变化
+            # 如果需要处理焦距变化，先计算缩放因子
             scale = ref_focal_length / focal_length
-            aligned_vertices[i] = (vertices + cam_t) * scale - ref_cam_t
+            
+            # 对X和Y方向应用缩放
+            aligned_vertices[i, :, 0] = (vertices[:, 0] + cam_t[0] - ref_cam_t[0]) * scale
+            aligned_vertices[i, :, 1] = (vertices[:, 1] + cam_t[1] - ref_cam_t[1]) * scale
+            
+            # Z方向不缩放
+            aligned_vertices[i, :, 2] = vertices[:, 2]
+            
             if i < 3:  # 打印前几帧的调试信息
-                print(f"[Alignment] Frame {i}: scaled by {scale:.3f} (focal: {focal_length:.1f} -> {ref_focal_length:.1f})")
+                print(f"[Alignment] Frame {i}: XY scaled by {scale:.3f} (focal: {focal_length:.1f} -> {ref_focal_length:.1f})")
         else:
-            # 简单的相机位置对齐
-            aligned_vertices[i] = vertices + cam_t - ref_cam_t
+            # X和Y方向：V_i' = V_i + C_i - C_ref
+            aligned_vertices[i, :, 0] = vertices[:, 0] + cam_t[0] - ref_cam_t[0]
+            aligned_vertices[i, :, 1] = vertices[:, 1] + cam_t[1] - ref_cam_t[1]
+            
+            # Z方向：V_i' = V_i
+            aligned_vertices[i, :, 2] = vertices[:, 2]
         
         valid_frames.append(i)
         
         # 调试信息
         if i < 3:  # 只打印前3帧的详细信息
-            print(f"[Alignment] Frame {i}: cam_t={cam_t.flatten()}, aligned offset={-cam_t.flatten() + ref_cam_t.flatten()}")
+            print(f"[Alignment] Frame {i}: cam_t={cam_t.flatten()}")
+            print(f"  XY offset: +cam_t - ref_cam_t = {cam_t[0]-ref_cam_t[0]:.3f}, {cam_t[1]-ref_cam_t[1]:.3f}")
+            print(f"  Z offset: 0.000")
     
     print(f"[Alignment] Completed: {len(valid_frames)} valid frames aligned to reference camera")
     
@@ -555,7 +570,7 @@ class SAM3DMeshSequenceFromVideo_JK:
     OUTPUT_NODE = True
     
     def __init__(self):
-        """初始化输出目录，参考jake_node_3d_viewer.py"""
+        """初始化输出目录"""
         # 检查依赖是否可用
         available, error_msg = check_sam3d_dependencies()
         if not available:
@@ -574,7 +589,7 @@ class SAM3DMeshSequenceFromVideo_JK:
         return Path(self.output_dir) / self.tmp_output_dir_name
     
     def clean_file_path(self, file_path: str) -> str:
-        """清理文件路径，去除可能的引号（参考jake_node_3d_viewer.py）"""
+        """清理文件路径，去除可能的引号"""
         if not file_path:
             return ""
         
@@ -811,8 +826,8 @@ class SAM3DMeshSequenceFromVideo_JK:
                     
                     processed_frames += 1
                 
-                # 每处理10帧显示一次进度
-                if (frame_idx + 1) % 10 == 0 or (frame_idx + 1) == num_frames:
+                # 每处理30帧显示一次进度
+                if (frame_idx + 1) % 30 == 0 or (frame_idx + 1) == num_frames:
                     elapsed = time.time() - start_time_total
                     fps_rate = processed_frames / elapsed if elapsed > 0 else 0
                     print(f"[VideoFramesToMesh] Progress: {frame_idx + 1}/{num_frames} frames, "
@@ -822,7 +837,7 @@ class SAM3DMeshSequenceFromVideo_JK:
         if processed_frames == 0:
             return (f"错误: 没有成功处理任何帧",)
         
-        # 6. 根据参数决定是否应用模型对齐
+        # 6. 默认应用模型对齐
         if align_to_reference_camera:
             print(f"[VideoFramesToMesh] Aligning models to fixed camera (reference frame: {reference_frame})...")
             try:
@@ -851,7 +866,7 @@ class SAM3DMeshSequenceFromVideo_JK:
                                         for d in frames_data], axis=0)
             valid_frames = [i for i, d in enumerate(frames_data) if d["success"]]
         
-        # 7. 总是应用时间平滑（如果有多于1帧）
+        # 7. 默认应用时间平滑（如果有多于1帧）
         if len(valid_frames) > 1:
             print(f"[VideoFramesToMesh] Applying temporal smoothing (method: {smoothing_method}, sigma: {smoothing_sigma})")
             
@@ -866,14 +881,14 @@ class SAM3DMeshSequenceFromVideo_JK:
             
             print(f"[VideoFramesToMesh] Temporal smoothing completed")
         
-        # 8. 应用坐标变换
+        # 8. 默认应用坐标变换
         if coordinate_transform != "none":
             print(f"[CoordinateTransform] Applying coordinate transformation: {coordinate_transform}")
             
             # 变换顶点序列
             aligned_vertices = apply_coordinate_transform(aligned_vertices, coordinate_transform)
         
-        # 9. 总是保存为 SMPL 兼容格式
+        # 9. 默认保存为 SMPL 兼容格式
         MeshSequenceBinaryFormat.save_smpl_compatible(
             vertices_sequence=aligned_vertices,
             faces=faces,
@@ -887,7 +902,6 @@ class SAM3DMeshSequenceFromVideo_JK:
         print(f"[VideoFramesToMesh] Model alignment: enabled (reference frame: {ref_cam_params.get('reference_frame', 0)})")
         print(f"[VideoFramesToMesh] Coordinate transformation: {coordinate_transform}")
         print(f"[VideoFramesToMesh] Temporal smoothing: enabled ({smoothing_method}, sigma={smoothing_sigma})")
-        print(f"[VideoFramesToMesh] Output file: {output_path}")
         
         # 只返回完整路径
         return (str(output_path),)

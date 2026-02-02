@@ -400,7 +400,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Add SAM3D Mesh Sequence From Video node to get mesh sequence from video using SAM3D. Need to install [ComfyUI-SAM3DBody](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody).
 
 - 2026-02-01 - v2.5.4
-1. Update SAM3D Mesh Sequence From Video node: Align the mesh sequence to the video instead of aligning along the bbox center.
+1. Update SAM3D Mesh Sequence From Video node: Align the mesh sequence to the video instead of aligning along the creation center.
+
+- 2026-02-02 - v2.5.5
+1. Update SAM3D Mesh Sequence From Video node: set z offset to 0 for mesh sequence.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
