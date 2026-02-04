@@ -501,7 +501,7 @@ class SAM3DMeshSequenceFromVideo_JK:
         # 检查依赖是否可用
         available, error_msg = check_sam3d_dependencies()
         if not available:
-            print(f"Warning: ComfyUI-SAM3DBody dependency is unavailable; nodes may not function correctly: {error_msg}")
+            print(f"SAM3D From Video JK node may not function correctly: {error_msg}")
         
         return {
             "required": {
