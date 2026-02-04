@@ -12,6 +12,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ## Video Introduction
 - (new)Wan Video update 5 (Long video with camera control & pose control | Adv 3D Viewer for Video Gen): [Youtube](https://youtu.be/yO7bun8wN3o) | [Bilibili](https://www.bilibili.com/video/BV1Fu6cBqEsG/)
+- (new)Wan Video update 5.1 (use SAM3D Body to generate character motion model sequences): [Youtube](https://youtu.be/yO7bun8wN3o) | [Bilibili](https://www.bilibili.com/video/BV1JFFTziE5X/)
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
@@ -404,6 +405,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-02-02 - v2.5.5
 1. Update SAM3D Mesh Sequence From Video node: set z offset to 0 for mesh sequence.
+
+- 2026-02-04 - v2.5.6
+1. Add Wan 2.2 SVI pro long video generation workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -988,6 +992,12 @@ TriMesh Input Switch JK🐉
 - (18 mv tex)[ComfyUI MVAdapter](https://github.com/huanngzh/ComfyUI-MVAdapter)
 - (18 mv tex)[ComfyUI IG2MV](https://github.com/hunzmusic/ComfyUI-IG2MV)
 - (18 mv tex)[ComfyUI StableX Wrapper](https://github.com/kijai/ComfyUI-StableXWrapper)
+
+### motion workflow
+- [ComfyUI-MotionCapture](https://github.com/PozzettiAndrea/ComfyUI-MotionCapture)
+- [ComfyUI-SAM3DBody (comfy-env==0.0.30)](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody)
+- [ComfyUI-UniRig (comfy-env==0.1.19)](https://github.com/PozzettiAndrea/ComfyUI-UniRig)
+- [ComfyUI-HY-Motion1](https://github.com/jtydhr88/ComfyUI-HY-Motion1)
 
 ### video workflow
 - [Wan Video Wrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
