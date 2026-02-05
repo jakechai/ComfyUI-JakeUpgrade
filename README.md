@@ -12,7 +12,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 ## Video Introduction
 - (new)Wan Video update 5 (Long video with camera control & pose control | Adv 3D Viewer for Video Gen): [Youtube](https://youtu.be/yO7bun8wN3o) | [Bilibili](https://www.bilibili.com/video/BV1Fu6cBqEsG/)
-- (new)Wan Video update 5.1 (use SAM3D Body to generate character motion model sequences): [Youtube](https://youtu.be/yO7bun8wN3o) | [Bilibili](https://www.bilibili.com/video/BV1JFFTziE5X/)
+- (new)Wan Video update 5.1 (use SAM3D Body to generate character motion model sequences): [Youtube](https://youtu.be/OJNodd1hYCs) | [Bilibili](https://www.bilibili.com/video/BV1JFFTziE5X/)
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
@@ -378,24 +378,18 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	- 2026-01-19 - v2.4.6	1. Fix adv3d_viewer_jk bugs: choose the shortest path around the rotation angle.  
 	- 2026-01-20 - v2.4.7	1. Fix adv3d_viewer_jk bugs: select invisible meshes.  
 							2. Add adv3d_viewer_jk features: Add random env for camera tracking.  
+	- 2026-01-25 - v2.5.0	1. Add Pose Control workflows for WAN Animate | OTA | Steady Dance | SCAIL.
+							2. Add | Update Wan (long) video generation with pose control workflows including Vace, Wan Animate, SCAIL, One to All, Steady Dance.
+							3. Replace all Enchance And Resize Hint Images JK nodes in video gen workflows with KJ Resize v2 node.
+							4. Since KJ make Uni3C suport t2v model, which is great, I add Uni3C to VACE and t2v workflows.
+							5. Change default attention to sage attention instead of radial attention.  
+							6. Clip Loader Multi GPU node doesn't work for the latest ComfyUI, it looks like the generation never follows the prompts, especially for t2v. Replace it with the CLIPLoaderDisTorch2MultiGPU node.
+	- 2026-01-27 - v2.5.1	1. Provide the modified `SeamlessTile.py` for seamless-tiling workflow since [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling) does not work with the latest ComfyUI and is inactive.
+	- 2026-01-29 - v2.5.2	1. SCAIL workflows update.
+							2. Control Video Gen workflow update.
+							3. Add more random boxes to the background for Adv 3D Viewer node.
 
 </details>
-
-- 2026-01-25 - v2.5.0
-1. Add Pose Control workflows for WAN Animate | OTA | Steady Dance | SCAIL.
-2. Add | Update Wan (long) video generation with pose control workflows including Vace, Wan Animate, SCAIL, One to All, Steady Dance.
-3. Replace all Enchance And Resize Hint Images JK nodes in video gen workflows with KJ Resize v2 node.
-4. Since KJ make Uni3C suport t2v model, which is great, I add Uni3C to VACE and t2v workflows.
-5. Change default attention to sage attention instead of radial attention.  
-6. Clip Loader Multi GPU node doesn't work for the latest ComfyUI, it looks like the generation never follows the prompts, especially for t2v. Replace it with the CLIPLoaderDisTorch2MultiGPU node.
-
-- 2026-01-27 - v2.5.1
-1. Provide the modified `SeamlessTile.py` for seamless-tiling workflow since [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling) does not work with the latest ComfyUI and is inactive.
-
-- 2026-01-29 - v2.5.2
-1. SCAIL workflows update.
-2. Control Video Gen workflow update.
-3. Add more random boxes to the background for Adv 3D Viewer node.
 
 - 2026-01-31 - v2.5.3
 1. Add SAM3D Mesh Sequence From Video node to get mesh sequence from video using SAM3D. Need to install [ComfyUI-SAM3DBody](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody).
@@ -408,6 +402,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-02-04 - v2.5.6
 1. Add Wan 2.2 SVI pro long video generation workflow.
+
+- 2026-02-05 - v2.5.7
+1. Add JK_module_Motion-Get_Mesh_Sequence workflow [here](Workflow/ComfyUI/Module/JK_module_Motion-Get_Mesh_Sequence.json).
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -998,17 +995,21 @@ TriMesh Input Switch JK🐉
 - [ComfyUI-SAM3DBody (comfy-env==0.0.30)](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody)
 - [ComfyUI-UniRig (comfy-env==0.1.19)](https://github.com/PozzettiAndrea/ComfyUI-UniRig)
 - [ComfyUI-HY-Motion1](https://github.com/jtydhr88/ComfyUI-HY-Motion1)
+- [SAM2](https://github.com/kijai/ComfyUI-segment-anything-2)
+- [SAM3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
+- [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
 
 ### video workflow
 - [Wan Video Wrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
 - [AnimateDiff](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
 - [Video Helper Suite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite)
 - [Frame Interpolation](https://github.com/Fannovel16/ComfyUI-Frame-Interpolation)
-- [Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
-- [Sam3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
+- [SAM2](https://github.com/kijai/ComfyUI-segment-anything-2)
+- [SAM3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
 - [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
 - [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
 - [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
+- (SVI pro Long video gen)[ComfyUI Easy Use](https://github.com/yolain/ComfyUI-Easy-Use)
 - (auto prompt)[QWen VL]https://github.com/1038lab/ComfyUI-QwenVL）
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
