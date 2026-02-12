@@ -532,10 +532,6 @@ class SAM3DMeshSequenceFromVideo_JK:
                 "mask": ("MASK", {
                     "tooltip": "Optional Mask"
                 }),
-                # "coordinate_transform": (["none", "rotate_z_180", "rotate_y_180", "rotate_x_180"], {
-                    # "default": "rotate_z_180",
-                    # "tooltip": "Coordinate transformation type. Rotate_z_180 is typically used to correct SAM3D Body orientation issues."
-                # }),
                 "smoothing_method": (["gaussian", "moving_average"], {
                     "default": "gaussian",
                     "tooltip": "Smoothing Method"
@@ -547,6 +543,10 @@ class SAM3DMeshSequenceFromVideo_JK:
                     "step": 0.5,
                     "tooltip": "Gaussian smoothing kernel width (the higher the width, the smoother the surface)"
                 }),
+                # "coordinate_transform": (["none", "rotate_z_180", "rotate_y_180", "rotate_x_180"], {
+                    # "default": "rotate_z_180",
+                    # "tooltip": "Coordinate transformation type. Rotate_z_180 is typically used to correct SAM3D Body orientation issues."
+                # }),
                 # "align_to_reference_camera": ("BOOLEAN", {
                     # "default": True,
                     # "label_on": "Enabled",
@@ -835,7 +835,7 @@ class SAM3DMeshSequenceFromVideo_JK:
                           f"Speed: {fps_rate:.1f} FPS")
         
         if processed_frames == 0:
-            return (f"错误: 没有成功处理任何帧",)
+            return (f"[VideoFramesToMesh] Error: No frames were processed successfully.",)
         
         # 6. 默认应用模型对齐
         if align_to_reference_camera:
