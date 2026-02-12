@@ -11,13 +11,13 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 > - If you found some JK nodes missing in your workflow or in the node library, they might be set to deprecated, [here's how to enable them](https://github.com/jakechai/ComfyUI-JakeUpgrade/issues/225#issuecomment-3527504565).
 
 ## Video Introduction
-- (new)Wan Video update 5 (Long video with camera control & pose control | Adv 3D Viewer for Video Gen): [Youtube](https://youtu.be/yO7bun8wN3o) | [Bilibili](https://www.bilibili.com/video/BV1Fu6cBqEsG/)
-- (new)Wan Video update 5.1 (use SAM3D Body to generate character motion model sequences): [Youtube](https://youtu.be/OJNodd1hYCs) | [Bilibili](https://www.bilibili.com/video/BV1JFFTziE5X/)
 - Wan Video | Wan Vace workflows: [Youtube](https://youtu.be/4KNOufzVsUs) | [Bilibili](https://www.bilibili.com/video/BV1kCJGzgEL4/)
 - Wan Video update 1 (multi-GPU | Dilated CN | ATI | Uni3C preview): [Youtube](https://youtu.be/gvgX82470i0) | [Bilibili](https://www.bilibili.com/video/BV1TS7hzwE99/)
 - Wan Video update 2 (Wan Eco | Long Video | Lip Sync | ref2v | MiniMax Remover and more): [Youtube](https://youtu.be/iZbT0Zi7ksg) | [Bilibili](https://www.bilibili.com/video/BV1DbaszHENZ/)
 - Wan Video update 3 (long video color shift issue | i2v no-low-step-lora issue | VACE keyframe2long-vid | flf2long-vid | MTV Crafter | Real MiniMax Remover): [Youtube](https://youtu.be/CHlUq17lxN8) | [Bilibili](https://www.bilibili.com/video/BV18WHeznEiE/)
 - Wan Video update 4 (Video Gen based on Scene & Audio Cuts | WAN 2.2 workflows): [showcase Wan 2.1](https://youtu.be/N__iDyJXAFU) | [showcase Wan 2.2](https://youtube.com/shorts/KEXIZLol4cg) | [Youtube](https://youtu.be/ZM8kDKj9ycw) | [Bilibili](https://www.bilibili.com/video/BV1XWWzzkERX/)
+- Wan Video update 5 (Long video with camera control & pose control | Adv 3D Viewer for Video Gen): [Youtube](https://youtu.be/yO7bun8wN3o) | [Bilibili](https://www.bilibili.com/video/BV1Fu6cBqEsG/)
+- Wan Video update 5.1 (use SAM3D Body to generate character motion model sequences): [Youtube](https://youtu.be/OJNodd1hYCs) | [Bilibili](https://www.bilibili.com/video/BV1JFFTziE5X/)
 - img2mesh workflows: [Youtube](https://www.youtube.com/watch?v=CbG2Vq3kps0) | [Bilibili](https://www.bilibili.com/video/BV1CE4m1R7br/)
 - img2mesh 3D-Pack Installation Tips：[Youtube](https://www.youtube.com/watch?v=RjuoLMCpvbI) | [Bilibili](https://www.bilibili.com/video/BV1Nm421375F/)
 - img2mesh 3D-Pack Algorithm Comparison：[Youtube](https://www.youtube.com/watch?v=E7Oj8UUGLic) | [Bilibili](https://www.bilibili.com/video/BV1CU411U7y4/)
@@ -388,23 +388,27 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	- 2026-01-29 - v2.5.2	1. SCAIL workflows update.
 							2. Control Video Gen workflow update.
 							3. Add more random boxes to the background for Adv 3D Viewer node.
+	- 2026-01-31 - v2.5.3	1. Add SAM3D Mesh Sequence From Video node to get mesh sequence from video using SAM3D. Need to install [ComfyUI-SAM3DBody](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody).
+	- 2026-02-01 - v2.5.4	1. Update SAM3D Mesh Sequence From Video node: Align the mesh sequence to the video instead of aligning along the creation center.
+	- 2026-02-02 - v2.5.5	1. Update SAM3D Mesh Sequence From Video node: set z offset to 0 for mesh sequence.
 
 </details>
 
-- 2026-01-31 - v2.5.3
-1. Add SAM3D Mesh Sequence From Video node to get mesh sequence from video using SAM3D. Need to install [ComfyUI-SAM3DBody](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody).
-
-- 2026-02-01 - v2.5.4
-1. Update SAM3D Mesh Sequence From Video node: Align the mesh sequence to the video instead of aligning along the creation center.
-
-- 2026-02-02 - v2.5.5
-1. Update SAM3D Mesh Sequence From Video node: set z offset to 0 for mesh sequence.
 
 - 2026-02-04 - v2.5.6
 1. Add Wan 2.2 SVI pro long video generation workflow.
 
 - 2026-02-05 - v2.5.7
 1. Add JK_module_Motion-Get_Mesh_Sequence workflow [here](Workflow/ComfyUI/Module/JK_module_Motion-Get_Mesh_Sequence.json).
+
+- 2026-02-07 - v2.5.8
+1. Add Trellis 2 img2mesh workflow but the result is not as good as the official space.
+2. Update auto prompt workflows using new QWen3 Prompt Enhancer node.
+
+- 2026-02-12 - v2.5.9
+1. Add LTXV2 video generation workflow, supports t2v | ff2v | lf2v | flf2v | frames2v | v2v, supports ControlNet | upscale.
+2. Add more camera motion to Random Prompter.
+3. Change SeamlessTile to "Modify in place" for all SD15 | SDXL workflows | Group Nodes | Subgraphs.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -1009,6 +1013,7 @@ TriMesh Input Switch JK🐉
 - [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
 - [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
 - [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
+- (LTXV2)[LTXVideo](https://github.com/Lightricks/ComfyUI-LTXVideo)
 - (SVI pro Long video gen)[ComfyUI Easy Use](https://github.com/yolain/ComfyUI-Easy-Use)
 - (auto prompt)[QWen VL]https://github.com/1038lab/ComfyUI-QwenVL）
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
