@@ -401,14 +401,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2026-02-05 - v2.5.7
 1. Add JK_module_Motion-Get_Mesh_Sequence workflow [here](Workflow/ComfyUI/Module/JK_module_Motion-Get_Mesh_Sequence.json).
 
-- 2026-02-07 - v2.5.8
+- 2026-02-12 - v2.5.9
 1. Add Trellis 2 img2mesh workflow but the result is not as good as the official space.
 2. Update auto prompt workflows using new QWen3 Prompt Enhancer node.
-
-- 2026-02-12 - v2.5.9
-1. Add LTXV2 video generation workflow, supports t2v | ff2v | lf2v | flf2v | frames2v | v2v, supports ControlNet | upscale.
-2. Add more camera motion to Random Prompter.
-3. Change SeamlessTile to "Modify in place" for all SD15 | SDXL workflows | Group Nodes | Subgraphs.
+3. Add LTXV2 video generation workflow, supports t2v | ff2v | lf2v | flf2v | frames2v | v2v, supports ControlNet | upscale.
+4. Add more camera motion to Random Prompter.
+5. Change SeamlessTile to "Modify in place" for all SD15 | SDXL workflows | Group Nodes | Subgraphs.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
