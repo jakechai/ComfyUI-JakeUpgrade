@@ -408,6 +408,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 4. Add more camera motion to Random Prompter.
 5. Change SeamlessTile to "Modify in place" for all SD15 | SDXL workflows | Group Nodes | Subgraphs.
 
+- 2026-02-14 - v2.6.0
+1. Update the JK_module_Imgen_Seamless Texture workflow and remove deprecated nodes.
+2. Update the JK_workflow_imgen_PortraitMaster+RandomPrompter workflow and using the latest Portrait Master nodes.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -987,6 +991,7 @@ TriMesh Input Switch JK🐉
 - [ComfyUI Hunyuan3D 2.1 Wrapper](https://github.com/visualbruno/ComfyUI-Hunyuan3d-2-1)
 - [Comfy mtb](https://github.com/melMass/comfy_mtb)
 - [ComfyUI-HQ-Image-Save](https://github.com/spacepxl/ComfyUI-HQ-Image-Save)
+- [ComfyUI-Trellis2](https://github.com/visualbruno/ComfyUI-Trellis2)
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (18 mv tex)[ComfyUI MVAdapter](https://github.com/huanngzh/ComfyUI-MVAdapter)
 - (18 mv tex)[ComfyUI IG2MV](https://github.com/hunzmusic/ComfyUI-IG2MV)
