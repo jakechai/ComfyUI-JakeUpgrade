@@ -65,8 +65,12 @@ class SysPromptBuilder:
         text = text.replace("<shot_count>", str(shot_count))
         
         # Replace <json_detail_format>
-        json_detail_format_str = self.preset_data.get("json_detail", {}).get("format", "{}")
+        json_detail_format_str = self.preset_data.get("json_detail", {}).get("for_image", {}).get("format", "{}")
+        json_detail_format_global_str = self.preset_data.get("json_detail", {}).get("for_video", {}).get("format_global", "{}")
+        json_detail_format_shot_str = self.preset_data.get("json_detail", {}).get("for_video", {}).get("format_shot", "{}")
         text = text.replace("<json_detail_format>", json_detail_format_str)
+        text = text.replace("<json_detail_format_global>", json_detail_format_global_str)
+        text = text.replace("<json_detail_format_shot>", json_detail_format_shot_str)
         
         return text
     
@@ -91,8 +95,8 @@ class SysPromptBuilder:
         except Exception as e:
             return ""
     
-    def _build_common_parts(self, model_type: str, mode: str, detail: str, json_detail_format: bool, 
-                           input_as_1st_shot: bool) -> list:
+    def _build_common_parts(self, model_type: str, mode: str, shot_continuity: bool, shot_script_for: bool, 
+                            detail: str, json_detail_format: bool, input_as_1st_shot: bool) -> list:
         """Build common template parts for both LLM and VLM"""
         json_key = "json_detail" if json_detail_format else "no_json_detail"
         
@@ -103,7 +107,7 @@ class SysPromptBuilder:
                     ["detail_preset", detail],
                     [model_type, "single", "part_02"],
                     ["add_json_detail", "single", json_key],
-                    ["json_detail", "description"]
+                    ["json_detail", "for_image", "description"]
                 ]
             else:
                 return [
@@ -123,12 +127,16 @@ class SysPromptBuilder:
                     [model_type, "script", "part_03"],
                     (["first_shot_02"] if input_as_1st_shot else []),
                     ["detail_preset", detail],
+                    (["shot_continuity"] if shot_continuity else []),
                     [model_type, "script", "part_04"],
                     (["first_shot_03"] if input_as_1st_shot else []),
                     ["add_json_detail", "script", json_key],
-                    ["json_detail", "description"],
+                    ["json_detail", "common"],
+                    (["json_detail", "for_image", "description"] if (not shot_script_for) or (not shot_continuity and shot_script_for) else []),
+                    (["json_detail", "for_video", "description_shot"] if shot_continuity and shot_script_for else []),
                     [model_type, "script", "part_05"],
-                    ["combine_shots"]
+                    ["combine_shots"],
+                    (["json_detail", "for_video", "description_global"] if shot_continuity and shot_script_for else []),
                 ]
             else:
                 return [
@@ -140,14 +148,17 @@ class SysPromptBuilder:
                     [model_type, "script", "part_03"],
                     (["first_shot_02"] if input_as_1st_shot else []),
                     ["detail_preset", detail],
+                    (["shot_continuity"] if shot_continuity else []),
                     [model_type, "script", "part_04"],
                     (["first_shot_03"] if input_as_1st_shot else []),
                     ["add_json_detail", "script", json_key],
+                    (["video_common_description_no_json_detail", "shot"] if shot_continuity and shot_script_for else []),
                     [model_type, "script", "part_05"],
-                    ["combine_shots"]
+                    ["combine_shots"],
+                    (["video_common_description_no_json_detail", "global"] if shot_continuity and shot_script_for else []),
                 ]
     
-    def build_prompt(self, model: str, mode: str, detail: str, json_detail_format: bool, 
+    def build_prompt(self, model: str, mode: str, shot_continuity: bool, shot_script_for: bool, detail: str, json_detail_format: bool, 
                     shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> str:
         """Build prompt based on input parameters"""
         
@@ -155,7 +166,7 @@ class SysPromptBuilder:
         model_type = model.lower()
         
         # Build template parts based on model and mode
-        template_parts = self._build_common_parts(model_type, mode, detail, json_detail_format, input_as_1st_shot)
+        template_parts = self._build_common_parts(model_type, mode, shot_continuity, shot_script_for, detail, json_detail_format, input_as_1st_shot)
         
         # Add final part for LLM
         if model == "Text":
@@ -190,13 +201,15 @@ class SystemPrompter_JK:
                     "default": "single image", 
                     "tooltip": "Select mode: single image or shot script."
                 }),
-                "detail": (["simple", "detailed", "extreme_detailed"], {
-                    "default": "detailed",
-                    "tooltip": "Select detail level for prompt generation."
+                "shot_continuity": ("BOOLEAN", {
+                    "default": True,
+                    "tooltip": "Shot script continuity setting."
                 }),
-                "json_detail_format": ("BOOLEAN", {
+                "shot_script_for": ("BOOLEAN", {
                     "default": False,
-                    "tooltip": "Only available for QWen3-VL for now. Whether to output in JSON format with detailed breakdown."
+                    "label_off": "image",
+                    "label_on": "video",
+                    "tooltip": "Shot script for image generation or video generation."
                 }),
                 "shot_count": ("INT", {
                     "default": 3,
@@ -208,6 +221,14 @@ class SystemPrompter_JK:
                 "input_as_1st_shot": ("BOOLEAN", {
                     "default": False,
                     "tooltip": "Whether to use the custom prompt or reference image as the first shot"
+                }),
+                "detail": (["simple", "detailed", "extreme_detailed"], {
+                    "default": "detailed",
+                    "tooltip": "Select detail level for prompt generation."
+                }),
+                "json_detail_format": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Only available for QWen3-VL for now. Whether to output in JSON format with detailed breakdown."
                 }),
                 "system_language": (["Chinese", "English"], {
                     "default": "English",
@@ -231,13 +252,15 @@ class SystemPrompter_JK:
     def __init__(self):
         self.builder = SysPromptBuilder()
     
-    def build_prompt(self, model: str, mode: str, detail: str, json_detail_format: bool, 
+    def build_prompt(self, model: str, mode: str, shot_continuity: bool, shot_script_for: bool, detail: str, json_detail_format: bool, 
                     shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> Tuple[str]:
         """Build and return the prompt string"""
         
         prompt = self.builder.build_prompt(
             model=model,
             mode=mode,
+            shot_continuity=shot_continuity,
+            shot_script_for=shot_script_for, 
             detail=detail,
             json_detail_format=json_detail_format,
             shot_count=shot_count,

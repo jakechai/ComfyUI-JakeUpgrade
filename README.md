@@ -412,6 +412,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Update the JK_module_Imgen_Seamless Texture workflow and remove deprecated nodes.
 2. Update the JK_workflow_imgen_PortraitMaster+RandomPrompter workflow and using the latest Portrait Master nodes.
 
+- 2026-02-15 - v2.6.1
+1. Update System Prompter node, supports shot scripts for video generation.
+2. Update workflows including System Prompter node.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -432,7 +436,6 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - [JakeUpgrade Subgraphs](replacement/subgraphs): Copy all the subgraph JSON files into `...\ComfyUI\user\default\subgraphs`.
 - [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager) : Copy `_JK.pack` or  `__JK_1_15_13.pack`(for `comfyui-frontend-package<=1.15.13`) to `...\ComfyUI\user\default\ComfyUI-Manager\components` for saving all JK Group Nodes within each workflow file.
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus) : (Workaround before IPAdapter approves my pull request) Copy and replace files to `custom_nodes\ComfyUI_IPAdapter_plus` for better API workflow control by adding "None" selection.
-- [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)  : Provide the modified `SeamlessTile.py` for seamless-tiling workflow since it does not work with the latest ComfyUI and is inactive.
 
 > [!NOTE]
 > - Subraphs can be used as custom nodes if you copy the JSON files to the `...\ComfyUI\user\default\subgraphs`.

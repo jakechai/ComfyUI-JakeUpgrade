@@ -86,11 +86,29 @@
 		}
 	},
 	"json_detail": {
-		"description": {
-			"en": "The detailed descriptions include the subject, background(scene, season, time, weather), atmosphere(mood and color tone), action, expression, lighting, camera type (shot size and view angle), camera movement, and style. Place the detailed descriptions into the corresponding areas of a JSON file and output them in <specified_language> language, <json_detail_format>. \n",
-			"cn": "细节描述包含主体、背景（场景、季节、时间、天气）、氛围（气氛及色调）、动作、表情、灯光、相机类型（景别及视角）、相机运动、风格。将细节描述放入JSON格式中对应区域并以<特定语种>输出，<json_detail_format>。\n"
+		"common": {
+			"en": "The detailed descriptions include the subject, background(scene, season, time, weather), atmosphere(mood and color tone), action, expression, lighting, camera type (shot size and view angle), camera movement, and style. ",
+			"cn": "细节描述包含主体、背景（场景、季节、时间、天气）、氛围（气氛及色调）、动作、表情、灯光、相机类型（景别及视角）、相机运动、风格。"
 		},
-		"format": "{'subject': '', 'background': '', 'atmosphere': '', 'motion': '', 'expression': '', 'lighting': '', 'shot type': '', 'movement': '', 'style': ''}"
+		"for_image": {
+			"description": {
+				"en": "Place the detailed descriptions into the corresponding areas of a JSON file and output them in <specified_language> language, <json_detail_format>; 'motion' refers to the action of the subject, and 'movement' refers to the movement of the camera; \n",
+				"cn": "将细节描述放入JSON格式中对应区域并以<特定语种>输出，<json_detail_format>；'motion'指主体动作，'movement'指相机运动；\n"
+			},
+			"format": "{'subject': '', 'background': '', 'atmosphere': '', 'motion': '', 'expression': '', 'lighting': '', 'shot type': '', 'movement': '', 'style': ''}"
+		},
+		"for_video": {
+			"description_global": {
+				"en": "Add a 'Global' item at the beginning of the JSON format, place the subject, background(scene, season, time, weather), atmosphere(mood and color tone), action, expression, lighting, camera type (shot size and view angle), camera movement, and style detailed descriptions of all shot scripts in the corresponding area and output them in <specified_language>, <json_detail_format_global>; \n",
+				"cn": "在JSON格式最前面增加'Global'项，将主体、背景（场景、季节、时间、天气）、氛围（气氛及色调）、灯光、风格细节描述放入对应区域并以<特定语种>输出，<json_detail_format_global>；\n"
+			},
+			"description_shot": {
+				"en": "Place the action, expression, lighting, camera type (shot size and view angle), camera movement detailed descriptions into the corresponding areas of a JSON file and output them in <specified_language> language, <json_detail_format_shot>; 'motion' refers to the action of the subject, and 'movement' refers to the movement of the camera; \n",
+				"cn": "将各分镜头的动作、表情、相机类型（景别及视角）、相机运动细节描述放入JSON格式中对应区域并以<特定语种>输出，<json_detail_format_shot>；'motion'指主体动作，'movement'指相机运动；\n"
+			},
+			"format_global": "{'subject': '', 'background': '', 'atmosphere': '', 'lighting': '', 'style': ''}",
+			"format_shot": "{'motion': '', 'expression': '', 'shot type': '', 'movement': ''}"
+		}	
 	},
 	"add_json_detail": {
 		"single": {
@@ -115,15 +133,29 @@
 		}
 	},
 	"split_shots": {
-		"en": "Create <shot_count> shot scripts based on the story's development, ensuring they align with the previous intent; follow the story and content sequence structure described in it, and ensure that the information hierarchy is clear, the continuity of elements between shots, and the connection of camera framing, perspective and movement; \n",
-		"cn": "根据故事发展，创作<shot_count>个分镜头，必须和之前的意图一致；遵循其中描述的故事及内容顺序结构，确保信息的层次清晰、前后镜头之间各元素的延续以及相机的景别、视角和运动的衔接；\n"
+		"en": "Create <shot_count> shot scripts based on the story's development; Follow the story and content sequence structure described in it, and ensure that the information hierarchy is clear, the continuity of elements between shots, and the connection of camera framing, perspective and movement; \n",
+		"cn": "根据故事发展，创作<shot_count>个分镜头；遵循故事及内容顺序结构，确保信息的层次清晰、前后镜头之间各元素的延续以及相机的景别、视角和运动的衔接；\n"
+	},
+	"shot_continuity": {
+		"en": " Descriptions that mean 'the same', 'identical', 'unchanged' or 'still' as the previous description are strictly prohibited. It is also strictly prohibited to use subjects (such as characters), backgrounds (such as scenes) or visual styles that are different from the previous description. Instead, the subjects (such as characters), backgrounds (such as scenes) or visual styles descriptions must be repeated, but appropriate modifications and additions of details are allowed as needed for the storyboard; ",
+		"cn": "严禁使用意为与上述“同样”、“同一”、“不变”或“依旧”含义的描述，严禁使用不同的主体（如人物）、背景（如场景）或画面风格，而必须重复使用主体（如人物）、背景（如场景）或画面风格，但允许根据分镜头需要适当修改并添加细节；"
 	},
 	"combine_shots": {
-		"en": "Combine all shot scripts into a JSON format with keys representing shot numbers. \n",
-		"cn": "将所有分镜头脚本放在按JSON文件代表对应镜头编号的英文名称简写中。\n"
+		"en": "Combine all shot scripts into a JSON format with keys representing shot numbers(Prefixed with 'shot_'). \n",
+		"cn": "将所有分镜头脚本放在按JSON格式代表对应镜头编号的英文名称简写中（以'shot'_为前缀）。\n"
+	},
+	"video_common_description_no_json_detail": {
+		"global": {
+			"en": "Add a 'Global' item at the beginning of the JSON format, redescribe the subject (such as characters), background (such as scenes), lighting and visual style in one sentence and output in <specified_language>. \n",
+			"cn": "在JSON格式最前面增加'Global'项，将所有分镜头脚本中的主体（如人物）、背景（如场景）、灯光及画面风格等内容，重新描述成一句话并按<特定语种>输出。\n"
+		},
+		"shot": {
+			"en": "Redescribes motions, expressions, camera type (shot size and angle), and camera movement and output them in <specified_language> for Each shot script; \n",
+			"cn": "将每个分镜脚本中的动作、表情、相机类型（景别及视角）、相机运动等内容，重新描述并以<特定语种>输出；\n"
+		}
 	},
 	"first_shot_01": {
-		"en": "And use this prompt as the first shot script;",
+		"en": " And use this prompt as the first shot script;",
 		"cn": "并将这个提示词作为第一个分镜头脚本；"
 	},
 	"first_shot_02": {
