@@ -410,11 +410,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-02-14 - v2.6.0
 1. Update the JK_module_Imgen_Seamless Texture workflow and remove deprecated nodes.
-2. Update the JK_workflow_imgen_PortraitMaster+RandomPrompter workflow and using the latest Portrait Master nodes.
+2. Update the JK_workflow_imgen_RandomPrompter workflow and using the latest Portrait Master nodes.
 
 - 2026-02-15 - v2.6.1
 1. Update System Prompter node, supports shot scripts for video generation.
 2. Update workflows including System Prompter node.
+
+- 2026-02-15 - v2.6.2
+1. Update camera angle for Random Prompter, supports Qwen-Image-Edit-2511-Multiple-Angles-LoRA.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
