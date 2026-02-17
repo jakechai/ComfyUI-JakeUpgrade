@@ -419,6 +419,13 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2026-02-15 - v2.6.2
 1. Update camera angle for Random Prompter, supports Qwen-Image-Edit-2511-Multiple-Angles-LoRA.
 
+- 2026-02-17 - v2.6.3
+1. Add audio selections to Random Prompter.
+2. Update workflows with Random Prompter.
+3. Add Trellis multiview mesh generation workflow and replace remesh node with remesh with Quad node.
+4. Add LTXV2 video extend sub workflow to it's main workflow.
+5. Update CutAudio_JK node, generate silent audio if no audio input.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`

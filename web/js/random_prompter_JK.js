@@ -25,7 +25,7 @@ const CONFIG = {
     GEEK_CATEGORY_FORMAT: "[{category_name}]",
     PRIMARY_CATEGORIES: [
         "scene", "motion", "facial_action", "expression", 
-        "lighting", "camera", "style", "description"
+        "lighting", "camera", "audio", "style", "description"
     ]
 };
 
@@ -120,6 +120,7 @@ class RandomPrompterExtension {
             { source: "scene", target: "custom_scene" },
             { source: "motion", target: "custom_motion" },
             { source: "camera", target: "custom_camera" },
+			{ source: "audio", target: "custom_audio" },
             { source: "style", target: "custom_style" },
             { source: "lighting", target: "custom_lighting" },
             { source: "description", target: "custom_description" }

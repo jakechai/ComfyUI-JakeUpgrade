@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------------------------------------------------#
 import torch
 import math
-from typing import Any, Tuple, List, Dict
+from typing import Any, Tuple, List, Dict, Optional
 from .jake_utils import parse_select_cuts, calculate_loop_frame_count
 from ..categories import icons
 
@@ -242,13 +242,12 @@ class SceneCuts_JK:
 #---------------------------------------------------------------------------------------------------------------------#
 
 class CutAudio_JK:
-    """Cut audio file based on start and end time."""
+    """Cut audio file based on start and end time. If no audio is provided, a silent audio is generated."""
     
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio": ("AUDIO",),
                 "start_time": ("FLOAT", {
                     "default": 0.0,
                     "min": -10000.0,
@@ -276,6 +275,9 @@ class CutAudio_JK:
                     "tooltip": "Add mute when time > audio duration."
                 }),
             },
+            "optional": {
+                "audio": ("AUDIO",),
+            }
         }
     
     RETURN_TYPES = ("AUDIO", "FLOAT")
@@ -285,40 +287,69 @@ class CutAudio_JK:
     DESCRIPTION = "Cut an audio file based on start and end time."
     OUTPUT_NODE = False
 
-    def process(self, audio: Dict[str, Any], start_time: float, end_time: float, 
-                add_start_mute: bool, add_end_mute: bool) -> Tuple[Dict[str, Any], float]:
-        """Cut audio based on time range."""
+    def process(self, start_time: float, end_time: float, add_start_mute: bool, add_end_mute: bool, 
+                audio: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], float]:
+        """Cut audio based on time range. If audio is None, generate silent audio."""
         if start_time >= end_time:
             raise ValueError("The start time must be less than the end time.")
         
-        waveform = audio["waveform"]
-        sample_rate = audio["sample_rate"]
-        
-        total_duration = waveform.shape[-1] / sample_rate
-        
-        # Calculate sample indices
-        start_sample = int(max(0.0, min(start_time, total_duration)) * sample_rate)
-        end_sample = int(max(start_time, min(end_time, total_duration)) * sample_rate)
-        
-        start_sample = min(start_sample, waveform.shape[-1])
-        end_sample = min(end_sample, waveform.shape[-1])
-        
-        # Extract audio segment
-        cut_waveform = waveform[..., start_sample:end_sample]
-        
-        # Add silence if needed
-        if add_start_mute and start_time < 0:
-            cut_waveform = self._add_start_silence(cut_waveform, start_time, sample_rate)
-        
-        if add_end_mute and end_time > total_duration:
-            cut_waveform = self._add_end_silence(cut_waveform, end_time, total_duration, sample_rate)
-        
-        result_audio = {
-            "waveform": cut_waveform,
-            "sample_rate": sample_rate
-        }
-        
-        return (result_audio, cut_waveform.shape[-1] / sample_rate)
+        # Case 1: Audio is provided → perform actual cutting
+        if audio is not None:
+            waveform = audio["waveform"]
+            sample_rate = audio["sample_rate"]
+            
+            total_duration = waveform.shape[-1] / sample_rate
+            
+            # Calculate sample indices
+            start_sample = int(max(0.0, min(start_time, total_duration)) * sample_rate)
+            end_sample = int(max(start_time, min(end_time, total_duration)) * sample_rate)
+            
+            start_sample = min(start_sample, waveform.shape[-1])
+            end_sample = min(end_sample, waveform.shape[-1])
+            
+            # Extract audio segment
+            cut_waveform = waveform[..., start_sample:end_sample]
+            
+            # Add silence if needed
+            if add_start_mute and start_time < 0:
+                cut_waveform = self._add_start_silence(cut_waveform, start_time, sample_rate)
+            
+            if add_end_mute and end_time > total_duration:
+                cut_waveform = self._add_end_silence(cut_waveform, end_time, total_duration, sample_rate)
+            
+            result_audio = {
+                "waveform": cut_waveform,
+                "sample_rate": sample_rate
+            }
+            
+            return (result_audio, cut_waveform.shape[-1] / sample_rate)
+    
+        # Case 2: No audio provided → generate silent audio
+        else:
+            # Determine effective start based on add_start_mute
+            if add_start_mute:
+                effective_start = start_time
+            else:
+                effective_start = max(0.0, start_time)
+            
+            effective_end = end_time  # No upper bound when generating silence
+            
+            if effective_start >= effective_end:
+                raise ValueError(f"Effective start ({effective_start}) must be less than end ({effective_end}).")
+            
+            # Use a default sample rate (44.1 kHz is common)
+            sample_rate = 44100
+            duration = effective_end - effective_start
+            samples = int(duration * sample_rate)
+            
+            # Create silent waveform: shape (batch=1, channels=1, samples)
+            waveform = torch.zeros((1, 1, samples), dtype=torch.float32)
+            
+            result_audio = {
+                "waveform": waveform,
+                "sample_rate": sample_rate
+            }
+            return (result_audio, duration)
     
     def _add_start_silence(self, waveform: torch.Tensor, start_time: float, sample_rate: int) -> torch.Tensor:
         """Add silence to the start of waveform."""
