@@ -363,6 +363,7 @@ class PromptStrategyFactory:
         "motion": "single_file_random", 
         "facial_action": "multiple_files_random",
         "expression": "expression_combination",
+        "audio": "multiple_files_random",
         "lighting": "single_file_random",
         "camera": "multiple_files_random",
         "style": "single_file_random",
@@ -571,6 +572,12 @@ class PromptComponentGenerator:
             self.data_cache['EXPRESSION_STRUCTURED_OPTIONS'], custom_expression_value, PromptConfig.DIRECTORY_MAPPING["expression"]
         )
     
+    def generate_audio(self, custom_audio_value: str) -> str:
+        """生成随机audio内容"""
+        return self._generate_from_multiple_files(
+            self.data_cache['AUDIO_STRUCTURED_OPTIONS'], custom_audio_value, PromptConfig.DIRECTORY_MAPPING["audio"]
+        )
+    
     def generate_lighting(self, custom_lighting_value: str) -> str:
         """生成随机lighting内容"""
         return self._generate_from_single_file(
@@ -761,19 +768,19 @@ class PromptGenerator:
         priority_orders = {
             "subject + scene": [
                 "subject", "scene", "motion", "facial_action", "expression", 
-                "lighting", "camera", "style", "description"
+                "audio", "lighting", "camera", "style", "description"
             ],
             "description + style": [
                 "description", "style", "subject", "scene", "motion", 
-                "facial_action", "expression", "lighting", "camera"
+                "facial_action", "expression", "audio", "lighting", "camera"
             ],
             "description + style + lighting + camera": [
                 "description", "style", "lighting", "camera", "subject", 
-                "scene", "motion", "facial_action", "expression"
+                "scene", "motion", "facial_action", "expression", "audio"
             ],
             "lighting + camera": [
                 "lighting", "camera", "subject", "scene", "motion", 
-                "facial_action", "expression", "style", "description"
+                "facial_action", "expression", "audio", "style", "description"
             ]
         }
         
@@ -807,6 +814,7 @@ class PromptGenerator:
             ("scene", "custom_scene", "multiple_files_random"),
             ("motion", "custom_motion", "single_file_random"),
             ("facial_action", "custom_facial_action", "multiple_files_random"),
+            ("audio", "custom_audio", "multiple_files_random"),
             ("lighting", "custom_lighting", "single_file_random"),
             ("camera", "custom_camera", "multiple_files_random"),
             ("style", "custom_style", "single_file_random"),
@@ -1047,12 +1055,22 @@ class RandomPrompter_JK:
             }),
             "expression": (cls.IMAGE_BASED_OPTIONS + data_cache['EXPRESSION_OPTIONS'], {
                 "default": "disable",
-                "tooltip": "Character expression options. Choose 'disable' to exclude, 'enable' to use custom value, 'random' for random selection, or specific expression options."
+                "tooltip": "Character expression options (use with caution in video prompts). Choose 'disable' to exclude, 'enable' to use custom value, 'random' for random selection, or specific expression options."
             }),
             "custom_expression": ("STRING", {
                 "multiline": True, 
                 "default": "",
                 "tooltip": "Custom expression description. Used when expression is set to 'enable' or specific options are selected, or is set to 'random' and is one of the possible options. Combines with exp_str when applicable."
+            }),
+            
+            "audio": (["enable", "disable", "random"] + data_cache['AUDIO_OPTIONS'], {
+                "default": "disable",
+                "tooltip": "Audio and sound effect options. Choose 'disable' to exclude, 'enable' to use custom value, 'random' for random selection, or specific audio options."
+            }),
+            "custom_audio": ("STRING", {
+                "multiline": True, 
+                "default": "",
+                "tooltip": "Custom audio description. Used when audio is set to 'enable' or specific options are selected, or is set to 'random' and is one of the possible options."
             }),
             
             "lighting": (cls.IMAGE_BASED_OPTIONS + data_cache['LIGHTING_OPTIONS'], {
@@ -1162,7 +1180,12 @@ class RandomPrompterGeek_JK:
             
             "expression": (data_cache['EXPRESSION_CATEGORIES'], {
                 "default": PromptConfig.GEEK_SELECT_OPTION,
-                "tooltip": "Expression category selection. Includes expression strength options."
+                "tooltip": "Expression category selection (use with caution in video prompts). Includes expression strength options."
+            }),
+            
+            "audio": (data_cache['AUDIO_CATEGORIES'], {
+                "default": PromptConfig.GEEK_SELECT_OPTION,
+                "tooltip": "Audio category selection. Choose a category to add its tag to custom_prompt."
             }),
             
             "lighting": (data_cache['LIGHTING_CATEGORIES'], {
@@ -1254,11 +1277,7 @@ class RandomPrompterGeek_JK:
         
         # 步骤2: 执行 replace_01 替换
         for original, replacement in replace_01.items():
-            # 检查是否需要替换（use_llm 中对应项为 True）
-            # 注意：配置文件中 use_llm 的键可能包含方括号，需要匹配
-            use_llm_key = original  # 直接使用原键，因为配置文件中就是带方括号的
-            if use_llm.get(use_llm_key, True):
-                sys_prompt = sys_prompt.replace(original, replacement)
+            sys_prompt = sys_prompt.replace(original, replacement)
         
         # 步骤3: 字符去重处理
         def keep_first_tag(text, tag):
@@ -1280,8 +1299,7 @@ class RandomPrompterGeek_JK:
         # 步骤4: 执行 replace_02 替换
         for original, replacement in replace_02.items():
             # 检查是否需要替换（use_llm 中对应项为 True）
-            use_llm_key = original  # 直接使用原键
-            if use_llm.get(use_llm_key, True):
+            if use_llm.get(original, True):
                 if isinstance(replacement, list):
                     # 如果是列表，随机选择一个
                     chosen_replacement = random.choice(replacement)
