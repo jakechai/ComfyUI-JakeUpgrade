@@ -426,6 +426,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 4. Add LTXV2 video extend sub workflow to it's main workflow.
 5. Update CutAudio_JK node, generate silent audio if no audio input.
 
+- 2026-02-19 - v2.6.4
+1. Add LTXV2 long video gen workflow.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
