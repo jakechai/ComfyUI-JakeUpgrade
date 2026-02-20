@@ -49,7 +49,7 @@ class SysPromptBuilder:
         """Convert language to preset key"""
         return "cn" if language == "Chinese" else "en"
     
-    def _replace_variables(self, text: str, output_language: str, shot_count: int, json_detail_format: bool) -> str:
+    def _replace_variables(self, mode, text: str, system_language: str, output_language: str, shot_count: int) -> str:
         """Replace variables in text with actual values"""
         if not text:
             return text
@@ -64,13 +64,30 @@ class SysPromptBuilder:
         # Replace <shot_count>
         text = text.replace("<shot_count>", str(shot_count))
         
-        # Replace <json_detail_format>
-        json_detail_format_str = self.preset_data.get("json_detail", {}).get("for_image", {}).get("format", "{}")
-        json_detail_format_global_str = self.preset_data.get("json_detail", {}).get("for_video", {}).get("format_global", "{}")
-        json_detail_format_shot_str = self.preset_data.get("json_detail", {}).get("for_video", {}).get("format_shot", "{}")
-        text = text.replace("<json_detail_format>", json_detail_format_str)
-        text = text.replace("<json_detail_format_global>", json_detail_format_global_str)
-        text = text.replace("<json_detail_format_shot>", json_detail_format_shot_str)
+        # Replace <shot_detail>
+        shot_detail_str = self.preset_data.get("json_detail", {}).get("for_image", {}).get("format", {})
+        shot_detail_global_str = self.preset_data.get("json_detail", {}).get("for_video", {}).get("format_global", {})
+        shot_detail_shot_str = self.preset_data.get("json_detail", {}).get("for_video", {}).get("format_shot", {})
+        if mode=="shot script":
+            if system_language == "en":
+                paragraph_global_str = self.preset_data.get("paragraph", {}).get("script", {}).get("global", {}).get("en", {})
+                paragraph_shot_str = self.preset_data.get("paragraph", {}).get("script", {}).get("shot", {}).get("en", {})
+            else:
+                paragraph_global_str = self.preset_data.get("paragraph", {}).get("script", {}).get("global", {}).get("cn", {})
+                paragraph_shot_str = self.preset_data.get("paragraph", {}).get("script", {}).get("shot", {}).get("cn", {})
+        elif mode=="shot paragraph":
+            if system_language == "en":
+                paragraph_global_str = self.preset_data.get("paragraph", {}).get("paragraph", {}).get("global", {}).get("en", {})
+                paragraph_shot_str = self.preset_data.get("paragraph", {}).get("paragraph", {}).get("shot", {}).get("en", {})
+            else:
+                paragraph_global_str = self.preset_data.get("paragraph", {}).get("paragraph", {}).get("global", {}).get("cn", {})
+                paragraph_shot_str = self.preset_data.get("paragraph", {}).get("paragraph", {}).get("shot", {}).get("cn", {})
+        
+        text = text.replace("<shot_detail>", shot_detail_str)
+        text = text.replace("<shot_detail_global>", shot_detail_global_str)
+        text = text.replace("<shot_detail_shot>", shot_detail_shot_str)
+        text = text.replace("<paragraph_global>", paragraph_global_str if mode!="single image" else "")
+        text = text.replace("<paragraph_shot>", paragraph_shot_str if mode!="single image" else "")
         
         return text
     
@@ -95,13 +112,13 @@ class SysPromptBuilder:
         except Exception as e:
             return ""
     
-    def _build_common_parts(self, model_type: str, mode: str, shot_continuity: bool, shot_script_for: bool, 
-                            detail: str, json_detail_format: bool, input_as_1st_shot: bool) -> list:
+    def _build_common_parts(self, model_type: str, mode: str, shot_continuity: bool, shot_for: bool, 
+                            detail: str, shot_detail: bool, input_as_1st_shot: bool) -> list:
         """Build common template parts for both LLM and VLM"""
-        json_key = "json_detail" if json_detail_format else "no_json_detail"
+        json_key = "json_detail" if shot_detail else "no_json_detail"
         
         if mode == "single image":
-            if json_detail_format:
+            if shot_detail:
                 return [
                     [model_type, "single", "part_01"],
                     ["detail_preset", detail],
@@ -116,53 +133,100 @@ class SysPromptBuilder:
                     [model_type, "single", "part_02"],
                     ["add_json_detail", "single", json_key]
                 ]
-        else:  # shot script
-            if json_detail_format:
+        elif mode == "shot script":
+            if shot_detail:
                 return [
                     [model_type, "script", "part_01"],
                     ["detail_preset", detail],
                     (["first_shot_01"] if input_as_1st_shot else []),
-                    (["no_story_rule"] if shot_script_for else []),
+                    (["no_story_rule"] if shot_for else []),
                     [model_type, "script", "part_02"],
                     ["split_shots"],
                     [model_type, "script", "part_03"],
                     (["first_shot_02"] if input_as_1st_shot else []),
                     ["detail_preset", detail],
-                    (["no_story_rule"] if shot_script_for else []),
+                    (["no_story_rule"] if shot_for else []),
                     (["shot_continuity"] if shot_continuity else []),
                     [model_type, "script", "part_04"],
                     (["first_shot_03"] if input_as_1st_shot else []),
                     ["add_json_detail", "script", json_key],
                     ["json_detail", "common"],
-                    (["json_detail", "for_image", "description"] if (not shot_script_for) or (not shot_continuity and shot_script_for) else []),
-                    (["json_detail", "for_video", "description_shot"] if shot_continuity and shot_script_for else []),
+                    (["json_detail", "for_image", "description"] if (not shot_for) or (not shot_continuity and shot_for) else []),
+                    # 以上与paragraph一致↓
+                    (["json_detail", "for_video", "description_shot"] if shot_continuity and shot_for else []),
                     [model_type, "script", "part_05"],
                     ["combine_shots"],
-                    (["json_detail", "for_video", "description_global"] if shot_continuity and shot_script_for else []),
+                    (["json_detail", "for_video", "description_global_prefix"] if shot_continuity and shot_for else []),
+                    (["json_detail", "for_video", "description_global"] if shot_continuity and shot_for else []),
                 ]
             else:
                 return [
                     [model_type, "script", "part_01"],
                     ["detail_preset", detail],
-                    (["no_story_rule"] if shot_script_for else []),
+                    (["no_story_rule"] if shot_for else []),
                     (["first_shot_01"] if input_as_1st_shot else []),
                     [model_type, "script", "part_02"],
                     ["split_shots"],
                     [model_type, "script", "part_03"],
                     (["first_shot_02"] if input_as_1st_shot else []),
                     ["detail_preset", detail],
-                    (["no_story_rule"] if shot_script_for else []),
+                    (["no_story_rule"] if shot_for else []),
                     (["shot_continuity"] if shot_continuity else []),
                     [model_type, "script", "part_04"],
                     (["first_shot_03"] if input_as_1st_shot else []),
                     ["add_json_detail", "script", json_key],
-                    (["video_common_description_no_json_detail", "shot"] if shot_continuity and shot_script_for else []),
+                    # 以上与paragraph一致↓
+                    (["video_common_description_no_json_detail", "shot"] if shot_continuity and shot_for else []),
                     [model_type, "script", "part_05"],
-                    ["combine_shots"],
-                    (["video_common_description_no_json_detail", "global"] if shot_continuity and shot_script_for else []),
+                    ["combine_shots"], 
+                    (["video_common_description_no_json_detail", "global_prefix"] if shot_continuity and shot_for else []),
+                    (["video_common_description_no_json_detail", "global"] if shot_continuity and shot_for else []),
+                ]
+        else:   # shot paragraph
+            if shot_detail:
+                return [
+                    [model_type, "script", "part_01"],
+                    ["detail_preset", detail],
+                    (["first_shot_01"] if input_as_1st_shot else []),
+                    (["no_story_rule"] if shot_for else []),
+                    [model_type, "script", "part_02"],
+                    ["split_shots"],
+                    [model_type, "script", "part_03"],
+                    (["first_shot_02"] if input_as_1st_shot else []),
+                    ["detail_preset", detail],
+                    (["no_story_rule"] if shot_for else []),
+                    (["shot_continuity"] if shot_continuity else []),
+                    [model_type, "script", "part_04"],
+                    (["first_shot_03"] if input_as_1st_shot else []),
+                    ["add_json_detail", "script", json_key],
+                    ["json_detail", "common"],
+                    (["json_detail", "for_image", "description"] if (not shot_for) or (not shot_continuity and shot_for) else []),
+                    # 以上与script一致↑
+                    (["json_detail", "for_video", "description_global"] if shot_continuity and shot_for else []),
+                    (["json_detail", "for_video", "description_shot"] if shot_continuity and shot_for else []),
+                ]
+            else:
+                return [
+                    [model_type, "script", "part_01"],
+                    ["detail_preset", detail],
+                    (["no_story_rule"] if shot_for else []),
+                    (["first_shot_01"] if input_as_1st_shot else []),
+                    [model_type, "script", "part_02"],
+                    ["split_shots"],
+                    [model_type, "script", "part_03"],
+                    (["first_shot_02"] if input_as_1st_shot else []),
+                    ["detail_preset", detail],
+                    (["no_story_rule"] if shot_for else []),
+                    (["shot_continuity"] if shot_continuity else []),
+                    [model_type, "script", "part_04"],
+                    (["first_shot_03"] if input_as_1st_shot else []),
+                    ["add_json_detail", "script", json_key],
+                    # 以上与script一致↑
+                    (["video_common_description_no_json_detail", "global"] if shot_continuity and shot_for else []),
+                    (["video_common_description_no_json_detail", "shot"] if shot_continuity and shot_for else []),
                 ]
     
-    def build_prompt(self, model: str, mode: str, shot_continuity: bool, shot_script_for: bool, detail: str, json_detail_format: bool, 
+    def build_prompt(self, model: str, mode: str, shot_continuity: bool, shot_for: bool, detail: str, shot_detail: bool, 
                     shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> str:
         """Build prompt based on input parameters"""
         
@@ -170,7 +234,7 @@ class SysPromptBuilder:
         model_type = model.lower()
         
         # Build template parts based on model and mode
-        template_parts = self._build_common_parts(model_type, mode, shot_continuity, shot_script_for, detail, json_detail_format, input_as_1st_shot)
+        template_parts = self._build_common_parts(model_type, mode, shot_continuity, shot_for, detail, shot_detail, input_as_1st_shot)
         
         # Add final part for LLM
         if model == "Text":
@@ -186,7 +250,7 @@ class SysPromptBuilder:
         
         # Combine all parts and replace variables
         full_prompt = "".join(prompt_parts)
-        full_prompt = self._replace_variables(full_prompt, output_language, shot_count, json_detail_format)
+        full_prompt = self._replace_variables(mode, full_prompt, system_language, output_language, shot_count)
         
         return full_prompt
 
@@ -201,15 +265,15 @@ class SystemPrompter_JK:
                     "default": "Text",
                     "tooltip": "Select model type. Text: generate prompt from user text; Image: generate prompt from ref image."
                 }),
-                "mode": (["single image", "shot script"], {
+                "mode": (["single image", "shot script", "shot paragraph"], {
                     "default": "single image", 
-                    "tooltip": "Select mode: single image or shot script."
+                    "tooltip": "Select mode: single image, shot script or one shot paragraph."
                 }),
                 "shot_continuity": ("BOOLEAN", {
                     "default": True,
                     "tooltip": "Shot script continuity setting."
                 }),
-                "shot_script_for": ("BOOLEAN", {
+                "shot_for": ("BOOLEAN", {
                     "default": False,
                     "label_off": "image",
                     "label_on": "video",
@@ -230,7 +294,7 @@ class SystemPrompter_JK:
                     "default": "detailed",
                     "tooltip": "Select detail level for prompt generation."
                 }),
-                "json_detail_format": ("BOOLEAN", {
+                "shot_detail": ("BOOLEAN", {
                     "default": False,
                     "tooltip": "Only available for QWen3-VL for now. Whether to output in JSON format with detailed breakdown."
                 }),
@@ -256,7 +320,7 @@ class SystemPrompter_JK:
     def __init__(self):
         self.builder = SysPromptBuilder()
     
-    def build_prompt(self, model: str, mode: str, shot_continuity: bool, shot_script_for: bool, detail: str, json_detail_format: bool, 
+    def build_prompt(self, model: str, mode: str, shot_continuity: bool, shot_for: bool, detail: str, shot_detail: bool, 
                     shot_count: int, input_as_1st_shot: bool, system_language: str, output_language: str) -> Tuple[str]:
         """Build and return the prompt string"""
         
@@ -264,9 +328,9 @@ class SystemPrompter_JK:
             model=model,
             mode=mode,
             shot_continuity=shot_continuity,
-            shot_script_for=shot_script_for, 
+            shot_for=shot_for, 
             detail=detail,
-            json_detail_format=json_detail_format,
+            shot_detail=shot_detail,
             shot_count=shot_count,
             input_as_1st_shot=input_as_1st_shot,
             system_language=system_language,
@@ -346,7 +410,7 @@ class ShotScriptCombiner_JK:
             result = []
             
             # 检查是否是特殊JSON格式（包含subject, background等字段）
-            is_special_format = ShotScriptUtils.is_special_json_detail_format(data)
+            is_special_format = ShotScriptUtils.is_special_shot_detail(data)
             
             # 如果是特殊格式且没有shot键，直接作为单个shot处理
             if is_special_format and not ShotScriptUtils.has_shot_keys(data, max_shots):
