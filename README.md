@@ -391,26 +391,17 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 	- 2026-01-31 - v2.5.3	1. Add SAM3D Mesh Sequence From Video node to get mesh sequence from video using SAM3D. Need to install [ComfyUI-SAM3DBody](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody).
 	- 2026-02-01 - v2.5.4	1. Update SAM3D Mesh Sequence From Video node: Align the mesh sequence to the video instead of aligning along the creation center.
 	- 2026-02-02 - v2.5.5	1. Update SAM3D Mesh Sequence From Video node: set z offset to 0 for mesh sequence.
+	- 2026-02-04 - v2.5.6	1. Add Wan 2.2 SVI pro long video generation workflow.
+	- 2026-02-05 - v2.5.7	1. Add JK_module_Motion-Get_Mesh_Sequence workflow [here](Workflow/ComfyUI/Module/JK_module_Motion-Get_Mesh_Sequence.json).
+	- 2026-02-12 - v2.5.9	1. Add Trellis 2 img2mesh workflow but the result is not as good as the official space.
+							2. Update auto prompt workflows using new QWen3 Prompt Enhancer node.
+							3. Add LTXV2 video generation workflow, supports t2v | ff2v | lf2v | flf2v | frames2v | v2v, supports ControlNet | upscale.
+							4. Add more camera motion to Random Prompter.
+							5. Change SeamlessTile to "Modify in place" for all SD15 | SDXL workflows | Group Nodes | Subgraphs.
+	- 2026-02-14 - v2.6.0	1. Update the JK_module_Imgen_Seamless Texture workflow and remove deprecated nodes.
+							2. Update the JK_workflow_imgen_RandomPrompter workflow and using the latest Portrait Master nodes.
 
 </details>
-
-
-- 2026-02-04 - v2.5.6
-1. Add Wan 2.2 SVI pro long video generation workflow.
-
-- 2026-02-05 - v2.5.7
-1. Add JK_module_Motion-Get_Mesh_Sequence workflow [here](Workflow/ComfyUI/Module/JK_module_Motion-Get_Mesh_Sequence.json).
-
-- 2026-02-12 - v2.5.9
-1. Add Trellis 2 img2mesh workflow but the result is not as good as the official space.
-2. Update auto prompt workflows using new QWen3 Prompt Enhancer node.
-3. Add LTXV2 video generation workflow, supports t2v | ff2v | lf2v | flf2v | frames2v | v2v, supports ControlNet | upscale.
-4. Add more camera motion to Random Prompter.
-5. Change SeamlessTile to "Modify in place" for all SD15 | SDXL workflows | Group Nodes | Subgraphs.
-
-- 2026-02-14 - v2.6.0
-1. Update the JK_module_Imgen_Seamless Texture workflow and remove deprecated nodes.
-2. Update the JK_workflow_imgen_RandomPrompter workflow and using the latest Portrait Master nodes.
 
 - 2026-02-15 - v2.6.1
 1. Update System Prompter node, supports shot scripts for video generation.
@@ -428,6 +419,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-02-19 - v2.6.4
 1. Add LTXV2 long video gen workflow.
+
+- 2023-02-20 - v2.6.5
+1. Add shot paragraph mode for System Prompter, which output continuous paragraph using natural language.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 

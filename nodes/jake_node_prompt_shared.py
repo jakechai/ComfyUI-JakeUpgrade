@@ -1132,7 +1132,7 @@ class ShotScriptUtils:
         return [str(key) for key in data.keys()]
     
     @staticmethod
-    def is_special_json_detail_format(data: dict) -> bool:
+    def is_special_shot_detail(data: dict) -> bool:
         """检查是否是特殊JSON格式（包含subject, background等字段）"""
         special_fields = [
             'subject', 'background', 'atmosphere', 'lighting', 
