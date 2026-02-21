@@ -420,8 +420,12 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2026-02-19 - v2.6.4
 1. Add LTXV2 long video gen workflow.
 
-- 2023-02-20 - v2.6.5
+- 2026-02-20 - v2.6.5
 1. Add shot paragraph mode for System Prompter, which output continuous paragraph using natural language.
+
+- 2026-02-21 - v2.6.6
+1. Add LTXV2 Frame Count node, calculate LTXV2-compatible frame count by rounding up to nearest multiple of 8 plus 1. 
+2. Add LTXV2 Cuts video gen workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -470,6 +474,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_edge.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_gtao.png)  
 Adv3DViewer JK🐉: Supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without animation, and with custom camera animation and exported as GLB.  
+Limitation:  
+1. Only one file import is supported; scene editing is not supported.
+2. Importing camera and light attribute animations is not supported, including the roll angle attribute animation of the target camera in Max.
+3. It is recommended that all animations in the scene be baked frame-by-frame into a global animation clip. This allows the Viewer to control animation playback based on the same start and end frames (0, maxFrameCount).
+4. When exportingcameras from Max or Maya, use a vertical FOV and set the Aperture Width to 35mm to ensure the Aspect Ratio value remains consistent with the Viewer.
 ![image](imgs/nodes/3D/Orbit%20Poses%20JK.png)  
 SAM3D Mesh Sequence JK🐉: Get mesh sequence from video using SAM3D.  
 ![image](imgs/nodes/3D/SAM3D%20Mesh%20Sequence%20JK.png) 
@@ -481,8 +490,6 @@ Orbit Poses to Orbit Lists JK🐉: Convert camera pose format to track list form
 ![image](imgs/nodes/3D/Get%20Orbit%20Poses%20From%20List%20JK.png)  
 Get Orbit Poses From List JK🐉: Select a specific pose by index from a list of camera poses.  
 - Audio Nodes  
-![image](imgs/nodes/Audio/Scene%20Cuts%20JK.png)  
-Scene Cuts JK🐉: Create scene cuts based on multiple cut point times or durations and an optional audio duration.  
 ![image](imgs/nodes/Audio/Cut%20Audio%20JK.png)  
 Cut Audio JK🐉: Cut an audio file based on start and end time.  
 ![image](imgs/nodes/Audio/Cut%20Audio%20Index%20JK.png)  
@@ -492,10 +499,14 @@ Cut Audio Cuts JK🐉: Merge all cuts from scene_cuts into a single audio file i
 ![image](imgs/nodes/Audio/Cut%20Audio%20Loop%20JK.png)  
 Cut Audio Loop JK🐉: Cut an audio file based on loop metadata and cut index.  
 - Video Nodes  
+![image](imgs/nodes/Video/Scene%20Cuts%20JK.png)  
+Scene Cuts JK🐉: Create scene cuts based on multiple cut point times or durations and an optional audio duration.  
 ![image](imgs/nodes/Video/Create%20Loop%20Schedule%20List%20JK.png)  
 Create Loop Schedule List JK🐉: Generate a sequential integer list for animation loop scheduling.  
 ![image](imgs/nodes/Video/Wan%20Frame%20Count%20JK.png)  
 Wan Frame Count JK🐉: Calculate WAN-compatible frame count by rounding up to nearest multiple of 4 plus 1.  
+![image](imgs/nodes/Video/Ltxv2%20Frame%20Count%20JK.png)  
+LTXV2 Frame Count JK🐉: Calculate LTXV2-compatible frame count by rounding up to nearest multiple of 8 plus 1.  
 ![image](imgs/nodes/Video/Wan22%20cfg%20Scheduler%20List%20JK.png)  
 Wan22 cfg Scheduler List JK🐉: Generate CFG scheduler list with initial and subsequent values for WAN 2.2.  
 ![image](imgs/nodes/Video/Wan%20Wrapper%20Sampler%20Default%20JK.png)  
