@@ -225,7 +225,7 @@ def parse_select_cuts(select_cuts: str, max_cuts: int) -> List[int]:
     return sorted(list(selected_indices))
 
 #---------------------------------------------------------------------------------------------------------------------#
-# Audio Processing Utilities  
+# Video Processing Utilities  
 #---------------------------------------------------------------------------------------------------------------------#
 
 def calculate_loop_frame_count(
@@ -233,7 +233,8 @@ def calculate_loop_frame_count(
     fps: int, 
     segment_frame_count: int, 
     overlap_frame_count: int,
-    long_vid_method: bool
+    long_vid_method: bool,
+    compatibility: bool
 ) -> int:
     """
     Calculate loop frame count for video generation.
@@ -249,9 +250,10 @@ def calculate_loop_frame_count(
         Calculated loop frame count
     """
     total_frames = duration * fps
+    frame_seg = 8 if compatibility else 4
     
     if not long_vid_method:
-        return multiple_of_int(max(0, total_frames - 1), 4) + 1
+        return multiple_of_int(max(0, total_frames - 1), frame_seg) + 1
     else:
         if (total_frames - segment_frame_count) > 0:
             segment_step = segment_frame_count - overlap_frame_count
@@ -261,10 +263,10 @@ def calculate_loop_frame_count(
             loop_frame_count = (
                 segment_frame_count + 
                 full_segments * segment_step + 
-                multiple_of_int(max(0, remaining_frames - 1), 4) + 1
+                multiple_of_int(max(0, remaining_frames - 1), frame_seg) + 1
             )
         else:
-            loop_frame_count = multiple_of_int(max(0, total_frames - 1), 4) + 1
+            loop_frame_count = multiple_of_int(max(0, total_frames - 1), frame_seg) + 1
         
         return int(loop_frame_count)
 

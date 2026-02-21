@@ -277,7 +277,6 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
         },
         ### Audio Nodes
         'audio': lambda: {
-            "Scene Cuts JK": lambda: global_symbols.get("SceneCuts_JK"),
             "Cut Audio JK": lambda: global_symbols.get("CutAudio_JK"),
             "Cut Audio Index JK": lambda: global_symbols.get("CutAudioIndex_JK"),
             "Cut Audio Cuts JK": lambda: global_symbols.get("CutAudioCuts_JK"),
@@ -406,8 +405,10 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
         },
         ### Video Nodes
         'video': lambda: {
+            "Scene Cuts JK": lambda: global_symbols.get("SceneCuts_JK"),
             "Create Loop Schedule List": lambda: global_symbols.get("CreateLoopScheduleList"),
             "Wan Frame Count JK": lambda: global_symbols.get("WanFrameCount_JK"),
+            "LTXV2 Frame Count JK": lambda: global_symbols.get("LtxV2FrameCount_JK"),
             "Wan22 cfg Scheduler List JK": lambda: global_symbols.get("Wan22cfgSchedulerList_JK"),
             "Wan Wrapper Sampler Default JK": lambda: global_symbols.get("WanWrapperSamplerDefault_JK"),
         }
