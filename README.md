@@ -425,7 +425,14 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 
 - 2026-02-21 - v2.6.6
 1. Add LTXV2 Frame Count node, calculate LTXV2-compatible frame count by rounding up to nearest multiple of 8 plus 1. 
-2. Add LTXV2 Cuts video gen workflow.
+2. Update Scene Cut node, supports LTXV2.
+3. Add LTXV2 Cuts video gen workflow.
+
+- 2026-02-24 - v2.6.7
+1. Update Trellis2 workflow using new remesh with quad node (though it doesn't reconstruct in quad).
+2. Update Wan Video Eco list.
+3. Add Wan2.1 Skyreel V3 ref2v, a2v, v2v extend sub workflows.
+4. Add Wan2.2 Pusa v2v extend sub workflow.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -474,11 +481,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_edge.png)  
 ![image](imgs/nodes/3D/Adv%203D%20Viewer%20JK_gtao.png)  
 Adv3DViewer JK🐉: Supports GLB, FBX, SMPL bin, OBJ, and PLY formats with/without animation, and with custom camera animation and exported as GLB.  
-Limitation:  
+Limitation:
 1. Only one file import is supported; scene editing is not supported.
 2. Importing camera and light attribute animations is not supported, including the roll angle attribute animation of the target camera in Max.
 3. It is recommended that all animations in the scene be baked frame-by-frame into a global animation clip. This allows the Viewer to control animation playback based on the same start and end frames (0, maxFrameCount).
-4. When exportingcameras from Max or Maya, use a vertical FOV and set the Aperture Width to 35mm to ensure the Aspect Ratio value remains consistent with the Viewer.
+4. When exporting cameras from Max or Maya, use a vertical FOV and set the Aperture Width to 35mm to ensure the Aspect Ratio value remains consistent with the Viewer.
 ![image](imgs/nodes/3D/Orbit%20Poses%20JK.png)  
 SAM3D Mesh Sequence JK🐉: Get mesh sequence from video using SAM3D.  
 ![image](imgs/nodes/3D/SAM3D%20Mesh%20Sequence%20JK.png) 
@@ -517,7 +524,7 @@ Random Prompter JK🐉: Random prompt generator with categorized options for sce
 ![image](imgs/nodes/Prompt/Random%20Prompter%20Geek%20JK.png)  
 Random Prompter Geek JK🐉: Random Prompter Geek version: Build prompts using category tags that are replaced with random content at runtime. Supports manual category selection and automatic tag insertion.  
 ![image](imgs/nodes/Prompt/Sys%20Prompter%20JK.png)  
-System Prompter JK🐉: Build single image | shot script system prompt for LLM/VLM based on preset templates and user configuration. Supports JSON format and multi-language output request. QWen3-VL is recommended.  
+System Prompter JK🐉: Build single image | shot script | shot paragraph system prompt for LLM/VLM based on preset templates and user configuration. Supports JSON format and multi-language output request. QWen3-VL is recommended.  
 ![image](imgs/nodes/Prompt/Shot%20Script%20Combiner%20JK.png)  
 Shot Script Combiner JK🐉: Combine shot scripts into string list output.  
 ![image](imgs/nodes/Prompt/Shot%20Script%20Extractor%20JK.png)  
@@ -841,10 +848,14 @@ TriMesh Input Switch JK🐉
 | FUN Camera [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model | ff2v | √ |
 | FUN VACE [2.2](https://huggingface.co/alibaba-pai/Wan2.2-VACE-Fun-A14B) | main & module model | t2v ff2v ref2v | - |
 | *fine tune Model* | | | |
-| Skyreel V2 [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main & lora | t2v ff2v v2v | - |
+| Skyreel V2 [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main model & lora | t2v ff2v v2v | - |
+| Skyreel V3 [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model & lora | t2v ff2v v2v | - |
 | MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v | - |
 | AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v | - |
 | Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | main model & lora | t2v ff2v uni_pc simple steps 5 cfg 5.0 | - |
+| Smooth Mix [2.2](https://civitai.com/models/1995784?modelVersionId=2323420)| main model | t2v v2v | √ |
+| VBVR [2.2](https://video-reason.com/) | main model & lora | ff2v | √ |
+| Unified Reward [2.2](https://huggingface.co/CodeGoat24/Wan2.2-T2V-A14B-UnifiedReward-Flex-lora) | lora | t2v | √ |
 | *Low-Step model* | | | |
 | lightX2V [2.2](https://huggingface.co/lightx2v/Wan2.2-Lightning) [2.1](https://huggingface.co/lightx2v) | main model & lora | t2v ff2v v2v lcm simple steps 4 cfg 1.0 | √ |
 | FusionX [2.1](https://huggingface.co/vrgamedevgirl84/Wan14BT2VFusioniX) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0| √ |
@@ -860,12 +871,15 @@ TriMesh Input Switch JK🐉
 | Stand-In [2.2](https://www.stand-in.tech/) [2.1](https://www.stand-in.tech/) | lora | ref2v ref+v2v | - |
 | MAGREF [2.1](https://github.com/MAGREF-Video/MAGREF) | main model | ref2v | - |
 | Skyreel A2 [2.1](https://github.com/SkyworkAI/SkyReels-A2) | main model | ref2v | - |
+| Skyreel V3 R2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | ref2v | √ |
 | lynx [2.1](https://github.com/bytedance/lynx) | module model | ref2v | √ |
 | Kaleido [2.1](https://arxiv.org/html/2510.18573v1) | main model | ref2v | x |
 | BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | ? |
+| Video as Prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | ref2v | ? |
 | FFGO [2.2](https://firstframego.github.io/) | lora | ref2v | √ |
 | *long video Model* | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
+| Skyreel V3 V2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | v2v | - |
 | LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2v v2v | - |
 | Stable Video Infinity [2.2](https://github.com/vita-epfl/Stable-Video-Infinity) [2.1](https://github.com/vita-epfl/Stable-Video-Infinity) | lora | ff2v | √ |
 | *multi-shot Model* | | | |
@@ -878,6 +892,7 @@ TriMesh Input Switch JK🐉
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v | - |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v | √ |
 | Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v | √ |
+| Skyreel V3 A2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | ff2v | - |
 | *audio Model* | | | |
 | Ovi [2.2](https://github.com/character-ai/Ovi) | main & module model | t2av i2av | - |
 | *edit Model* | | | |
@@ -915,6 +930,7 @@ TriMesh Input Switch JK🐉
 ### ComfyUI
 
 > [!NOTE]
+> - To [Get mesh sequence from video](Workflow/ComfyUI/Module/JK_module_Motion-Get_Mesh_Sequence.json) workflow, you need [ComfyUI-MotionCapture](https://github.com/PozzettiAndrea/ComfyUI-MotionCapture) at [v0.0.6](https://cdn.comfy.org/pznodes/comfyui-motioncapture/0.0.6/node.zip) and [ComfyUI-SAM3DBody](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody) at [v0.2.1](https://cdn.comfy.org/pznodes/ComfyUI-SAM3DBody/0.2.1/node.zip)
 > - ComfyUI frontend starts the [deprecation process of Group node](https://github.com/Comfy-Org/ComfyUI_frontend/issues/3441#issuecomment-2814386708) in v1.17.0 and depprecats group node totally in v1.24.0. If you update your ComfyUI to v0.3.49, Comfyui frontend v 1.24.4 will be installed, which will cause group node running error. At the meantime, they released the official version of [Subgraph](https://github.com/Comfy-Org/rfcs/blob/subgraph/rfcs/0000-subgraph.md), the replacement of Group Node. I've separated two versions of my group nodes as backup and memory: one is for `1.23.4>=comfyui-frontend-package>=1.16.0`, and the other is for `comfyui-frontend-package<=1.15.13` (1.15.12 is recommended). [All Grp Nodes-JK_~frontend-1.23.4](Workflow/ComfyUI_~frontend-1.23.4/All%20Grp%20Nodes-JK.json) | [All Grp Nodes-JK_~frontend-1.15.13](Workflow/ComfyUI_~frontend-1.15.13/All%20Grp%20Nodes-JK.json). If you want to use the workflows using Group Nodes especially the API workflow, downgrade your frontend to v1.23.4: `"...\python.exe" -m pip install comfyui-frontend-package==1.23.4` and choose ComfyUI v0.3.48(optional).
 > - ComfyUI frontend breaks the Impact-Pack Switch(Any) node. It is still functional, but can not be created. This issue has been fixed in the latest Impact-Pack version `>=v8.12`, but it only supports `comfyui-frontend-package>=1.16.9`. When using Group Nodes with `comfyui-frontend-package<=1.15.13`, it's recommended to switch Impact-Pack to `v8.8.1` in the ComfyUI Manager. 
 > - API workflows are separated into three versions: the first is for `ComfyUI-JakeUpgrade v1.9.16 or earlier`, the second is for `ComfyUI-JakeUpgrade v1.9.17~v1.9.20`, the third is for `ComfyUI-JakeUpgrade v2.0.0 or later`. When editing the first one, it is recommended to switch to `1.9.5<=ComfyUI-JakeUpgrade<=1.9.16` and `comfyui-frontend-package<=1.15.13`.
@@ -979,7 +995,7 @@ TriMesh Input Switch JK🐉
 - [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [QWen Image Wan Bridge](https://github.com/fblissjr/ComfyUI-QwenImageWanBridge)
-- (auto prompt)[QWen VL]https://github.com/1038lab/ComfyUI-QwenVL）
+- (auto prompt)[QWen VL](https://github.com/1038lab/ComfyUI-QwenVL)
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (auto prompt)[Hunyuan Prompt Enhancer](https://github.com/leeooo001/comfyui-Hunyuan-PromptEnhancer)
 - (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
@@ -1019,13 +1035,13 @@ TriMesh Input Switch JK🐉
 - (18 mv tex)[ComfyUI StableX Wrapper](https://github.com/kijai/ComfyUI-StableXWrapper)
 
 ### motion workflow
-- [ComfyUI-MotionCapture](https://github.com/PozzettiAndrea/ComfyUI-MotionCapture)
-- [ComfyUI-SAM3DBody (comfy-env==0.0.30)](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody)
-- [ComfyUI-UniRig (comfy-env==0.1.19)](https://github.com/PozzettiAndrea/ComfyUI-UniRig)
-- [ComfyUI-HY-Motion1](https://github.com/jtydhr88/ComfyUI-HY-Motion1)
-- [SAM2](https://github.com/kijai/ComfyUI-segment-anything-2)
-- [SAM3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
-- [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
+- (Sequence)[ComfyUI-MotionCapture](https://github.com/PozzettiAndrea/ComfyUI-MotionCapture) at [v0.0.6](https://cdn.comfy.org/pznodes/comfyui-motioncapture/0.0.6/node.zip)
+- (Sequence)[ComfyUI-SAM3DBody](https://github.com/PozzettiAndrea/ComfyUI-SAM3DBody) at [v0.2.1](https://cdn.comfy.org/pznodes/ComfyUI-SAM3DBody/0.2.1/node.zip)
+- (Mask)[SAM2](https://github.com/kijai/ComfyUI-segment-anything-2)
+- (Mask)[SAM3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
+- (Mask)[Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
+- (Rig WIP)[ComfyUI-UniRig](https://github.com/PozzettiAndrea/ComfyUI-UniRig)
+- (Rig WIP)[ComfyUI-HY-Motion1](https://github.com/jtydhr88/ComfyUI-HY-Motion1)
 
 ### video workflow
 - [Wan Video Wrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
@@ -1038,8 +1054,11 @@ TriMesh Input Switch JK🐉
 - [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
 - [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
 - (LTXV2)[LTXVideo](https://github.com/Lightricks/ComfyUI-LTXVideo)
-- (SVI pro Long video gen)[ComfyUI Easy Use](https://github.com/yolain/ComfyUI-Easy-Use)
-- (auto prompt)[QWen VL]https://github.com/1038lab/ComfyUI-QwenVL）
+- (For Loop)[ComfyUI Easy Use](https://github.com/yolain/ComfyUI-Easy-Use)
+- (Music Gen & Lyrics Transcript)[Heart MuLa](https://github.com/benjiyaya/HeartMuLa_ComfyUI)
+- (TTS)[Qwen TTS](https://github.com/flybirdxx/ComfyUI-Qwen-TTS)
+- (ASR)[Qwen ASR](https://github.com/1038lab/ComfyUI-QwenASR)
+- (auto prompt)[QWen VL](https://github.com/1038lab/ComfyUI-QwenVL)
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
 
