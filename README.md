@@ -434,6 +434,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 3. Add Wan2.1 Skyreel V3 ref2v, a2v, v2v extend sub workflows.
 4. Add Wan2.2 Pusa v2v extend sub workflow.
 
+- 2026-02-25 - v2.6.8
+1. Add Wan2.1 Bind Weave ref2v video gen sub workflow which supports Uni3C.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -806,7 +809,7 @@ TriMesh Input Switch JK🐉
 |----------|----------|-------|--------|
 | ComfyOrg [2.2](https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged)  [2.1](https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/tree/main) | | | √ |
 | Kijai [WAN](https://huggingface.co/Kijai/WanVideo_comfy/tree/main)  [WAN fp8 scaled](https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled) | | | √ |
-| *Common Feature* | | | |
+| **Common Feature** | | | |
 | [Triton (Torch Compile)](https://github.com/woct0rdho/triton-windows) | speed up | ~ | √ |
 | [Radial Attention](https://github.com/mit-han-lab/radial-attention) | speed up | ~ | √ |
 | [Sage Attention](https://github.com/thu-ml/SageAttention) | speed up | ~ | √ |
@@ -830,7 +833,7 @@ TriMesh Input Switch JK🐉
 | [UltraVico](https://github.com/thu-ml/DiT-Extrapolation) | long video | ~ | - |
 | [Context Window](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) | long & loop video | ~ | √ |
 | [Flow Edit](https://github.com/fallenshock/FlowEdit) | in content edit | v2v | × |
-| *Main Model* | | | |
+| **Main Model** | | | |
 | WAN Video [2.2](https://github.com/Wan-Video/Wan2.2) [2.1](https://github.com/Wan-Video/Wan2.1) | main model | t2v ff2v flf2v v2v s2v | √ |
 | WAN Animate [2.2](https://github.com/Wan-Video/Wan2.2) | main model | ff2v ref2v v2v | √ |
 | WAN Video GGUF [2.2](https://huggingface.co/collections/QuantStack/wan22-ggufs-6887ec891bdea453a35b95f3) [2.1](https://huggingface.co/city96) | main model | t2v ff2v flf2v v2v | √ |
@@ -847,16 +850,16 @@ TriMesh Input Switch JK🐉
 | FUN InP Reward LoRA [2.2](https://huggingface.co/alibaba-pai/Wan2.2-Fun-Reward-LoRAs) [2.1](https://huggingface.co/alibaba-pai/Wan2.1-Fun-Reward-LoRAs) | lora | t2v ff2v flf2v v2v | √ |
 | FUN Camera [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model | ff2v | √ |
 | FUN VACE [2.2](https://huggingface.co/alibaba-pai/Wan2.2-VACE-Fun-A14B) | main & module model | t2v ff2v ref2v | - |
-| *fine tune Model* | | | |
+| **fine tune Model** | | | |
 | Skyreel V2 [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main model & lora | t2v ff2v v2v | - |
 | Skyreel V3 [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model & lora | t2v ff2v v2v | - |
 | MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v | - |
 | AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v | - |
 | Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | main model & lora | t2v ff2v uni_pc simple steps 5 cfg 5.0 | - |
 | Smooth Mix [2.2](https://civitai.com/models/1995784?modelVersionId=2323420)| main model | t2v v2v | √ |
-| VBVR [2.2](https://video-reason.com/) | main model & lora | ff2v | √ |
+| VBVR [2.2](https://video-reason.com/) | main model & lora | flf2v | √ |
 | Unified Reward [2.2](https://huggingface.co/CodeGoat24/Wan2.2-T2V-A14B-UnifiedReward-Flex-lora) | lora | t2v | √ |
-| *Low-Step model* | | | |
+| **Low-Step model** | | | |
 | lightX2V [2.2](https://huggingface.co/lightx2v/Wan2.2-Lightning) [2.1](https://huggingface.co/lightx2v) | main model & lora | t2v ff2v v2v lcm simple steps 4 cfg 1.0 | √ |
 | FusionX [2.1](https://huggingface.co/vrgamedevgirl84/Wan14BT2VFusioniX) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0| √ |
 | FusionX GGUF [2.1](https://huggingface.co/collections/QuantStack/wan21-fusionx-ggufs-68498e41b3597737512c0636) | main model | t2v ff2v uni_pc simple steps 8 cfg 1.0| - |
@@ -865,58 +868,57 @@ TriMesh Input Switch JK🐉
 | Fast Wan [2.2](https://huggingface.co/FastVideo) [2.1](https://huggingface.co/FastVideo) | main model & lora | t2v v2v uni_pc simple steps 8 cfg 1.0 | - |
 | Turbo [2.2 TI2V 5B](https://github.com/quanhaol/Wan2.2-TI2V-5B-Turbo) | main model & lora | t2v uni_pc simple steps 4 cfg 1.0 | - |
 | rCM [2.2](https://github.com/NVlabs/rcm) [2.1](https://github.com/NVlabs/rcm) | main model & lora | t2v i2v step 4 | - |
-| *ref2v Model* | | | |
+| **ref2v Model** | | | |
 | HuMo [2.1](https://phantom-video.github.io/HuMo) | main model | t2v ff2v ref2v v2v s2v | √ |
 | Phantom [2.1](https://github.com/Phantom-video/Phantom) | main model & lora | ref2v ref+v2v | √ |
 | Stand-In [2.2](https://www.stand-in.tech/) [2.1](https://www.stand-in.tech/) | lora | ref2v ref+v2v | - |
 | MAGREF [2.1](https://github.com/MAGREF-Video/MAGREF) | main model | ref2v | - |
 | Skyreel A2 [2.1](https://github.com/SkyworkAI/SkyReels-A2) | main model | ref2v | - |
-| Skyreel V3 R2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | ref2v | √ |
+| Skyreel V3 R2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | ref2v | - |
 | lynx [2.1](https://github.com/bytedance/lynx) | module model | ref2v | √ |
 | Kaleido [2.1](https://arxiv.org/html/2510.18573v1) | main model | ref2v | x |
-| BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | ? |
-| Video as Prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | ref2v | ? |
+| BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | √√ |
+| Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) vap branch in Wan Wrapper | main & module model | ff2v 49 frames limitation | - |
 | FFGO [2.2](https://firstframego.github.io/) | lora | ref2v | √ |
-| *long video Model* | | | |
+| **long video Model** | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
 | Skyreel V3 V2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | v2v | - |
 | LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2v v2v | - |
 | Stable Video Infinity [2.2](https://github.com/vita-epfl/Stable-Video-Infinity) [2.1](https://github.com/vita-epfl/Stable-Video-Infinity) | lora | ff2v | √ |
-| *multi-shot Model* | | | |
+| **multi-shot Model** | | | |
 | Echo Shot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v | - |
 | HoloCine [2.2](https://holo-cine.github.io/) | main model | t2v | ? |
-| *relight Model* | | | |
+| **relight Model** | | | |
 | Lumen [2.1](https://lumen-relight.github.io/) | main model & lora | v2v | × |
 | UniLumos [2.1](https://github.com/alibaba-damo-academy/Lumos-Custom) | main model | v2v | - |
-| *voice Model* | | | |
+| **voice Model** | | | |
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v | - |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v | √ |
 | Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v | √ |
 | Skyreel V3 A2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | ff2v | - |
-| *audio Model* | | | |
+| **audio Model** | | | |
 | Ovi [2.2](https://github.com/character-ai/Ovi) | main & module model | t2av i2av | - |
-| *edit Model* | | | |
+| **edit Model** | | | |
 | MiniMax Remover [2.1](https://github.com/zibojia/MiniMax-Remover) | main model | v2v recommend standalone | √ |
 | MoCha [2.1](https://orange-3dv-team.github.io/MoCha/) | main model | v2v | √ |
 | LucyEdit [2.2](https://github.com/DecartAI/Lucy-Edit-ComfyUI) | main model | v2v | √ |
 | Ditto [2.1](https://github.com/EzioBy/Ditto) | lora | v2v + VACE2.1 | √ |
 | ChronoEdit [2.1](https://research.nvidia.com/labs/toronto-ai/chronoedit/) | main model & Lora | ff2v | ? |
-| Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) | main & module model | ff2v | ? |
-| *Upscale Model* | | | |
+| **Upscale Model** | | | |
 | Tile lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/tile) | control lora | v2v | √ |
 | CineScale [2.1](https://github.com/Eyeline-Labs/CineScale) | lora | t2v ff2v | - |
 | Flash VSR [2.1](https://github.com/OpenImagingLab/FlashVSR) | main model | v2v | √ |
-| *controlnet Model* | | | |
+| **controlnet Model** | | | |
 | Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v | - |
 | Dilated ControlNet [2.2](https://huggingface.co/collections/TheDenk/wan22-controlnets-688b754ca3ee3bc7b34253bf) [2.1](https://github.com/TheDenk/wan2.1-dilated-controlnet) | controlnet | t2v v2v | √ |
-| *camera+motion con Model* | | | |
+| **camera+motion con Model** | | | |
 | ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v | √ |
 | Time-to-Move [2.2](https://time-to-move.github.io/) | main model | ff2v | √ |
-| *camera control Model* | | | |
+| **camera control Model** | | | |
 | ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v | - |
 | Uni3C* [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | ff2v | √ |
 | CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) | main model | ff2vv2v | ? |
-| *motion control Model* | | | |
+| **motion control Model** | | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v | × |
 | RealisDance* [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | ff2v | × |
 | MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v | - |
@@ -1055,7 +1057,6 @@ TriMesh Input Switch JK🐉
 - [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
 - (LTXV2)[LTXVideo](https://github.com/Lightricks/ComfyUI-LTXVideo)
 - (For Loop)[ComfyUI Easy Use](https://github.com/yolain/ComfyUI-Easy-Use)
-- (Music Gen & Lyrics Transcript)[Heart MuLa](https://github.com/benjiyaya/HeartMuLa_ComfyUI)
 - (TTS)[Qwen TTS](https://github.com/flybirdxx/ComfyUI-Qwen-TTS)
 - (ASR)[Qwen ASR](https://github.com/1038lab/ComfyUI-QwenASR)
 - (auto prompt)[QWen VL](https://github.com/1038lab/ComfyUI-QwenVL)
