@@ -844,6 +844,7 @@ TriMesh Input Switch JK🐉
 | VACE FusionX [2.1](https://huggingface.co/QuantStack/Wan2.1_T2V_14B_FusionX_VACE) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | VACE FusionX GGUF [2.1](https://huggingface.co/collections/QuantStack/wan21-fusionx-ggufs-68498e41b3597737512c0636) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | VACE Phantom [2.1](https://huggingface.co/Inner-Reflections/Wan2.1_VACE_Phantom) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
+| VACE Skyreels V3 R2V [2.1](https://huggingface.co/Inner-Reflections/VACE_Skyreels_V3_R2V_Merge) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | √ |
 | VACE SF (GGUF) [2.1](https://huggingface.co/lym00) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | FUN Control [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | t2v ff2v | √ |
 | FUN InP [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | ff2v flf2v | √ |
@@ -855,7 +856,7 @@ TriMesh Input Switch JK🐉
 | Skyreel V3 [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model & lora | t2v ff2v v2v | - |
 | MoviiGen [2.1](https://huggingface.co/ZuluVision/MoviiGen1.1) | main model & lora | t2v v2v | - |
 | AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v | - |
-| Pusa* [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | main model & lora | t2v ff2v uni_pc simple steps 5 cfg 5.0 | - |
+| Pusa [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | main model & lora | t2v ff2v uni_pc simple steps 5 cfg 5.0 | - |
 | Smooth Mix [2.2](https://civitai.com/models/1995784?modelVersionId=2323420)| main model | t2v v2v | √ |
 | VBVR [2.2](https://video-reason.com/) | main model & lora | flf2v | √ |
 | Unified Reward [2.2](https://huggingface.co/CodeGoat24/Wan2.2-T2V-A14B-UnifiedReward-Flex-lora) | lora | t2v | √ |
@@ -877,9 +878,9 @@ TriMesh Input Switch JK🐉
 | Skyreel V3 R2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | ref2v | - |
 | lynx [2.1](https://github.com/bytedance/lynx) | module model | ref2v | √ |
 | Kaleido [2.1](https://arxiv.org/html/2510.18573v1) | main model | ref2v | x |
-| BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | √√ |
-| Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) vap branch in Wan Wrapper | main & module model | ff2v 49 frames limitation | - |
+| BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | **√** |
 | FFGO [2.2](https://firstframego.github.io/) | lora | ref2v | √ |
+| Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) vap branch | main & module model | ff2v 49 frames limitation | - |
 | **long video Model** | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
 | Skyreel V3 V2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | v2v | - |
@@ -913,14 +914,14 @@ TriMesh Input Switch JK🐉
 | Dilated ControlNet [2.2](https://huggingface.co/collections/TheDenk/wan22-controlnets-688b754ca3ee3bc7b34253bf) [2.1](https://github.com/TheDenk/wan2.1-dilated-controlnet) | controlnet | t2v v2v | √ |
 | **camera+motion con Model** | | | |
 | ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v | √ |
-| Time-to-Move [2.2](https://time-to-move.github.io/) | main model | ff2v | √ |
+| Time-to-Move [2.2](https://time-to-move.github.io/) | main model | ff2v | **√** |
 | **camera control Model** | | | |
 | ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v | - |
-| Uni3C* [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | ff2v | √ |
-| CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) | main model | ff2vv2v | ? |
+| Uni3C [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | ff2v | **√** |
+| CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) not implemented | main model | ff2v v2v | ? |
 | **motion control Model** | | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v | × |
-| RealisDance* [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | ff2v | × |
+| RealisDance [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | ff2v | × |
 | MTV Crafter [2.1](https://github.com/DINGYANB/MTVCrafter) | main & module model | t2v ff2v | - |
 | Fantasy Portrait [2.1](https://github.com/Fantasy-AMAP/fantasy-portrait) | module model | ff2v v2v | - |
 | SCAIL [2.1](https://teal024.github.io/SCAIL/) | main model | ff2v | √ |
