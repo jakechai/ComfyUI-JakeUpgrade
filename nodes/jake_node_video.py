@@ -257,6 +257,13 @@ class CreateLoopScheduleList:
                 "step": 1, 
                 "tooltip": "Number of loops to schedule for animation sequence"
             }),
+            "start_index": ("INT", {
+                "default": 1, 
+                "min": 1, 
+                "max": 1000, 
+                "step": 1, 
+                "tooltip": "Start index of loops to schedule"
+            })
             }
         }
     
@@ -266,12 +273,12 @@ class CreateLoopScheduleList:
     CATEGORY = icons.get("JK/Video")
     DESCRIPTION = "Generate a sequential integer list for animation loop scheduling."
     
-    def process(self, loop_count: int) -> Tuple[list]:
+    def process(self, loop_count: int, start_index: int) -> Tuple[list]:
         """创建循环调度列表"""
         step_list = [1] * loop_count
         
         for i in range(0, loop_count):
-            step_list[i] = i + 1
+            step_list[i] = start_index + i
             
         return (step_list,)
 
