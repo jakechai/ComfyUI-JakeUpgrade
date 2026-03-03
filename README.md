@@ -432,6 +432,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 2. Add Wan2.2 StoryMen multi-shot long video gen workflow.
 3. Add start_index to CreateLoopScheduleList node.
 
+- 2026-03-03 - v2.7.0
+1. Update stitching two segments method (when overlap frame count > 1) in long video gen sub workflow to reduce color shifting: using last frames of pre-segment to replace latent for current segment (Replace Video Latent Frames node) and linear_blend between the overlap frames (Image Batch Extend With Overlap node).
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -854,6 +857,7 @@ TriMesh Input Switch JK🐉
 | AniSora [2.2](https://huggingface.co/IndexTeam/Index-anisora/tree/main/V3.2) [2.1](https://github.com/bilibili/Index-anisora) | main model | ff2v | - |
 | Pusa [2.2](https://github.com/Yaofang-Liu/Pusa-VidGen) [2.1](https://github.com/Yaofang-Liu/Pusa-VidGen) | main model & lora | t2v ff2v uni_pc simple steps 5 cfg 5.0 | - |
 | Smooth Mix [2.2](https://civitai.com/models/1995784?modelVersionId=2323420)| main model | t2v v2v | √ |
+| Turbo Diffusion [2.1](https://github.com/thu-ml/TurboDiffusion) [2.2](https://github.com/thu-ml/TurboDiffusion)| main model | t2v v2v | - |
 | **Fine-Tune LoRA** | | | |
 | FUN InP Reward LoRA [2.2](https://huggingface.co/alibaba-pai/Wan2.2-Fun-Reward-LoRAs) [2.1](https://huggingface.co/alibaba-pai/Wan2.1-Fun-Reward-LoRAs) | lora | t2v ff2v flf2v v2v | √ |
 | VBVR [2.2](https://video-reason.com/) | main model & lora | flf2v | √ |
@@ -879,10 +883,12 @@ TriMesh Input Switch JK🐉
 | BindWeave [2.1](https://lzy-dot.github.io/BindWeave/) | main model | ref2v | ✅ |
 | FFGO [2.2](https://firstframego.github.io/) | lora | ref2v | √ |
 | Video-as-prompt [2.1](https://bytedance.github.io/Video-As-Prompt/) vap branch | main & module model | ff2v 49 frames limitation | - |
+| Kaleido [2.1](https://huggingface.co/Kijai/WanVideo_comfy/tree/main/Kaleido) | main model | ref2v s2v | - |
 | **Long Video Model** | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
 | LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2v v2v | - |
 | Stable Video Infinity [2.2](https://github.com/vita-epfl/Stable-Video-Infinity) [2.1](https://github.com/vita-epfl/Stable-Video-Infinity) | lora | ff2v | ✅ |
+| LongVie2 [2.1](https://vchitect.github.io/LongVie2-project/) need dense & sparse guidance | module model & lora | ff2v | x |
 | **Multi-Shot Model** | | | |
 | EchoShot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v | - |
 | HoloCine [2.2](https://holo-cine.github.io/) long vid | main model | t2v | - |
