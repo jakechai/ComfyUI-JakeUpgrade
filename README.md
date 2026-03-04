@@ -834,11 +834,11 @@ TriMesh Input Switch JK🐉
 | [Context Window](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) | long & loop video | ~ | √ |
 | [Flow Edit](https://github.com/fallenshock/FlowEdit) | in content edit | v2v | × |
 | **Main Model** | | | |
-| WAN Video [2.2](https://github.com/Wan-Video/Wan2.2) [2.1](https://github.com/Wan-Video/Wan2.1) | main model | t2v ff2v flf2v v2v s2v | √ |
-| WAN Animate [2.2](https://github.com/Wan-Video/Wan2.2) | main model | ff2v ref2v v2v | √ |
+| WAN Video [2.2](https://github.com/Wan-Video/Wan2.2) [2.1](https://github.com/Wan-Video/Wan2.1) | main model | t2v ff2v flf2v v2v s2v | ✅ |
+| WAN Animate [2.2](https://github.com/Wan-Video/Wan2.2) | main model | ff2v ref2v v2v | ✅ |
+| WAN VACE [2.2 Test](https://huggingface.co/lym00/Wan2.2_T2V_A14B_VACE-test) [2.2 Fake](https://huggingface.co/CCP6/FakeVace2.2) [2.1](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | main & module model | t2v ff2v flf2v ref2v v2v ref+v2v | ✅ |
 | WAN Video GGUF [2.2](https://huggingface.co/collections/QuantStack/wan22-ggufs-6887ec891bdea453a35b95f3) [2.1](https://huggingface.co/city96) | main model | t2v ff2v flf2v v2v | √ |
-| VACE [2.2 Test](https://huggingface.co/lym00/Wan2.2_T2V_A14B_VACE-test) [2.2 Fake](https://huggingface.co/CCP6/FakeVace2.2) [2.1](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | main & module model | t2v ff2v flf2v ref2v v2v ref+v2v | ✅ |
-| VACE GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_14B_VACE-GGUF) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
+| WAN VACE GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_14B_VACE-GGUF) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | FUN Control [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | t2v ff2v | √ |
 | FUN InP [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | ff2v flf2v | √ |
 | FUN Camera [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model | ff2v | √ |
@@ -886,13 +886,13 @@ TriMesh Input Switch JK🐉
 | Kaleido [2.1](https://huggingface.co/Kijai/WanVideo_comfy/tree/main/Kaleido) | main model | ref2v s2v | - |
 | **Long Video Model** | | | |
 | Skyreel V2 DF [2.1](https://github.com/SkyworkAI/SkyReels-V2) | main DF model | t2v ff2v v2v | √ |
-| LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2v v2v | - |
+| LongCat [2.1](https://github.com/meituan-longcat/LongCat-Video) | main model | t2v ff2v v2v | ✅ |
 | Stable Video Infinity [2.2](https://github.com/vita-epfl/Stable-Video-Infinity) [2.1](https://github.com/vita-epfl/Stable-Video-Infinity) | lora | ff2v | ✅ |
 | LongVie2 [2.1](https://vchitect.github.io/LongVie2-project/) need dense & sparse guidance | module model & lora | ff2v | x |
 | **Multi-Shot Model** | | | |
 | EchoShot [2.1](https://github.com/JoHnneyWang/EchoShot) | main model & lora | t2v | - |
-| HoloCine [2.2](https://holo-cine.github.io/) long vid | main model | t2v | - |
-| StoryMem [2.2](https://kevin-thu.github.io/StoryMem/) long vid | lora | t2v | ff2v | ✅ |
+| HoloCine [2.2](https://holo-cine.github.io/) | main model | t2v | - |
+| StoryMem [2.2](https://kevin-thu.github.io/StoryMem/) | lora | ff2v | ✅ |
 | Skyreel V3 V2V (shot) [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | v2v | - |
 | **Relight Model** | | | |
 | Lumen [2.1](https://lumen-relight.github.io/) | main model & lora | v2v | × |
@@ -900,7 +900,8 @@ TriMesh Input Switch JK🐉
 | **Voice Model** | | | |
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v | - |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v | √ |
-| Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v | √ |
+| Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v | ✅ |
+| LongCat Avatar [2.1](https://meigen-ai.github.io/LongCat-Video-Avatar/) | main model | ff2v | ✅ |
 | Skyreel V3 A2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | ff2v | - |
 | **Audio Model** | | | |
 | Ovi [2.2](https://github.com/character-ai/Ovi) | main & module model | t2av i2av | - |
@@ -923,7 +924,7 @@ TriMesh Input Switch JK🐉
 | **Camera Control Model** | | | |
 | ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v | - |
 | Uni3C [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | ff2v | ✅ |
-| CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) not implemented | main model | ff2v v2v | ? |
+| CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) | main model | ff2v v2v | ? |
 | **Motion Control Model** | | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v | × |
 | RealisDance [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | ff2v | × |
