@@ -611,7 +611,7 @@ class GetNthString_JK:
 #---------------------------------------------------------------------------------------------------------------------#
 
 class SaveStringListToJSON_JK:
-    """Save string data to JSON file with overwrite control"""
+    """Save string data to JSON file with overwrite control and optional parsing as list."""
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -629,6 +629,12 @@ class SaveStringListToJSON_JK:
                     "default": True,
                     "tooltip": "Overwrite existing file if True, skip if False"
                 }),
+                "save_as": ("BOOLEAN", {
+                    "default": True,
+                    "label_on": "list",
+                    "label_off": "string",
+                    "tooltip": "If True, parse string_input as JSON list and save formatted; if False, save as raw string"
+                }),
             },
         }
     
@@ -636,10 +642,10 @@ class SaveStringListToJSON_JK:
     RETURN_NAMES = ("string_output",) 
     FUNCTION = "save_strlist"
     CATEGORY = icons.get("JK/Misc")
-    DESCRIPTION = "Save string data to JSON file with overwrite control and directory creation."
+    DESCRIPTION = "Save string data to JSON file with overwrite control, directory creation, and optional parsing as list."
 
-    def save_strlist(self, string_input: str, file_path: str, overwrite: bool) -> Tuple[str]:
-        """Save string data to JSON file with error handling"""
+    def save_strlist(self, string_input: str, file_path: str, overwrite: bool, save_as: bool = True) -> Tuple[str]:
+        """Save string data to JSON file with error handling and optional JSON parsing."""
         # Check if file path is empty
         if not file_path:
             print("Error: file_path is empty. Cannot save JSON.")
@@ -663,7 +669,17 @@ class SaveStringListToJSON_JK:
         # Save to file with proper error handling
         try:
             with open(file_path, 'w', encoding='utf-8') as file:
-                json.dump(string_input, file, indent=4, ensure_ascii=False)
+                if save_as:
+                    # Attempt to parse the input string as JSON
+                    try:
+                        data = json.loads(string_input)
+                    except json.JSONDecodeError as e:
+                        print(f"Warning: Failed to parse string_input as JSON: {e}. Falling back to string mode.")
+                        data = string_input  # fallback to raw string
+                    json.dump(data, file, indent=4, ensure_ascii=False)
+                else:
+                    # Save as raw string (original behavior)
+                    json.dump(string_input, file, indent=4, ensure_ascii=False)
             print(f"Successfully saved JSON to {file_path}")
         except Exception as e:
             print(f"Error saving JSON to {file_path}: {e}")

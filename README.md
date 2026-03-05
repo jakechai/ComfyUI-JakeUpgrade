@@ -435,6 +435,17 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 - 2026-03-03 - v2.7.0
 1. Update stitching two segments method (when overlap frame count > 1) in long video gen sub workflow to reduce color shifting: using last frames of pre-segment to replace latent for current segment (Replace Video Latent Frames node) and linear_blend between the overlap frames (Image Batch Extend With Overlap node).
 
+- 2026-03-04 - v2.7.1
+1. Add Wan2.1 LongCat Avatar long video gen workflow. (Note: No lip sync >8 sec issue even using Wrapper default wf.)
+
+- 2026-03-05 - v2.7.2
+1. Fix Multi/Infinite Talk long video gen bug.
+2. Ignore using Replace Video Latent Frames node in the 1st run for Cuts workflows.
+3. Update SaveStringListToJSON_JK node, save as list by default instead of string.
+4. Add Wan Move ff2v video gen sub workflow.
+5. Update FlashVSR video upscale sub workflow using offload loading device.
+6. Add Video MaMa for mask refinement to video auto mask sub workflow.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -863,7 +874,7 @@ TriMesh Input Switch JK🐉
 | VBVR [2.2](https://video-reason.com/) | main model & lora | flf2v | √ |
 | Unified Reward [Flex](https://codegoat24.github.io/UnifiedReward/flex#Top) [2.1](https://huggingface.co/collections/CodeGoat24/unifiedreward-flex) [2.2](https://huggingface.co/collections/CodeGoat24/unifiedreward-flex) | lora need more steps | t2v | √ |
 | **Low-Step Model/LoRA** | | | |
-| lightX2V [2.2](https://huggingface.co/lightx2v/Wan2.2-Lightning) [2.1](https://huggingface.co/lightx2v) | main model & lora | t2v ff2v v2v lcm simple steps 4 cfg 1.0 | √ |
+| lightX2V [2.2](https://huggingface.co/lightx2v/Wan2.2-Lightning) [2.1](https://huggingface.co/lightx2v) | main model & lora | t2v ff2v v2v lcm simple steps 4 cfg 1.0 | ✅ |
 | FusionX [2.1](https://huggingface.co/vrgamedevgirl84/Wan14BT2VFusioniX) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0| √ |
 | FusionX GGUF [2.1](https://huggingface.co/collections/QuantStack/wan21-fusionx-ggufs-68498e41b3597737512c0636) | main model | t2v ff2v uni_pc simple steps 8 cfg 1.0| - |
 | CausVid [2.1](https://github.com/tianweiy/CausVid) | main model & lora | t2v ff2v uni_pc simple steps 8 cfg 1.0 | - |
@@ -919,7 +930,8 @@ TriMesh Input Switch JK🐉
 | Depth lora [2.1](https://huggingface.co/spacepxl/Wan2.1-control-loras/tree/main/1.3b/depth) | control lora | t2v | - |
 | Dilated ControlNet [2.2](https://huggingface.co/collections/TheDenk/wan22-controlnets-688b754ca3ee3bc7b34253bf) [2.1](https://github.com/TheDenk/wan2.1-dilated-controlnet) | controlnet | t2v v2v | √ |
 | **Camera+Motion Control Model** | | | |
-| ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v | √ |
+| ATI [2.1](https://github.com/bytedance/ATI) | main model | ff2v | ✅ |
+| WAN Move [2.1](https://github.com/ali-vilab/Wan-Move) | main model | ff2v | ✅ |
 | Time-to-Move [2.2](https://time-to-move.github.io/) | main model | ff2v | ✅ |
 | **Camera Control Model** | | | |
 | ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v | - |
@@ -1059,7 +1071,6 @@ TriMesh Input Switch JK🐉
 - [Frame Interpolation](https://github.com/Fannovel16/ComfyUI-Frame-Interpolation)
 - [SAM2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - [SAM3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
-- [Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
 - [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
 - [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
 - (LTXV2)[LTXVideo](https://github.com/Lightricks/ComfyUI-LTXVideo)
@@ -1069,6 +1080,8 @@ TriMesh Input Switch JK🐉
 - (auto prompt)[QWen VL](https://github.com/1038lab/ComfyUI-QwenVL)
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (multi-gpu)[ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU)
+- (auto mask)[Mat Anyone](https://github.com/KytraScript/ComfyUI_MatAnyone_Kytra)
+- (auto mask)[Video MaMa](https://github.com/okdalto/ComfyUI-VideoMaMa)
 
 ### Krita workflow
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
