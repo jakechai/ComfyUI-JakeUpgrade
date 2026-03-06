@@ -115,13 +115,13 @@ class SceneCuts_JK:
         overlap_frame_count = self._adjust_segment_frame_count(overlap_frame_count, compatibility) if compatibility else overlap_frame_count
         
         # Process selected cuts
-        selected_scene_cuts, selected_indices = self._process_selected_cuts(
-            scene_cuts, select_cuts, fps, loop_frame_count, overlap_frame_count, long_vid_method, warmup_frame_count
-        )
+        selected_scene_cuts, selected_indices = self._process_selected_cuts(scene_cuts, select_cuts)
         
         # Generate output strings
         output_strings = self._generate_output_strings(
-            selected_scene_cuts, selected_indices, total_duration, fps, compatibility
+            selected_scene_cuts, selected_indices, 
+            loop_frame_count, overlap_frame_count, long_vid_method, 
+            total_duration, fps, compatibility
         )
         
         return (
@@ -207,9 +207,7 @@ class SceneCuts_JK:
         frame_seg = 8 if compatibility else 4
         return int(math.ceil(max(0, (loop_frame_count - 1)) / frame_seg) * frame_seg + 1)
     
-    def _process_selected_cuts(self, scene_cuts: List[List[float]], select_cuts: str, fps: int, 
-                              loop_frame_count: int, overlap_frame_count: int, long_vid_method: bool, 
-                              warmup_frame_count: int) -> Tuple[List[List[float]], List[int]]:
+    def _process_selected_cuts(self, scene_cuts: List[List[float]], select_cuts: str)-> Tuple[List[List[float]], List[int]]:
         """Process and filter selected cuts."""
         selected_indices = parse_select_cuts(select_cuts, len(scene_cuts))
         selected_scene_cuts = []
@@ -221,6 +219,7 @@ class SceneCuts_JK:
         return selected_scene_cuts, selected_indices
     
     def _generate_output_strings(self, scene_cuts: List[List[float]], selected_indices: List[int], 
+                                loop_frame_count: int, overlap_frame_count: int, long_vid_method: bool, 
                                 total_duration: float, fps: int, compatibility: bool) -> Dict[str, str]:
         """Generate output summary strings."""
         cut_frame_counts = []
@@ -230,7 +229,7 @@ class SceneCuts_JK:
         for start, end in scene_cuts:
             duration = end - start
             cut_frames = max(0, int(round(duration * fps)))
-            loop_frames = calculate_loop_frame_count(duration, fps, 81, 10, False, compatibility)  # Using defaults
+            loop_frames = calculate_loop_frame_count(duration, fps, loop_frame_count, overlap_frame_count, long_vid_method, compatibility)
             
             cut_frame_counts.append(str(cut_frames))
             loop_frame_counts.append(str(loop_frames))

@@ -231,6 +231,41 @@ class CR_MaskInputSwitch_JK:
         else:
             return (mask_false, boolean_value)
 
+class CR_AudioInputSwitch_JK:
+    """Switch between two mask inputs based on boolean condition"""
+    
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "boolean_value": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Condition to select between inputs (True=audio_true, False=audio_false)"
+                }),
+                "audio_false": ("AUDIO", {
+                    "tooltip": "Audio to return when condition is False"
+                }),
+            },
+            "optional": {
+                "audio_true": ("AUDIO", {
+                    "tooltip": "Audio to return when condition is True (optional)"
+                })
+            },
+        }
+
+    RETURN_TYPES = ("AUDIO", "BOOLEAN")
+    RETURN_NAMES = ("audio_output", "boolean")
+    FUNCTION = "InputAudios"
+    CATEGORY = icons.get("JK/Switch")
+    DESCRIPTION = "Switch between two audio inputs based on boolean condition"
+
+    def InputAudios(self, boolean_value: bool, audio_false: Any, audio_true: Any = None) -> Tuple[Any, bool]:
+        """Select audio input based on boolean condition"""
+        if audio_true is not None and boolean_value:
+            return (audio_true, boolean_value)
+        else:
+            return (audio_false, boolean_value)
+
 #---------------------------------------------------------------------------------------------------------------------#
 # Model and Latent Switch Nodes
 #---------------------------------------------------------------------------------------------------------------------#
