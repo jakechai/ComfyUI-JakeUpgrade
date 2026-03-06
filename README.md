@@ -410,27 +410,19 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 							5. Update CutAudio_JK node, generate silent audio if no audio input.
 	- 2026-02-19 - v2.6.4	1. Add LTXV2 long video gen workflow.
 	- 2026-02-20 - v2.6.5	1. Add shot paragraph mode for System Prompter, which output continuous paragraph using natural language.
+	- 2026-02-21 - v2.6.6	1. Add LTXV2 Frame Count node, calculate LTXV2-compatible frame count by rounding up to nearest multiple of 8 plus 1. 
+							2. Update Scene Cut node, supports LTXV2.
+							3. Add LTXV2 Cuts video gen workflow.
+	- 2026-02-24 - v2.6.7	1. Update Trellis2 workflow using new remesh with quad node (though it doesn't reconstruct in quad).
+							2. Update Wan Video Eco list.
+							3. Add Wan2.1 Skyreel V3 ref2v, a2v, v2v extend sub workflows.
+							4. Add Wan2.2 Pusa v2v extend sub workflow.
+	- 2026-02-25 - v2.6.8	1. Add Wan2.1 Bind Weave ref2v video gen sub workflow which supports Uni3C.
+	- 2026-03-02 - v2.6.9	1. Add Wan2.2 HoloCine multi-shot long video gen workflow.
+							2. Add Wan2.2 StoryMen multi-shot long video gen workflow.
+							3. Add start_index to CreateLoopScheduleList node.
 
 </details>
-
-- 2026-02-21 - v2.6.6
-1. Add LTXV2 Frame Count node, calculate LTXV2-compatible frame count by rounding up to nearest multiple of 8 plus 1. 
-2. Update Scene Cut node, supports LTXV2.
-3. Add LTXV2 Cuts video gen workflow.
-
-- 2026-02-24 - v2.6.7
-1. Update Trellis2 workflow using new remesh with quad node (though it doesn't reconstruct in quad).
-2. Update Wan Video Eco list.
-3. Add Wan2.1 Skyreel V3 ref2v, a2v, v2v extend sub workflows.
-4. Add Wan2.2 Pusa v2v extend sub workflow.
-
-- 2026-02-25 - v2.6.8
-1. Add Wan2.1 Bind Weave ref2v video gen sub workflow which supports Uni3C.
-
-- 2026-03-02 - v2.6.9
-1. Add Wan2.2 HoloCine multi-shot long video gen workflow.
-2. Add Wan2.2 StoryMen multi-shot long video gen workflow.
-3. Add start_index to CreateLoopScheduleList node.
 
 - 2026-03-03 - v2.7.0
 1. Update stitching two segments method (when overlap frame count > 1) in long video gen sub workflow to reduce color shifting: using last frames of pre-segment to replace latent for current segment (Replace Video Latent Frames node) and linear_blend between the overlap frames (Image Batch Extend With Overlap node).
@@ -445,6 +437,10 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 4. Add Wan Move ff2v video gen sub workflow.
 5. Update FlashVSR video upscale sub workflow using offload loading device.
 6. Add Video MaMa for mask refinement to video auto mask sub workflow.
+
+- 2026-03-06 - v2.7.3
+1. Update LTXV2 workflows using the Diffusion Model Loader KJ node and Diffusion Model Selector for the latest ComfyUI.
+2. Add LTXV2_3 supports for LTXV video gen workflows, need ComfyUI v0.16.1.
 
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
@@ -848,7 +844,8 @@ TriMesh Input Switch JK🐉
 | WAN Video [2.2](https://github.com/Wan-Video/Wan2.2) [2.1](https://github.com/Wan-Video/Wan2.1) | main model | t2v ff2v flf2v v2v s2v | ✅ |
 | WAN Animate [2.2](https://github.com/Wan-Video/Wan2.2) | main model | ff2v ref2v v2v | ✅ |
 | WAN VACE [2.2 Test](https://huggingface.co/lym00/Wan2.2_T2V_A14B_VACE-test) [2.2 Fake](https://huggingface.co/CCP6/FakeVace2.2) [2.1](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | main & module model | t2v ff2v flf2v ref2v v2v ref+v2v | ✅ |
-| WAN Video GGUF [2.2](https://huggingface.co/collections/QuantStack/wan22-ggufs-6887ec891bdea453a35b95f3) [2.1](https://huggingface.co/city96) | main model | t2v ff2v flf2v v2v | √ |
+| WAN S2V [2.2](https://github.com/Wan-Video/Wan2.2) | main model | ff+s2v | - |
+| WAN Video GGUF [2.2](https://huggingface.co/collections/QuantStack/wan22-ggufs-6887ec891bdea453a35b95f3) [2.1](https://huggingface.co/city96) | main model | t2v ff2v flf2v v2v | - |
 | WAN VACE GGUF [2.1](https://huggingface.co/QuantStack/Wan2.1_14B_VACE-GGUF) | main model | t2v ff2v flf2v ref2v v2v ref+v2v | - |
 | FUN Control [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | t2v ff2v | √ |
 | FUN InP [2.2](https://huggingface.co/collections/alibaba-pai/wan22-fun-68958eabec343b948f1225c5) [2.1](https://huggingface.co/collections/alibaba-pai/wan21-fun-v11-680f514c89fe7b4df9d44f17) | main model & lora | ff2v flf2v | √ |
@@ -912,7 +909,7 @@ TriMesh Input Switch JK🐉
 | Fantasy Talking [2.1](https://github.com/Fantasy-AMAP/fantasy-talking) | module model | ff2v v2v | - |
 | Multi Talk [2.1](https://github.com/MeiGen-AI/MultiTalk) | module model | ff2v v2v | √ |
 | Infinite Talk [2.1](https://github.com/MeiGen-AI/InfiniteTalk) | module model | ff2v v2v | ✅ |
-| LongCat Avatar [2.1](https://meigen-ai.github.io/LongCat-Video-Avatar/) | main model | ff2v | ✅ |
+| LongCat Avatar [2.1](https://meigen-ai.github.io/LongCat-Video-Avatar/) | main model | ff2v No lip sync >8 sec issue | ✅ |
 | Skyreel V3 A2V [2.1](https://github.com/SkyworkAI/SkyReels-V3) | main model | ff2v | - |
 | **Audio Model** | | | |
 | Ovi [2.2](https://github.com/character-ai/Ovi) | main & module model | t2av i2av | - |
@@ -945,6 +942,9 @@ TriMesh Input Switch JK🐉
 | SCAIL [2.1](https://teal024.github.io/SCAIL/) | main model | ff2v | ✅ |
 | One To All [2.1](https://github.com/ssj9596/One-to-All-Animation) | main model | ff2v with restrictions | - |
 | Steady Dance [2.1](https://mcg-nju.github.io/steadydancer-web/) | main model | ff2v | - |
+| **Alpha Layer Model** | | | |
+| WAN Alpha [2.1](https://github.com/WeChatCV/Wan-Alpha) | lora | t2v | - |
+| Flow RVS [2.1](https://github.com/xmz111/FlowRVS) [Custom Node](https://github.com/smthemex/ComfyUI_FlowRVS) | lora | v2v | - |
 
 ## JakeUpgrade Workflow
 
