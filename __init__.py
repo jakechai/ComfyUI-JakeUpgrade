@@ -385,6 +385,7 @@ def create_node_mappings() -> Dict[str, Type[Any]]:
             "CR Float Input Switch JK": lambda: global_symbols.get("CR_FloatInputSwitch_JK"),
             "CR Image Input Switch JK": lambda: global_symbols.get("CR_ImageInputSwitch_JK"),
             "CR Mask Input Switch JK": lambda: global_symbols.get("CR_MaskInputSwitch_JK"),
+            "CR Audio Input Switch JK": lambda: global_symbols.get("CR_AudioInputSwitch_JK"),
             "CR Latent Input Switch JK": lambda: global_symbols.get("CR_LatentInputSwitch_JK"),
             "CR Conditioning Input Switch JK": lambda: global_symbols.get("CR_ConditioningInputSwitch_JK"),
             "CR Clip Input Switch JK": lambda: global_symbols.get("CR_ClipInputSwitch_JK"),

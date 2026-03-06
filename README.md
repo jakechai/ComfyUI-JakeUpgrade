@@ -442,6 +442,11 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 1. Update LTXV2 workflows using the Diffusion Model Loader KJ node and Diffusion Model Selector for the latest ComfyUI.
 2. Add LTXV2_3 supports for LTXV video gen workflows, need ComfyUI v0.16.1.
 
+- 2026-03-06 - v2.7.4
+1. Fix Scene Cuts node bug.
+2. Fix Cuts video gen workflows: loop count = 1 when segment frame count < loop frame count.
+3. Add Audio Switch node.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
