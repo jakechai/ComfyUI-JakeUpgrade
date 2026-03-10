@@ -447,6 +447,9 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
 2. Fix Cuts video gen workflows: loop count = 1 when segment frame count < loop frame count.
 3. Add Audio Switch node.
 
+- 2026-03-10 - v2.7.5
+1. Update LTXV2 workflow: supports 2.3 union and motion control, supports 2.3 official guidler for dev model.
+
 ## Installation
 1. `git clone https://github.com/jakechai/ComfyUI-JakeUpgrade` into the `custom_nodes` folder 
     - e.g. `custom_nodes\ComfyUI-JakeUpgrade`
@@ -938,7 +941,7 @@ TriMesh Input Switch JK🐉
 | **Camera Control Model** | | | |
 | ReCamMaster [2.1](https://github.com/KwaiVGI/ReCamMaster) | main model | v2v | - |
 | Uni3C [2.1](https://github.com/ewrfcas/Uni3C) | 3D controlnet | ff2v | ✅ |
-| CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) | main model | ff2v v2v | ? |
+| CamCloneMaster [2.1](https://github.com/KwaiVGI/CamCloneMaster) not implemented | main model | ff2v v2v | ? |
 | **Motion Control Model** | | | |
 | Unianimate [2.1](https://github.com/ali-vilab/UniAnimate) | control lora | ff2v | × |
 | RealisDance [2.1](https://github.com/damo-cv/RealisDance) | 3D controlnet | ff2v | × |
