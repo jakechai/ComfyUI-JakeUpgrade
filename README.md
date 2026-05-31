@@ -5,6 +5,7 @@ Feel free to join my [Discord server](https://discord.gg/2XC3w9as2f).
 If you like what I share, please support me with [PayPal](https://paypal.me/jakechaikefu).
 
 > [!NOTE]
+> - [ComfyUI MultiGPU](https://github.com/pollockjj/ComfyUI-MultiGPU) will cause cuda errors in the latest ComfyUI. Make sure to disable it.
 > - You might need ComfyUI v0.3.64 for JakeUpgrade v2.1.5up, for the `comfy_extras.nodes_compositing.SplitImageWithAlpha.split_image_with_alpha()` renaming issue.
 > - [portable img2mesh ComfyUI v0.3.68 with pytorch 2.7.0+cu128](https://drive.google.com/file/d/1WTZ1Mx79VhyYmJa7un8h4lyuKWrH8yDX) includes: 3D-Pack | Hy3D 2.0 | Hy3D 2.1 | MVAdapter | IG2MV
 > - [portable img2mesh ComfyUI v0.3.27 with pytorch 2.5.1+cu124](https://drive.google.com/file/d/1rUchssRRdqLQtu0A-OCkKKLU8_bd0y8q) includes: 3D-Pack | Hy3D 2.0 | MVAdapter | IG2MV
@@ -460,7 +461,7 @@ If you like what I share, please support me with [PayPal](https://paypal.me/jake
     - e.g. `cd C:\ComfyUI_windows_portable\ComfyUI\custom_nodes\ComfyUI-JakeUpgrade`
 4.  Install python packages
       - **Windows Standalone installation** (embedded python):  
-		run install.bat  
+		run install.bat (using pip install by default)  
         Manual: `../../../python_embeded/python.exe -s -m pip install -r requirements.txt`  
       - **non-Windows installation**:  
         Manual: `pip install -r requirements.txt`  
@@ -1021,18 +1022,15 @@ TriMesh Input Switch JK🐉
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 - [ComfyUI ELLA](https://github.com/TencentQQGYLab/ComfyUI-ELLA)
 - [Seamless tiling](https://github.com/spinagon/ComfyUI-seamless-tiling)
-- [ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
 - [Ultimate SD Upscale](https://github.com/ssitu/ComfyUI_UltimateSDUpscale)
 - [QWen Image Wan Bridge](https://github.com/fblissjr/ComfyUI-QwenImageWanBridge)
 - (auto prompt)[QWen VL](https://github.com/1038lab/ComfyUI-QwenVL)
 - (auto prompt)[Florence 2](https://github.com/kijai/ComfyUI-Florence2)
 - (auto prompt)[Hunyuan Prompt Enhancer](https://github.com/leeooo001/comfyui-Hunyuan-PromptEnhancer)
-- (auto prompt)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
 - (auto prompt)[One Button Prompt](https://github.com/AIrjen/OneButtonPrompt)
 - (auto prompt)[Portrait Master](https://github.com/florestefano1975/comfyui-portrait-master)
 - (refine)[Face Analysis](https://github.com/cubiq/ComfyUI_FaceAnalysis)
 - (detailer)[Impact SubPack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack)
-- (detailer)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 - (detailer)[Segment Anything 2](https://github.com/kijai/ComfyUI-segment-anything-2)
 - (detailer)[Sam3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
 - (Seamless Texture)[Comfy mtb](https://github.com/melMass/comfy_mtb)
@@ -1047,6 +1045,9 @@ TriMesh Input Switch JK🐉
 - (legacy)[Merlin Magic Photo Prompter](https://github.com/Xclbr7/ComfyUI-Merlin)
 - (legacy)[VLM Nodes](https://github.com/gokayfem/ComfyUI_VLM_nodes)
 - (legacy)[IF AI Tools](https://github.com/if-ai/ComfyUI-IF_AI_tools)
+- (legacy)[ComfyUI SAI API](https://github.com/Stability-AI/ComfyUI-SAI_API)
+- (legacy)[ComfyUI Fal API](https://github.com/gokayfem/ComfyUI-fal-API)
+- (legacy)[Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
 
 ### img2mesh workflow
 - [IP Adapter Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
@@ -1081,6 +1082,7 @@ TriMesh Input Switch JK🐉
 - [SAM3](https://github.com/PozzettiAndrea/ComfyUI-SAM3)
 - [Audio Seperation](https://github.com/christian-byrne/audio-separation-nodes-comfyui)
 - [Frame Pack](https://github.com/kijai/ComfyUI-FramePackWrapper)
+- (Upscale)[Nvidia RTX](https://github.com/Comfy-Org/Nvidia_RTX_Nodes_ComfyUI)
 - (LTXV2)[LTXVideo](https://github.com/Lightricks/ComfyUI-LTXVideo)
 - (For Loop)[ComfyUI Easy Use](https://github.com/yolain/ComfyUI-Easy-Use)
 - (TTS)[Qwen TTS](https://github.com/flybirdxx/ComfyUI-Qwen-TTS)
